@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIPPA — Mapa Mental NAL | SEBRAE Nacional</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#0b1120;color:#e2e8f0;overflow:hidden;height:100vh;user-select:none;}
+
+.header{background:rgba(17,24,39,.85);border-bottom:1px solid rgba(255,255,255,.06);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:200;backdrop-filter:blur(12px);}
+.header-left{display:flex;align-items:center;gap:16px;}
+.header-title{font-size:18px;font-weight:700;background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.header-sub{font-size:12px;color:#64748b;margin-top:1px;}
+.header-controls{display:flex;align-items:center;gap:8px;}
+.ctrl-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:#94a3b8;padding:7px 14px;border-radius:8px;font-size:11.5px;font-family:inherit;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;}
+.ctrl-btn:hover{border-color:rgba(16,185,129,.35);color:#e2e8f0;background:rgba(16,185,129,.08);}
+.ctrl-btn svg{width:13px;height:13px;}
+.zoom-label{font-size:11px;color:#475569;min-width:42px;text-align:center;}
+
+.pippa-home-btn{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
+.pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff;}
+.pippa-home-btn svg{width:13px;height:13px;}
+
+.wrap{position:fixed;top:50px;left:0;right:0;bottom:0;overflow:hidden;cursor:grab;}
+.wrap.dragging{cursor:grabbing;}
+.canvas{position:absolute;transform-origin:0 0;will-change:transform;}
+
+.connections{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none;}
+.conn{fill:none;stroke-width:2;transition:opacity .4s;}
+
+.mm-node{position:absolute;transform:translate(-50%,-50%);border-radius:10px;padding:10px 14px;cursor:pointer;transition:left .45s cubic-bezier(.4,0,.2,1),top .45s cubic-bezier(.4,0,.2,1),opacity .35s,box-shadow .2s,transform .2s;border:1.5px solid;max-width:240px;text-align:center;z-index:1;}
+.mm-node:hover{z-index:50;filter:brightness(1.15);}
+.mm-node.hidden{opacity:0;pointer-events:none;}
+
+.mm-node.root{max-width:280px;padding:18px 24px;border-radius:14px;border-width:2px;z-index:10;}
+.mm-node.root .node-label{font-size:16px;font-weight:700;}
+
+.mm-node.branch{padding:10px 16px;}
+.mm-node.branch .node-label{font-size:12.5px;font-weight:600;}
+
+.mm-node.leaf{max-width:220px;padding:8px 12px;border-radius:8px;}
+.mm-node.leaf .node-label{font-size:11.5px;font-weight:400;color:#94a3b8;}
+.mm-node.leaf:hover .node-label{color:#e2e8f0;}
+
+.node-label{line-height:1.45;white-space:pre-line;}
+.node-info{font-size:10px;color:#64748b;margin-top:4px;font-style:italic;line-height:1.4;}
+.node-toggle{display:inline-block;font-size:9px;color:#475569;margin-left:4px;transition:transform .3s;}
+.node-toggle.collapsed{transform:rotate(-90deg);}
+
+.legend{position:fixed;bottom:16px;left:16px;background:rgba(17,24,39,.85);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px 18px;backdrop-filter:blur(8px);z-index:100;font-size:11px;}
+.legend-title{font-size:10px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:5px;color:#8b9dc3;}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.legend-item:last-child{margin-bottom:0;}
+
+.hint{position:fixed;bottom:16px;right:16px;font-size:11px;color:#334155;z-index:100;}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <a href="../pippa-portal/index.html" class="pippa-home-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Portal
+    </a>
+    <div>
+      <div class="header-title">Mapa Mental — NAL</div>
+      <div class="header-sub">Nucleo de Assessoria Legislativa | Unidade de Politicas Publicas | SEBRAE Nacional</div>
+    </div>
+  </div>
+  <div class="header-controls">
+    <button class="ctrl-btn" onclick="expandAll()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/></svg> Expandir</button>
+    <button class="ctrl-btn" onclick="collapseAll()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/></svg> Recolher</button>
+    <button class="ctrl-btn" onclick="resetView()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4m-10-10h4m12 0h4"/></svg> Centralizar</button>
+    <span class="zoom-label" id="zoomLabel">100%</span>
+  </div>
+</header>
+
+<div class="wrap" id="wrap">
+  <div class="canvas" id="canvas">
+    <svg class="connections" id="svg" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="nodesLayer"></div>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-title">Frentes</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>NAL (Centro)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#4f8cff"></div>Estruturacão & Foresight</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Planejamento & Comunicacao</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div>Inteligencia & Experimentacao</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div>Incidencia Legislativa</div>
+</div>
+
+<div class="hint">Arraste para mover · Scroll para zoom · Clique nos nos para expandir/recolher</div>
+
+<script>
+const DATA = {
+  label: "Nucleo de Assessoria\nLegislativa (NAL)",
+  color: "#10b981",
+  children: [
+    {
+      label: "Base Estruturante",
+      info: "Equipe: Julio Enders e Murilo Terra",
+      color: "#4f8cff",
+      side: "right",
+      children: [{
+        label: "Modelo de Atuacao da UPP",
+        children: [
+          { label: "Modelo de Atuacao do Nucleo de\nInteligencia Legislativa e\nAmbiente de Negocio" },
+          { label: "Estrutura e governanca" },
+          { label: "Processos e fluxos" },
+          { label: "Papeis e responsabilidades" },
+          { label: "Integracao entre areas e parceiros" },
+          { label: "Monitoramento e melhoria continua" }
+        ]
+      }]
+    },
+    {
+      label: "Producao de Inteligencia\ne Experimentacao",
+      info: "Gerar conhecimento, testar solucoes\ne identificar oportunidades\nEquipe: Julio Enders e Murilo Terra",
+      color: "#a855f7",
+      side: "right",
+      children: [
+        {
+          label: "PIPPA — Plataforma de Inteligencia\nem Politicas Publicas Aplicadas",
+          children: [
+            { label: "PIPPA — Reforma Tributaria" },
+            { label: "PIPPA — Compras Publicas" },
+            { label: "PIPPA — Eleicoes" },
+            { label: "PIPPA — Poder Legislativo", children: [{ label: "Agente de Merito" }] },
+            { label: "PIPPA — Plataforma TransformaLab" },
+            { label: "PIPPA — Agenda Legislativa" },
+            { label: "PIPPA — Observatorio de PP\nestadual (prototipo PB)" },
+            { label: "PIPPA — Emendas" }
+          ]
+        },
+        {
+          label: "TransformaLab — Laboratorio\nde Politicas Publicas",
+          children: [
+            { label: "Lab Design" },
+            { label: "Lab Pro-Negocios" },
+            { label: "Lab Insight" }
+          ]
+        }
+      ]
+    },
+    {
+      label: "Incidencia e Priorizacao",
+      info: "Converte evidencias em agenda e\npromove a incidencia institucional",
+      color: "#ef4444",
+      side: "right",
+      children: [{
+        label: "Assessoria Legislativa",
+        children: [
+          { label: "Senado" },
+          { label: "Parlamento Mais Empreendedor" },
+          { label: "Camara" },
+          { label: "Frente Parlamentar das MPEs" },
+          { label: "Merito" },
+          { label: "GT da Reforma Tributaria\n— Novo Simples" },
+          { label: "GT da Escala 6x1" }
+        ]
+      }]
+    },
+    {
+      label: "Guia do Candidato a Presidente\ne Governador Empreendedor",
+      info: "Equipe: Julia Marcal e Murilo Terra",
+      color: "#f59e0b",
+      side: "right"
+    },
+    {
+      label: "Foresight Estrategico",
+      color: "#4f8cff",
+      side: "left",
+      children: [
+        { label: "Entendimento de contexto e\nmapeamento de tendencias" },
+        { label: "Analises socioeconomicas e insights\npara direcionar o futuro" },
+        { label: "Construcao de cenarios\ne visoes de futuro" },
+        { label: "Design de conceitos para politicas,\nregulacoes e servicos" },
+        { label: "Sistematizar indicadores criticos\n(NECI/GEM, Observatorio, B-ready)" },
+        { label: "Proposta de Governanca do\nEcossistema de PP" }
+      ]
+    },
+    {
+      label: "Ambiente de Negocio +20",
+      info: "Equipe: Julia Marcal, Julio Enders\ne Murilo Terra",
+      color: "#f59e0b",
+      side: "left"
+    },
+    {
+      label: "Comunicacao e Engajamento\nde Publicos",
+      color: "#f59e0b",
+      side: "left",
+      children: [
+        { label: "Conceito e narrativa do movimento" },
+        { label: "Plano de comunicacao e\nengajamento + mentoria" }
+      ]
+    },
+    {
+      label: "Planejamento da UPP",
+      color: "#f59e0b",
+      side: "left",
+      children: [
+        { label: "Atualizar objetivos das\ngerencia e nucleos" },
+        { label: "Atualizar macroprocessos\ne indicadores" },
+        { label: "Atualizar estrutura, governanca\ne gestao da mudanca" },
+        { label: "Construcao do macro plano de 4 anos\n(PPA) baseado no foresight" }
+      ]
+    },
+    {
+      label: "Capacitacao de Equipes",
+      color: "#f59e0b",
+      side: "left",
+      children: [
+        { label: "Capacitacao das equipes envolvidas" },
+        { label: "Elaboracao e entrega de\ncartilha (playbook)" }
+      ]
+    },
+    {
+      label: "Reestruturacao do NAL",
+      color: "#f59e0b",
+      side: "left"
+    }
+  ]
+};
+
+const LEVEL_GAP = 300;
+const NODE_GAP = 12;
+const NODE_PAD = 28;
+
+let allNodes = [];
+let root = null;
+let scale = 1, panX = 0, panY = 0;
+let dragging = false, lastMX = 0, lastMY = 0;
+
+function measureNodes() {
+  allNodes.forEach(node => {
+    node.el.style.position = 'absolute';
+    node.el.style.visibility = 'hidden';
+    node.el.style.left = '0px';
+    node.el.style.top = '0px';
+    node.el.style.transform = 'none';
+    node.el.style.display = '';
+    node.el.style.transition = 'none';
+  });
+  allNodes.forEach(node => {
+    node._realH = node.el.offsetHeight;
+  });
+  allNodes.forEach(node => {
+    node.el.style.visibility = '';
+    node.el.style.transform = 'translate(-50%,-50%)';
+    node.el.style.transition = '';
+  });
+}
+
+function init() {
+  root = JSON.parse(JSON.stringify(DATA));
+  prepareTree(root, 0, null, null);
+  createElements();
+  measureNodes();
+  resetView();
+}
+
+function prepareTree(node, level, parent, side) {
+  node.level = level;
+  node.parent = parent;
+  node.side = node.side || side;
+  node._collapsed = false;
+  node.x = 0;
+  node.y = 0;
+  if (!node.color && parent) node.color = parent.color;
+  allNodes.push(node);
+  if (node.children) {
+    node.children.forEach(c => prepareTree(c, level + 1, node, node.side));
+  }
+}
+
+function estimateH(node) {
+  if (node._realH) return node._realH;
+  return 50;
+}
+
+function subtreeH(node) {
+  if (!node.children || node._collapsed) return estimateH(node);
+  const gap = node.level === 0 ? NODE_GAP + 20 : NODE_GAP;
+  const ch = node.children.reduce((s, c) => s + subtreeH(c), 0) + (node.children.length - 1) * gap;
+  return Math.max(estimateH(node), ch);
+}
+
+function layoutChildren(parent, children, dir) {
+  const gap = parent.level === 0 ? NODE_GAP + 20 : NODE_GAP;
+  const totalH = children.reduce((s, c) => s + subtreeH(c), 0) + (children.length - 1) * gap;
+  let cy = parent.y - totalH / 2;
+  children.forEach(child => {
+    const h = subtreeH(child);
+    child.x = parent.x + dir * LEVEL_GAP;
+    child.y = cy + h / 2;
+    cy += h + gap;
+    if (child.children && !child._collapsed) {
+      layoutChildren(child, child.children, dir);
+    }
+  });
+}
+
+function calcLayout() {
+  root.x = 0;
+  root.y = 0;
+  const leftKids = (root.children || []).filter(c => c.side === 'left');
+  const rightKids = (root.children || []).filter(c => c.side === 'right');
+  if (leftKids.length) layoutChildren(root, leftKids, -1);
+  if (rightKids.length) layoutChildren(root, rightKids, 1);
+}
+
+function isVisible(node) {
+  let p = node.parent;
+  while (p) {
+    if (p._collapsed) return false;
+    p = p.parent;
+  }
+  return true;
+}
+
+function nodeClasses(node) {
+  let cls = 'mm-node';
+  if (node.level === 0) cls += ' root';
+  else if (node.children && node.children.length) cls += ' branch';
+  else cls += ' leaf';
+  if (!isVisible(node)) cls += ' hidden';
+  return cls;
+}
+
+function hexToRgba(hex, a) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+function createElements() {
+  const layer = document.getElementById('nodesLayer');
+  layer.innerHTML = '';
+  allNodes.forEach(node => {
+    const div = document.createElement('div');
+    div.className = nodeClasses(node);
+    const c = node.color || '#64748b';
+    if (node.level === 0) {
+      div.style.background = `linear-gradient(135deg, ${hexToRgba(c,.18)}, ${hexToRgba(c,.08)})`;
+      div.style.borderColor = hexToRgba(c,.6);
+      div.style.boxShadow = `0 0 30px ${hexToRgba(c,.15)}`;
+    } else if (node.children && node.children.length) {
+      div.style.background = hexToRgba(c,.1);
+      div.style.borderColor = hexToRgba(c,.3);
+    } else {
+      div.style.background = 'rgba(255,255,255,.03)';
+      div.style.borderColor = 'rgba(255,255,255,.08)';
+    }
+
+    let html = `<span class="node-label">${node.label}</span>`;
+    if (node.children && node.children.length) {
+      html += `<span class="node-toggle" id="tog-${allNodes.indexOf(node)}">▼</span>`;
+    }
+    if (node.info) {
+      html += `<div class="node-info">${node.info}</div>`;
+    }
+    div.innerHTML = html;
+
+    div.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (node.children && node.children.length) {
+        toggleNode(node);
+      }
+    });
+
+    layer.appendChild(div);
+    node.el = div;
+  });
+}
+
+function updatePositions() {
+  calcLayout();
+  allNodes.forEach(node => {
+    const vis = isVisible(node);
+    node.el.className = nodeClasses(node);
+    if (vis) {
+      node.el.style.left = node.x + 'px';
+      node.el.style.top = node.y + 'px';
+    } else {
+      const ancestor = findVisibleAncestor(node);
+      if (ancestor) {
+        node.el.style.left = ancestor.x + 'px';
+        node.el.style.top = ancestor.y + 'px';
+      }
+    }
+    const tog = node.el.querySelector('.node-toggle');
+    if (tog) {
+      tog.className = 'node-toggle' + (node._collapsed ? ' collapsed' : '');
+    }
+  });
+  requestAnimationFrame(() => requestAnimationFrame(drawConnections));
+}
+
+function findVisibleAncestor(node) {
+  let p = node.parent;
+  while (p) {
+    if (isVisible(p)) return p;
+    p = p.parent;
+  }
+  return root;
+}
+
+function drawConnections() {
+  const svg = document.getElementById('svg');
+  svg.innerHTML = '';
+  function draw(node) {
+    if (!node.children || node._collapsed) return;
+    node.children.forEach(child => {
+      if (!isVisible(child)) return;
+      const x1 = node.x, y1 = node.y;
+      const x2 = child.x, y2 = child.y;
+      const dx = (x2 - x1) * 0.45;
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', `M${x1},${y1} C${x1+dx},${y1} ${x2-dx},${y2} ${x2},${y2}`);
+      path.setAttribute('class', 'conn');
+      path.setAttribute('stroke', hexToRgba(child.color || '#64748b', .35));
+      svg.appendChild(path);
+      draw(child);
+    });
+  }
+  draw(root);
+}
+
+function toggleNode(node) {
+  node._collapsed = !node._collapsed;
+  updatePositions();
+}
+
+function expandAll() {
+  allNodes.forEach(n => n._collapsed = false);
+  updatePositions();
+}
+
+function collapseAll() {
+  allNodes.forEach(n => {
+    if (n.children && n.children.length && n.level > 0) n._collapsed = true;
+  });
+  updatePositions();
+}
+
+function resetView() {
+  const rect = document.getElementById('wrap').getBoundingClientRect();
+  scale = 0.82;
+  panX = rect.width / 2;
+  panY = rect.height / 2;
+  updateTransform();
+  updatePositions();
+}
+
+function updateTransform() {
+  document.getElementById('canvas').style.transform = `translate(${panX}px,${panY}px) scale(${scale})`;
+  document.getElementById('zoomLabel').textContent = Math.round(scale * 100) + '%';
+}
+
+const wrap = document.getElementById('wrap');
+
+wrap.addEventListener('mousedown', e => {
+  if (e.target.closest('.mm-node')) return;
+  dragging = true;
+  lastMX = e.clientX;
+  lastMY = e.clientY;
+  wrap.classList.add('dragging');
+});
+
+document.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  panX += e.clientX - lastMX;
+  panY += e.clientY - lastMY;
+  lastMX = e.clientX;
+  lastMY = e.clientY;
+  updateTransform();
+});
+
+document.addEventListener('mouseup', () => {
+  dragging = false;
+  wrap.classList.remove('dragging');
+});
+
+wrap.addEventListener('wheel', e => {
+  e.preventDefault();
+  const factor = e.deltaY > 0 ? 0.92 : 1.08;
+  const newScale = Math.max(0.25, Math.min(2.5, scale * factor));
+  const rect = wrap.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  panX = mx - (mx - panX) * (newScale / scale);
+  panY = my - (my - panY) * (newScale / scale);
+  scale = newScale;
+  updateTransform();
+}, { passive: false });
+
+let touchDist = 0, touchMid = null;
+wrap.addEventListener('touchstart', e => {
+  if (e.touches.length === 1) {
+    dragging = true;
+    lastMX = e.touches[0].clientX;
+    lastMY = e.touches[0].clientY;
+  } else if (e.touches.length === 2) {
+    dragging = false;
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    touchDist = Math.sqrt(dx*dx + dy*dy);
+    touchMid = { x: (e.touches[0].clientX + e.touches[1].clientX) / 2, y: (e.touches[0].clientY + e.touches[1].clientY) / 2 };
+  }
+}, { passive: false });
+
+wrap.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (e.touches.length === 1 && dragging) {
+    panX += e.touches[0].clientX - lastMX;
+    panY += e.touches[0].clientY - lastMY;
+    lastMX = e.touches[0].clientX;
+    lastMY = e.touches[0].clientY;
+    updateTransform();
+  } else if (e.touches.length === 2) {
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const factor = dist / touchDist;
+    const newScale = Math.max(0.25, Math.min(2.5, scale * factor));
+    const mid = { x: (e.touches[0].clientX + e.touches[1].clientX) / 2, y: (e.touches[0].clientY + e.touches[1].clientY) / 2 };
+    const rect = wrap.getBoundingClientRect();
+    const mx = mid.x - rect.left;
+    const my = mid.y - rect.top;
+    panX = mx - (mx - panX) * (newScale / scale);
+    panY = my - (my - panY) * (newScale / scale);
+    scale = newScale;
+    touchDist = dist;
+    updateTransform();
+  }
+}, { passive: false });
+
+wrap.addEventListener('touchend', () => { dragging = false; });
+
+init();
+</script>
+</body>
+</html>

@@ -126,7 +126,7 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
   <h1 class="hero-title">PIPPA</h1>
   <p class="hero-subtitle">Plataforma de Inteligencia em Politicas Publicas Aplicadas — ferramentas de monitoramento legislativo, orcamentario e territorial.</p>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">7</div><div class="hero-stat-label">Ferramentas</div></div>
+    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">8</div><div class="hero-stat-label">Ferramentas</div></div>
     <div class="hero-stat"><div class="hero-stat-value">5</div><div class="hero-stat-label">Dashboards</div></div>
     <div class="hero-stat"><div class="hero-stat-value">17</div><div class="hero-stat-label">Fontes de Dados</div></div>
     <div class="hero-stat"><div class="hero-stat-value">58</div><div class="hero-stat-label">Cubos Analiticos</div></div>
@@ -151,8 +151,8 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
     <div class="sidebar-desc">Selecione uma necessidade para filtrar as ferramentas.</div>
     <div class="questions-wrap" id="questionsWrap"></div>
     <div class="sidebar-stats">
-      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">7</div><div class="sidebar-stat-lbl">Visiveis</div></div>
-      <div class="sidebar-stat"><div class="sidebar-stat-val">7</div><div class="sidebar-stat-lbl">Total</div></div>
+      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">8</div><div class="sidebar-stat-lbl">Visiveis</div></div>
+      <div class="sidebar-stat"><div class="sidebar-stat-val">8</div><div class="sidebar-stat-lbl">Total</div></div>
     </div>
   </div>
 </aside>
@@ -160,7 +160,7 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
 <section class="grid-section">
   <div class="grid-header">
     <h2>Ferramentas Disponiveis</h2>
-    <div class="grid-count">Exibindo <span id="showCount">7</span> de 7</div>
+    <div class="grid-count">Exibindo <span id="showCount">8</span> de 8</div>
   </div>
   <div class="cards" id="cardsGrid"></div>
 </section>
@@ -249,6 +249,17 @@ const TOOLS = [
     descricao: "Catalogo interativo das fontes de dados disponiveis no Observatorio SEBRAE. Navegue por 17 fontes e 58 cubos de dados organizados por perguntas norteadoras sobre problemas publicos — de demografia a comercio exterior, de saude a empreendedorismo.",
     features: ["17 fontes de dados", "58 cubos analiticos", "Perguntas norteadoras", "Busca inteligente", "Cards expandiveis com detalhes", "Usos para politicas publicas"],
     destaque: "Descubra quais dados voce precisa antes de comecar qualquer analise. Navegue pelas fontes do Observatorio organizadas por problemas publicos, cada uma com descricao de uso e cubos analiticos disponiveis."
+  },
+  {
+    id: "mindmap",
+    nome: "Mapa Mental — NAL",
+    subtitulo: "Modelo Mental do Nucleo de Assessoria Legislativa",
+    accent: "#14b8a6",
+    icon: "🧠",
+    url: "../pippa-mindmap-nal/index.html",
+    descricao: "Mapa mental interativo do Nucleo de Assessoria Legislativa (NAL) da Unidade de Politicas Publicas do SEBRAE Nacional. Visualize todas as frentes de atuacao — foresight estrategico, producao de inteligencia (PIPPA), incidencia legislativa, planejamento, capacitacao e comunicacao — com navegacao expandivel e zoom.",
+    features: ["Mapa mental interativo", "10 frentes de atuacao", "Expandir/recolher ramos", "Pan e zoom", "Cores por frente", "Visao completa do NAL"],
+    destaque: "Entenda a estrutura completa do NAL em uma unica visualizacao. Navegue pelas frentes de foresight, inteligencia, incidencia legislativa e planejamento com um mapa mental interativo e expandivel."
   }
 ];
 
@@ -262,7 +273,9 @@ const QUESTIONS = [
   { texto: "Quero ver a plataforma em producao", ferramentas: ["prototipo"], tema: "Plataforma" },
   { texto: "Preciso de inteligencia orcamentaria completa", ferramentas: ["emendas", "compras"], tema: "Orcamento" },
   { texto: "Quero entender o cenario politico-legislativo", ferramentas: ["legislativo", "pesquisas", "emendas"], tema: "Politica" },
-  { texto: "Preciso de dados territoriais e economicos", ferramentas: ["catalogo", "prototipo"], tema: "Territorial" }
+  { texto: "Preciso de dados territoriais e economicos", ferramentas: ["catalogo", "prototipo"], tema: "Territorial" },
+  { texto: "Como esta organizado o NAL?", ferramentas: ["mindmap"], tema: "Estrutura" },
+  { texto: "Quero uma visao completa das frentes de trabalho", ferramentas: ["mindmap", "catalogo", "prototipo"], tema: "Estrategia" }
 ];
 
 let activeQuestion = null;
