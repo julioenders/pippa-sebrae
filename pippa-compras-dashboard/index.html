@@ -1579,7 +1579,9 @@ function renderCards() {
                      item._oportunidadeMPE === 'Cota MPE' ? `<span class="news-tag tag-cota">Cota 25% MPE</span>` : '';
       const srpTag = item.srp ? '<span class="news-tag" style="background:rgba(79,140,255,0.1);color:#4f8cff">SRP</span>' : '';
       const linkOrigem = item.linkSistemaOrigem ? `<a href="${item.linkSistemaOrigem}" target="_blank">Acessar no sistema</a>` : 'N/I';
-      const linkPNCP = item.numeroControlePNCP ? `<a href="https://pncp.gov.br/app/editais/${item.numeroControlePNCP}" target="_blank">Ver no PNCP</a>` : '';
+      const cnpjPNCP = (item.orgaoEntidade || {}).cnpj;
+      const linkPNCP = cnpjPNCP && item.anoCompra && item.sequencialCompra
+        ? `<a href="https://pncp.gov.br/app/editais/${cnpjPNCP}/${item.anoCompra}/${item.sequencialCompra}" target="_blank">Ver no PNCP</a>` : '';
       const amparo = item.amparoLegal ? item.amparoLegal.nome : 'N/I';
 
       html += `<div class="news-card ${cardClass}" id="card-${group}-${idx}">
