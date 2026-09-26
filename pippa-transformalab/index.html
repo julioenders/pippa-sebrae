@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TransformaLab — ObservaPP | Plataforma de Experimentação</title>
+  <title>TransformaLab — PIPPA - Plataforma de Inteligencia em Politicas Publicas Aplicadas | Plataforma de Experimentação</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <style>
     :root {
@@ -46,8 +46,9 @@
       min-height: 100vh;
     }
 
-    .pippa-home-btn{position:fixed;top:16px;right:16px;z-index:9999;display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;backdrop-filter:blur(8px);transition:all .2s;}
-    .pippa-home-btn:hover{background:rgba(16,185,129,.2);border-color:rgba(16,185,129,.6);color:#fff;}
+    .pippa-home-btn{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
+    .pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff;}
+    .pippa-home-btn svg{width:13px;height:13px;}
 
     /* Header */
     .header {
@@ -842,17 +843,16 @@
 </head>
 <body>
 
-<a href="../pippa-portal/index.html" class="pippa-home-btn">&#9751; PIPPA Portal</a>
-
 <!-- Header -->
 <div class="header">
   <div class="header-left">
     <div>
       <div class="logo">TransformaLab</div>
-      <div class="logo-sub">ObservaPP &mdash; Plataforma de Experimentacao</div>
+      <div class="logo-sub">PIPPA - Plataforma de Inteligencia em Politicas Publicas Aplicadas &mdash; Plataforma de Experimentacao</div>
     </div>
   </div>
   <div class="header-controls">
+    <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
     <span style="font-size:12px;color:var(--text-muted);">Dados sinteticos | Set/2026</span>
   </div>
 </div>
