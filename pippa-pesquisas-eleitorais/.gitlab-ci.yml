@@ -1,0 +1,15 @@
+image: alpine:latest
+
+pages:
+  stage: deploy
+  tags:
+    - docker
+  script:
+    - mkdir -p public
+    - cp index.html public/
+    - echo "Deploy concluido - $(date)"
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

@@ -1,0 +1,26 @@
+# Data files
+*.csv
+*.parquet
+data/raw/
+data/processed/
+data/cache/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Claude
+.claude/

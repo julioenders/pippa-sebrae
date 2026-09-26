@@ -1,0 +1,14 @@
+{
+  "stats": {
+    "total_emendas": 6311,
+    "total_autores_unicos": 628,
+    "match_exato": 5962,
+    "match_fuzzy": 0,
+    "match_nao_encontrado": 110,
+    "match_nao_aplicavel": 239,
+    "quality_flags_alerta": 0,
+    "quality_flags_critico": 0,
+    "timestamp": "2026-09-24T10:42:04.268338"
+  },
+  "flags": []
+}

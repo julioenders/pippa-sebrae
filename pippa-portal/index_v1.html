@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#0f1923;color:#e0eaf4;min-height:100vh;display:flex;flex-direction:column;}
+
+.header{background:linear-gradient(135deg,#0a1520 0%,#132D42 100%);border-bottom:2px solid #2ecc71;padding:24px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:16px;}
+.header-title{font-size:26px;font-weight:700;background:linear-gradient(135deg,#2ecc71,#27ae60);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.5px;}
+.header-subtitle{font-size:15px;color:#e0eaf4;font-weight:500;margin-top:2px;}
+.header-tagline{font-size:13px;color:#8bafc7;font-weight:400;font-style:italic;margin-top:2px;}
+.header-meta{text-align:right;font-size:12px;color:#8bafc7;}
+.header-meta span{color:#2ecc71;font-weight:600;}
+
+.layout{display:flex;flex:1;overflow:hidden;}
+
+.sidebar{width:340px;min-width:340px;background:#0a1520;border-right:1px solid rgba(46,204,113,.2);padding:20px 16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;}
+.sidebar-title{font-size:14px;font-weight:600;color:#2ecc71;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.sidebar-desc{font-size:12px;color:#8bafc7;margin-bottom:8px;line-height:1.5;}
+.search-box{width:100%;background:#0c1c2c;color:#e0eaf4;border:1px solid rgba(46,204,113,.3);border-radius:8px;padding:10px 14px;font-size:13px;font-family:inherit;outline:none;transition:border-color .2s;}
+.search-box:focus{border-color:#2ecc71;box-shadow:0 0 0 2px rgba(46,204,113,.15);}
+.search-box::placeholder{color:#5a7a8f;}
+
+.filter-section{margin-top:4px;}
+.filter-section-title{font-size:11px;font-weight:600;color:#8bafc7;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;}
+.question-btn{width:100%;text-align:left;background:rgba(13,33,53,.6);border:1px solid rgba(46,204,113,.15);border-radius:8px;padding:10px 14px;color:#c0d8e8;font-size:12.5px;font-family:inherit;cursor:pointer;transition:all .2s;line-height:1.4;display:flex;align-items:flex-start;gap:8px;}
+.question-btn:hover{background:rgba(46,204,113,.08);border-color:rgba(46,204,113,.4);color:#e0eaf4;}
+.question-btn.active{background:rgba(46,204,113,.12);border-color:#2ecc71;color:#fff;}
+.question-btn .q-icon{color:#2ecc71;font-weight:700;flex-shrink:0;margin-top:1px;}
+.question-btn .q-count{margin-left:auto;flex-shrink:0;background:rgba(46,204,113,.2);color:#2ecc71;font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;}
+.clear-btn{width:100%;background:none;border:1px solid rgba(231,76,60,.3);border-radius:8px;padding:8px;color:#e74c3c;font-size:12px;font-family:inherit;cursor:pointer;transition:all .2s;margin-top:4px;}
+.clear-btn:hover{background:rgba(231,76,60,.1);border-color:#e74c3c;}
+
+.stats-bar{display:flex;gap:8px;margin-top:auto;padding-top:12px;border-top:1px solid rgba(46,204,113,.1);}
+.stat-chip{flex:1;text-align:center;background:rgba(13,33,53,.6);border:1px solid rgba(46,204,113,.15);border-radius:8px;padding:8px 4px;}
+.stat-chip .sv{font-size:20px;font-weight:700;color:#2ecc71;}
+.stat-chip .sl{font-size:10px;color:#8bafc7;text-transform:uppercase;letter-spacing:.5px;}
+
+.main{flex:1;padding:24px;overflow-y:auto;}
+.cards-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.cards-header h2{font-size:16px;font-weight:600;color:#e0eaf4;}
+.showing-label{font-size:12px;color:#8bafc7;}
+.showing-label span{color:#2ecc71;font-weight:600;}
+
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;}
+
+.source-card{background:rgba(13,33,53,.7);backdrop-filter:blur(10px);border:1px solid rgba(46,204,113,.2);border-radius:12px;overflow:hidden;transition:all .3s;cursor:pointer;}
+.source-card:hover{border-color:rgba(46,204,113,.5);box-shadow:0 4px 20px rgba(0,0,0,.3);}
+.source-card.expanded{border-color:#2ecc71;}
+.source-card.hidden{display:none;}
+
+.card-header{padding:16px 20px;display:flex;align-items:center;gap:14px;}
+.card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.card-info{flex:1;min-width:0;}
+.card-title{font-size:15px;font-weight:600;color:#e0eaf4;margin-bottom:2px;}
+.card-subtitle{font-size:12px;color:#8bafc7;font-weight:400;}
+.card-toggle{width:28px;height:28px;border-radius:6px;border:1px solid rgba(46,204,113,.2);background:none;color:#8bafc7;font-size:14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-toggle:hover{border-color:#2ecc71;color:#2ecc71;}
+.source-card.expanded .card-toggle{transform:rotate(180deg);color:#2ecc71;border-color:#2ecc71;}
+
+.card-detail{max-height:0;overflow:hidden;transition:max-height .4s ease;background:rgba(10,21,32,.5);border-top:1px solid rgba(46,204,113,.1);}
+.source-card.expanded .card-detail{max-height:500px;}
+.card-detail-inner{padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
+.detail-row{display:grid;grid-template-columns:140px 1fr;gap:8px;font-size:12px;}
+.detail-label{color:#8bafc7;text-transform:uppercase;letter-spacing:.5px;font-weight:600;font-size:11px;}
+.detail-value{color:#c0d8e8;line-height:1.6;}
+.detail-value a{color:#2ecc71;text-decoration:none;font-weight:600;}
+.detail-value a:hover{text-decoration:underline;}
+
+.features-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.feature-tag{font-size:10px;background:rgba(46,204,113,.1);color:#2ecc71;border:1px solid rgba(46,204,113,.2);padding:3px 8px;border-radius:4px;}
+
+.usos-box{background:rgba(46,204,113,.05);border:1px solid rgba(46,204,113,.15);border-radius:8px;padding:12px 14px;font-size:12px;color:#c0d8e8;line-height:1.6;}
+
+.open-btn{display:inline-flex;align-items:center;gap:6px;background:#145e35;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;margin-top:4px;letter-spacing:.3px;}
+.open-btn:hover{background:#1a7a44;transform:translateY(-1px);box-shadow:0 4px 16px rgba(46,204,113,.25);}
+
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:#0a1520;}
+::-webkit-scrollbar-thumb{background:rgba(46,204,113,.3);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(46,204,113,.5);}
+
+@media(max-width:900px){
+.layout{flex-direction:column;}
+.sidebar{width:100%;min-width:0;max-height:40vh;border-right:none;border-bottom:1px solid rgba(46,204,113,.2);}
+.cards-grid{grid-template-columns:1fr;}
+}
+
+.footer{padding:14px 28px;border-top:1px solid rgba(46,204,113,.15);font-size:11px;color:#5a7a8f;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;background:#0a1520;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div>
+      <div class="header-title">PIPPA</div>
+      <div class="header-subtitle">Plataforma de Inteligencia em Politicas Publicas Aplicadas</div>
+      <div class="header-tagline">Ferramentas de inteligencia legislativa e territorial para o SEBRAE</div>
+    </div>
+  </div>
+  <div class="header-meta">
+    <div><span id="totalFerramentas">7</span> ferramentas</div>
+    <div id="dataAtual"></div>
+  </div>
+</div>
+
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="sidebar-title">O que voce precisa?</div>
+  <div class="sidebar-desc">Selecione uma necessidade para ver quais ferramentas podem ajuda-lo.</div>
+
+  <input type="text" class="search-box" id="searchBox" placeholder="Buscar ferramenta..." oninput="filterBySearch()">
+
+  <div class="filter-section" id="questionsContainer"></div>
+
+  <button class="clear-btn" id="clearBtn" onclick="clearFilter()" style="display:none;">Limpar filtro</button>
+
+  <div class="stats-bar">
+    <div class="stat-chip"><div class="sv" id="statTotal">7</div><div class="sl">Ferramentas</div></div>
+    <div class="stat-chip"><div class="sv" id="statVisiveis">7</div><div class="sl">Visiveis</div></div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="cards-header">
+    <h2>Ferramentas Disponiveis</h2>
+    <div class="showing-label">Exibindo <span id="showingCount">7</span> de 7 ferramentas</div>
+  </div>
+  <div class="cards-grid" id="cardsGrid"></div>
+</main>
+
+</div>
+
+<div class="footer">
+  <div>PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas | SEBRAE Nacional</div>
+  <div id="footerDate"></div>
+</div>
+
+<script>
+const TOOLS = [
+  {
+    id: "emendas",
+    nome: "PIPPA Emendas Parlamentares",
+    subtitulo: "Inteligencia em Emendas Federais",
+    categoria: "Orcamento Publico",
+    tipo: "Dashboard",
+    icon: "🏛️",
+    iconBg: "rgba(79,140,255,.2)",
+    url: "../pippa-emendas/output/pippa_emendas_completo.html",
+    descricao: "Painel de inteligencia sobre emendas parlamentares federais (2015-2026). Consolida dados de todas as modalidades (individual, bancada, comissao, relator) cruzando Portal da Transparencia (CGU), Tesouro Transparente e APIs da Camara e Senado para identificar autores, partidos e taxas de execucao orcamentaria por estado e municipio.",
+    features: ["Validacao cruzada CGU x Tesouro", "Matching de autores via API legislativa", "Treemap de partidos", "Serie historica 2015-2026", "Top autores por UF", "Tabela de 4.900+ municipios", "Exportar WhatsApp", "Diagnostico de qualidade"],
+    destaque: "Acompanhe R$ 89+ bilhoes em emendas parlamentares. Descubra quais autores e partidos direcionam recursos para cada estado, com taxa de execucao orcamentaria e serie historica desde 2015. Dados cruzados de 3 fontes oficiais."
+  },
+  {
+    id: "compras",
+    nome: "PIPPA Compras Publicas",
+    subtitulo: "Monitor de Licitacoes PNCP",
+    categoria: "Compras Governamentais",
+    tipo: "Dashboard ao Vivo",
+    icon: "📋",
+    iconBg: "rgba(16,185,129,.2)",
+    url: "../pippa-compras-dashboard/index.html",
+    descricao: "Radar de oportunidades para micro e pequenas empresas (MPEs) em compras governamentais. Busca licitacoes abertas em tempo real na API do PNCP em 5 modalidades (pregao eletronico, dispensa, concorrencia, inexigibilidade, credenciamento), classificando automaticamente cada oportunidade por tipo MPE (exclusiva ate R$80k, cota 25%, ou aberta) e nivel de urgencia.",
+    features: ["Dados ao vivo da API do PNCP", "5 modalidades de licitacao", "Classificacao MPE (LC 123/2006)", "Contagem regressiva de urgencia", "Cards expandiveis com link PNCP", "Filtro por UF e municipio", "Exportar WhatsApp"],
+    destaque: "Encontre licitacoes abertas agora. O radar classifica cada oportunidade por exclusividade MPE conforme a LC 123/2006, urgencia e valor — direto da API do PNCP, todos os niveis de governo."
+  },
+  {
+    id: "legislativo",
+    nome: "PIPPA Legislativo",
+    subtitulo: "Radar de Proposicoes Legislativas",
+    categoria: "Legislacao",
+    tipo: "Dashboard",
+    icon: "⚖️",
+    iconBg: "rgba(168,85,247,.2)",
+    url: "../pippa-legislativo-dashboard/index.html",
+    descricao: "Painel de monitoramento legislativo que consulta APIs abertas da Camara dos Deputados e Senado Federal, filtra proposicoes relevantes ao SEBRAE e aplica classificacao automatica de prioridade (P0-P4) baseada em analise semantica dos sumarios e criterios estrategicos. Formula de scoring pondera termos-chave de MPE, eixos estrategicos e termos de governanca institucional.",
+    features: ["Classificacao P0 (Critico) a P4 (Arquivo)", "Scoring numerico de relevancia", "Filtro institucional SEBRAE/Sistema S", "Filtros por prioridade, tipo e partido", "APIs da Camara e Senado", "Exportar WhatsApp com briefing narrativo"],
+    destaque: "Saiba quais projetos de lei importam para o SEBRAE. A classificacao automatica de 5 niveis prioriza proposicoes por impacto real em MPEs — de critico a arquivo — com scoring numerico e briefing pronto para compartilhar."
+  },
+  {
+    id: "pesquisas",
+    nome: "PIPPA Pesquisas Eleitorais",
+    subtitulo: "Painel de Intencao de Voto",
+    categoria: "Eleicoes",
+    tipo: "Dashboard",
+    icon: "🗳️",
+    iconBg: "rgba(244,114,182,.2)",
+    url: "../pippa-pesquisas-eleitorais/index.html",
+    descricao: "Agregador de pesquisas eleitorais para as eleicoes brasileiras de 2026. Calcula medias ponderadas (com decaimento exponencial por recencia, tamanho da amostra e ponderacao por metodologia), medias simples, medianas e desvios-padrao. Inclui aviso explicito de que o SEBRAE nao produz nem endossa pesquisas.",
+    features: ["Media ponderada com decaimento exponencial", "Rankings com intervalo de confianca", "Navegacao por cargo", "Badges de metodologia (presencial, telefone, online)", "Modal de fontes e metodologia", "Exportar WhatsApp"],
+    destaque: "Agregue pesquisas eleitorais de multiplos institutos com ponderacao inteligente. Visualize tendencias com intervalos de confianca e entenda o cenario politico que pode impactar politicas para MPEs."
+  },
+  {
+    id: "reforma",
+    nome: "PIPPA Reforma Tributaria",
+    subtitulo: "Impactos da Reforma nos Negocios",
+    categoria: "Tributacao",
+    tipo: "Dashboard",
+    icon: "💰",
+    iconBg: "rgba(245,158,11,.2)",
+    url: "../pippa-reforma-dashboard/index.html",
+    descricao: "Dashboard de monitoramento de noticias sobre a Reforma Tributaria brasileira. Busca noticias via Google News, classifica por tema (IBS, CBS, Seletivo) e nivel de impacto em pequenas empresas, e categoriza cada item como fato, proposta ou expectativa com indicadores de credibilidade.",
+    features: ["Integracao Google News", "Classificacao por tema e impacto MPE", "Tags: fato vs. proposta vs. expectativa", "Indicadores de credibilidade (ok/atencao/risco)", "Grafico historico de mencoes", "Exportar WhatsApp com narrativa editorial"],
+    destaque: "Acompanhe a reforma tributaria sem ruido. O painel separa fatos de propostas e expectativas, classifica o impacto em pequenos negocios e indica a credibilidade de cada noticia."
+  },
+  {
+    id: "prototipo",
+    nome: "PIPPA - Prototipo Paraiba",
+    subtitulo: "Plataforma Completa em Producao",
+    categoria: "Plataforma",
+    tipo: "Aplicacao Web",
+    icon: "🚀",
+    iconBg: "rgba(46,204,113,.2)",
+    url: "https://pippa.sebrae.com.br/",
+    descricao: "Versao em producao da PIPPA implantada no SEBRAE Paraiba. Plataforma completa de inteligencia territorial com dados socioeconomicos, demograficos e empresariais integrados — o produto final que estas ferramentas alimentam.",
+    features: ["Plataforma em producao", "Inteligencia territorial", "Dados socioeconomicos integrados", "SEBRAE Paraiba", "Analise municipal", "Decisao baseada em evidencias"],
+    destaque: "A PIPPA em acao. Acesse a plataforma completa ja implantada no SEBRAE Paraiba — inteligencia territorial, dados integrados e interface pronta para tomada de decisao em politicas publicas."
+  },
+  {
+    id: "catalogo",
+    nome: "Qual e a sua Estrategia?",
+    subtitulo: "Catalogo de Fontes de Dados",
+    categoria: "Dados",
+    tipo: "Catalogo Interativo",
+    icon: "🎯",
+    iconBg: "rgba(52,152,219,.2)",
+    url: "../catalogo-fontes/output/catalogo_fontes_observatorio.html",
+    descricao: "Catalogo interativo das fontes de dados disponiveis no Observatorio SEBRAE. Navegue por 17 fontes e 58 cubos de dados organizados por perguntas norteadoras sobre problemas publicos — de demografia a comercio exterior, de saude a empreendedorismo.",
+    features: ["17 fontes de dados", "58 cubos analiticos", "Perguntas norteadoras", "Busca inteligente", "Cards expandiveis com detalhes", "Usos para politicas publicas"],
+    destaque: "Descubra quais dados voce precisa antes de comecar qualquer analise. Navegue pelas fontes do Observatorio organizadas por problemas publicos, cada uma com descricao de uso e cubos analiticos disponiveis."
+  }
+];
+
+const QUESTIONS = [
+  { texto: "Como estao sendo executadas as emendas parlamentares?", ferramentas: ["emendas"], tema: "Orcamento" },
+  { texto: "Quais licitacoes estao abertas para MPEs?", ferramentas: ["compras"], tema: "Compras" },
+  { texto: "Quais projetos de lei impactam pequenas empresas?", ferramentas: ["legislativo"], tema: "Legislacao" },
+  { texto: "Qual o cenario eleitoral e seus impactos?", ferramentas: ["pesquisas"], tema: "Eleicoes" },
+  { texto: "Como a reforma tributaria afeta meu negocio?", ferramentas: ["reforma"], tema: "Tributacao" },
+  { texto: "Quais dados tenho disponiveis para analise?", ferramentas: ["catalogo"], tema: "Dados" },
+  { texto: "Quero ver a plataforma em producao", ferramentas: ["prototipo"], tema: "Plataforma" },
+  { texto: "Preciso de inteligencia orcamentaria completa", ferramentas: ["emendas", "compras"], tema: "Orcamento" },
+  { texto: "Quero entender o cenario politico-legislativo", ferramentas: ["legislativo", "pesquisas", "emendas"], tema: "Politica" },
+  { texto: "Preciso de dados territoriais e economicos", ferramentas: ["catalogo", "prototipo"], tema: "Territorial" }
+];
+
+// ── Render ──────────────────────────────────────────────────────────
+
+let activeQuestion = null;
+
+function renderQuestions() {
+  const container = document.getElementById("questionsContainer");
+  container.innerHTML = '<div class="filter-section-title">Necessidades</div>';
+  QUESTIONS.forEach((q, i) => {
+    const btn = document.createElement("button");
+    btn.className = "question-btn";
+    btn.dataset.index = i;
+    btn.innerHTML = `<span class="q-icon">?</span><span>${q.texto}</span><span class="q-count">${q.ferramentas.length}</span>`;
+    btn.onclick = () => toggleQuestion(i);
+    container.appendChild(btn);
+  });
+}
+
+function renderCards() {
+  const grid = document.getElementById("cardsGrid");
+  grid.innerHTML = "";
+  TOOLS.forEach(t => {
+    const isExternal = t.url.startsWith("http");
+    const card = document.createElement("div");
+    card.className = "source-card";
+    card.id = `card-${t.id}`;
+    card.innerHTML = `
+      <div class="card-header" onclick="toggleCard('${t.id}')">
+        <div class="card-icon" style="background:${t.iconBg}">${t.icon}</div>
+        <div class="card-info">
+          <div class="card-title">${t.nome}</div>
+          <div class="card-subtitle">${t.subtitulo}</div>
+        </div>
+        <button class="card-toggle">&#9660;</button>
+      </div>
+      <div class="card-detail">
+        <div class="card-detail-inner">
+          <div class="detail-row">
+            <div class="detail-label">Descricao</div>
+            <div class="detail-value">${t.descricao}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Recursos</div>
+            <div class="detail-value">
+              <div class="features-list">${t.features.map(f => `<span class="feature-tag">${f}</span>`).join("")}</div>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Por que usar?</div>
+            <div class="detail-value"><div class="usos-box">${t.destaque}</div></div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label"></div>
+            <div class="detail-value">
+              <a href="${t.url}" ${isExternal ? 'target="_blank" rel="noopener"' : ''} class="open-btn">
+                Abrir Ferramenta ${isExternal ? '&#8599;' : '&#8594;'}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ── Interactions ──────────────────────────────────────────────────────
+
+function toggleCard(id) {
+  document.getElementById(`card-${id}`).classList.toggle("expanded");
+}
+
+function toggleQuestion(index) {
+  const btns = document.querySelectorAll(".question-btn");
+  if (activeQuestion === index) { clearFilter(); return; }
+  activeQuestion = index;
+  btns.forEach(b => b.classList.remove("active"));
+  btns[index].classList.add("active");
+  document.getElementById("clearBtn").style.display = "block";
+  document.getElementById("searchBox").value = "";
+  applyFilter(QUESTIONS[index].ferramentas);
+}
+
+function applyFilter(visibleIds) {
+  let count = 0;
+  TOOLS.forEach(t => {
+    const card = document.getElementById(`card-${t.id}`);
+    if (visibleIds.includes(t.id)) { card.classList.remove("hidden"); count++; }
+    else { card.classList.add("hidden"); card.classList.remove("expanded"); }
+  });
+  updateStats(count);
+}
+
+function clearFilter() {
+  activeQuestion = null;
+  document.querySelectorAll(".question-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("clearBtn").style.display = "none";
+  document.getElementById("searchBox").value = "";
+  TOOLS.forEach(t => document.getElementById(`card-${t.id}`).classList.remove("hidden"));
+  updateStats(TOOLS.length);
+}
+
+function filterBySearch() {
+  const q = document.getElementById("searchBox").value.toLowerCase().trim();
+  activeQuestion = null;
+  document.querySelectorAll(".question-btn").forEach(b => b.classList.remove("active"));
+  if (!q) { document.getElementById("clearBtn").style.display = "none"; TOOLS.forEach(t => document.getElementById(`card-${t.id}`).classList.remove("hidden")); updateStats(TOOLS.length); return; }
+  document.getElementById("clearBtn").style.display = "block";
+  let count = 0;
+  TOOLS.forEach(t => {
+    const card = document.getElementById(`card-${t.id}`);
+    const haystack = [t.nome, t.subtitulo, t.categoria, t.tipo, t.descricao, ...t.features].join(" ").toLowerCase();
+    if (haystack.includes(q)) { card.classList.remove("hidden"); count++; }
+    else { card.classList.add("hidden"); card.classList.remove("expanded"); }
+  });
+  updateStats(count);
+}
+
+function updateStats(visible) {
+  document.getElementById("statVisiveis").textContent = visible;
+  document.getElementById("showingCount").textContent = visible;
+}
+
+// ── Init ──────────────────────────────────────────────────────────────
+
+const now = new Date();
+const dateStr = now.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+document.getElementById("dataAtual").textContent = dateStr;
+document.getElementById("footerDate").textContent = "Atualizado em " + dateStr;
+
+renderQuestions();
+renderCards();
+</script>
+</body>
+</html>

@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIPPA Reforma Tributaria — Plataforma de Inteligencia em Politicas Publicas Aplicadas</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #242836;
+      --border: #2e3348;
+      --text: #e4e6ef;
+      --text-muted: #8b8fa8;
+      --accent: #10b981;
+      --accent-hover: #34d399;
+      --fato: #22c55e;
+      --proposta: #f59e0b;
+      --expectativa: #8b5cf6;
+      --alta: #ff4d6a;
+      --media: #ff8c42;
+      --baixa: #ffc542;
+      --neutra: #8b8fa8;
+      --ibs: #4f8cff;
+      --cbs: #a855f7;
+      --seletivo: #f472b6;
+      --success: #22c55e;
+      --cred-ok: #22c55e;
+      --cred-atencao: #f59e0b;
+      --cred-risco: #ef4444;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1a1d27 0%, #242836 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 16px; }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #10b981, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .date-input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .date-input:focus { border-color: var(--accent); }
+
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
+
+    .thermometer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .thermo-green { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .thermo-yellow { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .thermo-orange { background: rgba(255,140,66,0.15); color: #ff8c42; }
+    .thermo-red { background: rgba(255,77,106,0.15); color: #ff4d6a; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: calc(100vh - 64px);
+    }
+
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 16px;
+      overflow-y: auto;
+      max-height: calc(100vh - 64px);
+      position: sticky;
+      top: 64px;
+    }
+
+    .filter-section {
+      margin-bottom: 4px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .filter-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      cursor: pointer;
+      background: var(--surface2);
+      transition: background 0.2s;
+      user-select: none;
+    }
+
+    .filter-header:hover { background: var(--border); }
+
+    .filter-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-arrow {
+      font-size: 10px;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+    }
+
+    .filter-section.open .filter-arrow { transform: rotate(180deg); }
+
+    .filter-badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 10px;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0 5px;
+      font-weight: 700;
+    }
+
+    .filter-badge.visible { display: flex; }
+
+    .filter-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease, padding 0.25s ease;
+      padding: 0 12px;
+    }
+
+    .filter-section.open .filter-body {
+      max-height: 300px;
+      padding: 10px 12px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .filter-chip:hover { border-color: var(--accent); color: var(--text); }
+    .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .filter-clear {
+      font-size: 11px;
+      color: var(--accent);
+      cursor: pointer;
+      margin-top: 8px;
+      display: block;
+      text-align: right;
+    }
+
+    .filter-clear:hover { text-decoration: underline; }
+
+    .search-input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      outline: none;
+      margin-bottom: 16px;
+    }
+
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--text-muted); }
+
+    .main {
+      padding: 20px 24px;
+      overflow-y: auto;
+    }
+
+    .kpi-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .kpi-value {
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-total { color: var(--accent); }
+    .kpi-fato { color: var(--fato); }
+    .kpi-proposta { color: var(--proposta); }
+    .kpi-expectativa { color: var(--expectativa); }
+    .kpi-fontes { color: var(--ibs); }
+
+    .kpi-bar-secondary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card-sm {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      text-align: center;
+    }
+
+    .kpi-card-sm .kpi-value { font-size: 24px; }
+    .kpi-card-sm .kpi-label { font-size: 11px; }
+    .kpi-tema { color: var(--ibs); }
+    .kpi-impacto { color: var(--alta); }
+
+    .charts-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .chart-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 220px;
+    }
+
+    .chart-card-wide {
+      grid-column: span 2;
+    }
+
+    .chart-card-full {
+      grid-column: 1 / -1;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .section-count {
+      font-size: 13px;
+      color: var(--text-muted);
+      background: var(--surface2);
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .news-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    .news-card:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+
+    .news-header {
+      padding: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .news-status-badge {
+      min-width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .status-fato { background: rgba(34,197,94,0.2); }
+    .status-proposta { background: rgba(245,158,11,0.2); }
+    .status-expectativa { background: rgba(139,92,246,0.2); }
+
+    .news-info { flex: 1; min-width: 0; }
+
+    .news-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .news-title a {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .news-title a:hover { color: var(--accent); }
+
+    .news-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .news-source {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(16,185,129,0.2);
+      color: var(--accent);
+    }
+
+    .news-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .news-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: var(--surface2);
+      color: var(--text-muted);
+    }
+
+    .news-tag-status { background: rgba(34,197,94,0.15); color: var(--fato); }
+    .news-tag-status-proposta { background: rgba(245,158,11,0.15); color: var(--proposta); }
+    .news-tag-status-expectativa { background: rgba(139,92,246,0.15); color: var(--expectativa); }
+    .news-tag-tema { background: rgba(79,140,255,0.15); color: var(--ibs); }
+    .news-tag-impacto { background: rgba(255,77,106,0.15); color: var(--alta); }
+
+    .news-expand {
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+    }
+
+    .news-expand:hover { background: var(--surface2); }
+    .news-card.expanded .news-expand { transform: rotate(180deg); }
+
+    .news-details {
+      display: none;
+      padding: 0 16px 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .news-card.expanded .news-details { display: block; }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .detail-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,17,23,0.85);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .loading-overlay.active { display: flex; }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text { color: var(--text); font-size: 14px; }
+    .loading-progress { color: var(--text-muted); font-size: 12px; }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state-icon { font-size: 48px; margin-bottom: 16px; }
+
+    .empty-state-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,17,23,0.8);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-backdrop.active { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+
+    .modal-content {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      font-size: 13px;
+      white-space: pre-wrap;
+      line-height: 1.6;
+      max-height: 400px;
+      overflow-y: auto;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      justify-content: flex-end;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--success);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 400;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .header { flex-wrap: wrap; gap: 12px; }
+      .kpi-bar { grid-template-columns: repeat(2, 1fr); }
+      .charts-row { grid-template-columns: 1fr; }
+      .chart-card-wide { grid-column: span 1; }
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    .credibility-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cred-confiavel { background: rgba(34,197,94,0.15); color: var(--cred-ok); }
+    .cred-atencao { background: rgba(245,158,11,0.2); color: var(--cred-atencao); }
+    .cred-risco { background: rgba(239,68,68,0.2); color: var(--cred-risco); }
+
+    .news-card.risco-fake {
+      border-left: 3px solid var(--cred-risco);
+    }
+
+    .news-card.atencao-fake {
+      border-left: 3px solid var(--cred-atencao);
+    }
+
+    .kpi-risco { color: var(--cred-risco); }
+
+    .cred-tooltip {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    .credibility-note {
+      margin-top: 16px;
+      padding: 12px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.03);
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .credibility-note-title {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      font-size: 11.5px;
+      text-align: center;
+    }
+    .credibility-note .cred-level {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .credibility-note .cred-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .credibility-note .cred-dot.green { background: #10b981; }
+    .credibility-note .cred-dot.yellow { background: #f59e0b; }
+    .credibility-note .cred-dot.red { background: #ef4444; }
+    .credibility-note .cred-label {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .credibility-note .cred-criteria {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+    .credibility-note .cred-criteria strong {
+      color: var(--text-secondary);
+    }
+    .sidebar-footer {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+    .pippa-home-btn{position:fixed;top:16px;right:16px;z-index:9999;display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;backdrop-filter:blur(8px);transition:all .2s;}
+    .pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff;transform:translateY(-1px);}
+    .pippa-home-btn svg{width:14px;height:14px;}
+  </style>
+</head>
+<body>
+
+<a href="../pippa-portal/index.html" class="pippa-home-btn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  PIPPA Portal
+</a>
+
+  <header class="header">
+    <div class="header-left">
+      <div>
+        <div class="logo">PIPPA Reforma Tributaria</div>
+        <div class="logo-sub">Plataforma de Inteligencia em Politicas Publicas Aplicadas</div>
+      </div>
+    </div>
+    <div class="header-controls">
+      <div id="thermometer" class="thermometer thermo-green">Sem dados carregados</div>
+      <input type="date" id="dateInput" class="date-input" title="Data de consulta">
+      <button class="btn" id="btnFetch" onclick="fetchData()">Monitorar Noticias</button>
+      <button class="btn btn-outline" onclick="exportWhatsApp()">Exportar WhatsApp</button>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <aside class="sidebar">
+      <input type="text" class="search-input" id="searchInput" placeholder="Buscar no titulo..." oninput="applyFilters()">
+
+      <div class="filter-section" data-section="status">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <div class="filter-title">Classificacao <span class="filter-badge" id="badge-status"></span></div>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+        <div class="filter-body">
+          <div class="filter-group" id="filterStatus">
+            <span class="filter-chip" data-filter="status" data-value="Fato Confirmado" onclick="toggleFilter(this)">Fato Confirmado</span>
+            <span class="filter-chip" data-filter="status" data-value="Proposta/Discussao" onclick="toggleFilter(this)">Proposta/Discussao</span>
+            <span class="filter-chip" data-filter="status" data-value="Expectativa/Projecao" onclick="toggleFilter(this)">Expectativa/Projecao</span>
+          </div>
+          <span class="filter-clear" onclick="clearFilter('status')">Limpar</span>
+        </div>
+      </div>
+
+      <div class="filter-section" data-section="tema">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <div class="filter-title">Tema <span class="filter-badge" id="badge-tema"></span></div>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+        <div class="filter-body">
+          <div class="filter-group" id="filterTema">
+            <span class="filter-chip" data-filter="tema" data-value="IVA Dual" onclick="toggleFilter(this)">IVA Dual</span>
+            <span class="filter-chip" data-filter="tema" data-value="IBS" onclick="toggleFilter(this)">IBS</span>
+            <span class="filter-chip" data-filter="tema" data-value="CBS" onclick="toggleFilter(this)">CBS</span>
+            <span class="filter-chip" data-filter="tema" data-value="Imposto Seletivo" onclick="toggleFilter(this)">Imposto Seletivo</span>
+            <span class="filter-chip" data-filter="tema" data-value="Split Payment" onclick="toggleFilter(this)">Split Payment</span>
+            <span class="filter-chip" data-filter="tema" data-value="Comite Gestor" onclick="toggleFilter(this)">Comite Gestor</span>
+            <span class="filter-chip" data-filter="tema" data-value="Transicao" onclick="toggleFilter(this)">Transicao</span>
+            <span class="filter-chip" data-filter="tema" data-value="Simples/MEI" onclick="toggleFilter(this)">Simples/MEI</span>
+            <span class="filter-chip" data-filter="tema" data-value="Aliquotas" onclick="toggleFilter(this)">Aliquotas</span>
+            <span class="filter-chip" data-filter="tema" data-value="Regulamentacao" onclick="toggleFilter(this)">Regulamentacao</span>
+            <span class="filter-chip" data-filter="tema" data-value="Geral" onclick="toggleFilter(this)">Geral</span>
+          </div>
+          <span class="filter-clear" onclick="clearFilter('tema')">Limpar</span>
+        </div>
+      </div>
+
+      <div class="filter-section" data-section="impactoMPE">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <div class="filter-title">Impacto MPE <span class="filter-badge" id="badge-impactoMPE"></span></div>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+        <div class="filter-body">
+          <div class="filter-group" id="filterImpactoMPE">
+            <span class="filter-chip" data-filter="impactoMPE" data-value="Alto" onclick="toggleFilter(this)">Alto</span>
+            <span class="filter-chip" data-filter="impactoMPE" data-value="Medio" onclick="toggleFilter(this)">Medio</span>
+            <span class="filter-chip" data-filter="impactoMPE" data-value="Baixo" onclick="toggleFilter(this)">Baixo</span>
+            <span class="filter-chip" data-filter="impactoMPE" data-value="Indefinido" onclick="toggleFilter(this)">Indefinido</span>
+          </div>
+          <span class="filter-clear" onclick="clearFilter('impactoMPE')">Limpar</span>
+        </div>
+      </div>
+
+      <div class="filter-section" data-section="credibilidade">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <div class="filter-title">Credibilidade <span class="filter-badge" id="badge-credibilidade"></span></div>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+        <div class="filter-body">
+          <div class="filter-group" id="filterCredibilidade">
+            <span class="filter-chip" data-filter="credibilidade" data-value="Confiavel" onclick="toggleFilter(this)">Confiavel</span>
+            <span class="filter-chip" data-filter="credibilidade" data-value="Atencao" onclick="toggleFilter(this)">Atencao</span>
+            <span class="filter-chip" data-filter="credibilidade" data-value="Risco" onclick="toggleFilter(this)">Risco Fake News</span>
+          </div>
+          <span class="filter-clear" onclick="clearFilter('credibilidade')">Limpar</span>
+        </div>
+      </div>
+
+      <div class="filter-section" data-section="fonte">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <div class="filter-title">Fonte <span class="filter-badge" id="badge-fonte"></span></div>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+        <div class="filter-body">
+          <div class="filter-group" id="filterFonte"></div>
+          <span class="filter-clear" onclick="clearFilter('fonte')">Limpar</span>
+        </div>
+      </div>
+
+      <div class="credibility-note">
+        <div class="credibility-note-title">Sistema de Credibilidade</div>
+
+        <div class="cred-level">
+          <span class="cred-dot green"></span>
+          <div><span class="cred-label">Confiavel</span> — Fonte reconhecida em lista curada de 70+ veiculos jornalisticos e 60+ fontes institucionais (Sistema S, bancos, BCB, universidades, orgaos publicos).</div>
+        </div>
+        <div class="cred-level">
+          <span class="cred-dot yellow"></span>
+          <div><span class="cred-label">Atencao</span> — Fonte nao identificada nas listas oficiais, porem sem sinais de desinformacao detectados no conteudo.</div>
+        </div>
+        <div class="cred-level">
+          <span class="cred-dot red"></span>
+          <div><span class="cred-label">Risco</span> — Fonte desconhecida com sinais de desinformacao. Score de risco acumulativo: fonte nao identificada (+40), padroes de fake news no titulo (+50), clickbait multiplo (+30), caixa alta excessiva (+20), pontuacao excessiva (+20). Risco = score ≥ 40.</div>
+        </div>
+
+        <div class="cred-criteria">
+          <strong>Fontes jornalisticas:</strong> Valor, Folha, Estadao, G1, CNN Brasil, Reuters, Bloomberg, Poder360, JOTA, Conjur, Exame, InfoMoney, entre outras.<br>
+          <strong>Fontes institucionais:</strong> Sebrae, CNA, CNI, CNC, CNM, SENAI, SESI, SENAC, SESC, SENAR, CNT, SEST, SENAT, ApexBrasil, FIBRA, Febraban, BCB, BNDES, BB, Caixa, Itau, Bradesco, Santander, BTG, Receita Federal, MF, universidades, entre outras.
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        PIPPA Reforma Tributaria v1.0<br>
+        Sebrae Nacional — Observatorio<br>
+        Fonte: Google News RSS
+      </div>
+    </aside>
+
+    <main class="main" id="mainContent">
+
+      <div class="kpi-bar">
+        <div class="kpi-card">
+          <div class="kpi-value kpi-total" id="kpiTotal">—</div>
+          <div class="kpi-label">Noticias</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value kpi-fato" id="kpiFato">—</div>
+          <div class="kpi-label">Fatos Confirmados</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value kpi-proposta" id="kpiProposta">—</div>
+          <div class="kpi-label">Propostas/Discussoes</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value kpi-expectativa" id="kpiExpectativa">—</div>
+          <div class="kpi-label">Expectativas</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value kpi-fontes" id="kpiFontes">—</div>
+          <div class="kpi-label">Fontes</div>
+        </div>
+      </div>
+
+      <div class="kpi-bar-secondary">
+        <div class="kpi-card-sm">
+          <div class="kpi-value kpi-tema" id="kpiIVA">—</div>
+          <div class="kpi-label">IVA Dual</div>
+        </div>
+        <div class="kpi-card-sm">
+          <div class="kpi-value kpi-tema" id="kpiIBS">—</div>
+          <div class="kpi-label">IBS</div>
+        </div>
+        <div class="kpi-card-sm">
+          <div class="kpi-value kpi-tema" id="kpiCBS">—</div>
+          <div class="kpi-label">CBS</div>
+        </div>
+        <div class="kpi-card-sm">
+          <div class="kpi-value kpi-tema" id="kpiSeletivo">—</div>
+          <div class="kpi-label">Imp. Seletivo</div>
+        </div>
+        <div class="kpi-card-sm">
+          <div class="kpi-value kpi-tema" id="kpiSimplesMEI">—</div>
+          <div class="kpi-label">Simples/MEI</div>
+        </div>
+        <div class="kpi-card-sm">
+          <div class="kpi-value kpi-impacto" id="kpiAltoImpacto">—</div>
+          <div class="kpi-label">Alto Impacto MPE</div>
+        </div>
+        <div class="kpi-card-sm">
+          <div class="kpi-value kpi-risco" id="kpiRiscoFake">—</div>
+          <div class="kpi-label">Risco Fake News</div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">Por Classificacao</div>
+          <div class="chart-wrapper"><canvas id="chartStatus"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Por Tema</div>
+          <div class="chart-wrapper"><canvas id="chartTema"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Por Fonte</div>
+          <div class="chart-wrapper"><canvas id="chartFonte"></canvas></div>
+        </div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card chart-card-full">
+          <div class="chart-title">Historico — Ultima Semana</div>
+          <div class="chart-wrapper"><canvas id="chartHistorico"></canvas></div>
+        </div>
+      </div>
+
+      <div id="newsContainer">
+        <div class="empty-state">
+          <div class="empty-state-icon">&#128240;</div>
+          <div class="empty-state-title">Selecione uma data e clique em "Monitorar Noticias"</div>
+          <p>O painel buscara noticias sobre Reforma Tributaria via Google News, classificara por tema e impacto para pequenos negocios.</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">Buscando noticias...</div>
+    <div class="loading-progress" id="loadingProgress"></div>
+  </div>
+
+  <div class="modal-backdrop" id="exportModal">
+    <div class="modal">
+      <div class="modal-title">Exportar para WhatsApp</div>
+      <div class="modal-content" id="exportContent"></div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeModal()">Fechar</button>
+        <button class="btn" onclick="copyExport()">Copiar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Copiado!</div>
+
+<script>
+// =====================================================
+// PIPPA REFORMA TRIBUTARIA — MONITOR ENGINE
+// =====================================================
+
+// =====================================================
+// CREDIBILITY ENGINE — Fontes confiaveis e deteccao de risco
+// =====================================================
+
+const FONTES_JORNALISTICAS = [
+  'agencia brasil', 'ebc', 'valor economico', 'valor globo', 'valor investe',
+  'folha de s.paulo', 'folha de sao paulo', 'folha', 'uol',
+  'estadao', 'estado de s. paulo', 'estado de sao paulo',
+  'o globo', 'globo', 'g1', 'cnn brasil', 'cnn',
+  'bbc news brasil', 'bbc brasil', 'bbc',
+  'reuters', 'bloomberg', 'poder360', 'poder 360',
+  'exame', 'istoe dinheiro', 'istoe', 'istoé',
+  'jota', 'jota info', 'conjur', 'consultor juridico',
+  'infomoney', 'money times', 'investing.com',
+  'carta capital', 'correio braziliense', 'gazeta do povo',
+  'diario do comercio', 'jornal do commercio', 'jornal do comercio',
+  'terra', 'r7', 'band', 'bandnews', 'sbt news',
+  'record news', 'metropoles', 'nexo jornal', 'nexo',
+  'the economist', 'financial times', 'wall street journal',
+  'associated press', 'ap news', 'france presse', 'afp', 'efe',
+  'el pais brasil', 'deutsche welle', 'dw'
+];
+
+const FONTES_INSTITUCIONAIS = [
+  'sebrae', 'cna', 'cni', 'cnc', 'cnm', 'cnt',
+  'senai', 'sesi', 'senac', 'sesc', 'senar', 'sest', 'senat',
+  'apex', 'apexbrasil', 'apex-brasil', 'fibra',
+  'banco do brasil', 'caixa', 'caixa economica',
+  'santander', 'bradesco', 'itau', 'itau unibanco',
+  'btg pactual', 'btg', 'banco safra', 'safra',
+  'bndes', 'banco bmg', 'bmg', 'sicredi', 'sicoob',
+  'brb', 'banco de brasilia', 'banrisul', 'banestes',
+  'banpara', 'bnb', 'banco do nordeste', 'basa', 'banco da amazonia',
+  'febraban', 'banco central', 'bcb',
+  'receita federal', 'ministerio da fazenda', 'fazenda',
+  'camara dos deputados', 'camara', 'senado federal', 'senado',
+  'governo federal', 'gov.br', 'planalto',
+  'tcu', 'cgu', 'ibge', 'ipea',
+  'usp', 'unicamp', 'ufrj', 'ufmg', 'unb', 'ufrgs',
+  'fgv', 'fundacao getulio vargas', 'insper', 'ibre',
+  'dieese', 'fiesp', 'firjan', 'fiergs',
+  'oab', 'anpec', 'ipece', 'observatorio'
+];
+
+const FAKE_NEWS_PATTERNS = [
+  /urgente.*!!+/i,
+  /bomba.*!!+/i,
+  /voce nao vai acreditar/i,
+  /compartilhe antes que/i,
+  /a midia nao quer que voce saiba/i,
+  /revelado.*segredo/i,
+  /chocante/i,
+  /absurdo.*governo/i,
+  /fim do.*brasil/i,
+  /golpe.*tributario/i,
+  /destrui.*economia/i,
+  /esquema.*bilhoes/i
+];
+
+const CLICKBAIT_SIGNALS = [
+  'descubra', 'saiba o que', 'veja o que aconteceu',
+  'ninguem esperava', 'a verdade sobre', 'o que nao te contam',
+  'isso muda tudo', 'nunca mais', 'inacreditavel'
+];
+
+function classifyCredibility(source, title) {
+  const normSource = normalize(source);
+  const normTitle = normalize(title);
+
+  const isTrustedJournalistic = FONTES_JORNALISTICAS.some(f => normSource.includes(f));
+  const isTrustedInstitutional = FONTES_INSTITUCIONAIS.some(f => normSource.includes(f));
+
+  if (isTrustedJournalistic || isTrustedInstitutional) {
+    return {
+      credibilidade: 'Confiavel',
+      credScore: 100,
+      credMotivo: isTrustedJournalistic ? 'Veiculo jornalistico consolidado' : 'Fonte institucional valida',
+      credIcon: '&#9989;'
+    };
+  }
+
+  let riscoScore = 0;
+  let motivos = [];
+
+  if (normSource === 'desconhecida' || normSource.length < 3) {
+    riscoScore += 40;
+    motivos.push('Fonte nao identificada');
+  }
+
+  if (FAKE_NEWS_PATTERNS.some(p => p.test(normTitle))) {
+    riscoScore += 50;
+    motivos.push('Padrao de desinformacao no titulo');
+  }
+
+  const clickbaitCount = CLICKBAIT_SIGNALS.filter(s => normTitle.includes(s)).length;
+  if (clickbaitCount >= 2) {
+    riscoScore += 30;
+    motivos.push('Multiplos sinais de clickbait');
+  } else if (clickbaitCount === 1) {
+    riscoScore += 10;
+  }
+
+  const upperRatio = (title.replace(/[^A-ZÀ-Ú]/g, '').length) / Math.max(title.replace(/\s/g, '').length, 1);
+  if (upperRatio > 0.5 && title.length > 20) {
+    riscoScore += 20;
+    motivos.push('Uso excessivo de caixa alta');
+  }
+
+  const exclamations = (title.match(/!/g) || []).length;
+  if (exclamations >= 3) {
+    riscoScore += 20;
+    motivos.push('Pontuacao excessiva');
+  }
+
+  if (riscoScore >= 40) {
+    return {
+      credibilidade: 'Risco',
+      credScore: Math.max(0, 100 - riscoScore),
+      credMotivo: motivos.join('; ') || 'Fonte nao reconhecida nas listas de veiculos confiaveis',
+      credIcon: '&#9888;'
+    };
+  }
+
+  return {
+    credibilidade: 'Atencao',
+    credScore: Math.max(30, 100 - riscoScore),
+    credMotivo: 'Fonte nao listada entre veiculos confiaveis — verificar origem',
+    credIcon: '&#10071;'
+  };
+}
+
+const SEARCH_QUERIES = [
+  '%22reforma+tribut%C3%A1ria%22',
+  '%22IBS%22+OR+%22CBS%22+OR+%22imposto+seletivo%22',
+  '%22IVA+dual%22+OR+%22split+payment%22+OR+%22comit%C3%AA+gestor+IBS%22',
+  '%22Simples+Nacional%22+reforma+OR+tribut%C3%A1ria'
+];
+
+const TEMA_DEFINITIONS = [
+  {
+    tema: 'IVA Dual',
+    keywords: ['iva dual', 'iva', 'imposto sobre valor agregado', 'valor agregado']
+  },
+  {
+    tema: 'IBS',
+    keywords: ['ibs', 'imposto sobre bens e servicos']
+  },
+  {
+    tema: 'CBS',
+    keywords: ['cbs', 'contribuicao sobre bens e servicos']
+  },
+  {
+    tema: 'Imposto Seletivo',
+    keywords: ['imposto seletivo', 'seletivo']
+  },
+  {
+    tema: 'Split Payment',
+    keywords: ['split payment', 'pagamento fracionado']
+  },
+  {
+    tema: 'Comite Gestor',
+    keywords: ['comite gestor', 'comite gestor do ibs', 'orgao gestor']
+  },
+  {
+    tema: 'Transicao',
+    keywords: ['transicao tributaria', 'periodo de transicao', 'fase de transicao', 'transicao do ibs']
+  },
+  {
+    tema: 'Simples/MEI',
+    keywords: ['simples nacional', 'mei', 'microempreendedor', 'microempresa', 'pequeno porte', 'mpe', 'pequenos negocios']
+  },
+  {
+    tema: 'Aliquotas',
+    keywords: ['aliquota', 'aliquotas', 'carga tributaria', 'taxa', 'percentual']
+  },
+  {
+    tema: 'Regulamentacao',
+    keywords: ['regulamentacao', 'lei complementar', 'decreto', 'instrucao normativa', 'regulamentar', 'projeto de lei']
+  }
+];
+
+const STATUS_KEYWORDS = {
+  fato: ['aprovado', 'aprovada', 'aprovaram', 'sancionado', 'sancionada', 'publicado', 'publicada',
+         'entrou em vigor', 'decidiu', 'definiu', 'estabeleceu', 'criou', 'instituiu',
+         'liminar', 'sentenca', 'julgamento', 'julgou', 'decidiu', 'acórdão'],
+  expectativa: ['deve', 'devera', 'podera', 'estima', 'estimativa', 'projecao', 'previsao',
+                'preve', 'previsto', 'perspectiva', 'expectativa', 'cenario', 'tendencia',
+                'pode impactar', 'pode afetar', 'espera-se', 'especialistas apontam']
+};
+
+const IMPACTO_MPE_KEYWORDS = {
+  alto: ['simples nacional', 'mei', 'microempreendedor', 'microempresa', 'pequeno porte',
+         'pequenos negocios', 'mpe', 'epp', 'obrigacao acessoria', 'nota fiscal',
+         'credito tributario', 'cashback', 'cumulatividade', 'nao cumulatividade'],
+  medio: ['aliquota', 'tributacao', 'carga tributaria', 'regime diferenciado',
+          'beneficio fiscal', 'isencao', 'split payment', 'pagamento fracionado',
+          'transicao', 'regulamentacao']
+};
+
+let allNews = [];
+let weeklyNews = [];
+let filteredNews = [];
+let activeFilters = { status: [], tema: [], impactoMPE: [], credibilidade: [], fonte: [] };
+let chartStatus, chartTema, chartFonte, chartHistorico;
+
+document.getElementById('dateInput').valueAsDate = new Date();
+
+function normalize(text) {
+  if (!text) return '';
+  return text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
+function extractSource(title) {
+  const parts = title.split(' - ');
+  if (parts.length > 1) return parts[parts.length - 1].trim();
+  return 'Desconhecida';
+}
+
+function extractTitle(fullTitle) {
+  const parts = fullTitle.split(' - ');
+  if (parts.length > 1) return parts.slice(0, -1).join(' - ').trim();
+  return fullTitle;
+}
+
+function classifyNews(title) {
+  const norm = normalize(title);
+
+  // Status classification
+  let status = 'Proposta/Discussao';
+  if (STATUS_KEYWORDS.fato.some(kw => norm.includes(kw))) {
+    status = 'Fato Confirmado';
+  } else if (STATUS_KEYWORDS.expectativa.some(kw => norm.includes(kw))) {
+    status = 'Expectativa/Projecao';
+  }
+
+  // Tema classification
+  let temas = [];
+  for (const def of TEMA_DEFINITIONS) {
+    for (const kw of def.keywords) {
+      if (norm.includes(kw)) {
+        temas.push(def.tema);
+        break;
+      }
+    }
+  }
+  const tema = temas.length > 0 ? temas[0] : 'Geral';
+
+  // Impacto MPE
+  let impactoMPE = 'Indefinido';
+  if (IMPACTO_MPE_KEYWORDS.alto.some(kw => norm.includes(kw))) {
+    impactoMPE = 'Alto';
+  } else if (IMPACTO_MPE_KEYWORDS.medio.some(kw => norm.includes(kw))) {
+    impactoMPE = 'Medio';
+  } else if (temas.length > 0) {
+    impactoMPE = 'Baixo';
+  }
+
+  return { status, tema, temas, impactoMPE, credibilidade: null, credScore: null, credMotivo: null, credIcon: null };
+}
+
+function showLoading(text, progress) {
+  const overlay = document.getElementById('loadingOverlay');
+  overlay.classList.add('active');
+  document.getElementById('loadingText').textContent = text || 'Buscando noticias...';
+  document.getElementById('loadingProgress').textContent = progress || '';
+}
+
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('active');
+}
+
+function isSameDay(dateStr, targetDate) {
+  if (!dateStr) return false;
+  const d = new Date(dateStr);
+  const t = new Date(targetDate + 'T00:00:00');
+  return d.getFullYear() === t.getFullYear() &&
+         d.getMonth() === t.getMonth() &&
+         d.getDate() === t.getDate();
+}
+
+function isRecentDay(dateStr, targetDate, daysBefore = 1) {
+  if (!dateStr) return false;
+  const d = new Date(dateStr);
+  const tStart = new Date(targetDate + 'T00:00:00');
+  tStart.setDate(tStart.getDate() - daysBefore);
+  const tEnd = new Date(targetDate + 'T23:59:59');
+  return d >= tStart && d <= tEnd;
+}
+
+async function fetchRSS(query, date) {
+  const rssUrl = `https://news.google.com/rss/search?q=${query}&hl=pt-BR&gl=BR&ceid=BR:pt-419`;
+  const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+
+  try {
+    const response = await fetch(proxyUrl);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+
+    if (data.status !== 'ok' || !data.items) return [];
+
+    return data.items
+      .filter(item => isRecentDay(item.pubDate, date, 7))
+      .map(item => ({
+        fullTitle: item.title || '',
+        title: extractTitle(item.title || ''),
+        source: extractSource(item.title || ''),
+        link: item.link || '',
+        pubDate: item.pubDate || ''
+      }));
+  } catch (e) {
+    console.warn('RSS fetch failed for query:', query, e.message);
+    return [];
+  }
+}
+
+async function fetchData() {
+  const date = document.getElementById('dateInput').value;
+  if (!date) { alert('Selecione uma data.'); return; }
+
+  const btn = document.getElementById('btnFetch');
+  btn.disabled = true;
+
+  try {
+    showLoading('Buscando noticias sobre Reforma Tributaria...', '');
+
+    const allResults = [];
+    const seenTitles = new Set();
+
+    for (let i = 0; i < SEARCH_QUERIES.length; i++) {
+      showLoading('Buscando noticias...', `Consulta ${i + 1} de ${SEARCH_QUERIES.length}...`);
+      const items = await fetchRSS(SEARCH_QUERIES[i], date);
+      for (const item of items) {
+        const key = normalize(item.title).substring(0, 60);
+        if (!seenTitles.has(key)) {
+          seenTitles.add(key);
+          allResults.push(item);
+        }
+      }
+    }
+
+    showLoading('Classificando noticias...', `${allResults.length} noticias encontradas`);
+
+    const classifiedAll = allResults.map(item => {
+      const classification = classifyNews(item.title);
+      const cred = classifyCredibility(item.source, item.title);
+      return {
+        ...item,
+        ...classification,
+        ...cred,
+        date: date
+      };
+    });
+
+    weeklyNews = classifiedAll;
+    allNews = classifiedAll.filter(n => isRecentDay(n.pubDate, date, 1));
+
+    // Sort: Fatos first, then Propostas, then Expectativas; within each, Alto impacto first
+    const statusOrder = { 'Fato Confirmado': 0, 'Proposta/Discussao': 1, 'Expectativa/Projecao': 2 };
+    const impactoOrder = { 'Alto': 0, 'Medio': 1, 'Baixo': 2, 'Indefinido': 3 };
+    allNews.sort((a, b) => {
+      const s = (statusOrder[a.status] || 3) - (statusOrder[b.status] || 3);
+      if (s !== 0) return s;
+      return (impactoOrder[a.impactoMPE] || 4) - (impactoOrder[b.impactoMPE] || 4);
+    });
+
+    populateFonteFilter();
+    applyFilters();
+
+    hideLoading();
+
+  } catch (e) {
+    console.error('Fetch error:', e);
+    hideLoading();
+    alert('Erro ao buscar noticias: ' + e.message);
+  }
+
+  btn.disabled = false;
+}
+
+function updateKPIs() {
+  const hasActiveFilter = Object.values(activeFilters).some(f => f.length > 0) ||
+    (document.getElementById('searchInput') && document.getElementById('searchInput').value.trim().length > 0);
+  const source = hasActiveFilter ? filteredNews : allNews;
+
+  document.getElementById('kpiTotal').textContent = source.length;
+  document.getElementById('kpiFato').textContent = source.filter(n => n.status === 'Fato Confirmado').length;
+  document.getElementById('kpiProposta').textContent = source.filter(n => n.status === 'Proposta/Discussao').length;
+  document.getElementById('kpiExpectativa').textContent = source.filter(n => n.status === 'Expectativa/Projecao').length;
+
+  const fontes = new Set(source.map(n => n.source));
+  document.getElementById('kpiFontes').textContent = fontes.size;
+
+  const countTema = (t) => source.filter(n => n.temas && n.temas.includes(t)).length;
+  document.getElementById('kpiIVA').textContent = countTema('IVA Dual');
+  document.getElementById('kpiIBS').textContent = countTema('IBS');
+  document.getElementById('kpiCBS').textContent = countTema('CBS');
+  document.getElementById('kpiSeletivo').textContent = countTema('Imposto Seletivo');
+  document.getElementById('kpiSimplesMEI').textContent = countTema('Simples/MEI');
+  document.getElementById('kpiAltoImpacto').textContent = source.filter(n => n.impactoMPE === 'Alto').length;
+  document.getElementById('kpiRiscoFake').textContent = source.filter(n => n.credibilidade === 'Risco').length;
+}
+
+function updateThermometer() {
+  const el = document.getElementById('thermometer');
+  const hasActiveFilter = Object.values(activeFilters).some(f => f.length > 0) ||
+    (document.getElementById('searchInput') && document.getElementById('searchInput').value.trim().length > 0);
+  const source = hasActiveFilter ? filteredNews : allNews;
+  const total = source.length;
+  const altoImpacto = source.filter(n => n.impactoMPE === 'Alto').length;
+  const fatos = source.filter(n => n.status === 'Fato Confirmado').length;
+
+  el.className = 'thermometer';
+  if (altoImpacto >= 3 || (fatos >= 2 && altoImpacto >= 1)) {
+    el.classList.add('thermo-red');
+    el.textContent = 'CRITICO — Multiplos fatos de alto impacto para MPE';
+  } else if (altoImpacto >= 1 || fatos >= 2) {
+    el.classList.add('thermo-orange');
+    el.textContent = 'ATENCAO — Fatos relevantes para pequenos negocios';
+  } else if (total >= 3) {
+    el.classList.add('thermo-yellow');
+    el.textContent = 'RELEVANTE — Movimentacao moderada na reforma';
+  } else if (total > 0) {
+    el.classList.add('thermo-green');
+    el.textContent = 'BAIXA — Poucas noticias identificadas';
+  } else {
+    el.classList.add('thermo-green');
+    el.textContent = 'SEM NOTICIAS — Nenhuma publicacao encontrada';
+  }
+}
+
+function populateFonteFilter() {
+  const fontes = [...new Set(allNews.map(n => n.source))].sort();
+  const container = document.getElementById('filterFonte');
+  container.innerHTML = fontes.map(f =>
+    `<span class="filter-chip" data-filter="fonte" data-value="${escapeHtml(f)}" onclick="toggleFilter(this)">${escapeHtml(f)}</span>`
+  ).join('');
+}
+
+function toggleSection(header) {
+  const section = header.closest('.filter-section');
+  section.classList.toggle('open');
+}
+
+function updateFilterBadges() {
+  const filters = ['status', 'tema', 'impactoMPE', 'credibilidade', 'fonte'];
+  filters.forEach(f => {
+    const badge = document.getElementById('badge-' + f);
+    if (!badge) return;
+    const count = activeFilters[f] ? activeFilters[f].length : 0;
+    badge.textContent = count;
+    badge.classList.toggle('visible', count > 0);
+  });
+}
+
+function toggleFilter(chip) {
+  const filter = chip.dataset.filter;
+  const value = chip.dataset.value;
+
+  const idx = activeFilters[filter].indexOf(value);
+  if (idx >= 0) {
+    activeFilters[filter].splice(idx, 1);
+    chip.classList.remove('active');
+  } else {
+    activeFilters[filter].push(value);
+    chip.classList.add('active');
+  }
+  updateFilterBadges();
+  applyFilters();
+}
+
+function clearFilter(filter) {
+  activeFilters[filter] = [];
+  document.querySelectorAll(`[data-filter="${filter}"]`).forEach(chip => {
+    chip.className = 'filter-chip';
+  });
+  updateFilterBadges();
+  applyFilters();
+}
+
+function applyFilters() {
+  const search = normalize(document.getElementById('searchInput').value);
+
+  filteredNews = allNews.filter(n => {
+    if (search && !normalize(n.title).includes(search) && !normalize(n.source).includes(search)) return false;
+    if (activeFilters.status.length && !activeFilters.status.includes(n.status)) return false;
+    if (activeFilters.tema.length && !activeFilters.tema.includes(n.tema)) return false;
+    if (activeFilters.impactoMPE.length && !activeFilters.impactoMPE.includes(n.impactoMPE)) return false;
+    if (activeFilters.credibilidade.length && !activeFilters.credibilidade.includes(n.credibilidade)) return false;
+    if (activeFilters.fonte.length && !activeFilters.fonte.includes(n.source)) return false;
+    return true;
+  });
+
+  updateKPIs();
+  renderNews();
+  updateCharts();
+  updateThermometer();
+}
+
+function renderNews() {
+  const container = document.getElementById('newsContainer');
+
+  if (filteredNews.length === 0 && allNews.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">&#128240;</div>
+        <div class="empty-state-title">Selecione uma data e clique em "Monitorar Noticias"</div>
+        <p>O painel buscara noticias sobre Reforma Tributaria via Google News, classificara por tema e impacto para pequenos negocios.</p>
+      </div>`;
+    return;
+  }
+
+  if (filteredNews.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">&#128269;</div>
+        <div class="empty-state-title">Nenhuma noticia encontrada com esses filtros</div>
+        <p>Tente ajustar os filtros na barra lateral.</p>
+      </div>`;
+    return;
+  }
+
+  const groups = {
+    'Fato Confirmado': [],
+    'Proposta/Discussao': [],
+    'Expectativa/Projecao': []
+  };
+
+  filteredNews.forEach(n => {
+    if (!groups[n.status]) groups[n.status] = [];
+    groups[n.status].push(n);
+  });
+
+  const icons = {
+    'Fato Confirmado': '&#9989;',
+    'Proposta/Discussao': '&#128172;',
+    'Expectativa/Projecao': '&#128302;'
+  };
+
+  let html = '';
+  _cardUid = 0;
+  for (const [status, news] of Object.entries(groups)) {
+    if (news.length === 0) continue;
+    html += `
+      <div class="section-header">
+        <div class="section-title">${status}</div>
+        <span class="section-count">${news.length} noticias</span>
+      </div>
+      <div class="news-list">
+        ${news.map(n => renderNewsCard(n, 0, icons[status])).join('')}
+      </div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+let _cardUid = 0;
+function renderNewsCard(news, idx, icon) {
+  const id = `news-${_cardUid++}`;
+  const statusClass = news.status === 'Fato Confirmado' ? 'status-fato' :
+                      news.status === 'Proposta/Discussao' ? 'status-proposta' : 'status-expectativa';
+  const statusTagClass = news.status === 'Fato Confirmado' ? 'news-tag-status' :
+                         news.status === 'Proposta/Discussao' ? 'news-tag-status-proposta' : 'news-tag-status-expectativa';
+
+  const pubDate = news.pubDate ? new Date(news.pubDate).toLocaleString('pt-BR', {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+  }) : '';
+
+  const temasTags = (news.temas || []).map(t =>
+    `<span class="news-tag news-tag-tema">${t}</span>`
+  ).join('');
+
+  const credClass = news.credibilidade === 'Risco' ? 'cred-risco' :
+                     news.credibilidade === 'Atencao' ? 'cred-atencao' : 'cred-confiavel';
+  const cardRiskClass = news.credibilidade === 'Risco' ? ' risco-fake' :
+                        news.credibilidade === 'Atencao' ? ' atencao-fake' : '';
+
+  return `
+    <div class="news-card${cardRiskClass}" id="${id}">
+      <div class="news-header" onclick="toggleNews('${id}')">
+        <div class="news-status-badge ${statusClass}">${icon}</div>
+        <div class="news-info">
+          <div class="news-title"><a href="${news.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escapeHtml(news.title)}</a></div>
+          <div class="news-meta">
+            <span class="news-source">${escapeHtml(news.source)}</span>
+            <span class="credibility-badge ${credClass}">${news.credIcon} ${news.credibilidade}</span>
+            ${pubDate}
+          </div>
+          <div class="news-tags">
+            <span class="news-tag ${statusTagClass}">${news.status}</span>
+            ${temasTags}
+            ${news.impactoMPE !== 'Indefinido' ? `<span class="news-tag news-tag-impacto">Impacto MPE: ${news.impactoMPE}</span>` : ''}
+          </div>
+        </div>
+        <div class="news-expand">&#9660;</div>
+      </div>
+      <div class="news-details">
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Classificacao</span>
+            <span class="detail-value">${news.status}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Tema Principal</span>
+            <span class="detail-value">${news.tema}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Impacto MPE</span>
+            <span class="detail-value">${news.impactoMPE}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Fonte</span>
+            <span class="detail-value">${escapeHtml(news.source)}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Credibilidade</span>
+            <span class="detail-value"><span class="credibility-badge ${credClass}">${news.credIcon} ${news.credibilidade}</span> (${news.credScore}/100)</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Motivo da classificacao</span>
+            <span class="detail-value">${news.credMotivo}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Publicacao</span>
+            <span class="detail-value">${pubDate}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Link</span>
+            <span class="detail-value"><a href="${news.link}" target="_blank" rel="noopener" style="color:var(--accent)">Abrir noticia original</a></span>
+          </div>
+          ${news.temas.length > 1 ? `
+          <div class="detail-item">
+            <span class="detail-label">Todos os temas</span>
+            <span class="detail-value">${news.temas.join(', ')}</span>
+          </div>` : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleNews(id) {
+  const card = document.getElementById(id);
+  if (card) card.classList.toggle('expanded');
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function updateCharts() {
+  const hasActiveFilter = Object.values(activeFilters).some(f => f.length > 0) ||
+    (document.getElementById('searchInput') && document.getElementById('searchInput').value.trim().length > 0);
+  const data = hasActiveFilter ? filteredNews : allNews;
+
+  const statusCounts = { 'Fato Confirmado': 0, 'Proposta/Discussao': 0, 'Expectativa/Projecao': 0 };
+  const temaCounts = {};
+  const fonteCounts = {};
+
+  data.forEach(n => {
+    statusCounts[n.status] = (statusCounts[n.status] || 0) + 1;
+    temaCounts[n.tema] = (temaCounts[n.tema] || 0) + 1;
+    fonteCounts[n.source] = (fonteCounts[n.source] || 0) + 1;
+  });
+
+  Chart.defaults.color = '#8b8fa8';
+  Chart.defaults.font.family = "'Segoe UI', sans-serif";
+
+  // Historico semanal — line chart
+  const selectedDate = document.getElementById('dateInput').value;
+  if (selectedDate) {
+    const dayLabels = [];
+    const dayCounts = { total: [], fato: [], proposta: [], expectativa: [] };
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(selectedDate + 'T12:00:00');
+      d.setDate(d.getDate() - i);
+      const ds = d.toISOString().split('T')[0];
+      dayLabels.push(d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }));
+      const dayNews = weeklyNews.filter(n => {
+        if (!n.pubDate) return false;
+        const pd = new Date(n.pubDate);
+        return pd.getFullYear() === d.getFullYear() && pd.getMonth() === d.getMonth() && pd.getDate() === d.getDate();
+      });
+      dayCounts.total.push(dayNews.length);
+      dayCounts.fato.push(dayNews.filter(n => n.status === 'Fato Confirmado').length);
+      dayCounts.proposta.push(dayNews.filter(n => n.status === 'Proposta/Discussao').length);
+      dayCounts.expectativa.push(dayNews.filter(n => n.status === 'Expectativa/Projecao').length);
+    }
+
+    if (chartHistorico) chartHistorico.destroy();
+    chartHistorico = new Chart(document.getElementById('chartHistorico'), {
+      type: 'line',
+      data: {
+        labels: dayLabels,
+        datasets: [
+          { label: 'Total', data: dayCounts.total, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2 },
+          { label: 'Fatos', data: dayCounts.fato, borderColor: '#22c55e', borderDash: [5,3], tension: 0.3, pointRadius: 3, borderWidth: 1.5 },
+          { label: 'Propostas', data: dayCounts.proposta, borderColor: '#f59e0b', borderDash: [5,3], tension: 0.3, pointRadius: 3, borderWidth: 1.5 },
+          { label: 'Expectativas', data: dayCounts.expectativa, borderColor: '#8b5cf6', borderDash: [5,3], tension: 0.3, pointRadius: 3, borderWidth: 1.5 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 10, font: { size: 11 } } } },
+        scales: {
+          x: { grid: { color: '#2e3348' }, ticks: { font: { size: 11 } } },
+          y: { beginAtZero: true, grid: { color: '#2e3348' }, ticks: { stepSize: 1, font: { size: 11 } } }
+        }
+      }
+    });
+  }
+
+  if (chartStatus) chartStatus.destroy();
+  chartStatus = new Chart(document.getElementById('chartStatus'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Fato Confirmado', 'Proposta/Discussao', 'Expectativa/Projecao'],
+      datasets: [{
+        data: [statusCounts['Fato Confirmado'], statusCounts['Proposta/Discussao'], statusCounts['Expectativa/Projecao']],
+        backgroundColor: ['#22c55e', '#f59e0b', '#8b5cf6'],
+        borderColor: '#1a1d27',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { boxWidth: 12, padding: 10, font: { size: 11 } } }
+      }
+    }
+  });
+
+  if (chartTema) chartTema.destroy();
+  const temaLabels = Object.keys(temaCounts).sort((a, b) => temaCounts[b] - temaCounts[a]);
+  const temaColors = ['#4f8cff', '#a855f7', '#f472b6', '#ff8c42', '#ffc542',
+                       '#4ecdc4', '#22c55e', '#818cf8', '#94a3b8', '#10b981'];
+
+  chartTema = new Chart(document.getElementById('chartTema'), {
+    type: 'bar',
+    data: {
+      labels: temaLabels.map(l => l.length > 16 ? l.substring(0, 16) + '...' : l),
+      datasets: [{
+        data: temaLabels.map(l => temaCounts[l]),
+        backgroundColor: temaLabels.map((_, i) => temaColors[i % temaColors.length]),
+        borderRadius: 4,
+        barPercentage: 0.7
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#2e3348' }, ticks: { font: { size: 11 } } },
+        y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+      }
+    }
+  });
+
+  if (chartFonte) chartFonte.destroy();
+  const fonteLabels = Object.keys(fonteCounts).sort((a, b) => fonteCounts[b] - fonteCounts[a]).slice(0, 8);
+  const fonteColors = ['#10b981', '#4f8cff', '#a855f7', '#ff4d6a', '#f59e0b',
+                        '#4ecdc4', '#f472b6', '#818cf8'];
+
+  chartFonte = new Chart(document.getElementById('chartFonte'), {
+    type: 'doughnut',
+    data: {
+      labels: fonteLabels,
+      datasets: [{
+        data: fonteLabels.map(l => fonteCounts[l]),
+        backgroundColor: fonteLabels.map((_, i) => fonteColors[i % fonteColors.length]),
+        borderColor: '#1a1d27',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { boxWidth: 12, padding: 8, font: { size: 10 } } }
+      }
+    }
+  });
+}
+
+function exportWhatsApp() {
+  const date = document.getElementById('dateInput').value;
+  if (!allNews.length) { alert('Busque as noticias primeiro.'); return; }
+
+  const dateObj = new Date(date + 'T12:00:00');
+  const dateStr = dateObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  const fatos = allNews.filter(n => n.status === 'Fato Confirmado');
+  const propostas = allNews.filter(n => n.status === 'Proposta/Discussao');
+  const expectativas = allNews.filter(n => n.status === 'Expectativa/Projecao');
+  const fontes = [...new Set(allNews.map(n => n.source))];
+  const altoImpacto = allNews.filter(n => n.impactoMPE === 'Alto');
+  const fontesElegiveis = SEARCH_QUERIES.length * 2;
+  const basesConsultadas = ['Google News RSS'];
+
+  let text = `PIPPA — Plataforma de Inteligência em Políticas Públicas Aplicadas\n\n`;
+  text += `Monitor de Reforma Tributária\n`;
+  text += `${dateStr}\n`;
+  text += `${fontesElegiveis} fontes elegíveis pesquisadas · ${basesConsultadas.length} base consultada (${basesConsultadas.join(', ')}) · ${fatos.length} fato${fatos.length !== 1 ? 's' : ''} identificado${fatos.length !== 1 ? 's' : ''}\n\n`;
+
+  // O que aconteceu hoje — narrativa editorial
+  text += `O que aconteceu hoje?\n\n`;
+  const allRelevant = [...fatos, ...altoImpacto.filter(n => n.status !== 'Fato Confirmado')];
+  const uniqueRelevant = allRelevant.filter((n, i, arr) => arr.findIndex(m => m.title === n.title) === i);
+  if (uniqueRelevant.length > 0) {
+    for (const n of uniqueRelevant.slice(0, 5)) {
+      text += `${n.title}`;
+      if (n.description) text += ` — ${n.description.substring(0, 200).replace(/\n/g, ' ').trim()}`;
+      text += `\n\n`;
+    }
+  } else if (propostas.length > 0) {
+    for (const n of propostas.slice(0, 3)) {
+      text += `${n.title}`;
+      if (n.description) text += ` — ${n.description.substring(0, 200).replace(/\n/g, ' ').trim()}`;
+      text += `\n\n`;
+    }
+  }
+
+  // O que significa para pequenos negócios
+  text += `O que significa para pequenos negócios?\n\n`;
+  const temasAtivos = [...new Set(allNews.map(n => n.tema))].filter(t => t !== 'Geral');
+  if (altoImpacto.length > 0) {
+    text += `${altoImpacto.length} notícia${altoImpacto.length !== 1 ? 's' : ''} com alto impacto potencial para MEI/Simples/MPE identificada${altoImpacto.length !== 1 ? 's' : ''}. `;
+    text += `Temas em destaque: ${temasAtivos.join(', ') || 'Geral'}. `;
+    text += `Acompanhe os desdobramentos nos próximos dias.\n\n`;
+  } else {
+    text += `Movimentação moderada hoje. Temas em pauta: ${temasAtivos.join(', ') || 'Geral'}.\n\n`;
+  }
+
+  // Pontos de atenção
+  text += `Pontos de atenção\n\n`;
+  const pontosAtencao = [];
+  for (const n of fatos.slice(0, 3)) {
+    pontosAtencao.push(n.title);
+  }
+  for (const n of altoImpacto.filter(n => n.status !== 'Fato Confirmado').slice(0, 2)) {
+    pontosAtencao.push(n.title + ' — impacto alto para MPE');
+  }
+  if (propostas.length > 3) {
+    pontosAtencao.push(`${propostas.length} propostas/discussões em andamento sobre ${temasAtivos.slice(0, 3).join(', ')}`);
+  }
+  const riscoFake = allNews.filter(n => n.credibilidade === 'Risco');
+  if (riscoFake.length > 0) {
+    pontosAtencao.push(`${riscoFake.length} notícia(s) com risco de credibilidade — verificar fontes`);
+  }
+  if (pontosAtencao.length === 0) pontosAtencao.push('Sem pontos críticos identificados hoje');
+  for (const p of pontosAtencao) {
+    text += `* ${p}\n`;
+  }
+  text += `\n`;
+
+  // Termômetro
+  const el = document.getElementById('thermometer');
+  const thermoText = el.textContent;
+  let thermoEmoji = '🟢';
+  if (el.classList.contains('thermo-red')) thermoEmoji = '🔴';
+  else if (el.classList.contains('thermo-orange')) thermoEmoji = '🟠';
+  else if (el.classList.contains('thermo-yellow')) thermoEmoji = '🟡';
+  text += `Termômetro: ${thermoEmoji} ${thermoText}\n\n`;
+
+  // Próximos desdobramentos
+  text += `Próximos desdobramentos: `;
+  const desdobramentos = [];
+  if (expectativas.length > 0) {
+    for (const n of expectativas.slice(0, 3)) {
+      desdobramentos.push(n.title);
+    }
+  }
+  if (desdobramentos.length === 0) desdobramentos.push('Acompanhar regulamentação e implementação');
+  text += desdobramentos.join(' · ') + `\n\n`;
+
+  // Rodapé com fontes
+  text += `—\n`;
+  const fontesComLink = allNews.filter(n => n.link).map(n => `${n.source} (${n.link})`);
+  const fontesUnicas = [...new Set(fontesComLink)];
+  if (fontesUnicas.length > 0) {
+    text += `Fontes externas: ${fontesUnicas.slice(0, 5).join(', ')}\n`;
+    if (fontesUnicas.length > 5) text += `... e mais ${fontesUnicas.length - 5} fontes\n`;
+  } else {
+    text += `Fontes: ${fontes.join(', ')}\n`;
+  }
+  text += `\nConteúdo gerado por Inteligência Artificial (IA)`;
+
+  document.getElementById('exportContent').textContent = text;
+  document.getElementById('exportModal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('exportModal').classList.remove('active');
+}
+
+function copyExport() {
+  const text = document.getElementById('exportContent').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Copiado para a area de transferencia!');
+  }).catch(() => {
+    const range = document.createRange();
+    range.selectNode(document.getElementById('exportContent'));
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    showToast('Copiado!');
+  });
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  updateCharts();
+});
+</script>
+
+</body>
+</html>

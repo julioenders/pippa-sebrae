@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIPPA Compras Publicas — Radar de Oportunidades para MPE</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #242836;
+      --border: #2e3348;
+      --text: #e4e6ef;
+      --text-muted: #8b8fa8;
+      --accent: #10b981;
+      --accent-hover: #34d399;
+      --pregao: #4f8cff;
+      --dispensa: #f59e0b;
+      --concorrencia: #a855f7;
+      --credenciamento: #f472b6;
+      --inexigibilidade: #8b8fa8;
+      --exclusiva: #22c55e;
+      --cota: #10b981;
+      --ampla: #4f8cff;
+      --alta: #ff4d6a;
+      --media: #ff8c42;
+      --baixa: #ffc542;
+      --neutra: #8b8fa8;
+      --success: #22c55e;
+      --urgente: #ef4444;
+      --atencao: #f59e0b;
+      --tranquilo: #22c55e;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1a1d27 0%, #242836 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 16px; }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #10b981, #4f8cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .select-input, .date-input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .select-input:focus, .date-input:focus { border-color: var(--accent); }
+
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
+
+    .thermometer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .thermo-green { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .thermo-yellow { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .thermo-red { background: rgba(239,68,68,0.15); color: #ef4444; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: calc(100vh - 64px);
+    }
+
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 16px;
+      overflow-y: auto;
+      max-height: calc(100vh - 64px);
+      position: sticky;
+      top: 64px;
+    }
+
+    .filter-section {
+      margin-bottom: 4px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .filter-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      cursor: pointer;
+      background: var(--surface2);
+      transition: background 0.2s;
+      user-select: none;
+    }
+
+    .filter-header:hover { background: var(--border); }
+
+    .filter-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-arrow {
+      font-size: 10px;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+    }
+
+    .filter-section.open .filter-arrow { transform: rotate(180deg); }
+
+    .filter-badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 10px;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0 5px;
+      font-weight: 700;
+    }
+
+    .filter-badge.visible { display: flex; }
+
+    .filter-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease, padding 0.25s ease;
+      padding: 0 12px;
+    }
+
+    .filter-section.open .filter-body {
+      max-height: 300px;
+      padding: 10px 12px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .filter-chip:hover { border-color: var(--accent); color: var(--text); }
+    .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .filter-clear {
+      font-size: 11px;
+      color: var(--accent);
+      cursor: pointer;
+      margin-top: 8px;
+      display: block;
+      text-align: right;
+    }
+
+    .filter-clear:hover { text-decoration: underline; }
+
+    .search-input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      outline: none;
+      margin-bottom: 16px;
+    }
+
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--text-muted); }
+
+    .main {
+      padding: 20px 24px;
+      overflow-y: auto;
+    }
+
+    .kpi-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .kpi-value {
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-total { color: var(--accent); }
+    .kpi-pregao { color: var(--pregao); }
+    .kpi-dispensa { color: var(--dispensa); }
+    .kpi-exclusiva { color: var(--exclusiva); }
+    .kpi-valor { color: #f59e0b; }
+
+    .kpi-bar-secondary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card-sm {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      text-align: center;
+    }
+
+    .kpi-card-sm .kpi-value { font-size: 24px; }
+    .kpi-card-sm .kpi-label { font-size: 11px; }
+
+    .charts-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .chart-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 220px;
+    }
+
+    .chart-card-full {
+      grid-column: 1 / -1;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .section-count {
+      font-size: 13px;
+      color: var(--text-muted);
+      background: var(--surface2);
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .news-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    .news-card:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+
+    .news-card.exclusiva-mpe { border-left: 3px solid var(--exclusiva); }
+    .news-card.urgente { border-left: 3px solid var(--urgente); }
+
+    .news-header {
+      padding: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .news-status-badge {
+      min-width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .badge-pregao { background: rgba(79,140,255,0.2); }
+    .badge-dispensa { background: rgba(245,158,11,0.2); }
+    .badge-concorrencia { background: rgba(168,85,247,0.2); }
+    .badge-credenciamento { background: rgba(244,114,182,0.2); }
+    .badge-inexigibilidade { background: rgba(139,143,168,0.2); }
+
+    .news-info { flex: 1; min-width: 0; }
+
+    .news-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    .news-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .news-source {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(16,185,129,0.2);
+      color: var(--accent);
+    }
+
+    .news-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .news-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: var(--surface2);
+      color: var(--text-muted);
+    }
+
+    .tag-modalidade { background: rgba(79,140,255,0.15); color: var(--pregao); }
+    .tag-exclusiva { background: rgba(34,197,94,0.15); color: var(--exclusiva); }
+    .tag-cota { background: rgba(16,185,129,0.15); color: var(--cota); }
+    .tag-urgente { background: rgba(239,68,68,0.15); color: var(--urgente); }
+    .tag-valor { background: rgba(245,158,11,0.15); color: var(--dispensa); }
+    .tag-uf { background: rgba(168,85,247,0.15); color: var(--concorrencia); }
+
+    .news-expand {
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+    }
+
+    .news-expand:hover { background: var(--surface2); }
+    .news-card.expanded .news-expand { transform: rotate(180deg); }
+
+    .news-details {
+      display: none;
+      padding: 0 16px 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .news-card.expanded .news-details { display: block; }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .detail-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .detail-value a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .detail-value a:hover { text-decoration: underline; }
+
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,17,23,0.85);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .loading-overlay.active { display: flex; }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text { color: var(--text); font-size: 14px; }
+    .loading-progress { color: var(--text-muted); font-size: 12px; }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--success);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 400;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    .info-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-muted);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-right: 10px;
+    }
+
+    .info-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .info-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,17,23,0.8);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .info-modal-backdrop.active { display: flex; }
+
+    .info-modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      max-width: 620px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .info-modal h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #10b981, #4f8cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .info-modal h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+
+    .info-modal ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .info-modal li {
+      font-size: 13px;
+      color: var(--text-muted);
+      padding: 4px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.5;
+    }
+
+    .info-modal li::before {
+      content: '•';
+      color: var(--accent);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .info-modal .info-footer {
+      margin-top: 20px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .info-close {
+      float: right;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0 4px;
+    }
+
+    .info-close:hover { color: var(--text); }
+
+    .date-range {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .date-range-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .mpe-note {
+      margin-top: 16px;
+      padding: 12px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.03);
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .mpe-note-title {
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      font-size: 11.5px;
+      text-align: center;
+    }
+    .mpe-note .mpe-level {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .mpe-note .mpe-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .mpe-note .mpe-dot.green { background: #22c55e; }
+    .mpe-note .mpe-dot.blue { background: #4f8cff; }
+    .mpe-note .mpe-dot.gray { background: #8b8fa8; }
+    .mpe-note .mpe-label { font-weight: 600; color: var(--text); }
+
+    .sidebar-footer {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .header { flex-wrap: wrap; gap: 12px; }
+      .kpi-bar { grid-template-columns: repeat(2, 1fr); }
+      .charts-row { grid-template-columns: 1fr; }
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+    .pippa-home-btn{position:fixed;top:16px;right:16px;z-index:9999;display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;backdrop-filter:blur(8px);transition:all .2s;}
+    .pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff;transform:translateY(-1px);}
+    .pippa-home-btn svg{width:14px;height:14px;}
+  </style>
+</head>
+<body>
+
+<a href="../pippa-portal/index.html" class="pippa-home-btn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  PIPPA Portal
+</a>
+
+  <header class="header">
+    <div class="header-left">
+      <div>
+        <div class="logo">PIPPA Compras Publicas</div>
+        <div class="logo-sub">Plataforma de Inteligencia em Politicas Publicas Aplicadas</div>
+      </div>
+      <button class="info-btn" onclick="toggleInfoModal()" title="Sobre o painel">i</button>
+    </div>
+    <div class="header-controls">
+      <div id="thermometer" class="thermometer thermo-green">Sem dados carregados</div>
+      <div class="date-range">
+        <input type="date" id="dateFrom" class="date-input" title="Data inicial">
+        <span>a</span>
+        <input type="date" id="dateTo" class="date-input" title="Data final">
+      </div>
+      <select id="ufInput" class="select-input" title="Filtrar por UF" onchange="onUfChange()" style="width:80px;">
+        <option value="">UF</option>
+        <option value="AC">AC</option><option value="AL">AL</option><option value="AM">AM</option>
+        <option value="AP">AP</option><option value="BA">BA</option><option value="CE">CE</option>
+        <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+        <option value="MA">MA</option><option value="MG">MG</option><option value="MS">MS</option>
+        <option value="MT">MT</option><option value="PA">PA</option><option value="PB">PB</option>
+        <option value="PE">PE</option><option value="PI">PI</option><option value="PR">PR</option>
+        <option value="RJ">RJ</option><option value="RN">RN</option><option value="RO">RO</option>
+        <option value="RR">RR</option><option value="RS">RS</option><option value="SC">SC</option>
+        <option value="SE">SE</option><option value="SP">SP</option><option value="TO">TO</option>
+      </select>
+      <select id="munInput" class="select-input" title="Municipio" style="width:160px;">
+        <option value="">Municipio</option>
+      </select>
+      <button class="btn" id="btnFetch" onclick="fetchData()">Buscar Licitacoes</button>
+      <button class="btn btn-outline" onclick="openExportModal()">Exportar WhatsApp</button>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <aside class="sidebar">
+      <input type="text" class="search-input" id="searchInput" placeholder="Buscar no objeto..." oninput="applyFilters()">
+
+      <div class="filter-section open" data-section="setor">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <div class="filter-title">Setor / Atividade <span class="filter-badge" id="badge-setor"></span></div>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+        <div class="filter-body">
+          <div class="filter-group" id="filterSetor">
+            <span class="filter-chip" data-filter="setor" data-value="alimentacao" onclick="toggleFilter(this)">Alimentacao</span>
+            <span class="filter-chip" data-filter="setor" data-value="construcao" onclick="toggleFilter(this)">Construcao</span>
+            <span class="filter-chip" data-filter="setor" data-value="ti" onclick="toggleFilter(this)">TI / Software</span>
+            <span class="filter-chip" data-filter="setor" data-value="saude" onclick="toggleFilter(this)">Saude</span>
+            <span class="filter-chip" data-filter="setor" data-value="limpeza" onclick="toggleFilter(this)">Limpeza</span>
+            <span class="filter-chip" data-filter="setor" data-value="mobiliario" onclick="toggleFilter(this)">Mobiliario</span>
+            <span class="filter-chip" data-filter="setor" data-value="veiculos" onclick="toggleFilter(this)">Veiculos</span>
+            <span class="filter-chip" data-filter="setor" data-value="grafica" onclick="toggleFilter(this)">Grafica</span>
+            <span class="filter-chip" data-filter="setor" data-value="textil" onclick="toggleFilter(this)">Textil / Uniformes</span>
+            <span class="filter-chip" data-filter="setor" data-value="combustivel" onclick="toggleFilter(this)">Combustivel</span>
+            <span class="filter-chip" data-filter="setor" data-value="eletrico" onclick="toggleFilter(this)">Eletrico</span>
+            <span class="filter-chip" data-filter="setor" data-value="seguranca" onclick="toggleFilter(this)">Seguranca</span>
+            <span class="filter-chip" data-filter="setor" data-value="educacao" onclick="toggleFilter(this)">Educacao</span>
+            <span class="filter-chip" data-filter="setor" data-value="agro" onclick="toggleFilter(this)">Agropecuario</span>
+          </div>
+          <span class="filter-clear" onclick="clearFilter('setor')">Limpar</span>
+        </div>
+      </div>
+
+      <div class="filter-section" data-section="modalidade">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <div class="filter-title">Modalidade <span class="filter-badge" id="badge-modalidade"></span></div>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+        <div class="filter-body">
+          <div class="filter-group" id="filterModalidade">
+            <span class="filter-chip" data-filter="modalidade" data-value="Pregão - Eletrônico" onclick="toggleFilter(this)">Pregao Eletronico</span>
+            <span class="filter-chip" data-filter="modalidade" data-value="Dispensa de Licitação" onclick="toggleFilter(this)">Dispensa</span>
+            <span class="filter-chip" data-filter="modalidade" data-value="Concorrência - Eletrônica" onclick="toggleFilter(this)">Concorrencia</span>
+            <span class="filter-chip" data-filter="modalidade" data-value="Inexigibilidade de Licitação" onclick="toggleFilter(this)">Inexigibilidade</span>
+            <span class="filter-chip" data-filter="modalidade" data-value="Credenciamento" onclick="toggleFilter(this)">Credenciamento</span>
+          </div>
+          <span class="filter-clear" onclick="clearFilter('modalidade')">Limpar</span>
+        </div>
+      </div>
+
+      <div class="filter-section" data-section="oportunidadeMPE">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <div class="filter-title">Oportunidade MPE <span class="filter-badge" id="badge-oportunidadeMPE"></span></div>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+        <div class="filter-body">
+          <div class="filter-group" id="filterOportunidadeMPE">
+            <span class="filter-chip" data-filter="oportunidadeMPE" data-value="Exclusiva MPE" onclick="toggleFilter(this)">Exclusiva MPE</span>
+            <span class="filter-chip" data-filter="oportunidadeMPE" data-value="Cota MPE" onclick="toggleFilter(this)">Cota 25%</span>
+            <span class="filter-chip" data-filter="oportunidadeMPE" data-value="Ampla" onclick="toggleFilter(this)">Ampla</span>
+          </div>
+          <span class="filter-clear" onclick="clearFilter('oportunidadeMPE')">Limpar</span>
+        </div>
+      </div>
+
+      <div class="filter-section" data-section="faixaValor">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <div class="filter-title">Faixa de Valor <span class="filter-badge" id="badge-faixaValor"></span></div>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+        <div class="filter-body">
+          <div class="filter-group" id="filterFaixaValor">
+            <span class="filter-chip" data-filter="faixaValor" data-value="Ate R$ 80 mil" onclick="toggleFilter(this)">Ate R$ 80 mil</span>
+            <span class="filter-chip" data-filter="faixaValor" data-value="R$ 80 mil a R$ 500 mil" onclick="toggleFilter(this)">R$ 80 mil - 500 mil</span>
+            <span class="filter-chip" data-filter="faixaValor" data-value="R$ 500 mil a R$ 2 mi" onclick="toggleFilter(this)">R$ 500 mil - 2 mi</span>
+            <span class="filter-chip" data-filter="faixaValor" data-value="Acima de R$ 2 mi" onclick="toggleFilter(this)">Acima de R$ 2 mi</span>
+          </div>
+          <span class="filter-clear" onclick="clearFilter('faixaValor')">Limpar</span>
+        </div>
+      </div>
+
+      <div class="filter-section" data-section="urgencia">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <div class="filter-title">Urgencia <span class="filter-badge" id="badge-urgencia"></span></div>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+        <div class="filter-body">
+          <div class="filter-group" id="filterUrgencia">
+            <span class="filter-chip" data-filter="urgencia" data-value="Urgente" onclick="toggleFilter(this)">Urgente (ate 3 dias)</span>
+            <span class="filter-chip" data-filter="urgencia" data-value="Atencao" onclick="toggleFilter(this)">Atencao (4-7 dias)</span>
+            <span class="filter-chip" data-filter="urgencia" data-value="Tranquilo" onclick="toggleFilter(this)">Tranquilo (8+ dias)</span>
+          </div>
+          <span class="filter-clear" onclick="clearFilter('urgencia')">Limpar</span>
+        </div>
+      </div>
+
+      <div class="filter-section" data-section="uf">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <div class="filter-title">UF <span class="filter-badge" id="badge-uf"></span></div>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+        <div class="filter-body">
+          <div class="filter-group" id="filterUf"></div>
+          <span class="filter-clear" onclick="clearFilter('uf')">Limpar</span>
+        </div>
+      </div>
+
+      <div class="mpe-note">
+        <div class="mpe-note-title">Vantagens para MPE nas Compras Publicas</div>
+        <div class="mpe-level">
+          <span class="mpe-dot green"></span>
+          <div><span class="mpe-label">Exclusiva MPE</span> — Licitacoes ate R$ 80.000 sao exclusivas para micro e pequenas empresas (LC 123/2006, Art. 47).</div>
+        </div>
+        <div class="mpe-level">
+          <span class="mpe-dot blue"></span>
+          <div><span class="mpe-label">Cota de 25%</span> — Em compras divisiveis, 25% do objeto deve ser reservado para MPEs (LC 123/2006, Art. 48).</div>
+        </div>
+        <div class="mpe-level">
+          <span class="mpe-dot gray"></span>
+          <div><span class="mpe-label">Empate Ficto</span> — Proposta de MPE ate 5% acima da melhor oferta e considerada empatada (LC 123/2006, Art. 44).</div>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        PIPPA Compras Publicas v1.0<br>
+        Sebrae Nacional — Observatorio<br>
+        Fonte: PNCP (pncp.gov.br)
+      </div>
+    </aside>
+
+    <main class="main" id="mainContent">
+
+      <div class="kpi-bar">
+        <div class="kpi-card">
+          <div class="kpi-value kpi-total" id="kpiTotal">—</div>
+          <div class="kpi-label">Licitacoes</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value kpi-exclusiva" id="kpiExclusiva">—</div>
+          <div class="kpi-label">Exclusivas MPE</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value kpi-pregao" id="kpiPregao">—</div>
+          <div class="kpi-label">Pregoes</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value kpi-dispensa" id="kpiDispensa">—</div>
+          <div class="kpi-label">Dispensas</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value kpi-valor" id="kpiValor">—</div>
+          <div class="kpi-label">Valor Total Est.</div>
+        </div>
+      </div>
+
+      <div class="kpi-bar-secondary">
+        <div class="kpi-card-sm">
+          <div class="kpi-value" style="color:var(--exclusiva)" id="kpiAte80k">—</div>
+          <div class="kpi-label">Ate R$ 80 mil</div>
+        </div>
+        <div class="kpi-card-sm">
+          <div class="kpi-value" style="color:var(--pregao)" id="kpiSRP">—</div>
+          <div class="kpi-label">Registro Precos</div>
+        </div>
+        <div class="kpi-card-sm">
+          <div class="kpi-value" style="color:var(--concorrencia)" id="kpiOrgaos">—</div>
+          <div class="kpi-label">Orgaos</div>
+        </div>
+        <div class="kpi-card-sm">
+          <div class="kpi-value" style="color:var(--dispensa)" id="kpiUFs">—</div>
+          <div class="kpi-label">UFs</div>
+        </div>
+        <div class="kpi-card-sm">
+          <div class="kpi-value" style="color:var(--urgente)" id="kpiUrgentes">—</div>
+          <div class="kpi-label">Urgentes</div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">Por Modalidade</div>
+          <div class="chart-wrapper"><canvas id="chartModalidade"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Por Oportunidade MPE</div>
+          <div class="chart-wrapper"><canvas id="chartMPE"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Por UF (Top 10)</div>
+          <div class="chart-wrapper"><canvas id="chartUF"></canvas></div>
+        </div>
+      </div>
+
+      <div id="newsContainer">
+        <div class="empty-state">
+          <div class="empty-state-icon">🏛️</div>
+          <div class="empty-state-title">Clique em "Buscar Licitacoes" para carregar</div>
+          <p>O painel buscara licitacoes abertas no Portal Nacional de Contratacoes Publicas (PNCP), classificando por modalidade, valor e oportunidade para MPEs.</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">Buscando licitacoes...</div>
+    <div class="loading-progress" id="loadingProgress"></div>
+  </div>
+
+  <div class="toast" id="toast">Copiado!</div>
+
+  <div class="info-modal-backdrop" id="exportModal" onclick="if(event.target===this)closeExportModal()">
+    <div class="info-modal">
+      <button class="info-close" onclick="closeExportModal()">&times;</button>
+      <h2>Exportar para WhatsApp</h2>
+      <div id="exportContent" style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;font-size:13px;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;font-family:'Segoe UI',sans-serif;"></div>
+      <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">
+        <button class="btn btn-outline" onclick="closeExportModal()">Fechar</button>
+        <button class="btn" onclick="copyExport()">Copiar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-modal-backdrop" id="infoModal" onclick="if(event.target===this)toggleInfoModal()">
+    <div class="info-modal">
+      <button class="info-close" onclick="toggleInfoModal()">&times;</button>
+      <h2>PIPPA Compras Publicas</h2>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">Radar de oportunidades de venda ao governo federal, estadual e municipal para micro e pequenas empresas.</p>
+
+      <h3>Fonte de Dados</h3>
+      <ul>
+        <li>Portal Nacional de Contratacoes Publicas (PNCP) — API oficial do governo, mandatoria pela Lei 14.133/2021 (Nova Lei de Licitacoes).</li>
+        <li>Dados atualizados em tempo real, sem autenticacao, cobrindo todas as esferas (federal, estadual e municipal).</li>
+      </ul>
+
+      <h3>O que o Painel Faz</h3>
+      <ul>
+        <li>Busca licitacoes abertas em 5 modalidades: Pregao Eletronico, Dispensa, Concorrencia, Inexigibilidade e Credenciamento.</li>
+        <li>Classifica automaticamente por oportunidade MPE: <strong>Exclusiva</strong> (ate R$ 80 mil), <strong>Cota 25%</strong> (SRP) ou <strong>Ampla</strong>.</li>
+        <li>Calcula urgencia em dias ate o encerramento da proposta (urgente, atencao, tranquilo).</li>
+      </ul>
+
+      <h3>Indicadores (KPIs)</h3>
+      <ul>
+        <li>Total de licitacoes, exclusivas MPE, pregoes, dispensas, valor total estimado.</li>
+        <li>Licitacoes ate R$ 80 mil, registro de precos (SRP), orgaos compradores, UFs e urgentes.</li>
+      </ul>
+
+      <h3>Graficos</h3>
+      <ul>
+        <li>Distribuicao por modalidade (rosca), por oportunidade MPE (rosca) e top 10 UFs (barras).</li>
+      </ul>
+
+      <h3>Filtros</h3>
+      <ul>
+        <li>Modalidade, oportunidade MPE, faixa de valor, urgencia, UF e busca por texto no objeto.</li>
+        <li>Selecao de periodo (data inicial e final) e filtragem por UF no cabecalho.</li>
+      </ul>
+
+      <h3>Recursos</h3>
+      <ul>
+        <li>Cards expandiveis com detalhes completos: objeto, orgao, valor, amparo legal, processo e links diretos para o PNCP e sistema de origem.</li>
+        <li>Exportar WhatsApp: gera resumo executivo com oportunidades exclusivas MPE.</li>
+      </ul>
+
+      <h3>Base Legal — Vantagens para MPE</h3>
+      <ul>
+        <li><strong>LC 123/2006, Art. 47:</strong> Licitacoes ate R$ 80.000 sao exclusivas para MPEs.</li>
+        <li><strong>LC 123/2006, Art. 48:</strong> Cota de 25% obrigatoria para MPEs em compras divisiveis.</li>
+        <li><strong>LC 123/2006, Art. 44:</strong> Empate ficto — proposta de MPE ate 5% acima da melhor e considerada empatada.</li>
+        <li><strong>Lei 14.133/2021:</strong> Nova Lei de Licitacoes — consolida e amplia vantagens para pequenos negocios.</li>
+      </ul>
+
+      <div class="info-footer">
+        PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas<br>
+        Sebrae Nacional — Observatorio Setorial Territorial<br>
+        Fonte: PNCP (pncp.gov.br)
+      </div>
+    </div>
+  </div>
+
+<script>
+// =====================================================
+// PIPPA COMPRAS PUBLICAS — PNCP MONITOR ENGINE
+// =====================================================
+
+const PNCP_BASE = 'https://pncp.gov.br/api/consulta/v1';
+const PNCP_PROXY = 'https://api.allorigins.win/raw?url=';
+
+const CAPITAIS = {
+  'AC': {'Rio Branco': '1200401'}, 'AL': {'Maceió': '2704302'}, 'AM': {'Manaus': '1302603'},
+  'AP': {'Macapá': '1600303'}, 'BA': {'Salvador': '2927408'}, 'CE': {'Fortaleza': '2304400'},
+  'DF': {'Brasília': '5300108'}, 'ES': {'Vitória': '3205309'}, 'GO': {'Goiânia': '5208707'},
+  'MA': {'São Luís': '2111300'}, 'MG': {'Belo Horizonte': '3106200'}, 'MS': {'Campo Grande': '5002704'},
+  'MT': {'Cuiabá': '5103403'}, 'PA': {'Belém': '1501402'}, 'PB': {'João Pessoa': '2507507'},
+  'PE': {'Recife': '2611606'}, 'PI': {'Teresina': '2211001'}, 'PR': {'Curitiba': '4106902'},
+  'RJ': {'Rio de Janeiro': '3304557'}, 'RN': {'Natal': '2408102'}, 'RO': {'Porto Velho': '1100205'},
+  'RR': {'Boa Vista': '1400100'}, 'RS': {'Porto Alegre': '4314902'}, 'SC': {'Florianópolis': '4205407'},
+  'SE': {'Aracaju': '2800308'}, 'SP': {'São Paulo': '3550308'}, 'TO': {'Palmas': '1721000'},
+};
+
+const CIDADES_COMUNS = {
+  'Campinas': '3509502', 'Guarulhos': '3518800', 'Ribeirão Preto': '3543402',
+  'Santos': '3548500', 'São José dos Campos': '3549904', 'Sorocaba': '3552205',
+  'Uberlândia': '3170206', 'Juiz de Fora': '3136702', 'Contagem': '3118601',
+  'Londrina': '4113700', 'Maringá': '4115200', 'Joinville': '4209102',
+  'Blumenau': '4202404', 'Caxias do Sul': '4305108', 'Canoas': '4304606',
+  'Niterói': '3303302', 'São Gonçalo': '3304904', 'Duque de Caxias': '3301702',
+  'Goiânia': '5208707', 'Aparecida de Goiânia': '5201405',
+  'São Luís': '2111300', 'Teresina': '2211001', 'Manaus': '1302603',
+};
+
+const MODALIDADES = [
+  { id: 6, nome: 'Pregão - Eletrônico' },
+  { id: 8, nome: 'Dispensa de Licitação' },
+  { id: 5, nome: 'Concorrência - Eletrônica' },
+  { id: 9, nome: 'Inexigibilidade de Licitação' },
+  { id: 12, nome: 'Credenciamento' },
+];
+
+let allItems = [];
+let filteredItems = [];
+let activeFilters = { setor: [], modalidade: [], oportunidadeMPE: [], faixaValor: [], urgencia: [], uf: [] };
+
+const SETOR_KEYWORDS = {
+  'alimentacao': ['aliment','refeicao','refeição','merenda','cozinha','nutricao','nutrição','generos alimenticios','gêneros alimentícios','cafe','café','agua mineral','água mineral','lanch'],
+  'construcao': ['construcao','construção','engenharia','obra','reforma','pavimenta','concret','ciment','areia','brita','tijolo','eletroduto','tubulação','tubulacao','pintura','impermeabiliz'],
+  'ti': ['software','computador','notebook','sistema','informatica','informática','tecnologia da informacao','tecnologia da informação','licenca','licença','servidor','cloud','nuvem','TI ','impressora','monitor','switch','firewall','rede de dados'],
+  'saude': ['medicament','farmac','hospitalar','odontolog','laboratori','cirurgi','ambulanc','medico','médico','saude','saúde','vacina','oxigenio','oxigênio','anestesi'],
+  'limpeza': ['limpeza','higien','produto de limpeza','desinfetant','detergent','conservacao predial','conservação predial','jardinagem','zeladoria','dedetiz'],
+  'mobiliario': ['mobiliario','mobiliário','movel','móvel','cadeira','mesa','armario','armário','estante','arquivo','birô'],
+  'veiculos': ['veiculo','veículo','automotiv','automovel','automóvel','caminhao','caminhão','onibus','ônibus','van ','ambulancia','ambulância','motocicleta','pneu','combustivel','combustível','lubrificant'],
+  'grafica': ['grafica','gráfica','impressao','impressão','banner','placa','sinaliz','adesivo','folder','cartilha','panfleto','publicacao','publicação','encadernacao','encadernação'],
+  'textil': ['textil','têxtil','uniforme','fardamento','camiseta','vestimenta','tecido','confeccao','confecção','EPI ','equipamento de protecao','equipamento de proteção','luva','bota','calca','calça'],
+  'combustivel': ['combustivel','combustível','gasolina','diesel','etanol','alcool','álcool','posto de combustivel','abasteciment'],
+  'eletrico': ['eletrico','elétrico','eletric','luminaria','luminária','lamp','iluminacao','iluminação','cabo eletric','cabo elétric','disjuntor','tomada','gerador','nobreak','energia'],
+  'seguranca': ['seguranca','segurança','vigilancia','vigilância','monitorament','camera','câmera','alarme','portaria','controle de acesso','CFTV','ronda'],
+  'educacao': ['educacao','educação','escolar','didatico','didático','livro','capacitacao','capacitação','treinamento','curso ','apostila','pedagogic'],
+  'agro': ['agropecuar','agricol','agricola','agrícola','semente','adubo','fertilizant','inseticida','herbicida','irrigacao','irrigação','trator','implemento','pecuari','racao','ração','veterinar']
+};
+let charts = {};
+
+// ── Classification Engine ────────────────────────────────────────
+
+function classifyMPE(item) {
+  const valor = item._valor || item.valorTotalEstimado || 0;
+  if (valor > 0 && valor <= 80000) return 'Exclusiva MPE';
+  if (item.srp) return 'Cota MPE';
+  return 'Ampla';
+}
+
+function classifyFaixaValor(item) {
+  const v = item.valorTotalEstimado || 0;
+  if (v <= 0) return 'Nao informado';
+  if (v <= 80000) return 'Ate R$ 80 mil';
+  if (v <= 500000) return 'R$ 80 mil a R$ 500 mil';
+  if (v <= 2000000) return 'R$ 500 mil a R$ 2 mi';
+  return 'Acima de R$ 2 mi';
+}
+
+function classifyUrgencia(item) {
+  const enc = item.dataEncerramentoProposta;
+  if (!enc) return 'Indefinido';
+  const diff = Math.ceil((new Date(enc) - new Date()) / (1000*60*60*24));
+  if (diff <= 0) return 'Encerrada';
+  if (diff <= 3) return 'Urgente';
+  if (diff <= 7) return 'Atencao';
+  return 'Tranquilo';
+}
+
+function diasRestantes(item) {
+  const enc = item.dataEncerramentoProposta;
+  if (!enc) return null;
+  return Math.ceil((new Date(enc) - new Date()) / (1000*60*60*24));
+}
+
+function formatCurrency(v) {
+  if (!v || v <= 0) return 'N/I';
+  if (v >= 1e9) return 'R$ ' + (v/1e9).toFixed(1) + ' bi';
+  if (v >= 1e6) return 'R$ ' + (v/1e6).toFixed(1) + ' mi';
+  if (v >= 1e3) return 'R$ ' + (v/1e3).toFixed(0) + ' mil';
+  return 'R$ ' + v.toFixed(0);
+}
+
+function formatDate(d) {
+  if (!d) return 'N/I';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('pt-BR') + ' ' + dt.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+}
+
+function sanitizeValor(item) {
+  const est = item.valorTotalEstimado || 0;
+  const hom = item.valorTotalHomologado || 0;
+  // Prefere homologado quando disponível (mais confiável)
+  if (hom > 0 && est > 0) {
+    // Se estimado é absurdamente maior que homologado (>1000x), é erro de cadastro
+    if (est / hom > 1000) return { valor: hom, outlier: true };
+    return { valor: est, outlier: false };
+  }
+  // Outlier: dispensa acima de R$ 1 bi é quase certamente erro
+  if (est > 1e9 && (item.modalidadeNome || '').includes('Dispensa'))
+    return { valor: est, outlier: true };
+  // Outlier: qualquer licitação acima de R$ 10 bi recebe alerta
+  if (est > 1e10)
+    return { valor: est, outlier: true };
+  return { valor: est > 0 ? est : hom, outlier: false };
+}
+
+function enrichItem(item) {
+  const uo = item.unidadeOrgao || {};
+  item._modalidade = item.modalidadeNome || 'Outra';
+  item._orgao = (item.orgaoEntidade || {}).razaoSocial || 'N/I';
+  item._uf = uo.ufSigla || 'N/I';
+  item._municipio = uo.municipioNome || 'N/I';
+  item._objeto = item.objetoCompra || 'Sem descricao';
+  const { valor, outlier } = sanitizeValor(item);
+  item._valor = valor;
+  item._outlier = outlier;
+  item._oportunidadeMPE = classifyMPE(item);
+  item._faixaValor = classifyFaixaValor(item);
+  item._urgencia = classifyUrgencia(item);
+  item._diasRestantes = diasRestantes(item);
+  return item;
+}
+
+// ── Fetch ────────────────────────────────────────────────────────
+
+const UF_PREFIXES = {
+  'AC':'12','AL':'27','AM':'13','AP':'16','BA':'29','CE':'23','DF':'53','ES':'32',
+  'GO':'52','MA':'21','MG':'31','MS':'50','MT':'51','PA':'15','PB':'25','PE':'26',
+  'PI':'22','PR':'41','RJ':'33','RN':'24','RO':'11','RR':'14','RS':'43','SC':'42',
+  'SE':'28','SP':'35','TO':'17'
+};
+
+function resolveCodigoMunicipio() {
+  return document.getElementById('munInput').value || '';
+}
+
+function onUfChange() {
+  const uf = document.getElementById('ufInput').value;
+  const sel = document.getElementById('munInput');
+  sel.innerHTML = '<option value="">Municipio</option>';
+  if (!uf) return;
+  const prefix = UF_PREFIXES[uf] || '';
+  const caps = CAPITAIS[uf] || {};
+  const added = new Set();
+  Object.entries(caps).forEach(([nome, cod]) => {
+    sel.innerHTML += `<option value="${cod}">${nome}</option>`;
+    added.add(cod);
+  });
+  Object.entries(CIDADES_COMUNS).forEach(([nome, cod]) => {
+    if (cod.startsWith(prefix) && !added.has(cod)) {
+      sel.innerHTML += `<option value="${cod}">${nome}</option>`;
+    }
+  });
+}
+
+async function fetchPNCP(modalidadeId, pagina = 1) {
+  const fromEl = document.getElementById('dateFrom');
+  const toEl = document.getElementById('dateTo');
+  const di = fromEl.value.replace(/-/g,'');
+  const df = toEl.value.replace(/-/g,'');
+  const uf = document.getElementById('ufInput').value;
+  const mun = resolveCodigoMunicipio();
+
+  let url = `${PNCP_BASE}/contratacoes/publicacao?dataInicial=${di}&dataFinal=${df}&codigoModalidadeContratacao=${modalidadeId}&pagina=${pagina}&tamanhoPagina=50`;
+  if (uf) url += `&uf=${uf}`;
+  if (mun) url += `&codigoMunicipioIbge=${mun}`;
+
+  try {
+    const proxyUrl = PNCP_PROXY + encodeURIComponent(url);
+    const resp = await fetch(proxyUrl);
+    if (!resp.ok) {
+      const direct = await fetch(url);
+      if (!direct.ok) return [];
+      const data = await direct.json();
+      return Array.isArray(data) ? data : (data.data || data.content || []);
+    }
+    const data = await resp.json();
+    return Array.isArray(data) ? data : (data.data || data.content || []);
+  } catch (e) {
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) return [];
+      const data = await resp.json();
+      return Array.isArray(data) ? data : (data.data || data.content || []);
+    } catch (e2) {
+      console.warn(`Falha modalidade ${modalidadeId}:`, e2);
+      return [];
+    }
+  }
+}
+
+async function fetchData() {
+  const btn = document.getElementById('btnFetch');
+  const overlay = document.getElementById('loadingOverlay');
+  const loadText = document.getElementById('loadingText');
+  const loadProg = document.getElementById('loadingProgress');
+
+  btn.disabled = true;
+  overlay.classList.add('active');
+  allItems = [];
+
+  for (let i = 0; i < MODALIDADES.length; i++) {
+    const mod = MODALIDADES[i];
+    loadText.textContent = `Buscando ${mod.nome}...`;
+    loadProg.textContent = `${i+1} de ${MODALIDADES.length} modalidades`;
+
+    let page = 1;
+    let hasMore = true;
+    while (hasMore && page <= 5) {
+      const items = await fetchPNCP(mod.id, page);
+      if (items.length === 0) {
+        hasMore = false;
+      } else {
+        allItems.push(...items);
+        page++;
+        if (items.length < 50) hasMore = false;
+      }
+    }
+  }
+
+  allItems = allItems.map(enrichItem);
+
+  // Deduplicate
+  const seen = new Set();
+  allItems = allItems.filter(item => {
+    const key = item.numeroControlePNCP || `${item._orgao}-${item.sequencialCompra}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  // Filter out already closed
+  allItems = allItems.filter(item => item._urgencia !== 'Encerrada');
+
+  // Sort by urgency
+  allItems.sort((a, b) => (a._diasRestantes || 999) - (b._diasRestantes || 999));
+
+  overlay.classList.remove('active');
+  btn.disabled = false;
+
+  buildUfFilterChips();
+  applyFilters();
+  updateThermometer();
+}
+
+// ── Filters ──────────────────────────────────────────────────────
+
+function toggleSection(el) {
+  el.closest('.filter-section').classList.toggle('open');
+}
+
+function toggleFilter(chip) {
+  chip.classList.toggle('active');
+  const filter = chip.dataset.filter;
+  const value = chip.dataset.value;
+  if (chip.classList.contains('active')) {
+    activeFilters[filter].push(value);
+  } else {
+    activeFilters[filter] = activeFilters[filter].filter(v => v !== value);
+  }
+  updateBadge(filter);
+  applyFilters();
+}
+
+function clearFilter(filter) {
+  activeFilters[filter] = [];
+  document.querySelectorAll(`[data-filter="${filter}"]`).forEach(c => c.classList.remove('active'));
+  updateBadge(filter);
+  applyFilters();
+}
+
+function updateBadge(filter) {
+  const badge = document.getElementById(`badge-${filter}`);
+  if (!badge) return;
+  const count = activeFilters[filter].length;
+  badge.textContent = count;
+  badge.classList.toggle('visible', count > 0);
+}
+
+function buildUfFilterChips() {
+  const ufs = [...new Set(allItems.map(i => i._uf))].filter(u => u !== 'N/I').sort();
+  const container = document.getElementById('filterUf');
+  container.innerHTML = ufs.map(uf =>
+    `<span class="filter-chip" data-filter="uf" data-value="${uf}" onclick="toggleFilter(this)">${uf}</span>`
+  ).join('');
+}
+
+function applyFilters() {
+  const search = (document.getElementById('searchInput').value || '').toLowerCase();
+  filteredItems = allItems.filter(item => {
+    if (search && !item._objeto.toLowerCase().includes(search)) return false;
+    if (activeFilters.modalidade.length && !activeFilters.modalidade.includes(item._modalidade)) return false;
+    if (activeFilters.oportunidadeMPE.length && !activeFilters.oportunidadeMPE.includes(item._oportunidadeMPE)) return false;
+    if (activeFilters.faixaValor.length && !activeFilters.faixaValor.includes(item._faixaValor)) return false;
+    if (activeFilters.urgencia.length && !activeFilters.urgencia.includes(item._urgencia)) return false;
+    if (activeFilters.uf.length && !activeFilters.uf.includes(item._uf)) return false;
+    if (activeFilters.setor.length) {
+      const obj = (item._objeto || item.objetoCompra || '').toLowerCase();
+      const match = activeFilters.setor.some(setor => {
+        const kws = SETOR_KEYWORDS[setor] || [];
+        return kws.some(kw => obj.includes(kw.toLowerCase()));
+      });
+      if (!match) return false;
+    }
+    return true;
+  });
+  renderKPIs();
+  renderCharts();
+  renderCards();
+}
+
+// ── KPIs ─────────────────────────────────────────────────────────
+
+function renderKPIs() {
+  const items = filteredItems;
+  document.getElementById('kpiTotal').textContent = items.length;
+  document.getElementById('kpiExclusiva').textContent = items.filter(i => i._oportunidadeMPE === 'Exclusiva MPE').length;
+  document.getElementById('kpiPregao').textContent = items.filter(i => i._modalidade.includes('Pregão')).length;
+  document.getElementById('kpiDispensa').textContent = items.filter(i => i._modalidade.includes('Dispensa')).length;
+
+  const valorTotal = items.reduce((s, i) => s + (i._valor || 0), 0);
+  document.getElementById('kpiValor').textContent = formatCurrency(valorTotal);
+
+  document.getElementById('kpiAte80k').textContent = items.filter(i => i._faixaValor === 'Ate R$ 80 mil').length;
+  document.getElementById('kpiSRP').textContent = items.filter(i => i.srp).length;
+  document.getElementById('kpiOrgaos').textContent = new Set(items.map(i => i._orgao)).size;
+  document.getElementById('kpiUFs').textContent = new Set(items.map(i => i._uf).filter(u => u !== 'N/I')).size;
+  document.getElementById('kpiUrgentes').textContent = items.filter(i => i._urgencia === 'Urgente').length;
+}
+
+// ── Charts ───────────────────────────────────────────────────────
+
+function countBy(items, key) {
+  const map = {};
+  items.forEach(i => { const v = i[key]; map[v] = (map[v] || 0) + 1; });
+  return map;
+}
+
+function renderCharts() {
+  const items = filteredItems;
+  const chartOpts = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: '#8b8fa8', font: { size: 11 } } } }
+  };
+
+  // Modalidade
+  const modData = countBy(items, '_modalidade');
+  function modColor(k) {
+    if (k.includes('Pregão')) return '#4f8cff';
+    if (k.includes('Dispensa')) return '#f59e0b';
+    if (k.includes('Concorrência')) return '#a855f7';
+    if (k.includes('Inexigibilidade')) return '#ef4444';
+    if (k.includes('Credenciamento')) return '#f472b6';
+    return '#14b8a6';
+  }
+  if (charts.modalidade) charts.modalidade.destroy();
+  charts.modalidade = new Chart(document.getElementById('chartModalidade'), {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(modData).map(k => k.replace(' - Eletrônico','').replace(' - Eletrônica','').replace(' de Licitação','')),
+      datasets: [{ data: Object.values(modData), backgroundColor: Object.keys(modData).map(k => modColor(k)), borderWidth: 0 }]
+    },
+    options: { ...chartOpts, cutout: '65%' }
+  });
+
+  // MPE
+  const mpeData = countBy(items, '_oportunidadeMPE');
+  const mpeColors = { 'Exclusiva MPE': '#22c55e', 'Cota MPE': '#f59e0b', 'Ampla': '#a855f7' };
+  if (charts.mpe) charts.mpe.destroy();
+  charts.mpe = new Chart(document.getElementById('chartMPE'), {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(mpeData),
+      datasets: [{ data: Object.values(mpeData), backgroundColor: Object.keys(mpeData).map(k => mpeColors[k] || '#6b7280'), borderWidth: 0 }]
+    },
+    options: { ...chartOpts, cutout: '65%' }
+  });
+
+  // UF
+  const ufData = countBy(items, '_uf');
+  const ufSorted = Object.entries(ufData).sort((a,b) => b[1] - a[1]).slice(0, 10);
+  if (charts.uf) charts.uf.destroy();
+  charts.uf = new Chart(document.getElementById('chartUF'), {
+    type: 'bar',
+    data: {
+      labels: ufSorted.map(e => e[0]),
+      datasets: [{ data: ufSorted.map(e => e[1]), backgroundColor: '#4f8cff', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.8 }]
+    },
+    options: {
+      ...chartOpts,
+      indexAxis: 'y',
+      plugins: { ...chartOpts.plugins, legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#2e3348' }, ticks: { color: '#8b8fa8' } },
+        y: { grid: { display: false }, ticks: { color: '#e4e6ef', font: { size: 11 } } }
+      }
+    }
+  });
+}
+
+// ── Cards ────────────────────────────────────────────────────────
+
+function getModalidadeIcon(mod) {
+  if (mod.includes('Pregão')) return '⚡';
+  if (mod.includes('Dispensa')) return '📋';
+  if (mod.includes('Concorrência')) return '🏛️';
+  if (mod.includes('Inexigibilidade')) return '🔒';
+  if (mod.includes('Credenciamento')) return '📝';
+  return '📄';
+}
+
+function getModalidadeBadgeClass(mod) {
+  if (mod.includes('Pregão')) return 'badge-pregao';
+  if (mod.includes('Dispensa')) return 'badge-dispensa';
+  if (mod.includes('Concorrência')) return 'badge-concorrencia';
+  if (mod.includes('Inexigibilidade')) return 'badge-inexigibilidade';
+  if (mod.includes('Credenciamento')) return 'badge-credenciamento';
+  return 'badge-pregao';
+}
+
+function renderCards() {
+  const container = document.getElementById('newsContainer');
+  if (filteredItems.length === 0 && allItems.length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">🏛️</div>
+      <div class="empty-state-title">Clique em "Buscar Licitacoes" para carregar</div>
+      <p>O painel buscara licitacoes abertas no Portal Nacional de Contratacoes Publicas (PNCP).</p>
+    </div>`;
+    return;
+  }
+
+  if (filteredItems.length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">🔍</div>
+      <div class="empty-state-title">Nenhuma licitacao encontrada com os filtros atuais</div>
+      <p>Tente remover ou alterar os filtros na barra lateral.</p>
+    </div>`;
+    return;
+  }
+
+  // Group by oportunidade
+  const groups = {};
+  filteredItems.forEach(item => {
+    const g = item._oportunidadeMPE;
+    if (!groups[g]) groups[g] = [];
+    groups[g].push(item);
+  });
+
+  const order = ['Exclusiva MPE', 'Cota MPE', 'Ampla'];
+  let html = '';
+
+  order.forEach(group => {
+    const items = groups[group];
+    if (!items || items.length === 0) return;
+
+    html += `<div class="section-header">
+      <span class="section-title">${group}</span>
+      <span class="section-count">${items.length} licitacoes</span>
+    </div>
+    <div class="news-list">`;
+
+    items.forEach((item, idx) => {
+      const cardClass = item._oportunidadeMPE === 'Exclusiva MPE' ? 'exclusiva-mpe' :
+                         item._urgencia === 'Urgente' ? 'urgente' : '';
+      const urgTag = item._urgencia === 'Urgente' ? `<span class="news-tag tag-urgente">${item._diasRestantes}d restantes</span>` :
+                     item._urgencia === 'Atencao' ? `<span class="news-tag tag-urgente" style="background:rgba(245,158,11,0.15);color:#f59e0b">${item._diasRestantes}d restantes</span>` :
+                     item._diasRestantes ? `<span class="news-tag" style="background:rgba(34,197,94,0.1);color:#22c55e">${item._diasRestantes}d restantes</span>` : '';
+      const valorTag = item._valor > 0 ? `<span class="news-tag tag-valor">${formatCurrency(item._valor)}</span>` : '';
+      const outlierTag = item._outlier ? '<span class="news-tag tag-urgente" title="Valor possivelmente incorreto na fonte">⚠ Valor suspeito</span>' : '';
+      const mpeTag = item._oportunidadeMPE === 'Exclusiva MPE' ? `<span class="news-tag tag-exclusiva">Exclusiva MPE</span>` :
+                     item._oportunidadeMPE === 'Cota MPE' ? `<span class="news-tag tag-cota">Cota 25% MPE</span>` : '';
+      const srpTag = item.srp ? '<span class="news-tag" style="background:rgba(79,140,255,0.1);color:#4f8cff">SRP</span>' : '';
+      const linkOrigem = item.linkSistemaOrigem ? `<a href="${item.linkSistemaOrigem}" target="_blank">Acessar no sistema</a>` : 'N/I';
+      const linkPNCP = item.numeroControlePNCP ? `<a href="https://pncp.gov.br/app/editais/${item.numeroControlePNCP}" target="_blank">Ver no PNCP</a>` : '';
+      const amparo = item.amparoLegal ? item.amparoLegal.nome : 'N/I';
+
+      html += `<div class="news-card ${cardClass}" id="card-${group}-${idx}">
+        <div class="news-header" onclick="document.getElementById('card-${group}-${idx}').classList.toggle('expanded')">
+          <div class="news-status-badge ${getModalidadeBadgeClass(item._modalidade)}">${getModalidadeIcon(item._modalidade)}</div>
+          <div class="news-info">
+            <div class="news-title">${item._objeto.length > 150 ? item._objeto.slice(0,150) + '...' : item._objeto}</div>
+            <div class="news-meta">
+              <span class="news-source">${item._orgao.length > 40 ? item._orgao.slice(0,40) + '...' : item._orgao}</span>
+              <span>${item._uf} — ${item._municipio}</span>
+              <span>Encerra: ${formatDate(item.dataEncerramentoProposta)}</span>
+            </div>
+            <div class="news-tags">
+              <span class="news-tag tag-modalidade">${item._modalidade.replace(' - Eletrônico','').replace(' - Eletrônica','').replace(' de Licitação','')}</span>
+              ${mpeTag}${valorTag}${outlierTag}${urgTag}${srpTag}
+              <span class="news-tag tag-uf">${item._uf}</span>
+            </div>
+          </div>
+          <span class="news-expand">&#9660;</span>
+        </div>
+        <div class="news-details">
+          <div class="detail-grid">
+            <div class="detail-item">
+              <div class="detail-label">Objeto Completo</div>
+              <div class="detail-value">${item._objeto}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Orgao</div>
+              <div class="detail-value">${item._orgao}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Municipio / UF</div>
+              <div class="detail-value">${item._municipio} / ${item._uf}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Valor Estimado</div>
+              <div class="detail-value">${item._valor > 0 ? 'R$ ' + item._valor.toLocaleString('pt-BR', {minimumFractionDigits:2}) : 'Nao informado'}${item._outlier ? ' <span style="color:var(--urgente);font-size:11px">⚠ Valor possivelmente incorreto na fonte (estimado: R$ ' + (item.valorTotalEstimado||0).toLocaleString('pt-BR') + ' / homologado: R$ ' + (item.valorTotalHomologado||0).toLocaleString('pt-BR') + ')</span>' : ''}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Modalidade</div>
+              <div class="detail-value">${item._modalidade}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Modo de Disputa</div>
+              <div class="detail-value">${item.modoDisputaNome || 'N/I'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Abertura Propostas</div>
+              <div class="detail-value">${formatDate(item.dataAberturaProposta)}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Encerramento</div>
+              <div class="detail-value">${formatDate(item.dataEncerramentoProposta)}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Amparo Legal</div>
+              <div class="detail-value">${amparo}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Processo</div>
+              <div class="detail-value">${item.processo || 'N/I'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Numero PNCP</div>
+              <div class="detail-value">${item.numeroControlePNCP || 'N/I'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Links</div>
+              <div class="detail-value">${linkPNCP} ${item.linkSistemaOrigem ? ' | ' + linkOrigem : ''}</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+}
+
+// ── Thermometer ──────────────────────────────────────────────────
+
+function updateThermometer() {
+  const el = document.getElementById('thermometer');
+  const exclusivas = allItems.filter(i => i._oportunidadeMPE === 'Exclusiva MPE').length;
+  const urgentes = allItems.filter(i => i._urgencia === 'Urgente').length;
+
+  if (urgentes > 5) {
+    el.className = 'thermometer thermo-red';
+    el.textContent = `${urgentes} urgentes — ${allItems.length} abertas`;
+  } else if (exclusivas > 0) {
+    el.className = 'thermometer thermo-green';
+    el.textContent = `${exclusivas} exclusivas MPE — ${allItems.length} abertas`;
+  } else {
+    el.className = 'thermometer thermo-yellow';
+    el.textContent = `${allItems.length} licitacoes abertas`;
+  }
+}
+
+// ── WhatsApp Export ──────────────────────────────────────────────
+
+let exportText = '';
+
+function generateExportText() {
+  const exclusivas = filteredItems.filter(i => i._oportunidadeMPE === 'Exclusiva MPE');
+  const cotas = filteredItems.filter(i => i._oportunidadeMPE === 'Cota MPE');
+  const urgentes = filteredItems.filter(i => i._urgencia === 'Urgente');
+  const valorTotal = filteredItems.reduce((s,i) => s + (i._valor || 0), 0);
+
+  let t = `🏛️ *PIPPA Compras Publicas*\n`;
+  t += `📅 ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+  t += `📊 *Resumo:* ${filteredItems.length} licitacoes abertas\n`;
+  t += `✅ *Exclusivas MPE:* ${exclusivas.length}\n`;
+  t += `📋 *Cota MPE (25%):* ${cotas.length}\n`;
+  t += `⚠️ *Urgentes (ate 3 dias):* ${urgentes.length}\n`;
+  t += `💰 *Valor total estimado:* ${formatCurrency(valorTotal)}\n\n`;
+
+  if (exclusivas.length > 0) {
+    t += `🟢 *OPORTUNIDADES EXCLUSIVAS MPE:*\n\n`;
+    exclusivas.slice(0, 10).forEach((item, i) => {
+      t += `${i+1}. ${item._objeto.slice(0,120)}\n`;
+      t += `   📍 ${item._orgao} — ${item._uf}\n`;
+      t += `   💰 ${formatCurrency(item._valor)}\n`;
+      t += `   ⏰ Encerra: ${formatDate(item.dataEncerramentoProposta)}\n`;
+      t += `   📋 ${item._modalidade}\n\n`;
+    });
+  }
+
+  if (urgentes.length > 0) {
+    t += `🔴 *URGENTES (ate 3 dias):*\n\n`;
+    urgentes.filter(i => i._oportunidadeMPE !== 'Exclusiva MPE').slice(0, 5).forEach((item, i) => {
+      t += `${i+1}. ${item._objeto.slice(0,120)}\n`;
+      t += `   📍 ${item._orgao} — ${item._uf}\n`;
+      t += `   💰 ${formatCurrency(item._valor)} | ⏰ ${formatDate(item.dataEncerramentoProposta)}\n\n`;
+    });
+  }
+
+  t += `\n🔗 Fonte: PNCP (pncp.gov.br)\n`;
+  t += `📡 PIPPA — Sebrae Nacional`;
+  return t;
+}
+
+function openExportModal() {
+  if (allItems.length === 0) { showToast('Busque licitacoes primeiro'); return; }
+  exportText = generateExportText();
+  document.getElementById('exportContent').textContent = exportText;
+  document.getElementById('exportModal').classList.add('active');
+}
+
+function closeExportModal() {
+  document.getElementById('exportModal').classList.remove('active');
+}
+
+function copyExport() {
+  navigator.clipboard.writeText(exportText).then(() => showToast('Copiado para WhatsApp!')).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = exportText;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Copiado!');
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── Info Modal ───────────────────────────────────────────────────
+
+function toggleInfoModal() {
+  document.getElementById('infoModal').classList.toggle('active');
+}
+
+// ── Init ─────────────────────────────────────────────────────────
+
+(function initDates() {
+  const hoje = new Date();
+  const fim = new Date(hoje);
+  fim.setDate(fim.getDate() + 15);
+  document.getElementById('dateFrom').valueAsDate = hoje;
+  document.getElementById('dateTo').valueAsDate = fim;
+})();
+
+</script>
+</body>
+</html>

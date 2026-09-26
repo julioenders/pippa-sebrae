@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIPPA — Catálogo de Fontes de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter','DejaVu Sans',Arial,sans-serif;background:#0f1923;color:#e0eaf4;min-height:100vh;display:flex;flex-direction:column;}
+
+/* ── Header ──────────────────────────────────────────────────────── */
+.header{background:linear-gradient(135deg,#0a1520 0%,#132D42 100%);border-bottom:2px solid #2ecc71;padding:20px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:16px;}
+.header-logo{height:36px;opacity:.9;}
+.header-title{font-size:24px;font-weight:700;background:linear-gradient(135deg,#2ecc71,#27ae60);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.5px;}
+.header-subtitle{font-size:15px;color:#e0eaf4;font-weight:500;margin-top:2px;}
+.header-tagline{font-size:13px;color:#8bafc7;font-weight:400;font-style:italic;margin-top:2px;}
+.header-meta{text-align:right;font-size:12px;color:#8bafc7;}
+.header-meta span{color:#2ecc71;font-weight:600;}
+
+/* ── Layout ──────────────────────────────────────────────────────── */
+.layout{display:flex;flex:1;overflow:hidden;}
+
+/* ── Sidebar ─────────────────────────────────────────────────────── */
+.sidebar{width:340px;min-width:340px;background:#0a1520;border-right:1px solid rgba(46,204,113,.2);padding:20px 16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;}
+.sidebar-title{font-size:14px;font-weight:600;color:#2ecc71;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.sidebar-desc{font-size:12px;color:#8bafc7;margin-bottom:8px;line-height:1.5;}
+.search-box{width:100%;background:#0c1c2c;color:#e0eaf4;border:1px solid rgba(46,204,113,.3);border-radius:8px;padding:10px 14px;font-size:13px;font-family:inherit;outline:none;transition:border-color .2s;}
+.search-box:focus{border-color:#2ecc71;box-shadow:0 0 0 2px rgba(46,204,113,.15);}
+.search-box::placeholder{color:#5a7a8f;}
+
+.filter-section{margin-top:4px;}
+.filter-section-title{font-size:11px;font-weight:600;color:#8bafc7;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;}
+
+.question-btn{width:100%;text-align:left;background:rgba(13,33,53,.6);border:1px solid rgba(46,204,113,.15);border-radius:8px;padding:10px 14px;color:#c0d8e8;font-size:12.5px;font-family:inherit;cursor:pointer;transition:all .2s;line-height:1.4;display:flex;align-items:flex-start;gap:8px;}
+.question-btn:hover{background:rgba(46,204,113,.08);border-color:rgba(46,204,113,.4);color:#e0eaf4;}
+.question-btn.active{background:rgba(46,204,113,.12);border-color:#2ecc71;color:#fff;}
+.question-btn .q-icon{color:#2ecc71;font-weight:700;flex-shrink:0;margin-top:1px;}
+.question-btn .q-count{margin-left:auto;flex-shrink:0;background:rgba(46,204,113,.2);color:#2ecc71;font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;}
+
+.clear-btn{width:100%;background:none;border:1px solid rgba(231,76,60,.3);border-radius:8px;padding:8px;color:#e74c3c;font-size:12px;font-family:inherit;cursor:pointer;transition:all .2s;margin-top:4px;}
+.clear-btn:hover{background:rgba(231,76,60,.1);border-color:#e74c3c;}
+
+.stats-bar{display:flex;gap:8px;margin-top:auto;padding-top:12px;border-top:1px solid rgba(46,204,113,.1);}
+.stat-chip{flex:1;text-align:center;background:rgba(13,33,53,.6);border:1px solid rgba(46,204,113,.15);border-radius:8px;padding:8px 4px;}
+.stat-chip .sv{font-size:20px;font-weight:700;color:#2ecc71;}
+.stat-chip .sl{font-size:10px;color:#8bafc7;text-transform:uppercase;letter-spacing:.5px;}
+
+/* ── Main Content ────────────────────────────────────────────────── */
+.main{flex:1;padding:24px;overflow-y:auto;}
+.cards-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.cards-header h2{font-size:16px;font-weight:600;color:#e0eaf4;}
+.showing-label{font-size:12px;color:#8bafc7;}
+.showing-label span{color:#2ecc71;font-weight:600;}
+
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;}
+
+/* ── Source Card ─────────────────────────────────────────────────── */
+.source-card{background:rgba(13,33,53,.7);backdrop-filter:blur(10px);border:1px solid rgba(46,204,113,.2);border-radius:12px;overflow:hidden;transition:all .3s;cursor:pointer;}
+.source-card:hover{border-color:rgba(46,204,113,.5);box-shadow:0 4px 20px rgba(0,0,0,.3);}
+.source-card.expanded{border-color:#2ecc71;}
+.source-card.hidden{display:none;}
+
+.card-header{padding:16px 20px;display:flex;align-items:center;gap:14px;}
+.card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.card-info{flex:1;min-width:0;}
+.card-title{font-size:14px;font-weight:600;color:#e0eaf4;margin-bottom:4px;}
+.card-badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.badge-source{background:rgba(243,156,18,.2);color:#f39c12;}
+.badge-cubos{background:rgba(46,204,113,.2);color:#2ecc71;}
+.badge-cat{background:rgba(52,152,219,.2);color:#3498db;}
+.card-toggle{width:28px;height:28px;border-radius:6px;border:1px solid rgba(46,204,113,.2);background:none;color:#8bafc7;font-size:14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-toggle:hover{border-color:#2ecc71;color:#2ecc71;}
+.source-card.expanded .card-toggle{transform:rotate(180deg);color:#2ecc71;border-color:#2ecc71;}
+
+/* ── Card Detail ─────────────────────────────────────────────────── */
+.card-detail{max-height:0;overflow:hidden;transition:max-height .4s ease;background:rgba(10,21,32,.5);border-top:1px solid rgba(46,204,113,.1);}
+.source-card.expanded .card-detail{max-height:600px;}
+.card-detail-inner{padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
+.detail-row{display:grid;grid-template-columns:140px 1fr;gap:8px;font-size:12px;}
+.detail-label{color:#8bafc7;text-transform:uppercase;letter-spacing:.5px;font-weight:600;font-size:11px;}
+.detail-value{color:#c0d8e8;line-height:1.5;}
+.detail-value a{color:#2ecc71;text-decoration:none;}
+.detail-value a:hover{text-decoration:underline;}
+
+.cubos-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.cubo-tag{font-size:10px;background:rgba(46,204,113,.1);color:#2ecc71;border:1px solid rgba(46,204,113,.2);padding:3px 8px;border-radius:4px;font-family:'Courier New',monospace;}
+
+.usos-box{background:rgba(46,204,113,.05);border:1px solid rgba(46,204,113,.15);border-radius:8px;padding:12px 14px;font-size:12px;color:#c0d8e8;line-height:1.6;}
+
+/* ── Scrollbar ───────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:#0a1520;}
+::-webkit-scrollbar-thumb{background:rgba(46,204,113,.3);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(46,204,113,.5);}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media(max-width:900px){
+.layout{flex-direction:column;}
+.sidebar{width:100%;min-width:0;max-height:40vh;border-right:none;border-bottom:1px solid rgba(46,204,113,.2);}
+.cards-grid{grid-template-columns:1fr;}
+}
+.pippa-home-btn{position:fixed;top:16px;right:16px;z-index:9999;display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(46,204,113,.3);color:#a7f3d0;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;backdrop-filter:blur(8px);transition:all .2s;}
+.pippa-home-btn:hover{background:rgba(46,204,113,.15);border-color:#2ecc71;color:#fff;transform:translateY(-1px);}
+.pippa-home-btn svg{width:14px;height:14px;}
+</style>
+</head>
+<body>
+
+<a href="../../pippa-portal/index.html" class="pippa-home-btn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  PIPPA Portal
+</a>
+
+<!-- ── Header ─────────────────────────────────────────────────────── -->
+<div class="header">
+  <div class="header-left">
+    <div>
+      <div class="header-title">PIPPA Catálogo de Fontes de Dados</div>
+      <div class="header-subtitle">Plataforma de Inteligência em Políticas Públicas Aplicadas</div>
+      <div class="header-tagline">Qual é a sua estratégia?</div>
+    </div>
+  </div>
+  <div class="header-meta">
+    <div><span>17</span> fontes &middot; <span>58</span> cubos de dados</div>
+    <div>25 / 09 / 2026</div>
+  </div>
+</div>
+
+<!-- ── Layout ─────────────────────────────────────────────────────── -->
+<div class="layout">
+
+<!-- ── Sidebar ────────────────────────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="sidebar-title">Perguntas Norteadoras</div>
+  <div class="sidebar-desc">Selecione um problema público para ver quais fontes podem respondê-lo.</div>
+
+  <input type="text" class="search-box" id="searchBox" placeholder="Buscar fonte pelo nome..." oninput="filterBySearch()">
+
+  <div class="filter-section" id="questionsContainer"></div>
+
+  <button class="clear-btn" id="clearBtn" onclick="clearFilter()" style="display:none;">Limpar filtro</button>
+
+  <div class="stats-bar">
+    <div class="stat-chip"><div class="sv" id="statFontes">17</div><div class="sl">Fontes</div></div>
+    <div class="stat-chip"><div class="sv" id="statCubos">58</div><div class="sl">Cubos</div></div>
+    <div class="stat-chip"><div class="sv" id="statVisiveis">17</div><div class="sl">Visíveis</div></div>
+  </div>
+</aside>
+
+<!-- ── Main ───────────────────────────────────────────────────────── -->
+<main class="main">
+  <div class="cards-header">
+    <h2>Fontes de Dados Disponíveis</h2>
+    <div class="showing-label">Exibindo <span id="showingCount">17</span> de 17 fontes</div>
+  </div>
+  <div class="cards-grid" id="cardsGrid"></div>
+</main>
+
+</div>
+
+<script>
+// ── Data ─────────────────────────────────────────────────────────────────────
+const SOURCES = [
+  {
+    id: "ibge",
+    nome: "IBGE",
+    nomeCompleto: "Instituto Brasileiro de Geografia e Estatística",
+    categoria: "Socioeconomia",
+    qtdCubos: 12,
+    icon: "📊",
+    iconBg: "rgba(52,152,219,.2)",
+    descricao: "Autarquia federal responsável pelo censo demográfico, contas nacionais, pesquisas agropecuárias (PAM, PPM, PEVS) e indicadores socioeconômicos. Principal fonte de dados estruturais do Brasil.",
+    cubos: ["PAM Culturas","PPM Efetivo dos Rebanhos","PPM Produtos","PPM Vacas Ordenhadas e Ovinos Tosquiados","PEVS_Plant_Extraction","PEVS_Forestry","PEVS_Area_Forestry","IBGE_PIB_Municipal_VAB","IBGE_Censo_Pop_Sit","IBGE_Censo_Sexo_Faixa_Etaria","IBGE_Censo_Densidade_Demografica","IBGE_pesquisas_setoriais"],
+    usos: "Diagnóstico territorial completo: PIB e valor agregado por setor, perfil demográfico (urbano/rural, pirâmide etária), produção agropecuária municipal, extrativismo vegetal e silvicultura. Base para calcular produtividade setorial, identificar vocações agro e dimensionar mercados locais."
+  },
+  {
+    id: "mdic",
+    nome: "MDIC / DataViva",
+    nomeCompleto: "Ministério do Desenvolvimento, Indústria, Comércio e Serviços",
+    categoria: "Comércio e Complexidade",
+    qtdCubos: 8,
+    icon: "🌐",
+    iconBg: "rgba(155,89,182,.2)",
+    descricao: "Dados de comércio exterior (COMEX) e indicadores de complexidade econômica baseados na metodologia do Atlas of Economic Complexity (Harvard/MIT). Mede sofisticação produtiva e oportunidades de diversificação.",
+    cubos: ["ECI","PCI","RCA","Relatedness","Proximity","Oportunity_Gain","mdic_exp_imp_mun","mdic_exp_imp_ncm_code"],
+    usos: "Mapeamento de vocação produtiva (RCA), sofisticação econômica dos territórios (ECI), identificação de setores com potencial de diversificação (Relatedness/Oportunity_Gain), balança comercial municipal. Subsidia políticas de desenvolvimento produtivo e inserção competitiva internacional."
+  },
+  {
+    id: "bacen",
+    nome: "BACEN / BCB",
+    nomeCompleto: "Banco Central do Brasil",
+    categoria: "Crédito e Finanças",
+    qtdCubos: 5,
+    icon: "🏦",
+    iconBg: "rgba(241,196,15,.2)",
+    descricao: "Dados do Sistema de Informações de Crédito (SCR), crédito rural (SICOR), estatística bancária municipal (ESTBAN) e concessões por porte empresarial.",
+    cubos: ["credito_bacen_valores","bcb_sicor_mun","bcb_sicor_prod","bcb_scr_mensais","BCB_ESTBAN_MUN"],
+    usos: "Diagnóstico de acesso a crédito por porte e setor, mapeamento de inadimplência setorial, crédito rural por produto e município, depósitos e presença bancária. Fundamental para políticas de inclusão financeira, fomento produtivo e priorização de linhas de crédito."
+  },
+  {
+    id: "inep",
+    nome: "INEP",
+    nomeCompleto: "Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira",
+    categoria: "Educação",
+    qtdCubos: 5,
+    icon: "🎓",
+    iconBg: "rgba(46,204,113,.2)",
+    descricao: "Autarquia do MEC responsável pelo ENEM, Censo Escolar, Censo da Educação Superior e IDEB. Cobre desde educação básica até ensino superior.",
+    cubos: ["INEP_enem","INEP_censo","INEP_Censo_Ed_Basica","INEP_Censo_Taxas_Basica","INEP_IDEB_Municipio"],
+    usos: "Qualidade da educação por município (IDEB, notas ENEM), oferta de ensino superior e técnico, taxas de aprovação/evasão. Subsidia políticas de qualificação da mão de obra, identificação de gaps de capital humano e planejamento de capacitação profissional."
+  },
+  {
+    id: "mte",
+    nome: "MTE",
+    nomeCompleto: "Ministério do Trabalho e Emprego",
+    categoria: "Trabalho e Emprego",
+    qtdCubos: 4,
+    icon: "👷",
+    iconBg: "rgba(230,126,34,.2)",
+    descricao: "Relação Anual de Informações Sociais (RAIS) e Cadastro Geral de Empregados e Desempregados (CAGED). Estoque e fluxo de emprego formal no Brasil.",
+    cubos: ["RAIS_establishment","RAIS_workers","CAGED_establishment","CAGED_movements"],
+    usos: "Estoque e fluxo de emprego formal por setor e município, perfil do trabalhador (salário, escolaridade, sexo), admissões vs. desligamentos. Monitora impacto de políticas de emprego, identifica setores em expansão/retração e gaps salariais."
+  },
+  {
+    id: "rfb",
+    nome: "Receita Federal",
+    nomeCompleto: "Secretaria Especial da Receita Federal do Brasil",
+    categoria: "Empresas",
+    qtdCubos: 2,
+    icon: "🏢",
+    iconBg: "rgba(231,76,60,.2)",
+    descricao: "Cadastro Nacional de Pessoa Jurídica (CNPJ) — estoque de empresas ativas — e dados de Notas Fiscais Eletrônicas (NF-e) com faturamento setorial.",
+    cubos: ["RF","rf_notas_fiscais"],
+    usos: "Mapeamento do tecido empresarial: quantidade de MPEs ativas por setor e território, densidade empresarial, faturamento setorial via NF-e. Base para políticas de formalização, desburocratização e fomento ao empreendedorismo."
+  },
+  {
+    id: "neotrust",
+    nome: "NeoTrust",
+    nomeCompleto: "NeoTrust — Inteligência de Mercado Digital",
+    categoria: "Mercado Digital",
+    qtdCubos: 4,
+    icon: "🛒",
+    iconBg: "rgba(142,68,173,.2)",
+    descricao: "Empresa de inteligência de mercado digital — dados de e-commerce, conversão e comportamento de compra online no Brasil.",
+    cubos: ["Digital_Market_Comparation","Digital_Market_NeoTrust","Digital_Market_Webshoppers","Digital_Market_Conversion"],
+    usos: "Dimensionamento do mercado digital brasileiro, taxa de conversão e tendências de e-commerce. Subsidia políticas de transformação digital de MPEs e inclusão no comércio eletrônico."
+  },
+  {
+    id: "sebrae",
+    nome: "SEBRAE",
+    nomeCompleto: "Serviço Brasileiro de Apoio às Micro e Pequenas Empresas",
+    categoria: "Atendimento e Inteligência",
+    qtdCubos: 4,
+    icon: "🚀",
+    iconBg: "rgba(26,188,156,.2)",
+    descricao: "Dados operacionais de atendimento, Índice SEBRAE de Desenvolvimento Local (ISDEL), predições do Radar e modelos de otimização de complexidade econômica.",
+    cubos: ["Sebrae_Atendimento","ISDEL","radar_predictions","ECI Optimization"],
+    usos: "Monitoramento da atuação do SEBRAE (atendimentos por UF/município), índice de desenvolvimento local (ISDEL), simulação de ganho de PIB per capita por metas de complexidade. Avalia efetividade das ações e prioriza territórios de atuação."
+  },
+  {
+    id: "datasus",
+    nome: "DATASUS",
+    nomeCompleto: "Departamento de Informática do SUS",
+    categoria: "Saúde",
+    qtdCubos: 3,
+    icon: "🏥",
+    iconBg: "rgba(231,76,60,.15)",
+    descricao: "Estimativas populacionais, Sistema de Informação sobre Nascidos Vivos (SINASC) e Sistema de Informações sobre Mortalidade (SIM).",
+    cubos: ["DATASUS_Estimativas_Populacionais","DATASUS_SINASC","DATASUS_SIM"],
+    usos: "População estimada para cálculos per capita, taxas de natalidade e mortalidade por causa. Cruzamento com indicadores econômicos para índices de vulnerabilidade e priorização de políticas de saúde e assistência social."
+  },
+  {
+    id: "siconfi",
+    nome: "STN / SICONFI",
+    nomeCompleto: "Secretaria do Tesouro Nacional — Sistema de Informações Contábeis e Fiscais",
+    categoria: "Finanças Públicas",
+    qtdCubos: 2,
+    icon: "📋",
+    iconBg: "rgba(52,73,94,.3)",
+    descricao: "Receitas e despesas municipais declaradas ao Tesouro Nacional. Permite avaliar a capacidade fiscal e o perfil de gasto dos municípios.",
+    cubos: ["SICONFI_receitas","SICONFI_despesas"],
+    usos: "Análise das finanças municipais: capacidade de arrecadação, dependência de transferências, perfil de despesa. Identifica municípios com margem fiscal para contrapartidas e avalia sustentabilidade financeira para receber programas."
+  },
+  {
+    id: "mtur",
+    nome: "MTur",
+    nomeCompleto: "Ministério do Turismo",
+    categoria: "Turismo",
+    qtdCubos: 2,
+    icon: "✈️",
+    iconBg: "rgba(41,128,185,.2)",
+    descricao: "Mapa do Turismo Brasileiro (categorização dos municípios turísticos) e dados de chegadas internacionais por via de acesso e país de origem.",
+    cubos: ["MTUR_Mapa_Turismo","MTUR_Chegadas_Internacionais"],
+    usos: "Categorização turística dos municípios, fluxo de turistas internacionais por via de acesso e origem. Subsidia políticas de desenvolvimento turístico regional e priorização de investimentos em infraestrutura receptiva."
+  },
+  {
+    id: "anatel",
+    nome: "ANATEL",
+    nomeCompleto: "Agência Nacional de Telecomunicações",
+    categoria: "Conectividade Digital",
+    qtdCubos: 1,
+    icon: "📡",
+    iconBg: "rgba(46,204,113,.15)",
+    descricao: "Índice Brasil de Conectividade (IBC), cobertura 4G/5G, fibra óptica, cobertura de área agrícola e concentração de mercado (HHI). Série 2021–2024.",
+    cubos: ["ANATEL_IBC_MUN"],
+    usos: "Diagnóstico de conectividade municipal, mapeamento de exclusão digital, cobertura de sinal em área agrícola. Essencial para políticas de inclusão digital, agro 4.0, e identificação de municípios prioritários para expansão de infraestrutura de telecomunicações."
+  },
+  {
+    id: "ans",
+    nome: "ANS",
+    nomeCompleto: "Agência Nacional de Saúde Suplementar",
+    categoria: "Saúde",
+    qtdCubos: 1,
+    icon: "💊",
+    iconBg: "rgba(231,76,60,.12)",
+    descricao: "Dados de beneficiários e cobertura de planos de saúde por operadora e município em todo o Brasil.",
+    cubos: ["ANS_COB_PLANOS"],
+    usos: "Cobertura de saúde suplementar por território, identificação de municípios com baixa cobertura vs. dependência exclusiva do SUS. Informa políticas de saúde pública e alocação de recursos assistenciais."
+  },
+  {
+    id: "pnud",
+    nome: "PNUD",
+    nomeCompleto: "Programa das Nações Unidas para o Desenvolvimento",
+    categoria: "Desenvolvimento Humano",
+    qtdCubos: 1,
+    icon: "🌍",
+    iconBg: "rgba(46,204,113,.12)",
+    descricao: "Atlas do Desenvolvimento Humano no Brasil — IDHM (educação, longevidade, renda) e índice de Gini por município.",
+    cubos: ["PNUD_Atlas_IDHM"],
+    usos: "IDHM e índice de Gini por município. Indicador-síntese para priorização de políticas sociais, ranking de vulnerabilidade e monitoramento de desigualdade intra e intermunicipal."
+  },
+  {
+    id: "mds",
+    nome: "MDS",
+    nomeCompleto: "Ministério do Desenvolvimento e Assistência Social",
+    categoria: "Assistência Social",
+    qtdCubos: 1,
+    icon: "🤝",
+    iconBg: "rgba(243,156,18,.15)",
+    descricao: "Cadastro Único e Programa Bolsa Família — famílias beneficiárias por município.",
+    cubos: ["MDS_PBF"],
+    usos: "Dimensiona vulnerabilidade social, identifica territórios com alta dependência de transferências e permite cruzamento com emprego formal e formalização para avaliar efetividade de políticas de inclusão produtiva."
+  },
+  {
+    id: "tse",
+    nome: "TSE",
+    nomeCompleto: "Tribunal Superior Eleitoral",
+    categoria: "Eleições",
+    qtdCubos: 1,
+    icon: "🗳️",
+    iconBg: "rgba(52,152,219,.15)",
+    descricao: "Dados do cadastro eleitoral — perfil do eleitorado por município (idade, escolaridade, sexo).",
+    cubos: ["TSE_Perfil_Eleitorado"],
+    usos: "Perfil do eleitorado por município (idade, escolaridade, sexo). Contextualiza o capital social do território e informa estratégias de comunicação e participação cidadã em políticas públicas."
+  },
+  {
+    id: "ptrs",
+    nome: "Portal Transparência RS",
+    nomeCompleto: "Portal de Dados Abertos do Rio Grande do Sul",
+    categoria: "Compras Públicas",
+    qtdCubos: 1,
+    icon: "🏛️",
+    iconBg: "rgba(149,165,166,.2)",
+    descricao: "Dados de compras governamentais do estado do Rio Grande do Sul — fornecedores, valores e itens adquiridos pelo poder público.",
+    cubos: ["Compras_Governamentais_RS"],
+    usos: "Compras governamentais estaduais — identifica fornecedores, valores e itens adquiridos. Subsidia políticas de compras públicas inclusivas e fomento a MPEs como fornecedoras do poder público."
+  }
+];
+
+const QUESTIONS = [
+  {
+    texto: "Onde estão o desemprego e a informalidade?",
+    fontes: ["mte","rfb"],
+    tema: "Trabalho"
+  },
+  {
+    texto: "Qual o nível de desenvolvimento econômico do território?",
+    fontes: ["ibge","mdic","sebrae"],
+    tema: "Economia"
+  },
+  {
+    texto: "A educação está formando mão de obra qualificada?",
+    fontes: ["inep"],
+    tema: "Educação"
+  },
+  {
+    texto: "Quais territórios têm maior vulnerabilidade social?",
+    fontes: ["pnud","mds","datasus","ibge"],
+    tema: "Social"
+  },
+  {
+    texto: "Há acesso a crédito para micro e pequenos negócios?",
+    fontes: ["bacen"],
+    tema: "Crédito"
+  },
+  {
+    texto: "Qual o potencial agropecuário e da bioeconomia?",
+    fontes: ["ibge","bacen"],
+    tema: "Agro"
+  },
+  {
+    texto: "Onde estão os desertos digitais e a exclusão tecnológica?",
+    fontes: ["anatel","neotrust"],
+    tema: "Digital"
+  },
+  {
+    texto: "O município tem capacidade fiscal para investir?",
+    fontes: ["siconfi"],
+    tema: "Fiscal"
+  },
+  {
+    texto: "Quais produtos o território exporta e importa?",
+    fontes: ["mdic"],
+    tema: "Comércio"
+  },
+  {
+    texto: "Como está a saúde pública e a cobertura assistencial?",
+    fontes: ["datasus","ans"],
+    tema: "Saúde"
+  },
+  {
+    texto: "Qual o potencial turístico da região?",
+    fontes: ["mtur"],
+    tema: "Turismo"
+  },
+  {
+    texto: "Quantos empreendedores existem e como o SEBRAE atua?",
+    fontes: ["rfb","sebrae"],
+    tema: "Empreendedorismo"
+  },
+  {
+    texto: "Qual o perfil demográfico e eleitoral do território?",
+    fontes: ["ibge","datasus","tse"],
+    tema: "Demografia"
+  },
+  {
+    texto: "O poder público está comprando de pequenas empresas?",
+    fontes: ["ptrs","rfb"],
+    tema: "Compras"
+  },
+  {
+    texto: "Quais setores têm vocação produtiva no território?",
+    fontes: ["mdic","rfb","ibge"],
+    tema: "Vocação"
+  }
+];
+
+// ── Render ────────────────────────────────────────────────────────────────────
+let activeQuestion = null;
+
+function renderQuestions() {
+  const container = document.getElementById("questionsContainer");
+  container.innerHTML = '<div class="filter-section-title">Problemas Públicos</div>';
+  QUESTIONS.forEach((q, i) => {
+    const btn = document.createElement("button");
+    btn.className = "question-btn";
+    btn.dataset.index = i;
+    btn.innerHTML = `<span class="q-icon">?</span><span>${q.texto}</span><span class="q-count">${q.fontes.length}</span>`;
+    btn.onclick = () => toggleQuestion(i);
+    container.appendChild(btn);
+  });
+}
+
+function renderCards() {
+  const grid = document.getElementById("cardsGrid");
+  grid.innerHTML = "";
+  SOURCES.forEach(s => {
+    const card = document.createElement("div");
+    card.className = "source-card";
+    card.id = `card-${s.id}`;
+    card.innerHTML = `
+      <div class="card-header" onclick="toggleCard('${s.id}')">
+        <div class="card-icon" style="background:${s.iconBg}">${s.icon}</div>
+        <div class="card-info">
+          <div class="card-title">${s.nome}</div>
+          <div class="card-badges">
+            <span class="badge badge-source">${s.nomeCompleto.split(" — ")[0].split(" – ")[0]}</span>
+            <span class="badge badge-cubos">${s.qtdCubos} cubo${s.qtdCubos > 1 ? "s" : ""}</span>
+            <span class="badge badge-cat">${s.categoria}</span>
+          </div>
+        </div>
+        <button class="card-toggle">▼</button>
+      </div>
+      <div class="card-detail">
+        <div class="card-detail-inner">
+          <div class="detail-row">
+            <div class="detail-label">Instituição</div>
+            <div class="detail-value">${s.nomeCompleto}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Descrição</div>
+            <div class="detail-value">${s.descricao}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Cubos (${s.qtdCubos})</div>
+            <div class="detail-value">
+              <div class="cubos-list">${s.cubos.map(c => `<span class="cubo-tag">${c}</span>`).join("")}</div>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Usos para<br>Políticas Públicas</div>
+            <div class="detail-value"><div class="usos-box">${s.usos}</div></div>
+          </div>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ── Interactions ──────────────────────────────────────────────────────────────
+function toggleCard(id) {
+  const card = document.getElementById(`card-${id}`);
+  card.classList.toggle("expanded");
+}
+
+function toggleQuestion(index) {
+  const btns = document.querySelectorAll(".question-btn");
+  if (activeQuestion === index) {
+    clearFilter();
+    return;
+  }
+  activeQuestion = index;
+  btns.forEach(b => b.classList.remove("active"));
+  btns[index].classList.add("active");
+  document.getElementById("clearBtn").style.display = "block";
+  document.getElementById("searchBox").value = "";
+  applyFilter(QUESTIONS[index].fontes);
+}
+
+function applyFilter(visibleIds) {
+  let visibleCount = 0;
+  let cuboCount = 0;
+  SOURCES.forEach(s => {
+    const card = document.getElementById(`card-${s.id}`);
+    if (visibleIds.includes(s.id)) {
+      card.classList.remove("hidden");
+      visibleCount++;
+      cuboCount += s.qtdCubos;
+    } else {
+      card.classList.add("hidden");
+      card.classList.remove("expanded");
+    }
+  });
+  updateStats(visibleCount, cuboCount);
+}
+
+function clearFilter() {
+  activeQuestion = null;
+  document.querySelectorAll(".question-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("clearBtn").style.display = "none";
+  document.getElementById("searchBox").value = "";
+  SOURCES.forEach(s => {
+    document.getElementById(`card-${s.id}`).classList.remove("hidden");
+  });
+  updateStats(SOURCES.length, SOURCES.reduce((a, s) => a + s.qtdCubos, 0));
+}
+
+function filterBySearch() {
+  const q = document.getElementById("searchBox").value.toLowerCase().trim();
+  activeQuestion = null;
+  document.querySelectorAll(".question-btn").forEach(b => b.classList.remove("active"));
+  if (!q) {
+    document.getElementById("clearBtn").style.display = "none";
+    SOURCES.forEach(s => document.getElementById(`card-${s.id}`).classList.remove("hidden"));
+    updateStats(SOURCES.length, SOURCES.reduce((a, s) => a + s.qtdCubos, 0));
+    return;
+  }
+  document.getElementById("clearBtn").style.display = "block";
+  let visibleCount = 0;
+  let cuboCount = 0;
+  SOURCES.forEach(s => {
+    const card = document.getElementById(`card-${s.id}`);
+    const haystack = [s.nome, s.nomeCompleto, s.categoria, s.descricao, ...s.cubos].join(" ").toLowerCase();
+    if (haystack.includes(q)) {
+      card.classList.remove("hidden");
+      visibleCount++;
+      cuboCount += s.qtdCubos;
+    } else {
+      card.classList.add("hidden");
+      card.classList.remove("expanded");
+    }
+  });
+  updateStats(visibleCount, cuboCount);
+}
+
+function updateStats(fontes, cubos) {
+  document.getElementById("statVisiveis").textContent = fontes;
+  document.getElementById("showingCount").textContent = fontes;
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+renderQuestions();
+renderCards();
+</script>
+</body>
+</html>

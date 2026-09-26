@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:100vh;}
+
+/* ── Hero ─────────────────────────────────────── */
+.hero{position:relative;padding:60px 48px 48px;text-align:center;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(16,185,129,.12) 0%,transparent 70%);pointer-events:none;}
+.hero-label{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#10b981;margin-bottom:12px;}
+.hero-title{font-size:42px;font-weight:800;letter-spacing:-1.5px;background:linear-gradient(135deg,#10b981 0%,#34d399 40%,#6ee7b7 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+.hero-subtitle{font-size:16px;color:#8b9dc3;font-weight:400;max-width:600px;margin:0 auto 28px;line-height:1.5;}
+.hero-stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;}
+.hero-stat{text-align:center;}
+.hero-stat-value{font-size:28px;font-weight:700;color:#e2e8f0;}
+.hero-stat-label{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
+/* ── Search ───────────────────────────────────── */
+.search-section{max-width:560px;margin:-8px auto 0;padding:0 48px 36px;position:relative;}
+.search-wrap{position:relative;}
+.search-wrap svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#64748b;pointer-events:none;}
+.search-input{width:100%;background:rgba(15,23,42,.8);border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:14px 16px 14px 44px;font-size:14px;font-family:inherit;color:#e2e8f0;outline:none;transition:border-color .2s,box-shadow .2s;backdrop-filter:blur(8px);}
+.search-input:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.1);}
+.search-input::placeholder{color:#475569;}
+
+/* ── Layout principal (sidebar + conteudo) ───── */
+.main-layout{display:flex;gap:28px;max-width:1320px;margin:0 auto;padding:0 48px 48px;}
+
+/* ── Sidebar (Perguntas) ─────────────────────── */
+.sidebar{width:320px;flex-shrink:0;position:sticky;top:24px;align-self:flex-start;}
+.sidebar-inner{background:rgba(17,24,39,.6);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:24px 20px;backdrop-filter:blur(8px);}
+.sidebar-label{font-size:11px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.sidebar-label svg{width:14px;height:14px;color:#10b981;}
+.sidebar-desc{font-size:12px;color:#64748b;margin-bottom:16px;line-height:1.5;}
+.questions-wrap{display:flex;flex-direction:column;gap:6px;}
+.q-chip{display:flex;align-items:center;gap:8px;background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 14px;font-size:12.5px;color:#94a3b8;cursor:pointer;transition:all .25s;line-height:1.4;text-align:left;font-family:inherit;width:100%;}
+.q-chip:hover{border-color:rgba(16,185,129,.3);color:#e2e8f0;background:rgba(16,185,129,.06);}
+.q-chip.active{border-color:#10b981;color:#a7f3d0;background:rgba(16,185,129,.12);box-shadow:0 0 0 2px rgba(16,185,129,.1);}
+.q-chip .q-icon{font-size:11px;opacity:.6;flex-shrink:0;}
+.q-chip .q-text{flex:1;}
+.q-chip .q-count{font-size:10px;font-weight:600;background:rgba(255,255,255,.06);color:#64748b;padding:2px 6px;border-radius:6px;min-width:18px;text-align:center;flex-shrink:0;}
+.q-chip.active .q-count{background:rgba(16,185,129,.2);color:#a7f3d0;}
+.clear-filter{display:none;align-items:center;justify-content:center;gap:5px;width:100%;margin-top:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:9px 14px;font-size:12px;color:#fca5a5;cursor:pointer;transition:all .2s;font-family:inherit;}
+.clear-filter:hover{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.35);color:#fecaca;}
+.clear-filter svg{width:12px;height:12px;}
+.sidebar-stats{display:flex;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06);}
+.sidebar-stat{flex:1;text-align:center;}
+.sidebar-stat-val{font-size:20px;font-weight:700;color:#e2e8f0;}
+.sidebar-stat-lbl{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+
+/* ── Grid (conteudo principal) ───────────────── */
+.grid-section{flex:1;min-width:0;}
+.grid-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.grid-header h2{font-size:14px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;}
+.grid-count{font-size:13px;color:#475569;}
+.grid-count span{color:#10b981;font-weight:600;}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;}
+
+/* ── Card ─────────────────────────────────────── */
+.card{position:relative;background:#111827;border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;transition:all .3s ease;cursor:pointer;}
+.card:hover{border-color:rgba(16,185,129,.25);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.card.expanded{border-color:rgba(16,185,129,.35);}
+.card.hidden{display:none;}
+
+.card-accent{position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;}
+
+.card-top{padding:24px 24px 20px 28px;display:flex;align-items:flex-start;gap:16px;}
+.card-emoji{font-size:28px;line-height:1;flex-shrink:0;margin-top:2px;}
+.card-body{flex:1;min-width:0;}
+.card-name{font-size:16px;font-weight:700;color:#e2e8f0;margin-bottom:4px;line-height:1.3;}
+.card-desc-short{font-size:13px;color:#8b9dc3;line-height:1.5;}
+
+.card-arrow{width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:#475569;transition:all .3s;flex-shrink:0;margin-top:4px;}
+.card:hover .card-arrow{color:#10b981;}
+.card.expanded .card-arrow{transform:rotate(180deg);color:#10b981;}
+
+/* ── Card expanded ────────────────────────────── */
+.card-expand{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+.card.expanded .card-expand{max-height:800px;}
+.card-expand-inner{padding:0 24px 24px 28px;border-top:1px solid rgba(255,255,255,.04);margin-top:0;padding-top:20px;}
+
+.expand-section{margin-bottom:16px;}
+.expand-label{font-size:10px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;}
+.expand-text{font-size:13px;color:#94a3b8;line-height:1.7;}
+
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{font-size:11px;color:#94a3b8;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);padding:4px 10px;border-radius:6px;transition:all .2s;}
+.tag:hover{border-color:rgba(16,185,129,.3);color:#e2e8f0;}
+
+.highlight-box{background:rgba(16,185,129,.06);border-left:3px solid #10b981;border-radius:0 8px 8px 0;padding:14px 16px;font-size:13px;color:#94a3b8;line-height:1.7;}
+
+.card-btn{display:inline-flex;align-items:center;gap:8px;background:#0f3d2b;color:#a7f3d0;border:1px solid rgba(16,185,129,.25);padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;margin-top:8px;}
+.card-btn:hover{background:#145e35;border-color:#10b981;color:#fff;transform:translateY(-1px);}
+.card-btn svg{width:14px;height:14px;}
+
+/* ── Footer ───────────────────────────────────── */
+.footer{text-align:center;padding:32px 48px;border-top:1px solid rgba(255,255,255,.04);font-size:11px;color:#334155;}
+.footer span{color:#475569;}
+
+/* ── Responsive ───────────────────────────────── */
+@media(max-width:768px){
+.hero{padding:40px 24px 32px;}
+.hero-title{font-size:28px;}
+.search-section{padding:0 24px 28px;}
+.main-layout{flex-direction:column;padding:0 16px 32px;gap:20px;}
+.sidebar{width:100%;position:static;}
+.cards{grid-template-columns:1fr;}
+}
+
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:#0b1120;}
+::-webkit-scrollbar-thumb{background:rgba(16,185,129,.2);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(16,185,129,.4);}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-label">SEBRAE Nacional</div>
+  <h1 class="hero-title">PIPPA</h1>
+  <p class="hero-subtitle">Plataforma de Inteligencia em Politicas Publicas Aplicadas — ferramentas de monitoramento legislativo, orcamentario e territorial.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">7</div><div class="hero-stat-label">Ferramentas</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">5</div><div class="hero-stat-label">Dashboards</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">17</div><div class="hero-stat-label">Fontes de Dados</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">58</div><div class="hero-stat-label">Cubos Analiticos</div></div>
+  </div>
+</section>
+
+<div class="search-section">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" class="search-input" id="searchBox" placeholder="Buscar ferramenta por nome, tema ou recurso..." oninput="filterCards()">
+  </div>
+</div>
+
+<div class="main-layout">
+
+<aside class="sidebar">
+  <div class="sidebar-inner">
+    <div class="sidebar-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      O que voce precisa?
+    </div>
+    <div class="sidebar-desc">Selecione uma necessidade para filtrar as ferramentas.</div>
+    <div class="questions-wrap" id="questionsWrap"></div>
+    <div class="sidebar-stats">
+      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">7</div><div class="sidebar-stat-lbl">Visiveis</div></div>
+      <div class="sidebar-stat"><div class="sidebar-stat-val">7</div><div class="sidebar-stat-lbl">Total</div></div>
+    </div>
+  </div>
+</aside>
+
+<section class="grid-section">
+  <div class="grid-header">
+    <h2>Ferramentas Disponiveis</h2>
+    <div class="grid-count">Exibindo <span id="showCount">7</span> de 7</div>
+  </div>
+  <div class="cards" id="cardsGrid"></div>
+</section>
+
+</div>
+
+<footer class="footer">
+  PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas <span>|</span> SEBRAE Nacional <span>|</span> <span id="footerDate"></span>
+</footer>
+
+<script>
+const TOOLS = [
+  {
+    id: "emendas",
+    nome: "PIPPA Emendas Parlamentares",
+    subtitulo: "Inteligencia em Emendas Federais",
+    accent: "#4f8cff",
+    icon: "🏛️",
+    url: "../pippa-emendas/output/pippa_emendas_completo.html",
+    descricao: "Painel de inteligencia sobre emendas parlamentares federais (2015-2026). Consolida dados de todas as modalidades (individual, bancada, comissao, relator) cruzando Portal da Transparencia (CGU), Tesouro Transparente e APIs da Camara e Senado para identificar autores, partidos e taxas de execucao orcamentaria por estado e municipio.",
+    features: ["Validacao cruzada CGU x Tesouro", "Matching de autores via API legislativa", "Treemap de partidos", "Serie historica 2015-2026", "Top autores por UF", "Tabela de 4.900+ municipios", "Exportar WhatsApp", "Diagnostico de qualidade"],
+    destaque: "Acompanhe R$ 89+ bilhoes em emendas parlamentares. Descubra quais autores e partidos direcionam recursos para cada estado, com taxa de execucao orcamentaria e serie historica desde 2015. Dados cruzados de 3 fontes oficiais."
+  },
+  {
+    id: "compras",
+    nome: "PIPPA Compras Publicas",
+    subtitulo: "Radar de Oportunidades para MPEs",
+    accent: "#10b981",
+    icon: "📋",
+    url: "../pippa-compras-dashboard/index.html",
+    descricao: "Radar de oportunidades para micro e pequenas empresas (MPEs) em compras governamentais. Busca licitacoes abertas em tempo real na API do PNCP em 5 modalidades (pregao eletronico, dispensa, concorrencia, inexigibilidade, credenciamento), classificando automaticamente cada oportunidade por tipo MPE (exclusiva ate R$80k, cota 25%, ou aberta) e nivel de urgencia.",
+    features: ["Dados ao vivo da API do PNCP", "5 modalidades de licitacao", "Classificacao MPE (LC 123/2006)", "Contagem regressiva de urgencia", "Cards expandiveis com link PNCP", "Filtro por UF e municipio", "Exportar WhatsApp"],
+    destaque: "Encontre licitacoes abertas agora. O radar classifica cada oportunidade por exclusividade MPE conforme a LC 123/2006, urgencia e valor — direto da API do PNCP, todos os niveis de governo."
+  },
+  {
+    id: "legislativo",
+    nome: "PIPPA Legislativo",
+    subtitulo: "Radar de Proposicoes Legislativas",
+    accent: "#a855f7",
+    icon: "⚖️",
+    url: "../pippa-legislativo-dashboard/index.html",
+    descricao: "Painel de monitoramento legislativo que consulta APIs abertas da Camara dos Deputados e Senado Federal, filtra proposicoes relevantes ao SEBRAE e aplica classificacao automatica de prioridade (P0-P4) baseada em analise semantica dos sumarios e criterios estrategicos.",
+    features: ["Classificacao P0 (Critico) a P4 (Arquivo)", "Scoring numerico de relevancia", "Filtro institucional SEBRAE/Sistema S", "Filtros por prioridade, tipo e partido", "APIs da Camara e Senado", "Exportar WhatsApp com briefing narrativo"],
+    destaque: "Saiba quais projetos de lei importam para o SEBRAE. A classificacao automatica de 5 niveis prioriza proposicoes por impacto real em MPEs — de critico a arquivo — com scoring numerico e briefing pronto para compartilhar."
+  },
+  {
+    id: "pesquisas",
+    nome: "PIPPA Pesquisas Eleitorais",
+    subtitulo: "Agregador de Pesquisas 2026",
+    accent: "#f472b6",
+    icon: "🗳️",
+    url: "../pippa-pesquisas-eleitorais/index.html",
+    descricao: "Agregador de pesquisas eleitorais para as eleicoes brasileiras de 2026. Calcula medias ponderadas (com decaimento exponencial por recencia, tamanho da amostra e ponderacao por metodologia), medias simples, medianas e desvios-padrao.",
+    features: ["Media ponderada com decaimento exponencial", "Rankings com intervalo de confianca", "Navegacao por cargo", "Badges de metodologia (presencial, telefone, online)", "Modal de fontes e metodologia", "Exportar WhatsApp"],
+    destaque: "Agregue pesquisas eleitorais de multiplos institutos com ponderacao inteligente. Visualize tendencias com intervalos de confianca e entenda o cenario politico que pode impactar politicas para MPEs."
+  },
+  {
+    id: "reforma",
+    nome: "PIPPA Reforma Tributaria",
+    subtitulo: "Monitor de Impactos em MPEs",
+    accent: "#f59e0b",
+    icon: "💰",
+    url: "../pippa-reforma-dashboard/index.html",
+    descricao: "Dashboard de monitoramento de noticias sobre a Reforma Tributaria brasileira. Busca noticias via Google News, classifica por tema (IBS, CBS, Seletivo) e nivel de impacto em pequenas empresas, e categoriza cada item como fato, proposta ou expectativa com indicadores de credibilidade.",
+    features: ["Integracao Google News", "Classificacao por tema e impacto MPE", "Tags: fato vs. proposta vs. expectativa", "Indicadores de credibilidade (ok/atencao/risco)", "Grafico historico de mencoes", "Exportar WhatsApp com narrativa editorial"],
+    destaque: "Acompanhe a reforma tributaria sem ruido. O painel separa fatos de propostas e expectativas, classifica o impacto em pequenos negocios e indica a credibilidade de cada noticia."
+  },
+  {
+    id: "prototipo",
+    nome: "PIPPA - Prototipo Paraiba",
+    subtitulo: "Plataforma Completa em Producao",
+    accent: "#10b981",
+    icon: "🚀",
+    url: "https://pippa.sebrae.com.br/",
+    descricao: "Versao em producao da PIPPA implantada no SEBRAE Paraiba. Plataforma completa de inteligencia territorial com dados socioeconomicos, demograficos e empresariais integrados — o produto final que estas ferramentas alimentam.",
+    features: ["Plataforma em producao", "Inteligencia territorial", "Dados socioeconomicos integrados", "SEBRAE Paraiba", "Analise municipal", "Decisao baseada em evidencias"],
+    destaque: "A PIPPA em acao. Acesse a plataforma completa ja implantada no SEBRAE Paraiba — inteligencia territorial, dados integrados e interface pronta para tomada de decisao em politicas publicas."
+  },
+  {
+    id: "catalogo",
+    nome: "Qual e a sua Estrategia?",
+    subtitulo: "Catalogo de Fontes do Observatorio",
+    accent: "#3b82f6",
+    icon: "🎯",
+    url: "../catalogo-fontes/output/catalogo_fontes_observatorio.html",
+    descricao: "Catalogo interativo das fontes de dados disponiveis no Observatorio SEBRAE. Navegue por 17 fontes e 58 cubos de dados organizados por perguntas norteadoras sobre problemas publicos — de demografia a comercio exterior, de saude a empreendedorismo.",
+    features: ["17 fontes de dados", "58 cubos analiticos", "Perguntas norteadoras", "Busca inteligente", "Cards expandiveis com detalhes", "Usos para politicas publicas"],
+    destaque: "Descubra quais dados voce precisa antes de comecar qualquer analise. Navegue pelas fontes do Observatorio organizadas por problemas publicos, cada uma com descricao de uso e cubos analiticos disponiveis."
+  }
+];
+
+const QUESTIONS = [
+  { texto: "Como estao sendo executadas as emendas parlamentares?", ferramentas: ["emendas"], tema: "Orcamento" },
+  { texto: "Quais licitacoes estao abertas para MPEs?", ferramentas: ["compras"], tema: "Compras" },
+  { texto: "Quais projetos de lei impactam pequenas empresas?", ferramentas: ["legislativo"], tema: "Legislacao" },
+  { texto: "Qual o cenario eleitoral e seus impactos?", ferramentas: ["pesquisas"], tema: "Eleicoes" },
+  { texto: "Como a reforma tributaria afeta meu negocio?", ferramentas: ["reforma"], tema: "Tributacao" },
+  { texto: "Quais dados tenho disponiveis para analise?", ferramentas: ["catalogo"], tema: "Dados" },
+  { texto: "Quero ver a plataforma em producao", ferramentas: ["prototipo"], tema: "Plataforma" },
+  { texto: "Preciso de inteligencia orcamentaria completa", ferramentas: ["emendas", "compras"], tema: "Orcamento" },
+  { texto: "Quero entender o cenario politico-legislativo", ferramentas: ["legislativo", "pesquisas", "emendas"], tema: "Politica" },
+  { texto: "Preciso de dados territoriais e economicos", ferramentas: ["catalogo", "prototipo"], tema: "Territorial" }
+];
+
+let activeQuestion = null;
+
+function renderQuestions() {
+  const wrap = document.getElementById("questionsWrap");
+  QUESTIONS.forEach((q, i) => {
+    const chip = document.createElement("button");
+    chip.className = "q-chip";
+    chip.dataset.index = i;
+    chip.innerHTML = `<span class="q-icon">?</span><span class="q-text">${q.texto}</span><span class="q-count">${q.ferramentas.length}</span>`;
+    chip.onclick = () => toggleQuestion(i);
+    wrap.appendChild(chip);
+  });
+  const clearBtn = document.createElement("button");
+  clearBtn.className = "clear-filter";
+  clearBtn.id = "clearBtn";
+  clearBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Limpar`;
+  clearBtn.onclick = clearFilter;
+  wrap.appendChild(clearBtn);
+}
+
+function toggleQuestion(index) {
+  const chips = document.querySelectorAll(".q-chip");
+  if (activeQuestion === index) { clearFilter(); return; }
+  activeQuestion = index;
+  chips.forEach(c => c.classList.remove("active"));
+  chips[index].classList.add("active");
+  document.getElementById("clearBtn").style.display = "inline-flex";
+  document.getElementById("searchBox").value = "";
+  applyQuestionFilter(QUESTIONS[index].ferramentas);
+}
+
+function applyQuestionFilter(visibleIds) {
+  let count = 0;
+  TOOLS.forEach(t => {
+    const el = document.getElementById(`card-${t.id}`);
+    if (visibleIds.includes(t.id)) { el.classList.remove("hidden"); count++; }
+    else { el.classList.add("hidden"); el.classList.remove("expanded"); }
+  });
+  document.getElementById("showCount").textContent = count;
+  document.getElementById("statVisiveis").textContent = count;
+}
+
+function clearFilter() {
+  activeQuestion = null;
+  document.querySelectorAll(".q-chip").forEach(c => c.classList.remove("active"));
+  document.getElementById("clearBtn").style.display = "none";
+  document.getElementById("searchBox").value = "";
+  TOOLS.forEach(t => document.getElementById(`card-${t.id}`).classList.remove("hidden"));
+  document.getElementById("showCount").textContent = TOOLS.length;
+  document.getElementById("statVisiveis").textContent = TOOLS.length;
+}
+
+function renderCards() {
+  const grid = document.getElementById("cardsGrid");
+  grid.innerHTML = "";
+  TOOLS.forEach(t => {
+    const ext = t.url.startsWith("http");
+    const card = document.createElement("div");
+    card.className = "card";
+    card.id = `card-${t.id}`;
+    card.innerHTML = `
+      <div class="card-accent" style="background:${t.accent}"></div>
+      <div class="card-top" onclick="toggle('${t.id}')">
+        <div class="card-emoji">${t.icon}</div>
+        <div class="card-body">
+          <div class="card-name">${t.nome}</div>
+          <div class="card-desc-short">${t.subtitulo}</div>
+        </div>
+        <div class="card-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="card-expand">
+        <div class="card-expand-inner">
+          <div class="expand-section">
+            <div class="expand-label">Sobre</div>
+            <div class="expand-text">${t.descricao}</div>
+          </div>
+          <div class="expand-section">
+            <div class="expand-label">Recursos</div>
+            <div class="tags">${t.features.map(f => `<span class="tag">${f}</span>`).join("")}</div>
+          </div>
+          <div class="expand-section">
+            <div class="highlight-box">${t.destaque}</div>
+          </div>
+          <a href="${t.url}" ${ext ? 'target="_blank" rel="noopener"' : ''} class="card-btn" onclick="event.stopPropagation()">
+            Acessar Ferramenta
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function toggle(id) {
+  document.getElementById(`card-${id}`).classList.toggle("expanded");
+}
+
+function filterCards() {
+  const q = document.getElementById("searchBox").value.toLowerCase().trim();
+  if (q) {
+    activeQuestion = null;
+    document.querySelectorAll(".q-chip").forEach(c => c.classList.remove("active"));
+    document.getElementById("clearBtn").style.display = "inline-flex";
+  } else if (activeQuestion === null) {
+    document.getElementById("clearBtn").style.display = "none";
+  }
+  let vis = 0;
+  TOOLS.forEach(t => {
+    const el = document.getElementById(`card-${t.id}`);
+    const hay = [t.nome, t.subtitulo, t.descricao, ...t.features].join(" ").toLowerCase();
+    if (!q || hay.includes(q)) { el.classList.remove("hidden"); vis++; }
+    else { el.classList.add("hidden"); el.classList.remove("expanded"); }
+  });
+  document.getElementById("showCount").textContent = vis;
+  document.getElementById("statVisiveis").textContent = vis;
+}
+
+document.getElementById("footerDate").textContent = new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});
+renderQuestions();
+renderCards();
+</script>
+</body>
+</html>

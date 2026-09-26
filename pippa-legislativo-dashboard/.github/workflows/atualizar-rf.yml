@@ -1,0 +1,51 @@
+name: Atualizar dados RF (Receita Federal)
+
+on:
+  schedule:
+    # Toda segunda-feira as 06:00 UTC (03:00 Brasilia)
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    # Permite execucao manual pelo GitHub
+
+jobs:
+  atualizar-dados:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repositorio
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: pip install requests
+
+      - name: Gerar dados RF
+        env:
+          OBSERVATORIO_TOKEN: ${{ secrets.OBSERVATORIO_TOKEN }}
+        run: python scripts/gerar_dados_rf.py
+
+      - name: Verificar mudancas
+        id: check
+        run: |
+          if git diff --quiet data/rf_empresas.json; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "Sem alteracoes nos dados."
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Dados atualizados detectados."
+          fi
+
+      - name: Commit e push
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/rf_empresas.json
+          git commit -m "chore: atualiza dados RF ($(date +%Y-%m-%d))"
+          git push
