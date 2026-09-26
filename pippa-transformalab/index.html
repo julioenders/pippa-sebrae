@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TransformaLab — ObservaPP | Plataforma de Experimentação</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #242836;
+      --border: #2e3348;
+      --text: #e4e6ef;
+      --text-muted: #8b8fa8;
+      --accent: #10b981;
+      --accent-hover: #34d399;
+      --accent-dim: rgba(16,185,129,.15);
+      --blue: #4f8cff;
+      --purple: #a855f7;
+      --orange: #f59e0b;
+      --pink: #f472b6;
+      --red: #ef4444;
+      --cyan: #06b6d4;
+      --lime: #84cc16;
+      --elegibilidade: #4f8cff;
+      --descoberta: #a855f7;
+      --prototipagem: #f59e0b;
+      --piloto: #10b981;
+      --recomendacao: #06b6d4;
+      --institucionalizacao: #f472b6;
+      --lab-design: #a855f7;
+      --lab-pro: #4f8cff;
+      --insight-lab: #f59e0b;
+      --success: #22c55e;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .pippa-home-btn{position:fixed;top:16px;right:16px;z-index:9999;display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;backdrop-filter:blur(8px);transition:all .2s;}
+    .pippa-home-btn:hover{background:rgba(16,185,129,.2);border-color:rgba(16,185,129,.6);color:#fff;}
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #1a1d27 0%, #242836 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 16px; }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #10b981, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      overflow-x: auto;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, rgba(16,185,129,.08) 0%, rgba(168,85,247,.08) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      border: 1px solid rgba(16,185,129,.2);
+    }
+
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #e4e6ef, #a7f3d0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 24px;
+    }
+
+    .search-box {
+      max-width: 560px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 14px 20px 14px 44px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus { border-color: var(--accent); }
+
+    .search-box .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+
+    /* Content */
+    .content { padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+    /* Action cards */
+    .action-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .action-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .action-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(16,185,129,.15);
+    }
+
+    .action-card .ac-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin: 0 auto 12px;
+    }
+
+    .action-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .action-card p { font-size: 12px; color: var(--text-muted); }
+
+    /* Section titles */
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title .st-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .section-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-left: 8px;
+      font-weight: 400;
+    }
+
+    /* Filter bar */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+      align-items: center;
+    }
+
+    .filter-bar select, .filter-bar input[type="text"] {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .filter-bar select:focus, .filter-bar input:focus { border-color: var(--accent); }
+
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
+
+    .btn-sm { padding: 5px 12px; font-size: 12px; }
+
+    /* KPI row */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .kpi-card .kpi-value {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .kpi-card .kpi-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-card .kpi-delta {
+      font-size: 11px;
+      margin-top: 6px;
+      font-weight: 600;
+    }
+
+    .kpi-delta.up { color: var(--success); }
+    .kpi-delta.down { color: var(--red); }
+
+    /* Journey timeline */
+    .journey {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 32px;
+      overflow-x: auto;
+    }
+
+    .journey-steps {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      min-width: 900px;
+      position: relative;
+    }
+
+    .journey-steps::before {
+      content: '';
+      position: absolute;
+      top: 24px;
+      left: 40px;
+      right: 40px;
+      height: 3px;
+      background: var(--border);
+      z-index: 0;
+    }
+
+    .journey-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 140px;
+      position: relative;
+      z-index: 1;
+      cursor: pointer;
+    }
+
+    .journey-step .step-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 10px;
+      border: 3px solid;
+      background: var(--bg);
+      transition: all 0.3s;
+    }
+
+    .journey-step:hover .step-circle {
+      transform: scale(1.15);
+      box-shadow: 0 0 20px rgba(16,185,129,.3);
+    }
+
+    .journey-step .step-gate {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .journey-step .step-name {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .journey-step .step-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    .journey-step .step-count {
+      margin-top: 8px;
+      background: var(--surface2);
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* Grid layouts */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+    .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 32px; }
+    .grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 32px; }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .card-header h3 {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 280px;
+    }
+
+    /* Experiment cards */
+    .exp-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .exp-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .exp-item:hover {
+      border-color: var(--accent);
+      background: rgba(16,185,129,.05);
+    }
+
+    .exp-badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .exp-badge.piloto { background: rgba(16,185,129,.15); color: var(--accent); }
+    .exp-badge.prototipo { background: rgba(168,85,247,.15); color: var(--purple); }
+    .exp-badge.descoberta { background: rgba(79,140,255,.15); color: var(--blue); }
+    .exp-badge.recomendacao { background: rgba(6,182,212,.15); color: var(--cyan); }
+    .exp-badge.institucionalizado { background: rgba(244,114,182,.15); color: var(--pink); }
+
+    .exp-info { flex: 1; }
+    .exp-info h4 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .exp-info p { font-size: 11px; color: var(--text-muted); }
+
+    .exp-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .exp-meta span { display: flex; align-items: center; gap: 4px; }
+
+    /* Call cards */
+    .call-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 10px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .call-card:hover { border-color: var(--accent); }
+
+    .call-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .call-header h4 { font-size: 13px; font-weight: 600; }
+
+    .call-status {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .call-status.aberta { background: rgba(34,197,94,.15); color: var(--success); }
+    .call-status.encerrada { background: rgba(139,143,168,.15); color: var(--text-muted); }
+    .call-status.avaliacao { background: rgba(245,158,11,.15); color: var(--orange); }
+
+    .call-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+
+    .call-progress {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .call-progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--cyan));
+      transition: width 0.5s;
+    }
+
+    /* Lab type cards */
+    .lab-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+
+    .lab-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lab-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .lab-card.design::before { background: var(--lab-design); }
+    .lab-card.pro::before { background: var(--lab-pro); }
+    .lab-card.insight::before { background: var(--insight-lab); }
+
+    .lab-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0,0,0,.3);
+    }
+
+    .lab-card .lab-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .lab-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .lab-card .lab-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4; }
+
+    .lab-stat {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      padding: 6px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .lab-stat span:first-child { color: var(--text-muted); }
+    .lab-stat span:last-child { font-weight: 600; }
+
+    /* Results table */
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .results-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .results-table td {
+      padding: 12px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .results-table tr:hover td {
+      background: rgba(16,185,129,.03);
+    }
+
+    .impact-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      width: 80px;
+    }
+
+    .impact-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--accent);
+    }
+
+    /* Territory map placeholder */
+    .territory-grid {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 4px;
+    }
+
+    .territory-cell {
+      aspect-ratio: 1;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .territory-cell:hover {
+      transform: scale(1.2);
+      z-index: 2;
+      border-color: #fff;
+    }
+
+    .territory-cell.active { opacity: 1; }
+    .territory-cell.inactive { opacity: 0.3; }
+
+    /* Detail modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,.7);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 28px;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .modal-close:hover { border-color: var(--accent); }
+
+    .modal h2 { font-size: 20px; margin-bottom: 4px; }
+    .modal .modal-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+
+    .modal-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .modal-kpi {
+      background: var(--surface2);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .modal-kpi .mk-value { font-size: 22px; font-weight: 700; }
+    .modal-kpi .mk-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .modal-section { margin-bottom: 20px; }
+    .modal-section h4 { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+
+    .modal-chart { height: 200px; position: relative; }
+
+    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .action-cards { grid-template-columns: repeat(2, 1fr); }
+      .kpi-row { grid-template-columns: repeat(3, 1fr); }
+      .lab-cards { grid-template-columns: 1fr; }
+      .grid-2, .grid-2-1, .grid-1-2 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .action-cards { grid-template-columns: 1fr; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .hero h1 { font-size: 22px; }
+      .content { padding: 16px; }
+      .modal-kpis { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Scroll styling */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* Tooltip */
+    .tooltip-container { position: relative; }
+    .tooltip-container .tooltip-text {
+      visibility: hidden;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      z-index: 10;
+      box-shadow: var(--shadow);
+    }
+    .tooltip-container:hover .tooltip-text { visibility: visible; }
+
+    /* Ecosystem visual */
+    .eco-ring {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin: 20px auto;
+      max-width: 500px;
+    }
+
+    .eco-node {
+      flex: 1;
+      text-align: center;
+      padding: 16px 12px;
+      border-radius: var(--radius);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .eco-node:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .eco-node h4 { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .eco-node p { font-size: 10px; color: var(--text-muted); }
+
+    .eco-arrow {
+      font-size: 20px;
+      color: var(--accent);
+      padding: 0 8px;
+    }
+
+    /* Animate */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-in { animation: fadeIn 0.4s ease-out; }
+  </style>
+</head>
+<body>
+
+<a href="../pippa-portal/index.html" class="pippa-home-btn">&#9751; PIPPA Portal</a>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <div>
+      <div class="logo">TransformaLab</div>
+      <div class="logo-sub">ObservaPP &mdash; Plataforma de Experimentacao</div>
+    </div>
+  </div>
+  <div class="header-controls">
+    <span style="font-size:12px;color:var(--text-muted);">Dados sinteticos | Set/2026</span>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" data-tab="visao-geral">Visao Geral</div>
+  <div class="tab" data-tab="experimentos">Experimentos</div>
+  <div class="tab" data-tab="chamadas">Chamadas</div>
+  <div class="tab" data-tab="territorios">Territorios</div>
+  <div class="tab" data-tab="resultados">Resultados</div>
+  <div class="tab" data-tab="hub">Hub TransformaLab</div>
+</div>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge">&#9881; Laboratorio de Politicas Publicas</div>
+  <h1>Experimentacao para transformar o ambiente de negocios</h1>
+  <p>Conectando desafios regulatorios a solucoes baseadas em evidencias atraves de laboratórios de inovacao em politicas publicas.</p>
+  <div class="search-box">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="searchInput" placeholder="Busque um desafio, experimento ou territorio..." oninput="globalSearch(this.value)">
+  </div>
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- ===================== TAB: VISAO GERAL ===================== -->
+  <div id="tab-visao-geral" class="tab-panel active">
+
+    <!-- Action Cards -->
+    <div class="action-cards animate-in">
+      <div class="action-card" onclick="switchTab('chamadas')">
+        <div class="ac-icon" style="background:rgba(16,185,129,.12);color:var(--accent);">&#128221;</div>
+        <h3>Submeter Desafio</h3>
+        <p>Proponha um desafio regulatorio para experimentacao</p>
+      </div>
+      <div class="action-card" onclick="switchTab('experimentos')">
+        <div class="ac-icon" style="background:rgba(79,140,255,.12);color:var(--blue);">&#128300;</div>
+        <h3>Participar de Piloto</h3>
+        <p>Contribua com um experimento ativo em seu territorio</p>
+      </div>
+      <div class="action-card" onclick="switchTab('experimentos')">
+        <div class="ac-icon" style="background:rgba(168,85,247,.12);color:var(--purple);">&#128161;</div>
+        <h3>Ver Experimentos Ativos</h3>
+        <p>Acompanhe os 12 experimentos em andamento</p>
+      </div>
+      <div class="action-card" onclick="switchTab('resultados')">
+        <div class="ac-icon" style="background:rgba(245,158,11,.12);color:var(--orange);">&#128218;</div>
+        <h3>Biblioteca de Aprendizados</h3>
+        <p>Acesse resultados e evidencias de experimentos</p>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-row animate-in" id="kpiRow">
+      <!-- filled by JS -->
+    </div>
+
+    <!-- Jornada de Experimentacao -->
+    <div class="section-title">&#128736; Jornada de Experimentacao <span class="section-subtitle">Framework de 6 etapas com gates de decisao</span><span class="st-line"></span></div>
+    <div class="journey animate-in" id="journeySection">
+      <div class="journey-steps" id="journeySteps">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+    <!-- Lab models -->
+    <div class="section-title">&#127981; Modelos de Laboratorio <span class="st-line"></span></div>
+    <div class="lab-cards animate-in" id="labCards">
+      <!-- filled by JS -->
+    </div>
+
+    <!-- Ecossistema -->
+    <div class="section-title">&#128256; Ecossistema Integrado <span class="st-line"></span></div>
+    <div class="card animate-in" style="margin-bottom:32px;">
+      <div class="eco-ring">
+        <div class="eco-node" style="border-color:var(--blue);">
+          <h4 style="color:var(--blue);">Observatorio</h4>
+          <p>Dados & Evidencias</p>
+        </div>
+        <div class="eco-arrow">&#8594;</div>
+        <div class="eco-node" style="border-color:var(--accent);">
+          <h4 style="color:var(--accent);">Laboratorio</h4>
+          <p>Experimentacao</p>
+        </div>
+        <div class="eco-arrow">&#8594;</div>
+        <div class="eco-node" style="border-color:var(--purple);">
+          <h4 style="color:var(--purple);">Advocacy</h4>
+          <p>Incidencia Politica</p>
+        </div>
+        <div class="eco-arrow" style="font-size:14px;">&#128260;</div>
+      </div>
+      <div style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:8px;">Ciclo integrado: evidencias alimentam experimentos que geram recomendacoes para incidencia</div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="grid-2 animate-in">
+      <div class="card">
+        <div class="card-header"><h3>Experimentos por Etapa</h3></div>
+        <div class="chart-container"><canvas id="chartEtapas"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Experimentos por Modelo de Lab</h3></div>
+        <div class="chart-container"><canvas id="chartLabs"></canvas></div>
+      </div>
+    </div>
+
+    <div class="grid-2 animate-in">
+      <div class="card">
+        <div class="card-header"><h3>Evolucao Mensal de Experimentos</h3></div>
+        <div class="chart-container"><canvas id="chartTimeline"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Indicadores de Impacto Agregado</h3></div>
+        <div class="chart-container"><canvas id="chartImpact"></canvas></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===================== TAB: EXPERIMENTOS ===================== -->
+  <div id="tab-experimentos" class="tab-panel">
+    <div class="section-title">&#128300; Experimentos Ativos <span class="section-subtitle" id="expCount"></span><span class="st-line"></span></div>
+
+    <div class="filter-bar">
+      <select id="filterEtapa" onchange="applyFilters()">
+        <option value="">Todas as Etapas</option>
+        <option value="Elegibilidade">Elegibilidade</option>
+        <option value="Descoberta">Descoberta</option>
+        <option value="Prototipagem">Prototipagem</option>
+        <option value="Piloto">Piloto</option>
+        <option value="Recomendacao">Recomendacao</option>
+        <option value="Institucionalizacao">Institucionalizacao</option>
+      </select>
+      <select id="filterLab" onchange="applyFilters()">
+        <option value="">Todos os Labs</option>
+        <option value="Lab Design & Experimentacao">Lab Design</option>
+        <option value="Lab Pro-Negocios">Lab Pro-Negocios</option>
+        <option value="Insight Lab">Insight Lab</option>
+      </select>
+      <select id="filterUF" onchange="applyFilters()">
+        <option value="">Todos os Estados</option>
+      </select>
+      <select id="filterTema" onchange="applyFilters()">
+        <option value="">Todos os Temas</option>
+      </select>
+      <button class="btn btn-outline btn-sm" onclick="clearFilters()">Limpar Filtros</button>
+    </div>
+
+    <div class="exp-list" id="expList">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <!-- ===================== TAB: CHAMADAS ===================== -->
+  <div id="tab-chamadas" class="tab-panel">
+    <div class="section-title">&#128221; Chamadas de Desafios <span class="st-line"></span></div>
+
+    <div class="filter-bar">
+      <select id="filterCallStatus" onchange="applyFilters()">
+        <option value="">Todos os Status</option>
+        <option value="Aberta">Abertas</option>
+        <option value="Em Avaliacao">Em Avaliacao</option>
+        <option value="Encerrada">Encerradas</option>
+      </select>
+      <select id="filterCallTema" onchange="applyFilters()">
+        <option value="">Todos os Temas</option>
+      </select>
+      <button class="btn btn-outline btn-sm" onclick="clearFilters()">Limpar Filtros</button>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div id="callList">
+          <!-- filled by JS -->
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Chamadas por Status</h3></div>
+        <div class="chart-container"><canvas id="chartCalls"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB: TERRITORIOS ===================== -->
+  <div id="tab-territorios" class="tab-panel">
+    <div class="section-title">&#127758; Mapa de Territorios <span class="section-subtitle">27 UFs no Hub TransformaLab</span><span class="st-line"></span></div>
+
+    <div class="filter-bar">
+      <select id="filterRegiao" onchange="applyFilters()">
+        <option value="">Todas as Regioes</option>
+        <option value="Norte">Norte</option>
+        <option value="Nordeste">Nordeste</option>
+        <option value="Centro-Oeste">Centro-Oeste</option>
+        <option value="Sudeste">Sudeste</option>
+        <option value="Sul">Sul</option>
+      </select>
+      <select id="filterMaturidade" onchange="applyFilters()">
+        <option value="">Todas as Maturidades</option>
+        <option value="Avancado">Avancado</option>
+        <option value="Intermediario">Intermediario</option>
+        <option value="Inicial">Inicial</option>
+        <option value="Planejamento">Planejamento</option>
+      </select>
+      <button class="btn btn-outline btn-sm" onclick="clearFilters()">Limpar Filtros</button>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><h3>Heatmap de Atividade por UF</h3></div>
+        <div class="territory-grid" id="territoryGrid">
+          <!-- filled by JS -->
+        </div>
+        <div style="display:flex;justify-content:center;gap:16px;margin-top:12px;font-size:10px;color:var(--text-muted);">
+          <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--accent);vertical-align:middle;margin-right:4px;"></span>Avancado</span>
+          <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--blue);vertical-align:middle;margin-right:4px;"></span>Intermediario</span>
+          <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--orange);vertical-align:middle;margin-right:4px;"></span>Inicial</span>
+          <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--border);vertical-align:middle;margin-right:4px;"></span>Planejamento</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Experimentos por Regiao</h3></div>
+        <div class="chart-container"><canvas id="chartRegiao"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:32px;">
+      <div class="card-header"><h3>Ranking de Territorios</h3></div>
+      <table class="results-table" id="territoryTable">
+        <thead>
+          <tr>
+            <th>UF</th>
+            <th>Regiao</th>
+            <th>Lab</th>
+            <th>Maturidade</th>
+            <th>Experimentos</th>
+            <th>Impacto</th>
+          </tr>
+        </thead>
+        <tbody id="territoryBody">
+          <!-- filled by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== TAB: RESULTADOS ===================== -->
+  <div id="tab-resultados" class="tab-panel">
+    <div class="section-title">&#128200; Resultados e Evidencias <span class="st-line"></span></div>
+
+    <div class="filter-bar">
+      <select id="filterResultTema" onchange="applyFilters()">
+        <option value="">Todos os Temas</option>
+      </select>
+      <select id="filterResultImpacto" onchange="applyFilters()">
+        <option value="">Todos os Impactos</option>
+        <option value="Alto">Alto</option>
+        <option value="Medio">Medio</option>
+        <option value="Baixo">Baixo</option>
+      </select>
+      <button class="btn btn-outline btn-sm" onclick="clearFilters()">Limpar Filtros</button>
+    </div>
+
+    <div class="grid-2-1">
+      <div class="card">
+        <div class="card-header"><h3>Comparativo Antes x Depois</h3></div>
+        <div class="chart-container"><canvas id="chartBeforeAfter"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Nivel de Evidencia</h3></div>
+        <div class="chart-container"><canvas id="chartEvidence"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:32px;">
+      <div class="card-header"><h3>Catalogo de Resultados</h3></div>
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Experimento</th>
+            <th>Tema</th>
+            <th>UF</th>
+            <th>Indicador</th>
+            <th>Antes</th>
+            <th>Depois</th>
+            <th>Variacao</th>
+            <th>Impacto</th>
+          </tr>
+        </thead>
+        <tbody id="resultsBody">
+          <!-- filled by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== TAB: HUB ===================== -->
+  <div id="tab-hub" class="tab-panel">
+    <div class="section-title">&#127760; Hub TransformaLab <span class="section-subtitle">Rede colaborativa de 27 laboratorios estaduais</span><span class="st-line"></span></div>
+
+    <div class="kpi-row animate-in" id="hubKpis">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="grid-2 animate-in">
+      <div class="card">
+        <div class="card-header"><h3>Capacidades Dinamicas por UF</h3></div>
+        <div class="chart-container"><canvas id="chartCapacidades"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Formacao Acumulada</h3></div>
+        <div class="chart-container"><canvas id="chartFormacao"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card animate-in" style="margin-bottom:32px;">
+      <div class="card-header"><h3>Plano de Formacao &mdash; 90 Dias</h3></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        <div style="background:var(--surface2);border-radius:8px;padding:16px;border-left:3px solid var(--accent);">
+          <div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:4px;">Fase 1 — Dias 1-30</div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:6px;">Sensibilizacao</div>
+          <div style="font-size:11px;color:var(--text-muted);line-height:1.4;">Diagnostico inicial, formacao de equipe, alinhamento conceitual com stakeholders.</div>
+          <div style="margin-top:8px;font-size:11px;"><span style="color:var(--accent);font-weight:600;">18</span> <span style="color:var(--text-muted);">labs concluiram</span></div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:16px;border-left:3px solid var(--blue);">
+          <div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:4px;">Fase 2 — Dias 31-60</div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:6px;">Capacitacao</div>
+          <div style="font-size:11px;color:var(--text-muted);line-height:1.4;">Formacao metodologica, design thinking, ferramentas de experimentacao, metricas.</div>
+          <div style="margin-top:8px;font-size:11px;"><span style="color:var(--blue);font-weight:600;">12</span> <span style="color:var(--text-muted);">labs concluiram</span></div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:16px;border-left:3px solid var(--purple);">
+          <div style="font-size:12px;color:var(--purple);font-weight:600;margin-bottom:4px;">Fase 3 — Dias 61-90</div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:6px;">Primeiro Experimento</div>
+          <div style="font-size:11px;color:var(--text-muted);line-height:1.4;">Selecao de desafio, prototipagem rapida, ciclo completo de experimentacao piloto.</div>
+          <div style="margin-top:8px;font-size:11px;"><span style="color:var(--purple);font-weight:600;">8</span> <span style="color:var(--text-muted);">labs concluiram</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalContent">
+    <button class="modal-close" onclick="closeModal()">&#10005;</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// SYNTHETIC DATA
+// ============================================================
+
+const UFS = [
+  {uf:'AC',nome:'Acre',regiao:'Norte'},{uf:'AL',nome:'Alagoas',regiao:'Nordeste'},
+  {uf:'AM',nome:'Amazonas',regiao:'Norte'},{uf:'AP',nome:'Amapa',regiao:'Norte'},
+  {uf:'BA',nome:'Bahia',regiao:'Nordeste'},{uf:'CE',nome:'Ceara',regiao:'Nordeste'},
+  {uf:'DF',nome:'Distrito Federal',regiao:'Centro-Oeste'},{uf:'ES',nome:'Espirito Santo',regiao:'Sudeste'},
+  {uf:'GO',nome:'Goias',regiao:'Centro-Oeste'},{uf:'MA',nome:'Maranhao',regiao:'Nordeste'},
+  {uf:'MG',nome:'Minas Gerais',regiao:'Sudeste'},{uf:'MS',nome:'Mato Grosso do Sul',regiao:'Centro-Oeste'},
+  {uf:'MT',nome:'Mato Grosso',regiao:'Centro-Oeste'},{uf:'PA',nome:'Para',regiao:'Norte'},
+  {uf:'PB',nome:'Paraiba',regiao:'Nordeste'},{uf:'PE',nome:'Pernambuco',regiao:'Nordeste'},
+  {uf:'PI',nome:'Piaui',regiao:'Nordeste'},{uf:'PR',nome:'Parana',regiao:'Sul'},
+  {uf:'RJ',nome:'Rio de Janeiro',regiao:'Sudeste'},{uf:'RN',nome:'Rio Grande do Norte',regiao:'Nordeste'},
+  {uf:'RO',nome:'Rondonia',regiao:'Norte'},{uf:'RR',nome:'Roraima',regiao:'Norte'},
+  {uf:'RS',nome:'Rio Grande do Sul',regiao:'Sul'},{uf:'SC',nome:'Santa Catarina',regiao:'Sul'},
+  {uf:'SE',nome:'Sergipe',regiao:'Nordeste'},{uf:'SP',nome:'Sao Paulo',regiao:'Sudeste'},
+  {uf:'TO',nome:'Tocantins',regiao:'Norte'}
+];
+
+const TEMAS = [
+  'Licenciamento','Desburocratizacao','Compras Publicas','Tributacao Simplificada',
+  'Acesso a Credito','Capacitacao Digital','Internacionalizacao','Inovacao Regulatoria',
+  'Formalizacao','Sustentabilidade'
+];
+
+const ETAPAS = [
+  {nome:'Elegibilidade',gate:'Gate 0',desc:'Triagem e selecao de desafios',cor:'var(--elegibilidade)',icon:'&#9898;'},
+  {nome:'Descoberta',gate:'Gate 1',desc:'Pesquisa, entrevistas e diagnostico',cor:'var(--descoberta)',icon:'&#128270;'},
+  {nome:'Prototipagem',gate:'Gate 2',desc:'Design de solucao e MVP',cor:'var(--prototipagem)',icon:'&#9998;'},
+  {nome:'Piloto',gate:'Gate 3',desc:'Teste controlado com metricas',cor:'var(--piloto)',icon:'&#128300;'},
+  {nome:'Recomendacao',gate:'Gate 4',desc:'Analise de resultados e proposta',cor:'var(--recomendacao)',icon:'&#128203;'},
+  {nome:'Institucionalizacao',gate:'Gate 5',desc:'Adocao formal da politica',cor:'var(--institucionalizacao)',icon:'&#127942;'}
+];
+
+const LAB_MODELS = [
+  {
+    nome:'Lab Design & Experimentacao',cls:'design',icon:'&#128161;',
+    desc:'Laboratorio completo com ciclo de design thinking, prototipagem e teste de solucoes regulatorias.',
+    experimentos:5,territorios:8,duracao:'6-12 meses',color:'var(--lab-design)'
+  },
+  {
+    nome:'Lab Pro-Negocios',cls:'pro',icon:'&#127981;',
+    desc:'Foco em simplificacao do ambiente de negocios e reducao de barreiras regulatorias para MPE.',
+    experimentos:4,territorios:6,duracao:'3-6 meses',color:'var(--lab-pro)'
+  },
+  {
+    nome:'Insight Lab',cls:'insight',icon:'&#128202;',
+    desc:'Laboratorio de dados e evidencias para subsidiar decisoes de politicas publicas com analytics.',
+    experimentos:3,territorios:5,duracao:'2-4 meses',color:'var(--insight-lab)'
+  }
+];
+
+function rnd(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function pick(arr){return arr[rnd(0,arr.length-1)];}
+
+const maturidades = ['Avancado','Intermediario','Inicial','Planejamento'];
+const ufData = UFS.map(u => ({
+  ...u,
+  maturidade: pick(maturidades),
+  experimentos: rnd(0,5),
+  lab: pick(LAB_MODELS).nome,
+  impacto: rnd(20,95)
+}));
+// Ensure MA is advanced (TransformaLab Maranhao case)
+const maIdx = ufData.findIndex(u => u.uf === 'MA');
+if(maIdx >= 0){ ufData[maIdx].maturidade = 'Avancado'; ufData[maIdx].experimentos = 5; ufData[maIdx].impacto = 92; }
+const spIdx = ufData.findIndex(u => u.uf === 'SP');
+if(spIdx >= 0){ ufData[spIdx].maturidade = 'Avancado'; ufData[spIdx].experimentos = 4; ufData[spIdx].impacto = 88; }
+
+const EXPERIMENTOS = [
+  {id:1,titulo:'Simplificar licenciamento para pequenos negocios',tema:'Licenciamento',uf:'MA',etapa:'Piloto',lab:'Lab Design & Experimentacao',descricao:'Redesenho do processo de licenciamento municipal com foco em reducao de tempo e etapas para MEI e ME.',indicador:'Tempo medio de licenciamento',antes:45,depois:12,unidade:'dias',participantes:340,inicio:'2026-03-15'},
+  {id:2,titulo:'Plataforma digital de formalizacao simplificada',tema:'Formalizacao',uf:'SP',etapa:'Prototipagem',lab:'Lab Pro-Negocios',descricao:'Prototipo de plataforma unificada para formalizacao de MEI com integracao de orgaos municipais e estaduais.',indicador:'Taxa de formalizacao',antes:23,depois:41,unidade:'%',participantes:890,inicio:'2026-04-01'},
+  {id:3,titulo:'Sandbox regulatorio para fintechs de microcredito',tema:'Acesso a Credito',uf:'CE',etapa:'Descoberta',lab:'Insight Lab',descricao:'Ambiente regulatorio experimental para testar novos modelos de microcredito digital para pequenos negocios.',indicador:'Acesso a credito',antes:15,depois:null,unidade:'%',participantes:0,inicio:'2026-06-10'},
+  {id:4,titulo:'Compras publicas com reserva para economia solidaria',tema:'Compras Publicas',uf:'RS',etapa:'Recomendacao',lab:'Lab Design & Experimentacao',descricao:'Teste de modelo de licitacao com reserva de percentual para cooperativas e empreendimentos solidarios.',indicador:'Participacao de cooperativas',antes:3,depois:18,unidade:'%',participantes:67,inicio:'2025-11-20'},
+  {id:5,titulo:'Certificacao digital automatizada para exportadores',tema:'Internacionalizacao',uf:'PR',etapa:'Piloto',lab:'Lab Pro-Negocios',descricao:'Sistema piloto de certificacao de origem automatizada via blockchain para pequenos exportadores.',indicador:'Tempo de certificacao',antes:30,depois:3,unidade:'dias',participantes:124,inicio:'2026-01-08'},
+  {id:6,titulo:'Dashboard preditivo de conformidade tributaria',tema:'Tributacao Simplificada',uf:'MG',etapa:'Prototipagem',lab:'Insight Lab',descricao:'Painel com IA para antecipar obrigacoes e simular cenarios tributarios para Simples Nacional.',indicador:'Inadimplencia fiscal',antes:22,depois:null,unidade:'%',participantes:0,inicio:'2026-05-15'},
+  {id:7,titulo:'Hub de capacitacao digital para artesaos',tema:'Capacitacao Digital',uf:'BA',etapa:'Institucionalizacao',lab:'Lab Pro-Negocios',descricao:'Programa de letramento digital e presenca online para artesaos e produtores locais, institucionalizado como politica estadual.',indicador:'Presenca digital',antes:8,depois:67,unidade:'%',participantes:1250,inicio:'2025-06-01'},
+  {id:8,titulo:'Redesenho do alvara digital municipal',tema:'Desburocratizacao',uf:'PE',etapa:'Piloto',lab:'Lab Design & Experimentacao',descricao:'Reengenharia do processo de alvara de funcionamento com emissao 100% digital e aprovacao automatica para atividades de baixo risco.',indicador:'Tempo de emissao',antes:21,depois:1,unidade:'dias',participantes:2100,inicio:'2026-02-01'},
+  {id:9,titulo:'Programa de inovacao regulatoria para delivery',tema:'Inovacao Regulatoria',uf:'RJ',etapa:'Descoberta',lab:'Lab Design & Experimentacao',descricao:'Mapeamento e proposta de adequacao regulatoria para dark kitchens e servicos de delivery por pequenos negocios.',indicador:'Adequacao regulatoria',antes:12,depois:null,unidade:'%',participantes:0,inicio:'2026-07-20'},
+  {id:10,titulo:'Selo verde simplificado para MPE',tema:'Sustentabilidade',uf:'SC',etapa:'Prototipagem',lab:'Insight Lab',descricao:'Certificacao ambiental simplificada para micro e pequenas empresas com criterios adaptados a realidade das MPE.',indicador:'Empresas certificadas',antes:2,depois:null,unidade:'%',participantes:0,inicio:'2026-06-01'},
+  {id:11,titulo:'Balcao unico de regularizacao fundiaria',tema:'Formalizacao',uf:'GO',etapa:'Elegibilidade',lab:'Lab Pro-Negocios',descricao:'Integracao de servicos de regularizacao em balcao unico para empreendedores rurais.',indicador:'Regularizacoes concluidas',antes:null,depois:null,unidade:'un/mes',participantes:0,inicio:'2026-08-15'},
+  {id:12,titulo:'Jornada digital de licenciamento ambiental',tema:'Licenciamento',uf:'MA',etapa:'Piloto',lab:'Lab Design & Experimentacao',descricao:'Digitalizacao completa da jornada de licenciamento ambiental com acompanhamento em tempo real.',indicador:'Tempo de analise',antes:90,depois:25,unidade:'dias',participantes:180,inicio:'2026-01-20'}
+];
+
+const CHAMADAS = [
+  {id:1,titulo:'Desafio: Simplificacao do Licenciamento Municipal',tema:'Licenciamento',status:'Encerrada',propostas:23,inicio:'2025-10-01',fim:'2025-12-15',progresso:100},
+  {id:2,titulo:'Desafio: Barreiras ao Acesso a Credito para MEI',tema:'Acesso a Credito',status:'Em Avaliacao',propostas:15,inicio:'2026-04-01',fim:'2026-06-30',progresso:85},
+  {id:3,titulo:'Desafio: Desburocratizacao do Alvara Digital',tema:'Desburocratizacao',status:'Encerrada',propostas:31,inicio:'2025-08-01',fim:'2025-10-31',progresso:100},
+  {id:4,titulo:'Desafio: Inovacao em Compras Publicas para MPE',tema:'Compras Publicas',status:'Aberta',propostas:8,inicio:'2026-08-01',fim:'2026-10-31',progresso:35},
+  {id:5,titulo:'Desafio: Capacitacao Digital Rural',tema:'Capacitacao Digital',status:'Aberta',propostas:12,inicio:'2026-07-15',fim:'2026-10-15',progresso:42},
+  {id:6,titulo:'Desafio: Tributacao Simplificada — Simples Nacional',tema:'Tributacao Simplificada',status:'Aberta',propostas:6,inicio:'2026-09-01',fim:'2026-11-30',progresso:15},
+  {id:7,titulo:'Desafio: Sustentabilidade e Certificacao Verde',tema:'Sustentabilidade',status:'Em Avaliacao',propostas:19,inicio:'2026-05-01',fim:'2026-07-31',progresso:90},
+  {id:8,titulo:'Desafio: Formalizacao de Negocios Informais',tema:'Formalizacao',status:'Encerrada',propostas:27,inicio:'2025-06-01',fim:'2025-09-30',progresso:100}
+];
+
+const RESULTADOS = EXPERIMENTOS.filter(e => e.depois !== null).map(e => ({
+  ...e,
+  variacao: e.unidade === '%' ? (e.depois - e.antes) : -Math.round((1 - e.depois/e.antes)*100),
+  impacto: Math.abs(e.unidade === '%' ? (e.depois - e.antes) : Math.round((1 - e.depois/e.antes)*100)) > 50 ? 'Alto' : (Math.abs(e.unidade === '%' ? (e.depois - e.antes) : Math.round((1 - e.depois/e.antes)*100)) > 25 ? 'Medio' : 'Baixo')
+}));
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+
+let charts = {};
+let currentFilters = {};
+
+function init(){
+  populateFilterOptions();
+  renderKPIs();
+  renderJourney();
+  renderLabCards();
+  renderOverviewCharts();
+  renderExperiments();
+  renderChamadas();
+  renderTerritories();
+  renderResults();
+  renderHub();
+  setupTabs();
+}
+
+function populateFilterOptions(){
+  const ufSel = document.getElementById('filterUF');
+  UFS.forEach(u => { const o = document.createElement('option'); o.value = u.uf; o.textContent = u.uf + ' - ' + u.nome; ufSel.appendChild(o); });
+
+  [document.getElementById('filterTema'), document.getElementById('filterCallTema'), document.getElementById('filterResultTema')].forEach(sel => {
+    if(!sel) return;
+    TEMAS.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; sel.appendChild(o); });
+  });
+}
+
+// ============================================================
+// TABS
+// ============================================================
+
+function setupTabs(){
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+  });
+}
+
+function switchTab(tabName){
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabName));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tabName));
+  // Re-render charts when switching tabs (Canvas resize issue)
+  setTimeout(() => {
+    Object.values(charts).forEach(c => { if(c && c.resize) c.resize(); });
+  }, 50);
+}
+
+// ============================================================
+// KPIs
+// ============================================================
+
+function renderKPIs(){
+  const totalExp = EXPERIMENTOS.length;
+  const totalPilotos = EXPERIMENTOS.filter(e => e.etapa === 'Piloto').length;
+  const totalUFs = new Set(EXPERIMENTOS.map(e => e.uf)).size;
+  const totalChamadasAbertas = CHAMADAS.filter(c => c.status === 'Aberta').length;
+  const totalParticipantes = EXPERIMENTOS.reduce((s,e) => s + e.participantes, 0);
+
+  const kpis = [
+    {value: totalExp, label:'Experimentos', delta:'+3 este mes', up: true, color:'var(--accent)'},
+    {value: totalPilotos, label:'Pilotos Ativos', delta:'+1 este mes', up: true, color:'var(--blue)'},
+    {value: totalUFs, label:'Territorios', delta:'', up: true, color:'var(--purple)'},
+    {value: totalChamadasAbertas, label:'Chamadas Abertas', delta:'3 abertas agora', up: true, color:'var(--orange)'},
+    {value: totalParticipantes.toLocaleString('pt-BR'), label:'Participantes', delta:'+420 este mes', up: true, color:'var(--cyan)'}
+  ];
+
+  document.getElementById('kpiRow').innerHTML = kpis.map(k => `
+    <div class="kpi-card">
+      <div class="kpi-value" style="color:${k.color}">${k.value}</div>
+      <div class="kpi-label">${k.label}</div>
+      ${k.delta ? `<div class="kpi-delta up">${k.delta}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// JOURNEY
+// ============================================================
+
+function renderJourney(){
+  const counts = ETAPAS.map(et => EXPERIMENTOS.filter(e => e.etapa === et.nome).length);
+
+  document.getElementById('journeySteps').innerHTML = ETAPAS.map((et, i) => `
+    <div class="journey-step" onclick="showEtapaDetail('${et.nome}')">
+      <div class="step-circle" style="border-color:${et.cor};color:${et.cor};">${i+1}</div>
+      <div class="step-gate" style="color:${et.cor};">${et.gate}</div>
+      <div class="step-name">${et.nome}</div>
+      <div class="step-desc">${et.desc}</div>
+      <div class="step-count" style="color:${et.cor};">${counts[i]} exp.</div>
+    </div>
+  `).join('');
+}
+
+function showEtapaDetail(etapa){
+  const exps = getFilteredExperiments().filter(e => e.etapa === etapa);
+  const et = ETAPAS.find(e => e.nome === etapa);
+  const html = `
+    <h2 style="color:${et.cor};">${et.icon} ${etapa}</h2>
+    <div class="modal-sub">${et.gate} — ${et.desc}</div>
+    <div class="modal-kpis">
+      <div class="modal-kpi"><div class="mk-value" style="color:${et.cor};">${exps.length}</div><div class="mk-label">Experimentos</div></div>
+      <div class="modal-kpi"><div class="mk-value">${new Set(exps.map(e=>e.uf)).size}</div><div class="mk-label">Territorios</div></div>
+      <div class="modal-kpi"><div class="mk-value">${exps.reduce((s,e)=>s+e.participantes,0).toLocaleString('pt-BR')}</div><div class="mk-label">Participantes</div></div>
+      <div class="modal-kpi"><div class="mk-value">${new Set(exps.map(e=>e.tema)).size}</div><div class="mk-label">Temas</div></div>
+    </div>
+    <div class="modal-section">
+      <h4>Experimentos nesta etapa</h4>
+      <div class="exp-list">
+        ${exps.length ? exps.map(e => renderExpItem(e)).join('') : '<div style="font-size:13px;color:var(--text-muted);padding:12px;">Nenhum experimento nesta etapa com os filtros atuais.</div>'}
+      </div>
+    </div>
+  `;
+  openModal(html);
+}
+
+// ============================================================
+// LAB CARDS
+// ============================================================
+
+function renderLabCards(){
+  document.getElementById('labCards').innerHTML = LAB_MODELS.map(lab => `
+    <div class="lab-card ${lab.cls}" onclick="showLabDetail('${lab.nome}')">
+      <div class="lab-icon" style="background:${lab.color}22;color:${lab.color};">${lab.icon}</div>
+      <h3>${lab.nome}</h3>
+      <div class="lab-desc">${lab.desc}</div>
+      <div class="lab-stat"><span>Experimentos</span><span style="color:${lab.color};">${EXPERIMENTOS.filter(e=>e.lab===lab.nome).length}</span></div>
+      <div class="lab-stat"><span>Territorios</span><span>${new Set(EXPERIMENTOS.filter(e=>e.lab===lab.nome).map(e=>e.uf)).size}</span></div>
+      <div class="lab-stat"><span>Duracao tipica</span><span>${lab.duracao}</span></div>
+    </div>
+  `).join('');
+}
+
+function showLabDetail(labNome){
+  const lab = LAB_MODELS.find(l => l.nome === labNome);
+  const exps = EXPERIMENTOS.filter(e => e.lab === labNome);
+  const html = `
+    <h2 style="color:${lab.color};">${lab.icon} ${lab.nome}</h2>
+    <div class="modal-sub">${lab.desc}</div>
+    <div class="modal-kpis">
+      <div class="modal-kpi"><div class="mk-value" style="color:${lab.color};">${exps.length}</div><div class="mk-label">Experimentos</div></div>
+      <div class="modal-kpi"><div class="mk-value">${new Set(exps.map(e=>e.uf)).size}</div><div class="mk-label">Territorios</div></div>
+      <div class="modal-kpi"><div class="mk-value">${exps.reduce((s,e)=>s+e.participantes,0).toLocaleString('pt-BR')}</div><div class="mk-label">Participantes</div></div>
+      <div class="modal-kpi"><div class="mk-value">${lab.duracao}</div><div class="mk-label">Duracao</div></div>
+    </div>
+    <div class="modal-section">
+      <h4>Experimentos</h4>
+      <div class="exp-list">${exps.map(e => renderExpItem(e)).join('')}</div>
+    </div>
+  `;
+  openModal(html);
+}
+
+// ============================================================
+// CHARTS — VISAO GERAL
+// ============================================================
+
+function renderOverviewCharts(){
+  // Etapas bar chart
+  const etapaCounts = ETAPAS.map(et => EXPERIMENTOS.filter(e => e.etapa === et.nome).length);
+  charts.etapas = new Chart(document.getElementById('chartEtapas'), {
+    type: 'bar',
+    data: {
+      labels: ETAPAS.map(e => e.nome),
+      datasets: [{
+        data: etapaCounts,
+        backgroundColor: ETAPAS.map(e => e.cor.replace('var(--','').replace(')',''))
+          .map(v => getComputedStyle(document.documentElement).getPropertyValue('--'+v).trim() + '99'),
+        borderColor: ETAPAS.map(e => e.cor.replace('var(--','').replace(')',''))
+          .map(v => getComputedStyle(document.documentElement).getPropertyValue('--'+v).trim()),
+        borderWidth: 1,
+        borderRadius: 6
+      }]
+    },
+    options: chartOpts('Quantidade')
+  });
+
+  // Labs doughnut
+  charts.labs = new Chart(document.getElementById('chartLabs'), {
+    type: 'doughnut',
+    data: {
+      labels: LAB_MODELS.map(l => l.nome),
+      datasets: [{
+        data: LAB_MODELS.map(l => EXPERIMENTOS.filter(e => e.lab === l.nome).length),
+        backgroundColor: ['#a855f799','#4f8cff99','#f59e0b99'],
+        borderColor: ['#a855f7','#4f8cff','#f59e0b'],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#8b8fa8', font: { size: 11 }, padding: 16 } }
+      },
+      cutout: '60%'
+    }
+  });
+
+  // Timeline
+  const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set'];
+  const cumulative = [1,2,3,5,7,8,10,11,12];
+  const newPerMonth = [1,1,1,2,2,1,2,1,1];
+  charts.timeline = new Chart(document.getElementById('chartTimeline'), {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        {
+          label: 'Acumulado',
+          data: cumulative,
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16,185,129,.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#10b981'
+        },
+        {
+          label: 'Novos/mes',
+          data: newPerMonth,
+          borderColor: '#4f8cff',
+          backgroundColor: 'rgba(79,140,255,.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#4f8cff'
+        }
+      ]
+    },
+    options: chartOpts('')
+  });
+
+  // Impact radar
+  charts.impact = new Chart(document.getElementById('chartImpact'), {
+    type: 'radar',
+    data: {
+      labels: ['Tempo','Custo','Satisfacao','Participacao','Escalabilidade','Evidencia'],
+      datasets: [{
+        label: 'Media dos Experimentos',
+        data: [82, 65, 78, 71, 58, 74],
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16,185,129,.15)',
+        pointBackgroundColor: '#10b981',
+        pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          beginAtZero: true,
+          max: 100,
+          ticks: { color: '#8b8fa8', font: { size: 10 }, backdropColor: 'transparent' },
+          grid: { color: '#2e334855' },
+          pointLabels: { color: '#8b8fa8', font: { size: 11 } },
+          angleLines: { color: '#2e334855' }
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function chartOpts(yLabel){
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true, position: 'bottom', labels: { color: '#8b8fa8', font: { size: 11 }, padding: 14 } }
+    },
+    scales: {
+      x: { ticks: { color: '#8b8fa8', font: { size: 11 } }, grid: { color: '#2e334833' } },
+      y: { beginAtZero: true, ticks: { color: '#8b8fa8', font: { size: 11 } }, grid: { color: '#2e334833' }, title: yLabel ? { display: true, text: yLabel, color: '#8b8fa8', font: { size: 11 } } : { display: false } }
+    }
+  };
+}
+
+// ============================================================
+// EXPERIMENTS LIST
+// ============================================================
+
+function getFilteredExperiments(){
+  let data = [...EXPERIMENTOS];
+  const etapa = document.getElementById('filterEtapa')?.value;
+  const lab = document.getElementById('filterLab')?.value;
+  const uf = document.getElementById('filterUF')?.value;
+  const tema = document.getElementById('filterTema')?.value;
+  const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+
+  if(etapa) data = data.filter(e => e.etapa === etapa);
+  if(lab) data = data.filter(e => e.lab === lab);
+  if(uf) data = data.filter(e => e.uf === uf);
+  if(tema) data = data.filter(e => e.tema === tema);
+  if(search) data = data.filter(e =>
+    e.titulo.toLowerCase().includes(search) ||
+    e.tema.toLowerCase().includes(search) ||
+    e.uf.toLowerCase().includes(search) ||
+    e.descricao.toLowerCase().includes(search)
+  );
+  return data;
+}
+
+function getFilteredChamadas(){
+  let data = [...CHAMADAS];
+  const status = document.getElementById('filterCallStatus')?.value;
+  const tema = document.getElementById('filterCallTema')?.value;
+  const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+
+  if(status) data = data.filter(c => c.status === status);
+  if(tema) data = data.filter(c => c.tema === tema);
+  if(search) data = data.filter(c => c.titulo.toLowerCase().includes(search) || c.tema.toLowerCase().includes(search));
+  return data;
+}
+
+function getFilteredUFs(){
+  let data = [...ufData];
+  const regiao = document.getElementById('filterRegiao')?.value;
+  const maturidade = document.getElementById('filterMaturidade')?.value;
+
+  if(regiao) data = data.filter(u => u.regiao === regiao);
+  if(maturidade) data = data.filter(u => u.maturidade === maturidade);
+  return data;
+}
+
+function getFilteredResults(){
+  let data = [...RESULTADOS];
+  const tema = document.getElementById('filterResultTema')?.value;
+  const impacto = document.getElementById('filterResultImpacto')?.value;
+
+  if(tema) data = data.filter(r => r.tema === tema);
+  if(impacto) data = data.filter(r => r.impacto === impacto);
+  return data;
+}
+
+function renderExpItem(e){
+  const badgeCls = e.etapa.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z]/g,'');
+  const etapaClasses = {
+    'Elegibilidade':'descoberta','Descoberta':'descoberta','Prototipagem':'prototipo',
+    'Piloto':'piloto','Recomendacao':'recomendacao','Institucionalizacao':'institucionalizado'
+  };
+  return `
+    <div class="exp-item" onclick="showExpDetail(${e.id})">
+      <span class="exp-badge ${etapaClasses[e.etapa] || 'piloto'}">${e.etapa}</span>
+      <div class="exp-info">
+        <h4>${e.titulo}</h4>
+        <p>${e.tema} &bull; ${e.lab}</p>
+      </div>
+      <div class="exp-meta">
+        <span>&#127758; ${e.uf}</span>
+        ${e.participantes ? `<span>&#128101; ${e.participantes}</span>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function renderExperiments(){
+  const filtered = getFilteredExperiments();
+  document.getElementById('expCount').textContent = filtered.length + ' experimentos';
+  document.getElementById('expList').innerHTML = filtered.length
+    ? filtered.map(e => renderExpItem(e)).join('')
+    : '<div style="padding:20px;text-align:center;color:var(--text-muted);">Nenhum experimento encontrado com os filtros atuais.</div>';
+}
+
+function showExpDetail(id){
+  const e = EXPERIMENTOS.find(x => x.id === id);
+  if(!e) return;
+  const et = ETAPAS.find(x => x.nome === e.etapa);
+  const hasResults = e.depois !== null;
+
+  let chartHtml = '';
+  if(hasResults){
+    chartHtml = `
+      <div class="modal-section">
+        <h4>Comparativo Antes x Depois</h4>
+        <div class="modal-chart"><canvas id="modalChart"></canvas></div>
+      </div>
+    `;
+  }
+
+  const html = `
+    <h2>${e.titulo}</h2>
+    <div class="modal-sub">${e.tema} &bull; ${e.uf} &bull; ${e.lab} &bull; Inicio: ${e.inicio}</div>
+    <div class="modal-kpis">
+      <div class="modal-kpi"><div class="mk-value" style="color:${et.cor};">${e.etapa}</div><div class="mk-label">Etapa Atual</div></div>
+      <div class="modal-kpi"><div class="mk-value">${e.participantes.toLocaleString('pt-BR')}</div><div class="mk-label">Participantes</div></div>
+      <div class="modal-kpi"><div class="mk-value">${e.antes !== null ? e.antes + ' ' + e.unidade : '-'}</div><div class="mk-label">Baseline (Antes)</div></div>
+      <div class="modal-kpi"><div class="mk-value" style="color:var(--accent);">${e.depois !== null ? e.depois + ' ' + e.unidade : 'Em andamento'}</div><div class="mk-label">Resultado (Depois)</div></div>
+    </div>
+    <div class="modal-section">
+      <h4>Descricao</h4>
+      <p style="font-size:13px;color:var(--text-muted);line-height:1.6;">${e.descricao}</p>
+    </div>
+    <div class="modal-section">
+      <h4>Indicador Principal</h4>
+      <div style="font-size:14px;">${e.indicador}</div>
+    </div>
+    ${chartHtml}
+    <div class="modal-section">
+      <h4>Tags</h4>
+      <div class="tag-list">
+        <span class="tag">${e.tema}</span>
+        <span class="tag">${e.uf}</span>
+        <span class="tag">${e.lab}</span>
+        <span class="tag">${e.etapa}</span>
+      </div>
+    </div>
+  `;
+  openModal(html);
+
+  if(hasResults){
+    setTimeout(() => {
+      new Chart(document.getElementById('modalChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Antes','Depois'],
+          datasets: [{
+            data: [e.antes, e.depois],
+            backgroundColor: ['#ef444499','#10b98199'],
+            borderColor: ['#ef4444','#10b981'],
+            borderWidth: 2,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#8b8fa8' }, grid: { display: false } },
+            y: { beginAtZero: true, ticks: { color: '#8b8fa8' }, grid: { color: '#2e334833' }, title: { display: true, text: e.indicador + ' (' + e.unidade + ')', color: '#8b8fa8', font: { size: 11 } } }
+          }
+        }
+      });
+    }, 100);
+  }
+}
+
+// ============================================================
+// CHAMADAS
+// ============================================================
+
+function renderChamadas(){
+  const filtered = getFilteredChamadas();
+  document.getElementById('callList').innerHTML = filtered.map(c => `
+    <div class="call-card" onclick="showCallDetail(${c.id})">
+      <div class="call-header">
+        <h4>${c.titulo}</h4>
+        <span class="call-status ${c.status.toLowerCase().replace(/ /g,'').normalize('NFD').replace(/[̀-ͯ]/g,'')}">${c.status}</span>
+      </div>
+      <div class="call-meta">${c.tema} &bull; ${c.propostas} propostas &bull; ${c.inicio} a ${c.fim}</div>
+      <div class="call-progress"><div class="call-progress-fill" style="width:${c.progresso}%;"></div></div>
+    </div>
+  `).join('');
+
+  // Chart
+  if(charts.calls) charts.calls.destroy();
+  const statusCounts = ['Aberta','Em Avaliacao','Encerrada'].map(s => filtered.filter(c => c.status === s).length);
+  charts.calls = new Chart(document.getElementById('chartCalls'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Abertas','Em Avaliacao','Encerradas'],
+      datasets: [{
+        data: statusCounts,
+        backgroundColor: ['#22c55e99','#f59e0b99','#8b8fa899'],
+        borderColor: ['#22c55e','#f59e0b','#8b8fa8'],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { color: '#8b8fa8', font: { size: 11 }, padding: 14 } } },
+      cutout: '55%'
+    }
+  });
+}
+
+function showCallDetail(id){
+  const c = CHAMADAS.find(x => x.id === id);
+  if(!c) return;
+  const relatedExps = EXPERIMENTOS.filter(e => e.tema === c.tema);
+  const html = `
+    <h2>${c.titulo}</h2>
+    <div class="modal-sub">${c.tema} &bull; ${c.status} &bull; ${c.propostas} propostas</div>
+    <div class="modal-kpis">
+      <div class="modal-kpi"><div class="mk-value" style="color:${c.status==='Aberta'?'var(--success)':c.status==='Em Avaliacao'?'var(--orange)':'var(--text-muted)'};">${c.status}</div><div class="mk-label">Status</div></div>
+      <div class="modal-kpi"><div class="mk-value">${c.propostas}</div><div class="mk-label">Propostas</div></div>
+      <div class="modal-kpi"><div class="mk-value">${c.inicio}</div><div class="mk-label">Inicio</div></div>
+      <div class="modal-kpi"><div class="mk-value">${c.fim}</div><div class="mk-label">Encerramento</div></div>
+    </div>
+    <div class="modal-section">
+      <h4>Progresso</h4>
+      <div class="call-progress" style="height:8px;margin-top:8px;"><div class="call-progress-fill" style="width:${c.progresso}%;"></div></div>
+      <div style="text-align:right;font-size:12px;color:var(--text-muted);margin-top:4px;">${c.progresso}%</div>
+    </div>
+    ${relatedExps.length ? `
+    <div class="modal-section">
+      <h4>Experimentos Relacionados</h4>
+      <div class="exp-list">${relatedExps.map(e => renderExpItem(e)).join('')}</div>
+    </div>` : ''}
+  `;
+  openModal(html);
+}
+
+// ============================================================
+// TERRITORIES
+// ============================================================
+
+function renderTerritories(){
+  const filtered = getFilteredUFs();
+  const filteredUFSet = new Set(filtered.map(u => u.uf));
+
+  // Grid
+  const matColors = {
+    'Avancado': 'var(--accent)',
+    'Intermediario': 'var(--blue)',
+    'Inicial': 'var(--orange)',
+    'Planejamento': 'var(--border)'
+  };
+
+  document.getElementById('territoryGrid').innerHTML = ufData.map(u => {
+    const isActive = filteredUFSet.has(u.uf);
+    return `<div class="territory-cell ${isActive ? 'active' : 'inactive'}" style="background:${matColors[u.maturidade]}33;color:${matColors[u.maturidade]};" title="${u.nome} (${u.maturidade})" onclick="showTerritoryDetail('${u.uf}')">${u.uf}</div>`;
+  }).join('');
+
+  // Table
+  const sorted = [...filtered].sort((a,b) => b.impacto - a.impacto);
+  document.getElementById('territoryBody').innerHTML = sorted.map(u => `
+    <tr onclick="showTerritoryDetail('${u.uf}')" style="cursor:pointer;">
+      <td><strong>${u.uf}</strong> — ${u.nome}</td>
+      <td>${u.regiao}</td>
+      <td style="font-size:12px;">${u.lab}</td>
+      <td><span class="exp-badge ${u.maturidade === 'Avancado' ? 'piloto' : u.maturidade === 'Intermediario' ? 'descoberta' : u.maturidade === 'Inicial' ? 'prototipo' : 'recomendacao'}">${u.maturidade}</span></td>
+      <td>${u.experimentos}</td>
+      <td><div class="impact-bar"><div class="impact-bar-fill" style="width:${u.impacto}%;"></div></div> <span style="font-size:11px;color:var(--text-muted);">${u.impacto}%</span></td>
+    </tr>
+  `).join('');
+
+  // Chart Regiao
+  if(charts.regiao) charts.regiao.destroy();
+  const regioes = ['Norte','Nordeste','Centro-Oeste','Sudeste','Sul'];
+  const regColors = ['#06b6d4','#f59e0b','#a855f7','#4f8cff','#10b981'];
+  charts.regiao = new Chart(document.getElementById('chartRegiao'), {
+    type: 'bar',
+    data: {
+      labels: regioes,
+      datasets: [{
+        label: 'Experimentos',
+        data: regioes.map(r => filtered.filter(u => u.regiao === r).reduce((s,u) => s + u.experimentos, 0)),
+        backgroundColor: regColors.map(c => c + '99'),
+        borderColor: regColors,
+        borderWidth: 1,
+        borderRadius: 6
+      }]
+    },
+    options: chartOpts('Experimentos')
+  });
+}
+
+function showTerritoryDetail(uf){
+  const u = ufData.find(x => x.uf === uf);
+  if(!u) return;
+  const exps = EXPERIMENTOS.filter(e => e.uf === uf);
+  const html = `
+    <h2>&#127758; ${u.nome} (${u.uf})</h2>
+    <div class="modal-sub">${u.regiao} &bull; ${u.maturidade} &bull; ${u.lab}</div>
+    <div class="modal-kpis">
+      <div class="modal-kpi"><div class="mk-value" style="color:var(--accent);">${u.experimentos}</div><div class="mk-label">Experimentos</div></div>
+      <div class="modal-kpi"><div class="mk-value">${u.impacto}%</div><div class="mk-label">Indice de Impacto</div></div>
+      <div class="modal-kpi"><div class="mk-value">${u.maturidade}</div><div class="mk-label">Maturidade</div></div>
+      <div class="modal-kpi"><div class="mk-value">${exps.reduce((s,e)=>s+e.participantes,0).toLocaleString('pt-BR')}</div><div class="mk-label">Participantes</div></div>
+    </div>
+    ${exps.length ? `<div class="modal-section"><h4>Experimentos</h4><div class="exp-list">${exps.map(e => renderExpItem(e)).join('')}</div></div>` : '<div style="font-size:13px;color:var(--text-muted);padding:12px;">Nenhum experimento registrado neste territorio.</div>'}
+  `;
+  openModal(html);
+}
+
+// ============================================================
+// RESULTS
+// ============================================================
+
+function renderResults(){
+  const filtered = getFilteredResults();
+
+  document.getElementById('resultsBody').innerHTML = filtered.map(r => {
+    const isPositive = r.unidade === '%' ? r.depois > r.antes : r.depois < r.antes;
+    const varText = r.unidade === '%' ? (r.depois - r.antes > 0 ? '+' : '') + (r.depois - r.antes) + ' p.p.' : r.variacao + '%';
+    return `
+    <tr>
+      <td><strong style="font-size:12px;">${r.titulo.substring(0,45)}...</strong></td>
+      <td>${r.tema}</td>
+      <td>${r.uf}</td>
+      <td style="font-size:12px;">${r.indicador}</td>
+      <td>${r.antes} ${r.unidade}</td>
+      <td style="color:var(--accent);font-weight:600;">${r.depois} ${r.unidade}</td>
+      <td style="color:${isPositive ? 'var(--success)' : 'var(--red)'};font-weight:600;">${varText}</td>
+      <td><span class="exp-badge ${r.impacto === 'Alto' ? 'piloto' : r.impacto === 'Medio' ? 'prototipo' : 'descoberta'}">${r.impacto}</span></td>
+    </tr>
+    `;
+  }).join('');
+
+  // Before/After chart
+  if(charts.beforeAfter) charts.beforeAfter.destroy();
+  charts.beforeAfter = new Chart(document.getElementById('chartBeforeAfter'), {
+    type: 'bar',
+    data: {
+      labels: filtered.map(r => r.uf + ': ' + r.indicador.substring(0,20)),
+      datasets: [
+        {
+          label: 'Antes',
+          data: filtered.map(r => r.antes),
+          backgroundColor: '#ef444466',
+          borderColor: '#ef4444',
+          borderWidth: 1,
+          borderRadius: 4
+        },
+        {
+          label: 'Depois',
+          data: filtered.map(r => r.depois),
+          backgroundColor: '#10b98166',
+          borderColor: '#10b981',
+          borderWidth: 1,
+          borderRadius: 4
+        }
+      ]
+    },
+    options: chartOpts('')
+  });
+
+  // Evidence level
+  if(charts.evidence) charts.evidence.destroy();
+  const impactCounts = ['Alto','Medio','Baixo'].map(i => filtered.filter(r => r.impacto === i).length);
+  charts.evidence = new Chart(document.getElementById('chartEvidence'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Alto Impacto','Medio Impacto','Baixo Impacto'],
+      datasets: [{
+        data: impactCounts,
+        backgroundColor: ['#10b98199','#f59e0b99','#4f8cff99'],
+        borderColor: ['#10b981','#f59e0b','#4f8cff'],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { color: '#8b8fa8', font: { size: 11 }, padding: 14 } } },
+      cutout: '55%'
+    }
+  });
+}
+
+// ============================================================
+// HUB
+// ============================================================
+
+function renderHub(){
+  const hubKpis = [
+    {value:'27',label:'Labs Estaduais',color:'var(--accent)'},
+    {value:'5',label:'Regioes Cobertas',color:'var(--blue)'},
+    {value:'156',label:'Agentes Formados',color:'var(--purple)'},
+    {value:'42',label:'Mentores Ativos',color:'var(--orange)'},
+    {value:'18',label:'Parceiros Institucionais',color:'var(--cyan)'}
+  ];
+
+  document.getElementById('hubKpis').innerHTML = hubKpis.map(k => `
+    <div class="kpi-card">
+      <div class="kpi-value" style="color:${k.color};">${k.value}</div>
+      <div class="kpi-label">${k.label}</div>
+    </div>
+  `).join('');
+
+  // Capacidades radar
+  charts.capacidades = new Chart(document.getElementById('chartCapacidades'), {
+    type: 'radar',
+    data: {
+      labels: ['Sensing','Seizing','Transforming','Learning','Coordinating'],
+      datasets: [
+        {
+          label: 'MA (referencia)',
+          data: [90, 85, 78, 92, 88],
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16,185,129,.1)',
+          pointBackgroundColor: '#10b981',
+          pointRadius: 4
+        },
+        {
+          label: 'Media Nacional',
+          data: [62, 55, 48, 58, 52],
+          borderColor: '#4f8cff',
+          backgroundColor: 'rgba(79,140,255,.1)',
+          pointBackgroundColor: '#4f8cff',
+          pointRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          beginAtZero: true,
+          max: 100,
+          ticks: { color: '#8b8fa8', font: { size: 10 }, backdropColor: 'transparent' },
+          grid: { color: '#2e334855' },
+          pointLabels: { color: '#8b8fa8', font: { size: 11 } },
+          angleLines: { color: '#2e334855' }
+        }
+      },
+      plugins: { legend: { position: 'bottom', labels: { color: '#8b8fa8', font: { size: 11 }, padding: 14 } } }
+    }
+  });
+
+  // Formacao
+  const formMeses = ['Abr','Mai','Jun','Jul','Ago','Set'];
+  charts.formacao = new Chart(document.getElementById('chartFormacao'), {
+    type: 'line',
+    data: {
+      labels: formMeses,
+      datasets: [
+        {
+          label: 'Agentes Formados',
+          data: [24,48,72,105,132,156],
+          borderColor: '#a855f7',
+          backgroundColor: 'rgba(168,85,247,.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#a855f7'
+        },
+        {
+          label: 'Labs Ativos',
+          data: [5,9,14,19,23,27],
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16,185,129,.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#10b981'
+        }
+      ]
+    },
+    options: chartOpts('')
+  });
+}
+
+// ============================================================
+// FILTERS — ALL FILTERS AFFECT ALL VIEWS
+// ============================================================
+
+function applyFilters(){
+  renderExperiments();
+  renderChamadas();
+  renderTerritories();
+  renderResults();
+  updateJourneyCounts();
+  updateKPIsFromFilters();
+}
+
+function updateJourneyCounts(){
+  const filtered = getFilteredExperiments();
+  ETAPAS.forEach((et, i) => {
+    const count = filtered.filter(e => e.etapa === et.nome).length;
+    const countEl = document.querySelectorAll('.journey-step .step-count')[i];
+    if(countEl) countEl.textContent = count + ' exp.';
+  });
+}
+
+function updateKPIsFromFilters(){
+  const filtered = getFilteredExperiments();
+  const kpiValues = document.querySelectorAll('#kpiRow .kpi-value');
+  if(kpiValues.length >= 5){
+    kpiValues[0].textContent = filtered.length;
+    kpiValues[1].textContent = filtered.filter(e => e.etapa === 'Piloto').length;
+    kpiValues[2].textContent = new Set(filtered.map(e => e.uf)).size;
+    kpiValues[3].textContent = getFilteredChamadas().filter(c => c.status === 'Aberta').length;
+    kpiValues[4].textContent = filtered.reduce((s,e) => s + e.participantes, 0).toLocaleString('pt-BR');
+  }
+}
+
+function clearFilters(){
+  document.querySelectorAll('.filter-bar select').forEach(s => s.value = '');
+  document.getElementById('searchInput').value = '';
+  applyFilters();
+}
+
+function globalSearch(val){
+  applyFilters();
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+
+function openModal(html){
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+
+// ============================================================
+// INIT
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
