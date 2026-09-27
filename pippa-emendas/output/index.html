@@ -1713,9 +1713,16 @@ function showToast(msg) {
 
 // ── Fetch API ───────────────────────────────────────────────
 
-const API_BASE = window.location.origin;
+const IS_LOCAL = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE = IS_LOCAL ? 'http://localhost:8050' : window.location.origin;
 
 async function fetchData() {
+  if (!IS_LOCAL) {
+    applyAllFilters();
+    showToast('Filtros aplicados — dados embarcados no painel');
+    return;
+  }
+
   const btn = document.getElementById('btnFetch');
   const overlay = document.getElementById('loadingOverlay');
   const loadText = document.getElementById('loadingText');
@@ -1754,7 +1761,10 @@ async function fetchData() {
     showToast('Dados atualizados com sucesso!');
 
   } catch (e) {
-    showToast('Erro: ' + e.message);
+    const msg = e.message === 'Failed to fetch'
+      ? 'Servidor local nao disponivel. Inicie o backend (python api.py) para atualizar dados.'
+      : e.message;
+    showToast('Erro: ' + msg);
     console.error(e);
   } finally {
     overlay.classList.remove('active');
