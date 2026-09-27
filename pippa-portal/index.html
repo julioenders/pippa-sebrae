@@ -19,6 +19,10 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
 .hero-stat{text-align:center;}
 .hero-stat-value{font-size:28px;font-weight:700;color:#e2e8f0;}
 .hero-stat-label{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+.hero-actions{display:flex;justify-content:center;margin-top:24px;}
+.btn-quem-somos{display:inline-flex;align-items:center;gap:8px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#a7f3d0;padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .25s;text-decoration:none;letter-spacing:.3px;}
+.btn-quem-somos:hover{background:rgba(16,185,129,.18);border-color:#10b981;color:#fff;transform:translateY(-1px);box-shadow:0 4px 16px rgba(16,185,129,.15);}
+.btn-quem-somos svg{width:14px;height:14px;}
 
 /* ── Search ───────────────────────────────────── */
 .search-section{max-width:560px;margin:-8px auto 0;padding:0 48px 36px;position:relative;}
@@ -130,6 +134,12 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
     <div class="hero-stat"><div class="hero-stat-value">6</div><div class="hero-stat-label">Dashboards</div></div>
     <div class="hero-stat"><div class="hero-stat-value">17</div><div class="hero-stat-label">Fontes de Dados</div></div>
     <div class="hero-stat"><div class="hero-stat-value">58</div><div class="hero-stat-label">Cubos Analiticos</div></div>
+  </div>
+  <div class="hero-actions">
+    <a href="../pippa-quem-somos/index.html" class="btn-quem-somos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Quem Somos?
+    </a>
   </div>
 </section>
 

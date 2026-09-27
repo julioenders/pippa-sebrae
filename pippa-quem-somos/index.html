@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIPPA — Quem Somos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:100vh;line-height:1.7;}
+
+/* ── Header ──────────────────────────────────── */
+.header{position:sticky;top:0;z-index:100;background:rgba(11,17,32,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);padding:16px 48px;display:flex;align-items:center;justify-content:space-between;}
+.header-brand{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.header-logo{font-size:22px;font-weight:800;background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;}
+.header-sep{width:1px;height:20px;background:rgba(255,255,255,.12);}
+.header-page{font-size:13px;color:#64748b;font-weight:500;}
+.header-back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#94a3b8;text-decoration:none;padding:8px 16px;border:1px solid rgba(255,255,255,.08);border-radius:8px;transition:all .2s;}
+.header-back:hover{border-color:rgba(16,185,129,.3);color:#e2e8f0;background:rgba(16,185,129,.06);}
+.header-back svg{width:14px;height:14px;}
+
+/* ── Hero ────────────────────────────────────── */
+.hero{position:relative;padding:80px 48px 60px;text-align:center;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(16,185,129,.1) 0%,transparent 70%);pointer-events:none;}
+.hero-label{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#10b981;margin-bottom:12px;}
+.hero-title{font-size:48px;font-weight:800;letter-spacing:-2px;background:linear-gradient(135deg,#10b981 0%,#34d399 40%,#6ee7b7 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;}
+.hero-subtitle{font-size:18px;color:#8b9dc3;font-weight:400;max-width:720px;margin:0 auto;line-height:1.6;}
+
+/* ── Content container ───────────────────────── */
+.content{max-width:900px;margin:0 auto;padding:0 48px 80px;}
+
+/* ── Section ─────────────────────────────────── */
+.section{margin-bottom:64px;}
+.section-divider{width:48px;height:3px;background:linear-gradient(90deg,#10b981,#34d399);border-radius:2px;margin-bottom:32px;}
+.section-title{font-size:28px;font-weight:700;color:#e2e8f0;margin-bottom:20px;letter-spacing:-.5px;}
+.section-text{font-size:15px;color:#94a3b8;line-height:1.8;margin-bottom:16px;}
+.section-text strong{color:#e2e8f0;font-weight:600;}
+
+/* ── Highlight box ───────────────────────────── */
+.highlight{background:rgba(16,185,129,.06);border-left:3px solid #10b981;border-radius:0 12px 12px 0;padding:20px 24px;margin:24px 0;font-size:15px;color:#a7f3d0;line-height:1.7;font-weight:500;}
+
+/* ── Cycle flow ──────────────────────────────── */
+.cycle-flow{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:28px 0;padding:24px;background:rgba(17,24,39,.6);border:1px solid rgba(255,255,255,.06);border-radius:16px;}
+.cycle-step{font-size:14px;font-weight:600;color:#10b981;text-transform:uppercase;letter-spacing:1px;}
+.cycle-arrow{color:#475569;font-size:16px;}
+.cycle-flow.small{padding:16px;gap:8px;}
+.cycle-flow.small .cycle-step{font-size:12px;letter-spacing:.5px;color:#94a3b8;}
+.cycle-flow.small .cycle-step.accent{color:#10b981;}
+
+/* ── Three pillars ───────────────────────────── */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:32px 0;}
+.pillar{background:rgba(17,24,39,.6);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:28px 24px;transition:border-color .3s;}
+.pillar:hover{border-color:rgba(16,185,129,.25);}
+.pillar-icon{font-size:28px;margin-bottom:12px;}
+.pillar-title{font-size:16px;font-weight:700;color:#e2e8f0;margin-bottom:8px;}
+.pillar-subtitle{font-size:12px;font-weight:600;color:#10b981;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+.pillar-text{font-size:13px;color:#94a3b8;line-height:1.7;}
+
+/* ── PIPPA meaning cards ─────────────────────── */
+.meaning-cards{display:flex;flex-direction:column;gap:24px;margin:32px 0;}
+.meaning-card{display:flex;gap:24px;background:rgba(17,24,39,.6);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:32px;transition:border-color .3s;}
+.meaning-card:hover{border-color:rgba(16,185,129,.25);}
+.meaning-letter{font-size:56px;font-weight:800;background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;flex-shrink:0;width:64px;text-align:center;}
+.meaning-body{flex:1;}
+.meaning-word{font-size:20px;font-weight:700;color:#e2e8f0;margin-bottom:4px;}
+.meaning-tagline{font-size:14px;color:#10b981;font-weight:500;margin-bottom:12px;font-style:italic;}
+.meaning-text{font-size:14px;color:#94a3b8;line-height:1.7;margin-bottom:12px;}
+.meaning-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.meaning-tag{font-size:11px;color:#64748b;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);padding:4px 10px;border-radius:6px;}
+
+/* ── Mission/Vision boxes ────────────────────── */
+.mission-box{background:rgba(17,24,39,.6);border:1px solid rgba(16,185,129,.15);border-radius:16px;padding:36px;margin:24px 0;}
+.mission-label{font-size:11px;font-weight:700;color:#10b981;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;}
+.mission-title{font-size:18px;font-weight:600;color:#e2e8f0;line-height:1.6;margin-bottom:16px;}
+.mission-text{font-size:14px;color:#94a3b8;line-height:1.7;}
+
+/* ── Values grid ─────────────────────────────── */
+.values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0;}
+.value-card{background:rgba(17,24,39,.6);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:24px 20px;transition:all .3s;}
+.value-card:hover{border-color:rgba(16,185,129,.25);transform:translateY(-2px);}
+.value-name{font-size:15px;font-weight:700;color:#e2e8f0;margin-bottom:8px;}
+.value-text{font-size:13px;color:#94a3b8;line-height:1.6;}
+
+/* ── Journey steps ───────────────────────────── */
+.journey{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:32px 0;}
+.journey-step{position:relative;background:rgba(17,24,39,.6);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:28px 20px;text-align:center;transition:border-color .3s;}
+.journey-step:hover{border-color:rgba(16,185,129,.25);}
+.journey-num{font-size:32px;font-weight:800;background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+.journey-title{font-size:16px;font-weight:700;color:#e2e8f0;margin-bottom:8px;}
+.journey-tags{font-size:11px;color:#10b981;font-weight:600;margin-bottom:12px;line-height:1.5;}
+.journey-text{font-size:13px;color:#94a3b8;line-height:1.6;text-align:left;}
+.journey-arrow{position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:#475569;font-size:18px;z-index:1;}
+
+/* ── Team ────────────────────────────────────── */
+.team-section{margin-bottom:32px;}
+.team-label{font-size:12px;font-weight:700;color:#10b981;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(16,185,129,.15);}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.team-card{background:rgba(17,24,39,.6);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:24px;transition:border-color .3s;}
+.team-card:hover{border-color:rgba(16,185,129,.25);}
+.team-name{font-size:16px;font-weight:700;color:#e2e8f0;margin-bottom:4px;}
+.team-role{font-size:13px;color:#10b981;font-weight:500;margin-bottom:4px;}
+.team-desc{font-size:12px;color:#64748b;line-height:1.5;}
+
+/* ── Closing ─────────────────────────────────── */
+.closing{text-align:center;padding:60px 0;border-top:1px solid rgba(255,255,255,.06);margin-top:64px;}
+.closing-title{font-size:36px;font-weight:800;background:linear-gradient(135deg,#10b981,#34d399,#6ee7b7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;letter-spacing:-1px;}
+.closing-tagline{font-size:16px;color:#a7f3d0;font-weight:500;margin-bottom:8px;}
+.closing-sub{font-size:14px;color:#64748b;max-width:640px;margin:0 auto;line-height:1.6;}
+
+/* ── Footer ──────────────────────────────────── */
+.footer{text-align:center;padding:32px 48px;border-top:1px solid rgba(255,255,255,.04);font-size:11px;color:#334155;}
+.footer span{color:#475569;}
+
+/* ── Responsive ──────────────────────────────── */
+@media(max-width:900px){
+.pillars{grid-template-columns:1fr;}
+.values-grid{grid-template-columns:repeat(2,1fr);}
+.journey{grid-template-columns:repeat(2,1fr);}
+.journey-arrow{display:none;}
+.meaning-card{flex-direction:column;gap:16px;}
+.meaning-letter{width:auto;}
+}
+@media(max-width:600px){
+.hero{padding:48px 24px 40px;}
+.hero-title{font-size:32px;}
+.content{padding:0 20px 48px;}
+.header{padding:12px 20px;}
+.values-grid{grid-template-columns:1fr;}
+.journey{grid-template-columns:1fr;}
+.team-grid{grid-template-columns:1fr;}
+.cycle-flow{gap:6px;padding:16px;}
+.cycle-step{font-size:11px;}
+}
+
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:#0b1120;}
+::-webkit-scrollbar-thumb{background:rgba(16,185,129,.2);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(16,185,129,.4);}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a href="../pippa-portal/index.html" class="header-brand">
+    <div class="header-logo">PIPPA</div>
+    <div class="header-sep"></div>
+    <div class="header-page">Quem Somos</div>
+  </a>
+  <a href="../pippa-portal/index.html" class="header-back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Voltar ao Portal
+  </a>
+</header>
+
+<section class="hero">
+  <div class="hero-label">SEBRAE Nacional</div>
+  <h1 class="hero-title">Quem Somos</h1>
+  <p class="hero-subtitle">Plataforma de Inteligencia em Politicas Publicas Aplicadas — inteligencia, evidencias e experimentacao para transformar politicas publicas e melhorar o ambiente de negocios.</p>
+</section>
+
+<div class="content">
+
+<!-- ═══ Quem Somos ═══════════════════════════════ -->
+<div class="section">
+  <div class="section-divider"></div>
+  <h2 class="section-title">PIPPA</h2>
+  <p class="section-text">A <strong>PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas</strong> e uma iniciativa do <strong>Sebrae Nacional</strong> dedicada a produzir, integrar e aplicar inteligencia para o aprimoramento das politicas publicas, a melhoria do ambiente de negocios e o fortalecimento dos pequenos negocios brasileiros.</p>
+  <p class="section-text">A Plataforma conecta <strong>dados, conhecimento, analise, evidencias, experimentacao e incidencia institucional</strong> para apoiar o Sistema Sebrae, gestores publicos e parceiros na compreensao de desafios, na formulacao de solucoes e na tomada de decisoes mais informadas.</p>
+  <div class="highlight">Mais do que um ambiente de consulta ou monitoramento, a PIPPA funciona como uma <strong>infraestrutura de inteligencia e aprendizagem em politicas publicas</strong>. Integra pessoas, metodos, dados, tecnologias, instituicoes e territorios para transformar conhecimento em capacidade de acao.</div>
+</div>
+
+<!-- ═══ Da inteligencia a aplicacao ══════════════ -->
+<div class="section">
+  <div class="section-divider"></div>
+  <h2 class="section-title">Da inteligencia a aplicacao</h2>
+  <p class="section-text">A PIPPA articula tres capacidades complementares que formam um ciclo continuo de producao, aplicacao e aprendizagem em politicas publicas.</p>
+
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pillar-icon">🔍</div>
+      <div class="pillar-title">Observar e analisar</div>
+      <div class="pillar-subtitle">Observatorio</div>
+      <div class="pillar-text">Organiza e interpreta dados, indicadores, normas, pesquisas, evidencias e informacoes territoriais para identificar tendencias, compreender problemas publicos e produzir inteligencia qualificada. Transformar dados e informacoes dispersas em conhecimento estruturado, comparavel e relevante para a tomada de decisao.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">🧪</div>
+      <div class="pillar-title">Experimentar e aprender</div>
+      <div class="pillar-subtitle">Laboratorios</div>
+      <div class="pillar-text">Transforma problemas e hipoteses em solucoes que podem ser desenvolvidas e testadas por meio de laboratorios de politicas publicas, prototipagem, incubacao, pilotos, sandboxes e outras abordagens de inovacao e experimentacao. Aproximar conhecimento e pratica, testar solucoes, avaliar resultados e transformar experiencias em novas evidencias.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">📢</div>
+      <div class="pillar-title">Informar e subsidiar a incidencia</div>
+      <div class="pillar-subtitle">Advocacy</div>
+      <div class="pillar-text">Traduz conhecimento e evidencias em diagnosticos, estudos, pesquisas, indicadores, notas tecnicas, reports, policy briefs e outros produtos de inteligencia que apoiam a formulacao e o aprimoramento de politicas publicas e qualificam a atuacao institucional do Sebrae.</div>
+    </div>
+  </div>
+
+  <div class="cycle-flow">
+    <span class="cycle-step">Observatorio</span>
+    <span class="cycle-arrow">→</span>
+    <span class="cycle-step">Laboratorios</span>
+    <span class="cycle-arrow">→</span>
+    <span class="cycle-step">Advocacy</span>
+  </div>
+
+  <div class="cycle-flow small">
+    <span class="cycle-step accent">Dados</span><span class="cycle-arrow">→</span>
+    <span class="cycle-step">Informacoes</span><span class="cycle-arrow">→</span>
+    <span class="cycle-step">Evidencias</span><span class="cycle-arrow">→</span>
+    <span class="cycle-step accent">Insights</span><span class="cycle-arrow">→</span>
+    <span class="cycle-step">Experimentacao</span><span class="cycle-arrow">→</span>
+    <span class="cycle-step">Aprendizagem</span><span class="cycle-arrow">→</span>
+    <span class="cycle-step accent">Incidencia</span><span class="cycle-arrow">→</span>
+    <span class="cycle-step">Acao Publica</span><span class="cycle-arrow">→</span>
+    <span class="cycle-step accent">Resultados</span>
+  </div>
+
+  <p class="section-text" style="margin-top:16px;font-size:13px;color:#64748b;text-align:center;">Os resultados das experiencias e intervencoes retornam a Plataforma como novos dados, evidencias e aprendizados, ampliando continuamente a inteligencia institucional.</p>
+</div>
+
+<!-- ═══ O que significa PIPPA ════════════════════ -->
+<div class="section">
+  <div class="section-divider"></div>
+  <h2 class="section-title">O que significa PIPPA?</h2>
+
+  <div class="meaning-cards">
+    <div class="meaning-card">
+      <div class="meaning-letter">P</div>
+      <div class="meaning-body">
+        <div class="meaning-word">Plataforma</div>
+        <div class="meaning-tagline">Um ambiente integrado de inteligencia, colaboracao e acao.</div>
+        <div class="meaning-text">A PIPPA conecta pessoas, dados, metodos, tecnologias, instituicoes e territorios. Como plataforma, nao se limita a um site, painel ou repositorio de informacoes. Constitui um ambiente dinamico de producao, integracao e circulacao de conhecimento, articulando capacidades do Sebrae Nacional, dos Sebraes/UF, de gestores publicos, especialistas, instituicoes de ensino e pesquisa e parceiros estrategicos.</div>
+        <div class="meaning-tags">
+          <span class="meaning-tag">Integracao</span><span class="meaning-tag">Colaboracao</span><span class="meaning-tag">Governanca</span><span class="meaning-tag">Observacao</span><span class="meaning-tag">Dinamismo</span><span class="meaning-tag">Rede</span><span class="meaning-tag">Territorio</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="meaning-card">
+      <div class="meaning-letter">I</div>
+      <div class="meaning-body">
+        <div class="meaning-word">Inteligencia</div>
+        <div class="meaning-tagline">Dados transformados em conhecimento para decisao.</div>
+        <div class="meaning-text">A PIPPA utiliza inteligencia de dados e com dados, combinando informacoes, metodos analiticos e conhecimento especializado para compreender problemas publicos, identificar tendencias, construir indicadores, comparar territorios, produzir cenarios e gerar evidencias. Dados ganham valor quando sao interpretados a luz do contexto e transformados em conhecimento relevante, compreensivel e aplicavel a tomada de decisao.</div>
+        <div class="meaning-tags">
+          <span class="meaning-tag">Dados</span><span class="meaning-tag">Indicadores</span><span class="meaning-tag">Evidencias</span><span class="meaning-tag">Analise</span><span class="meaning-tag">Cenarios</span><span class="meaning-tag">Insights</span><span class="meaning-tag">Decisao</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="meaning-card">
+      <div class="meaning-letter">PP</div>
+      <div class="meaning-body">
+        <div class="meaning-word">Politicas Publicas</div>
+        <div class="meaning-tagline">Conhecimento qualificado para compreender, formular e aprimorar politicas publicas.</div>
+        <div class="meaning-text">A PIPPA produz e integra analises, diagnosticos, estudos, pesquisas, indicadores, avaliacoes, notas tecnicas, reports e sinteses de evidencias sobre temas que influenciam o ambiente de negocios e os pequenos negocios brasileiros. Essa inteligencia apoia gestores, equipes do Sistema Sebrae e parceiros e contribui para qualificar processos de formulacao, implementacao, monitoramento e avaliacao de politicas publicas, alem de fornecer base tecnica para advocacy e incidencia institucional.</div>
+        <div class="meaning-tags">
+          <span class="meaning-tag">Analise</span><span class="meaning-tag">Formulacao</span><span class="meaning-tag">Avaliacao</span><span class="meaning-tag">Evidencias</span><span class="meaning-tag">Politicas Publicas</span><span class="meaning-tag">Advocacy</span><span class="meaning-tag">Incidencia</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="meaning-card">
+      <div class="meaning-letter">A</div>
+      <div class="meaning-body">
+        <div class="meaning-word">Aplicadas</div>
+        <div class="meaning-tagline">Conhecimento que encontra a realidade.</div>
+        <div class="meaning-text">A PIPPA aproxima inteligencia e pratica. Por meio de laboratorios, incubacao de solucoes, prototipagem, pilotos, sandboxes e outras metodologias de inovacao e experimentacao, problemas publicos podem ser investigados e solucoes podem ser desenvolvidas, testadas e aperfeicoadas. Os aprendizados gerados retornam a Plataforma como novas evidencias, permitindo aprimorar solucoes, avaliar possibilidades de replicacao ou escala e subsidiar novas decisoes. Aplicar significa transformar conhecimento em capacidade de acao e, ao mesmo tempo, transformar a experiencia em novo conhecimento.</div>
+        <div class="meaning-tags">
+          <span class="meaning-tag">Laboratorios</span><span class="meaning-tag">Experimentacao</span><span class="meaning-tag">Inovacao</span><span class="meaning-tag">Prototipagem</span><span class="meaning-tag">Sandbox</span><span class="meaning-tag">Aprendizagem</span><span class="meaning-tag">Aplicacao</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Missao ═══════════════════════════════════ -->
+<div class="section">
+  <div class="section-divider"></div>
+  <h2 class="section-title">Nossa Missao</h2>
+  <p class="section-text">A PIPPA esta alinhada ao <strong>Planejamento Estrategico Sebrae 2035</strong>, especialmente a:</p>
+
+  <div class="mission-box">
+    <div class="mission-label">Missao B</div>
+    <div class="mission-title">Governo e Estado Empreendedor por um Ambiente de Negocios Atrativo</div>
+  </div>
+
+  <div class="highlight">Transformar dados, conhecimento e experiencias territoriais em inteligencia, evidencias e solucoes aplicadas de politicas publicas, contribuindo para um Governo e Estado Empreendedor, para a construcao de um ambiente de negocios mais atrativo e para o fortalecimento dos pequenos negocios brasileiros.</div>
+
+  <p class="section-text">A PIPPA materializa esse proposito ao conectar <strong>observacao, inteligencia, experimentacao e incidencia</strong>, apoiando o Sistema Sebrae, gestores publicos e parceiros na formulacao, no aprimoramento e na aplicacao de politicas publicas orientadas por evidencias.</p>
+</div>
+
+<!-- ═══ Visao ════════════════════════════════════ -->
+<div class="section">
+  <div class="section-divider"></div>
+  <h2 class="section-title">Nossa Visao</h2>
+
+  <div class="mission-box">
+    <div class="mission-label">Visao</div>
+    <div class="mission-title">Ser referencia nacional em inteligencia aplicada a politicas publicas para o ambiente de negocios, conectando dados, evidencias, experimentacao e incidencia para apoiar governos, territorios e o Sistema Sebrae na construcao de solucoes publicas mais simples, inovadoras, efetivas e orientadas as necessidades dos pequenos negocios.</div>
+  </div>
+</div>
+
+<!-- ═══ Valores ══════════════════════════════════ -->
+<div class="section">
+  <div class="section-divider"></div>
+  <h2 class="section-title">Nossos Valores</h2>
+
+  <div class="values-grid">
+    <div class="value-card">
+      <div class="value-name">Rigor e evidencias</div>
+      <div class="value-text">Produzimos conhecimento com metodo, qualidade, rastreabilidade e transparencia.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-name">Neutralidade e integridade</div>
+      <div class="value-text">Analisamos politicas publicas com independencia tecnica, responsabilidade institucional e neutralidade politico-partidaria.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-name">Inteligencia para decisao</div>
+      <div class="value-text">Transformamos dados e informacoes em conhecimento relevante, compreensivel e aplicavel a tomada de decisao.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-name">Experimentacao e aprendizagem</div>
+      <div class="value-text">Testamos hipoteses, avaliamos resultados e transformamos experiencias em evidencias e aprendizado institucional.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-name">Colaboracao e inteligencia coletiva</div>
+      <div class="value-text">Conectamos gestores, especialistas, territorios, academia, instituicoes publicas e parceiros para ampliar a capacidade coletiva de compreender e enfrentar desafios publicos.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-name">Inovacao com proposito</div>
+      <div class="value-text">Aplicamos tecnologia, metodos e novas formas de atuacao orientados a resolucao de problemas publicos e a geracao de valor.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-name">Orientacao ao territorio</div>
+      <div class="value-text">Reconhecemos a diversidade do Brasil e consideramos os diferentes efeitos das politicas publicas entre territorios, setores, empresas e grupos sociais.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-name">Foco nos pequenos negocios</div>
+      <div class="value-text">Mantemos como referencia os efeitos das politicas publicas sobre microempreendedores individuais, microempresas, empresas de pequeno porte e seus ecossistemas.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-name">Conhecimento compartilhado</div>
+      <div class="value-text">Sistematizamos e disseminamos metodos, evidencias e aprendizados para ampliar capacidades institucionais, promover aprendizagem e estimular novas solucoes.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Como atuamos ═════════════════════════════ -->
+<div class="section">
+  <div class="section-divider"></div>
+  <h2 class="section-title">Como atuamos</h2>
+  <p class="section-text">A atuacao da PIPPA acompanha uma jornada continua de transformacao do conhecimento em acao:</p>
+
+  <div class="journey">
+    <div class="journey-step">
+      <div class="journey-num">01</div>
+      <div class="journey-title">Observar</div>
+      <div class="journey-tags">Dados · Indicadores · Normas · Politicas · Orcamento · Territorios · Tendencias</div>
+      <div class="journey-text">Monitoramos informacoes e sinais relevantes para compreender o ambiente de negocios e identificar desafios, oportunidades e mudancas que possam afetar os pequenos negocios e os territorios.</div>
+      <span class="journey-arrow">→</span>
+    </div>
+    <div class="journey-step">
+      <div class="journey-num">02</div>
+      <div class="journey-title">Compreender</div>
+      <div class="journey-tags">Inteligencia · Estudos · Pesquisas · Diagnosticos · Avaliacoes · Cenarios · Evidencias</div>
+      <div class="journey-text">Integramos diferentes fontes de conhecimento para interpretar problemas, identificar relacoes, comparar experiencias e produzir evidencias capazes de apoiar decisoes.</div>
+      <span class="journey-arrow">→</span>
+    </div>
+    <div class="journey-step">
+      <div class="journey-num">03</div>
+      <div class="journey-title">Aplicar</div>
+      <div class="journey-tags">Laboratorios · Pilotos · Prototipos · Sandboxes · Incubacao · Experimentacao</div>
+      <div class="journey-text">Transformamos conhecimento em hipoteses e solucoes que podem ser desenvolvidas, testadas, avaliadas e aperfeicoadas em contextos reais.</div>
+      <span class="journey-arrow">→</span>
+    </div>
+    <div class="journey-step">
+      <div class="journey-num">04</div>
+      <div class="journey-title">Transformar</div>
+      <div class="journey-tags">Aprendizagem · Recomendacoes · Formulacao · Advocacy · Incidencia · Aprimoramento</div>
+      <div class="journey-text">Sistematizamos os aprendizados produzidos para subsidiar decisoes, qualificar propostas e contribuir para o desenvolvimento e aprimoramento de politicas publicas.</div>
+    </div>
+  </div>
+
+  <p class="section-text" style="text-align:center;font-size:13px;color:#64748b;">A jornada e continua: cada aplicacao pode produzir novos dados, evidencias e aprendizados, que retornam a PIPPA e alimentam novos ciclos de inteligencia e inovacao.</p>
+</div>
+
+<!-- ═══ Quem faz a PIPPA ═════════════════════════ -->
+<div class="section">
+  <div class="section-divider"></div>
+  <h2 class="section-title">Quem faz a PIPPA</h2>
+  <p class="section-text">A PIPPA e uma iniciativa do <strong>Sebrae Nacional</strong>, desenvolvida no ambito da <strong>Unidade de Politicas Publicas</strong> e construida de forma colaborativa por gestores, especialistas e profissionais de diferentes areas do conhecimento.</p>
+  <p class="section-text">Sua governanca combina <strong>lideranca institucional, gestao estrategica, coordenacao, inteligencia e metodologia, planejamento e operacoes</strong>, alem da participacao da equipe da Unidade de Politicas Publicas e de especialistas mobilizados de acordo com os temas, projetos e territorios trabalhados.</p>
+
+  <div class="team-section">
+    <div class="team-label">Lideranca Institucional</div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-name">Rodrigo Soares</div>
+        <div class="team-role">Presidente do Sebrae Nacional</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="team-section">
+    <div class="team-label">Unidade de Politicas Publicas</div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-name">Augusto Togni</div>
+        <div class="team-role">Gerente</div>
+      </div>
+      <div class="team-card">
+        <div class="team-name">Lillian Callafange</div>
+        <div class="team-role">Gerente Adjunta</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="team-section">
+    <div class="team-label">Coordenacao da PIPPA</div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-name">Murilo Terra</div>
+        <div class="team-role">Coordenador</div>
+        <div class="team-desc">Economista</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="team-section">
+    <div class="team-label">Inteligencia e Metodologia</div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-name">Julio Enders</div>
+        <div class="team-role">Gestor de Inteligencia e Metodologia</div>
+        <div class="team-desc">Administrador, Economista e Mestre em Observatorios de Informacao</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="team-section">
+    <div class="team-label">Planejamento e Operacoes</div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-name">Julia Marcal</div>
+        <div class="team-role">Gestora de Planejamento e Operacoes</div>
+        <div class="team-desc">Administradora</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="team-section">
+    <div class="team-label">Equipe Tecnica</div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-name">Equipe da Unidade de Politicas Publicas</div>
+        <div class="team-role">Sebrae Nacional</div>
+        <div class="team-desc">Profissionais responsaveis pelo desenvolvimento, articulacao e implementacao das agendas, projetos e iniciativas de politicas publicas.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-name">Especialistas em Politicas Publicas</div>
+        <div class="team-role">Rede Multidisciplinar</div>
+        <div class="team-desc">Rede multidisciplinar de especialistas, pesquisadores e parceiros mobilizada de acordo com os desafios, agendas e territorios analisados pela PIPPA.</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-text" style="margin-top:24px;">A Plataforma tambem se desenvolve por meio da colaboracao com <strong>Sebraes/UF, gestores publicos, instituicoes de ensino e pesquisa, especialistas, organizacoes parceiras</strong> e demais atores dos ecossistemas de politicas publicas, empreendedorismo e desenvolvimento territorial.</p>
+</div>
+
+<!-- ═══ Closing ══════════════════════════════════ -->
+<div class="closing">
+  <div class="closing-title">PIPPA</div>
+  <div class="closing-tagline">Inteligencia que observa. Evidencia que orienta. Experimentacao que transforma.</div>
+  <div class="closing-sub">Da inteligencia a aplicacao: evidencias para transformar politicas publicas e melhorar o ambiente de negocios.</div>
+</div>
+
+</div>
+
+<footer class="footer">
+  PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas <span>|</span> SEBRAE Nacional <span>|</span> <span id="footerDate"></span>
+</footer>
+
+<script>
+document.getElementById("footerDate").textContent = new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});
+</script>
+</body>
+</html>
