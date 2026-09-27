@@ -61,7 +61,8 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
 .meaning-cards{display:flex;flex-direction:column;gap:24px;margin:32px 0;}
 .meaning-card{display:flex;gap:24px;background:rgba(17,24,39,.6);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:32px;transition:border-color .3s;}
 .meaning-card:hover{border-color:rgba(16,185,129,.25);}
-.meaning-letter{font-size:56px;font-weight:800;background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;flex-shrink:0;width:64px;text-align:center;}
+.meaning-letter{font-size:56px;font-weight:800;background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;flex-shrink:0;min-width:64px;text-align:center;}
+.meaning-letter.double{font-size:42px;}
 .meaning-body{flex:1;}
 .meaning-word{font-size:20px;font-weight:700;color:#e2e8f0;margin-bottom:4px;}
 .meaning-tagline{font-size:14px;color:#10b981;font-weight:500;margin-bottom:12px;font-style:italic;}
@@ -285,7 +286,7 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
     </div>
 
     <div class="meaning-card">
-      <div class="meaning-letter">PP</div>
+      <div class="meaning-letter double">PP</div>
       <div class="meaning-body">
         <div class="meaning-word">Politicas Publicas</div>
         <div class="meaning-tagline">Conhecimento qualificado para compreender, formular e aprimorar politicas publicas.</div>
