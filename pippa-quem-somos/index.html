@@ -124,6 +124,9 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
 .team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
 .team-card{background:rgba(17,24,39,.6);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:24px;transition:border-color .3s;}
 .team-card:hover{border-color:rgba(16,185,129,.25);}
+.team-card.has-photo{display:flex;align-items:center;gap:20px;}
+.team-photo{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid rgba(16,185,129,.2);flex-shrink:0;}
+.team-info{flex:1;}
 .team-name{font-size:16px;font-weight:700;color:#e2e8f0;margin-bottom:4px;}
 .team-role{font-size:13px;color:#10b981;font-weight:500;margin-bottom:4px;}
 .team-desc{font-size:12px;color:#64748b;line-height:1.5;}
@@ -387,128 +390,36 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
   <p class="section-text">Sua arquitetura metodologica esta organizada em <strong>seis dimensoes interdependentes: Infraestrutura, Governanca, Inteligencia, Comunidade, Dados e Metodologia</strong>.</p>
   <p class="section-text">Essas dimensoes orientam a estruturacao, a operacao e o desenvolvimento continuo da Plataforma e funcionam como referencia para avaliar capacidades, identificar lacunas e orientar sua evolucao.</p>
 
-  <div class="dim-cards">
-    <div class="dim-card">
-      <div class="dim-icon">🏗️</div>
-      <div class="dim-body">
-        <div class="dim-name">Infraestrutura</div>
-        <div class="dim-tagline">A base que permite a inteligencia funcionar.</div>
-        <div class="dim-text">Compreende os ambientes, tecnologias e capacidades necessarias para sustentar a PIPPA. Inclui arquitetura tecnologica, softwares, ferramentas analiticas, ambientes digitais, conectividade, seguranca, interoperabilidade e pessoas capacitadas para operar, manter e desenvolver a Plataforma. A infraestrutura e entendida como meio para a producao de inteligencia — e nao como finalidade da PIPPA.</div>
-        <div class="dim-tags">
-          <span class="dim-tag">Tecnologia</span><span class="dim-tag">Ambientes</span><span class="dim-tag">Ferramentas</span><span class="dim-tag">Seguranca</span><span class="dim-tag">Interoperabilidade</span><span class="dim-tag">Capacidades</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="dim-card">
-      <div class="dim-icon">⚖️</div>
-      <div class="dim-body">
-        <div class="dim-name">Governanca</div>
-        <div class="dim-tagline">Regras, responsabilidades e decisoes que dao sustentabilidade a Plataforma.</div>
-        <div class="dim-text">Estabelece proposito, papeis, responsabilidades, prioridades, processos decisorios e mecanismos de coordenacao necessarios para garantir consistencia e continuidade a PIPPA. Abrange a gestao da Plataforma, seus servicos, parceiros, responsabilidades, criterios de priorizacao, protecao e uso responsavel dos dados, validacao tecnica e prestacao de contas. A governanca conecta estrategia e execucao e assegura que dados, tecnologia e inteligencia sejam utilizados de maneira responsavel e orientada ao proposito institucional.</div>
-        <div class="dim-tags">
-          <span class="dim-tag">Proposito</span><span class="dim-tag">Papeis</span><span class="dim-tag">Responsabilidades</span><span class="dim-tag">Prioridades</span><span class="dim-tag">Integridade</span><span class="dim-tag">Coordenacao</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="dim-card">
-      <div class="dim-icon">🧠</div>
-      <div class="dim-body">
-        <div class="dim-name">Inteligencia</div>
-        <div class="dim-tagline">Transformar informacao em capacidade de compreender e decidir.</div>
-        <div class="dim-text">E a capacidade de coletar, organizar, analisar, interpretar e conectar informacoes para gerar conhecimento relevante. Na PIPPA, inteligencia significa formular perguntas, identificar padroes e tendencias, construir indicadores, produzir diagnosticos, comparar territorios, desenvolver cenarios e sintetizar evidencias capazes de apoiar decisoes. A inteligencia conecta o que e observado ao que precisa ser compreendido.</div>
-        <div class="dim-tags">
-          <span class="dim-tag">Analise</span><span class="dim-tag">Interpretacao</span><span class="dim-tag">Indicadores</span><span class="dim-tag">Evidencias</span><span class="dim-tag">Cenarios</span><span class="dim-tag">Decisao</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="dim-card">
-      <div class="dim-icon">🤝</div>
-      <div class="dim-body">
-        <div class="dim-name">Comunidade</div>
-        <div class="dim-tagline">Inteligencia tambem e produzida por pessoas e redes.</div>
-        <div class="dim-text">A PIPPA reconhece que conhecimento nao e produzido apenas por bases de dados. Gestores, especialistas, pesquisadores, empreendedores, instituicoes publicas, organizacoes da sociedade civil, parceiros e demais atores dos territorios possuem conhecimentos, experiencias e perspectivas fundamentais para compreender problemas publicos. A dimensao Comunidade promove colaboracao, participacao, escuta, intercambio de conhecimentos e construcao de redes capazes de ampliar a qualidade da inteligencia produzida.</div>
-        <div class="dim-tags">
-          <span class="dim-tag">Pessoas</span><span class="dim-tag">Especialistas</span><span class="dim-tag">Gestores</span><span class="dim-tag">Parceiros</span><span class="dim-tag">Participacao</span><span class="dim-tag">Colaboracao</span><span class="dim-tag">Redes</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="dim-card">
-      <div class="dim-icon">📊</div>
-      <div class="dim-body">
-        <div class="dim-name">Dados</div>
-        <div class="dim-tagline">A materia-prima da inteligencia.</div>
-        <div class="dim-text">A dimensao Dados compreende a identificacao, organizacao, tratamento, integracao, documentacao, atualizacao e utilizacao responsavel das informacoes necessarias as analises da PIPPA. Dados devem ser compreendidos em seu contexto: quem os produz, como sao produzidos, o que representam, qual sua cobertura, periodicidade, qualidade e quais sao suas limitacoes. A PIPPA busca transformar dados brutos em informacoes estruturadas e evidencias uteis, preservando rastreabilidade, qualidade e transparencia metodologica.</div>
-        <div class="dim-tags">
-          <span class="dim-tag">Fontes</span><span class="dim-tag">Bases de dados</span><span class="dim-tag">Qualidade</span><span class="dim-tag">Integracao</span><span class="dim-tag">Metadados</span><span class="dim-tag">Atualizacao</span><span class="dim-tag">Rastreabilidade</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="dim-card">
-      <div class="dim-icon">📐</div>
-      <div class="dim-body">
-        <div class="dim-name">Metodologia</div>
-        <div class="dim-tagline">O caminho que transforma dados em conhecimento confiavel.</div>
-        <div class="dim-text">A metodologia organiza os processos pelos quais dados sao selecionados, tratados, analisados, interpretados e comunicados. Compreende metodos de pesquisa e analise, construcao de indicadores, tratamento e transformacao de dados, criterios de evidencia, protocolos de validacao, manutencao e gestao da informacao e formas de comunicacao e visualizacao dos resultados. Tambem incorpora principios de Design da Informacao, Visualizacao da Informacao e storytelling com dados, buscando transformar fenomenos complexos em informacoes claras, compreensiveis e uteis aos diferentes publicos da Plataforma.</div>
-        <div class="dim-tags">
-          <span class="dim-tag">Metodos</span><span class="dim-tag">Indicadores</span><span class="dim-tag">Protocolos</span><span class="dim-tag">Analise</span><span class="dim-tag">Visualizacao</span><span class="dim-tag">Comunicacao</span><span class="dim-tag">Validacao</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ Seis dimensoes, uma plataforma ═══════════ -->
-<div class="section">
-  <div class="section-divider"></div>
-  <h2 class="section-title">Seis dimensoes, uma unica Plataforma</h2>
-  <p class="section-text">As seis dimensoes nao funcionam isoladamente.</p>
-
   <div class="dim-summary">
     <div class="dim-summary-card">
       <div class="dim-summary-name">Infraestrutura</div>
-      <div class="dim-summary-desc">Fornece os meios</div>
+      <div class="dim-summary-desc">Ambientes, tecnologias e capacidades que sustentam a Plataforma — meio para a producao de inteligencia, nao finalidade</div>
     </div>
     <div class="dim-summary-card">
       <div class="dim-summary-name">Governanca</div>
-      <div class="dim-summary-desc">Estabelece direcao e responsabilidades</div>
-    </div>
-    <div class="dim-summary-card">
-      <div class="dim-summary-name">Dados</div>
-      <div class="dim-summary-desc">Fornecem a materia-prima</div>
-    </div>
-    <div class="dim-summary-card">
-      <div class="dim-summary-name">Metodologia</div>
-      <div class="dim-summary-desc">Define como a materia-prima e tratada e interpretada</div>
+      <div class="dim-summary-desc">Proposito, papeis, responsabilidades, prioridades e coordenacao que garantem consistencia e continuidade</div>
     </div>
     <div class="dim-summary-card">
       <div class="dim-summary-name">Inteligencia</div>
-      <div class="dim-summary-desc">Transforma informacao em conhecimento para decisao</div>
+      <div class="dim-summary-desc">Capacidade de analisar, interpretar e conectar informacoes para gerar conhecimento relevante e apoiar decisoes</div>
     </div>
     <div class="dim-summary-card">
       <div class="dim-summary-name">Comunidade</div>
-      <div class="dim-summary-desc">Conecta conhecimento as pessoas, instituicoes e territorios</div>
+      <div class="dim-summary-desc">Pessoas, redes e parceiros que produzem, validam e utilizam o conhecimento gerado pela Plataforma</div>
+    </div>
+    <div class="dim-summary-card">
+      <div class="dim-summary-name">Dados</div>
+      <div class="dim-summary-desc">Identificacao, organizacao, tratamento e integracao responsavel das informacoes, com rastreabilidade e qualidade</div>
+    </div>
+    <div class="dim-summary-card">
+      <div class="dim-summary-name">Metodologia</div>
+      <div class="dim-summary-desc">Metodos, protocolos, indicadores e formas de comunicacao que transformam dados em conhecimento confiavel</div>
     </div>
   </div>
 
   <div class="highlight">A integracao dessas dimensoes permite que a PIPPA avance de um ambiente de disponibilizacao de informacoes para uma verdadeira <strong>Plataforma de Inteligencia em Politicas Publicas Aplicadas</strong>.</div>
 
   <p class="section-text">Por isso, tecnologia sem governanca, dados sem metodologia ou inteligencia desconectada de seus usuarios nao sao suficientes. A capacidade da PIPPA resulta da integracao entre todas essas dimensoes.</p>
-</div>
-
-<!-- ═══ Informacao que pode ser compreendida ═════ -->
-<div class="section">
-  <div class="section-divider"></div>
-  <h2 class="section-title">Informacao que pode ser compreendida</h2>
-  <p class="section-text">Produzir inteligencia tambem significa saber comunica-la.</p>
-  <p class="section-text">Por isso, a PIPPA incorpora a sua abordagem metodologica principios de <strong>Visualizacao da Informacao e Design da Informacao</strong>, buscando tornar dados e fenomenos complexos mais claros, acessiveis e uteis.</p>
-  <p class="section-text">A escolha da forma de apresentacao deve partir da informacao, da pergunta que se pretende responder e das necessidades de quem utilizara o conhecimento produzido.</p>
-  <p class="section-text">Tabelas, indicadores, graficos, mapas, infograficos, paineis, relatorios e demais recursos visuais sao utilizados como instrumentos para ampliar a compreensao, facilitar a identificacao de padroes e apoiar a interpretacao.</p>
-  <div class="highlight">A visualizacao nao constitui apenas a etapa final de apresentacao dos dados: integra o processo de transformacao da informacao em conhecimento.</div>
 </div>
 
 <!-- ═══ Como atuamos ═════════════════════════════ -->
@@ -560,9 +471,12 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
   <div class="team-section">
     <div class="team-label">Lideranca Institucional</div>
     <div class="team-grid">
-      <div class="team-card">
-        <div class="team-name">Rodrigo Soares</div>
-        <div class="team-role">Presidente do Sebrae Nacional</div>
+      <div class="team-card has-photo">
+        <img src="fotos/rodrigo-soares.png" alt="Rodrigo Soares" class="team-photo">
+        <div class="team-info">
+          <div class="team-name">Rodrigo Soares</div>
+          <div class="team-role">Presidente do Sebrae Nacional</div>
+        </div>
       </div>
     </div>
   </div>
@@ -570,13 +484,26 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
   <div class="team-section">
     <div class="team-label">Unidade de Politicas Publicas</div>
     <div class="team-grid">
-      <div class="team-card">
-        <div class="team-name">Augusto Togni</div>
-        <div class="team-role">Gerente</div>
+      <div class="team-card has-photo">
+        <img src="fotos/augusto-togni.jpg" alt="Augusto Togni" class="team-photo">
+        <div class="team-info">
+          <div class="team-name">Augusto Togni</div>
+          <div class="team-role">Gerente</div>
+        </div>
       </div>
-      <div class="team-card">
-        <div class="team-name">Lillian Callafange</div>
-        <div class="team-role">Gerente Adjunta</div>
+      <div class="team-card has-photo">
+        <img src="fotos/lillian-callafange.jpg" alt="Lillian Callafange" class="team-photo">
+        <div class="team-info">
+          <div class="team-name">Lillian Callafange</div>
+          <div class="team-role">Gerente Adjunta</div>
+        </div>
+      </div>
+      <div class="team-card has-photo">
+        <img src="fotos/claudia-dutra.jpg" alt="Claudia Dutra" class="team-photo">
+        <div class="team-info">
+          <div class="team-name">Claudia Dutra</div>
+          <div class="team-role">Gerente Adjunta</div>
+        </div>
       </div>
     </div>
   </div>
@@ -584,10 +511,13 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
   <div class="team-section">
     <div class="team-label">Coordenacao da PIPPA</div>
     <div class="team-grid">
-      <div class="team-card">
-        <div class="team-name">Murilo Terra</div>
-        <div class="team-role">Coordenador da PIPPA</div>
-        <div class="team-desc">Economista</div>
+      <div class="team-card has-photo">
+        <img src="fotos/murilo-terra.jpg" alt="Murilo Terra" class="team-photo">
+        <div class="team-info">
+          <div class="team-name">Murilo Terra</div>
+          <div class="team-role">Coordenador da PIPPA</div>
+          <div class="team-desc">Economista</div>
+        </div>
       </div>
     </div>
   </div>
@@ -595,10 +525,13 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
   <div class="team-section">
     <div class="team-label">Inteligencia e Metodologia</div>
     <div class="team-grid">
-      <div class="team-card">
-        <div class="team-name">Julio Enders</div>
-        <div class="team-role">Gestor de Inteligencia e Metodologia</div>
-        <div class="team-desc">Administrador, Economista e Mestre em Observatorios de Informacao</div>
+      <div class="team-card has-photo">
+        <img src="fotos/julio-enders.png" alt="Julio Enders" class="team-photo">
+        <div class="team-info">
+          <div class="team-name">Julio Enders</div>
+          <div class="team-role">Gestor de Inteligencia e Metodologia</div>
+          <div class="team-desc">Administrador, Economista e Mestre em Observatorios de Informacao</div>
+        </div>
       </div>
     </div>
   </div>
@@ -606,10 +539,13 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
   <div class="team-section">
     <div class="team-label">Planejamento e Operacoes</div>
     <div class="team-grid">
-      <div class="team-card">
-        <div class="team-name">Julia Marcal</div>
-        <div class="team-role">Gestora de Planejamento e Operacoes</div>
-        <div class="team-desc">Administradora</div>
+      <div class="team-card has-photo">
+        <img src="fotos/julia-marcal.jpg" alt="Julia Marcal" class="team-photo">
+        <div class="team-info">
+          <div class="team-name">Julia Marcal</div>
+          <div class="team-role">Gestora de Planejamento e Operacoes</div>
+          <div class="team-desc">Administradora</div>
+        </div>
       </div>
     </div>
   </div>
@@ -631,26 +567,6 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
   </div>
 
   <p class="section-text" style="margin-top:24px;">A Plataforma tambem se desenvolve por meio da colaboracao com <strong>Sebraes/UF, gestores publicos, instituicoes de ensino e pesquisa, especialistas, organizacoes parceiras</strong> e demais atores dos ecossistemas de politicas publicas, empreendedorismo e desenvolvimento territorial.</p>
-</div>
-
-<!-- ═══ Uma plataforma para transformar ══════════ -->
-<div class="section">
-  <div class="section-divider"></div>
-  <h2 class="section-title">Uma plataforma para transformar conhecimento em acao</h2>
-  <p class="section-text">A PIPPA parte de uma premissa: <strong>dados, isoladamente, nao transformam realidades</strong>.</p>
-  <p class="section-text">E a capacidade de organiza-los, interpreta-los e transforma-los em informacao, evidencias e inteligencia — e de conectar esse conhecimento a experimentacao, a aprendizagem e a acao — que amplia a capacidade de enfrentar desafios publicos.</p>
-  <p class="section-text">Por isso, a PIPPA conecta <strong>quem produz dados, quem produz conhecimento, quem formula politicas, quem experimenta solucoes e quem atua nos territorios</strong>.</p>
-  <p class="section-text">Um ciclo no qual observar gera compreensao; compreender permite experimentar; experimentar produz aprendizagem; e aprender qualifica novas decisoes.</p>
-  <p class="section-text">A PIPPA busca, assim, transformar:</p>
-
-  <div class="transform-chain">
-    <div class="transform-step"><span class="transform-from">DADOS</span><span class="transform-arrow">→</span><span class="transform-to">INFORMACOES</span></div>
-    <div class="transform-step"><span class="transform-from">INFORMACOES</span><span class="transform-arrow">→</span><span class="transform-to">EVIDENCIAS</span></div>
-    <div class="transform-step"><span class="transform-from">EVIDENCIAS</span><span class="transform-arrow">→</span><span class="transform-to">INTELIGENCIA</span></div>
-    <div class="transform-step"><span class="transform-from">INTELIGENCIA</span><span class="transform-arrow">→</span><span class="transform-to">EXPERIMENTACAO</span></div>
-    <div class="transform-step"><span class="transform-from">EXPERIMENTACAO</span><span class="transform-arrow">→</span><span class="transform-to">APRENDIZAGEM</span></div>
-    <div class="transform-step"><span class="transform-from">APRENDIZAGEM</span><span class="transform-arrow">→</span><span class="transform-to">ACAO PUBLICA</span></div>
-  </div>
 </div>
 
 <!-- ═══ Closing ══════════════════════════════════ -->
