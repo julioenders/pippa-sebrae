@@ -836,6 +836,40 @@
       padding: 0 8px;
     }
 
+    /* Forum / Chat */
+    .forum-section { margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px; }
+    .forum-title { font-size: 14px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; color: var(--text); }
+    .forum-title .ft-icon { font-size: 16px; }
+    .forum-messages { display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; padding-right: 4px; }
+    .forum-msg { display: flex; gap: 10px; }
+    .forum-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+    .forum-bubble { background: var(--surface2); border: 1px solid var(--border); border-radius: 2px 10px 10px 10px; padding: 10px 14px; flex: 1; }
+    .forum-meta { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; flex-wrap: wrap; }
+    .forum-name { font-size: 12px; font-weight: 600; color: var(--accent); }
+    .forum-uf { font-size: 10px; color: var(--text-muted); background: var(--bg); padding: 1px 6px; border-radius: 4px; }
+    .forum-time { font-size: 10px; color: var(--text-muted); margin-left: auto; }
+    .forum-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+    .forum-input-row { display: flex; gap: 8px; margin-top: 14px; }
+    .forum-input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 14px; border-radius: 8px; font-size: 13px; outline: none; cursor: default; }
+    .forum-badge { font-size: 10px; background: var(--accent-dim); color: var(--accent); padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+
+    /* Info modal button */
+    .info-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .info-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .info-modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(15,17,23,0.8); z-index: 600; align-items: center; justify-content: center; }
+    .info-modal-backdrop.active { display: flex; }
+    .info-modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; max-width: 640px; width: 92%; max-height: 82vh; overflow-y: auto; }
+    .info-modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; background: linear-gradient(135deg, #10b981, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .info-modal h3 { font-size: 13px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 16px; margin-bottom: 8px; }
+    .info-modal ul { list-style: none; padding: 0; }
+    .info-modal li { font-size: 13px; color: var(--text-muted); padding: 4px 0; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+    .info-modal li::before { content: '\2022'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+    .info-modal .info-footer { margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.6; }
+    .info-modal .info-close { float: right; background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0 4px; }
+    .info-modal .info-close:hover { color: var(--text); }
+    .info-warning { background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.2); border-radius: 8px; padding: 12px 16px; margin-top: 16px; font-size: 12px; color: var(--orange); line-height: 1.5; }
+
     /* Animate */
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .animate-in { animation: fadeIn 0.4s ease-out; }
@@ -850,6 +884,7 @@
       <div class="logo">TransformaLab</div>
       <div class="logo-sub">PIPPA - Plataforma de Inteligencia em Politicas Publicas Aplicadas &mdash; Plataforma de Experimentacao</div>
     </div>
+    <button class="info-btn" onclick="toggleInfoModal()" title="Sobre o painel">i</button>
   </div>
   <div class="header-controls">
     <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
@@ -1193,8 +1228,82 @@
         </div>
       </div>
     </div>
+
+    <!-- Forum Hub -->
+    <div class="card animate-in" style="margin-bottom:32px;">
+      <div class="forum-title"><span class="ft-icon">&#128172;</span> Forum da Rede TransformaLab <span class="forum-badge">Colaborativo</span></div>
+      <div class="forum-messages" id="hubForum"></div>
+      <div class="forum-input-row">
+        <input class="forum-input" placeholder="Disponivel na plataforma com dados reais..." disabled>
+      </div>
+    </div>
   </div>
 
+</div>
+
+<!-- Info Modal -->
+<div class="info-modal-backdrop" id="infoModal" onclick="if(event.target===this)toggleInfoModal()">
+  <div class="info-modal">
+    <button class="info-close" onclick="toggleInfoModal()">&times;</button>
+    <h2>TransformaLab — Sobre o Painel</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">
+      Plataforma de gestao e acompanhamento de experimentos em politicas publicas voltados a melhoria do ambiente de negocios para micro e pequenas empresas.
+    </p>
+
+    <h3>Visao Geral</h3>
+    <ul>
+      <li>Dashboard consolidado com KPIs de experimentos, pilotos ativos, territorios envolvidos e participantes.</li>
+      <li>Jornada de experimentacao em 6 etapas com gates de decisao (Elegibilidade a Institucionalizacao).</li>
+      <li>Modelos de laboratorio: Lab Design & Experimentacao, Lab Pro-Negocios e Insight Lab.</li>
+      <li>Graficos de evolucao temporal, distribuicao por etapa e indicadores de impacto agregado.</li>
+    </ul>
+
+    <h3>Experimentos</h3>
+    <ul>
+      <li>Catalogo de todos os experimentos com filtros por etapa, laboratorio, UF e tema.</li>
+      <li>Detalhamento individual com indicador principal, comparativo antes/depois e grafico de resultados.</li>
+      <li>Forum de discussao por experimento para colaboracao entre participantes e mentores.</li>
+    </ul>
+
+    <h3>Chamadas</h3>
+    <ul>
+      <li>Chamadas de desafios regulatorios abertas, em avaliacao ou encerradas.</li>
+      <li>Acompanhamento de propostas recebidas e progresso de cada chamada.</li>
+      <li>Vinculacao com experimentos relacionados ao tema da chamada.</li>
+      <li>Forum de discussao por chamada para debate entre proponentes e avaliadores.</li>
+    </ul>
+
+    <h3>Territorios</h3>
+    <ul>
+      <li>Heatmap de atividade por UF com indicacao de maturidade (Avancado, Intermediario, Inicial, Planejamento).</li>
+      <li>Ranking de territorios por indice de impacto e numero de experimentos.</li>
+      <li>Distribuicao regional de experimentos e modelos de laboratorio.</li>
+    </ul>
+
+    <h3>Resultados</h3>
+    <ul>
+      <li>Catalogo de evidencias com comparativo antes/depois para cada experimento concluido.</li>
+      <li>Classificacao por nivel de impacto (Alto, Medio, Baixo) baseada na variacao dos indicadores.</li>
+      <li>Graficos consolidados de resultados e distribuicao de evidencias.</li>
+    </ul>
+
+    <h3>Hub TransformaLab</h3>
+    <ul>
+      <li>Rede colaborativa de 27 laboratorios estaduais com KPIs de formacao e mentoria.</li>
+      <li>Capacidades dinamicas por UF (Sensing, Seizing, Transforming, Learning, Coordinating).</li>
+      <li>Plano de formacao em 90 dias com acompanhamento de progresso por fase.</li>
+      <li>Forum geral da rede para troca de experiencias entre todos os laboratorios.</li>
+    </ul>
+
+    <div class="info-warning">
+      &#9888; <strong>Dados sinteticos</strong> — Este painel utiliza dados simulados para fins de planejamento e demonstracao da plataforma. Os experimentos, chamadas, resultados e conversas nos foruns sao ficticios. Quando a plataforma estiver conectada a dados reais, os foruns serao interativos e os dados refletirao os experimentos em andamento.
+    </div>
+
+    <div class="info-footer">
+      PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas<br>
+      SEBRAE Nacional — Observatorio | Set/2026
+    </div>
+  </div>
 </div>
 
 <!-- Modal -->
@@ -1310,6 +1419,162 @@ const RESULTADOS = EXPERIMENTOS.filter(e => e.depois !== null).map(e => ({
 }));
 
 // ============================================================
+// FORUM DATA (synthetic)
+// ============================================================
+
+const FORUM_MSGS = {
+  exp: {
+    1: [
+      {nome:'Ana Carolina Ribeiro',uf:'MA',msg:'O prazo caiu de 45 para 12 dias aqui em Sao Luis. Os empreendedores estao surpresos com a agilidade.',time:'15/09/2026 14:32'},
+      {nome:'Ricardo Lopes',uf:'MA',msg:'Alguem sabe se o modelo vai ser replicado nos municipios do interior? Temos demanda grande em Imperatriz.',time:'16/09/2026 09:15'},
+      {nome:'Fernanda Costa',uf:'DF',msg:'Parabens pelo resultado! Estamos estudando o caso do MA como referencia para o nosso lab.',time:'17/09/2026 11:08'},
+      {nome:'Carlos Eduardo Silva',uf:'MA',msg:'O ponto chave foi a eliminacao de etapas redundantes. Tinham 3 orgaos pedindo o mesmo documento.',time:'18/09/2026 16:45'}
+    ],
+    2: [
+      {nome:'Juliana Martins',uf:'SP',msg:'A integracao com o sistema da Junta Comercial esta quase pronta. Falta o modulo de viabilidade.',time:'12/09/2026 10:20'},
+      {nome:'Marcos Pereira',uf:'SP',msg:'Temos 890 usuarios no prototipo. O feedback principal e sobre a complexidade do formulario de enquadramento.',time:'14/09/2026 15:33'},
+      {nome:'Patricia Almeida',uf:'MG',msg:'Podemos compartilhar a experiencia de MG com integracao de cadastros? Tivemos desafios semelhantes.',time:'15/09/2026 08:47'},
+      {nome:'Roberto Nascimento',uf:'SP',msg:'Proponho simplificar o formulario para 3 telas maximo. O MEI nao pode gastar mais de 5 minutos.',time:'16/09/2026 14:10'}
+    ],
+    3: [
+      {nome:'Diego Rodrigues',uf:'CE',msg:'O sandbox esta na fase de mapeamento. Ja identificamos 12 fintechs interessadas em participar.',time:'20/09/2026 09:30'},
+      {nome:'Camila Freitas',uf:'CE',msg:'O desafio regulatorio principal e a questao de garantias. MEI nao tem patrimonio para oferecer.',time:'21/09/2026 11:15'},
+      {nome:'Andre Santos',uf:'PE',msg:'Em PE temos uma experiencia com cooperativas de credito que pode ajudar. Posso compartilhar o relatorio?',time:'22/09/2026 14:28'}
+    ],
+    4: [
+      {nome:'Luciana Teixeira',uf:'RS',msg:'A reserva de 15% para cooperativas esta funcionando bem. Ja tivemos 18% de participacao no ultimo pregao.',time:'10/09/2026 08:55'},
+      {nome:'Fernando Dias',uf:'RS',msg:'O modelo de pontuacao tecnica diferenciada foi o que mais impactou. Recomendo replicar.',time:'12/09/2026 16:40'},
+      {nome:'Beatriz Moura',uf:'SC',msg:'SC quer implementar algo similar. Podem compartilhar o decreto municipal que regulamentou?',time:'14/09/2026 10:12'}
+    ],
+    5: [
+      {nome:'Gabriel Souza',uf:'PR',msg:'A certificacao via blockchain reduziu o tempo de 30 para 3 dias. Os exportadores de mel estao comemorando.',time:'08/09/2026 11:20'},
+      {nome:'Isabela Carvalho',uf:'PR',msg:'Proximo passo e integrar com o Siscomex. Alguem tem contato na Receita Federal para alinhar?',time:'10/09/2026 09:45'},
+      {nome:'Thiago Monteiro',uf:'SC',msg:'Queremos estender o piloto para exportadores de vinho de SC. O modelo de certificacao e o mesmo?',time:'12/09/2026 14:30'}
+    ],
+    6: [
+      {nome:'Marina Oliveira',uf:'MG',msg:'O dashboard preditivo ja esta identificando padroes de inadimplencia com 85% de acuracia.',time:'18/09/2026 10:15'},
+      {nome:'Rafael Campos',uf:'MG',msg:'Estamos treinando o modelo com dados do Simples Nacional. Precisamos de mais dados historicos.',time:'20/09/2026 15:22'},
+      {nome:'Aline Barbosa',uf:'SP',msg:'Em SP temos uma base grande de dados do Simples. Podemos explorar uma parceria de dados anonimizados?',time:'22/09/2026 08:38'}
+    ],
+    7: [
+      {nome:'Socorro Lima',uf:'BA',msg:'Ja formamos 1.250 artesaos em letramento digital. O programa virou politica estadual!',time:'05/09/2026 14:10'},
+      {nome:'Jorge Conceicao',uf:'BA',msg:'O marketplace dos artesaos ja vendeu R$ 2,3 milhoes. Resultado que ninguem esperava.',time:'08/09/2026 11:30'},
+      {nome:'Claudia Ramos',uf:'MA',msg:'Queremos replicar no MA com os ceramistas de Alcantara. O modelo de capacitacao e aberto?',time:'10/09/2026 16:55'},
+      {nome:'Pedro Henrique',uf:'BA',msg:'O segredo foi usar WhatsApp como plataforma inicial. Os artesaos ja dominavam a ferramenta.',time:'12/09/2026 09:20'}
+    ],
+    8: [
+      {nome:'Renata Vieira',uf:'PE',msg:'2.100 alvaras emitidos em 24h desde que o sistema entrou no ar. Zero reclamacoes ate agora.',time:'14/09/2026 10:40'},
+      {nome:'Antonio Gomes',uf:'PE',msg:'A aprovacao automatica para baixo risco foi a decisao mais importante. 78% dos casos nem precisam de vistoria.',time:'16/09/2026 13:25'},
+      {nome:'Debora Lima',uf:'RN',msg:'RN esta implementando o mesmo modelo. Podemos marcar uma call para alinhar os criterios de risco?',time:'18/09/2026 09:10'}
+    ],
+    9: [
+      {nome:'Eduardo Farias',uf:'RJ',msg:'Mapeamos 340 dark kitchens no Rio. A maioria opera sem enquadramento regulatorio adequado.',time:'22/09/2026 11:50'},
+      {nome:'Priscila Andrade',uf:'RJ',msg:'O problema nao e so sanitario. E tributario, trabalhista e urbanistico ao mesmo tempo.',time:'23/09/2026 14:35'},
+      {nome:'Victor Hugo Mendes',uf:'SP',msg:'Em SP fizemos um estudo parecido. O caminho foi criar uma categoria especifica no codigo de atividades.',time:'24/09/2026 08:20'}
+    ],
+    10: [
+      {nome:'Larissa Santos',uf:'SC',msg:'Os criterios de certificacao verde para MPE precisam ser muito diferentes dos de grandes empresas.',time:'15/09/2026 09:40'},
+      {nome:'Gustavo Araujo',uf:'SC',msg:'Estamos testando um modelo com 15 criterios simplificados. O checklist completo tinha 87 itens.',time:'18/09/2026 14:55'},
+      {nome:'Helena Campos',uf:'PR',msg:'O selo precisa ter reconhecimento de mercado. Ja conversaram com redes de varejo sobre aceitacao?',time:'20/09/2026 11:30'}
+    ],
+    11: [
+      {nome:'Marcos Antonio',uf:'GO',msg:'O desafio em Goias e a quantidade de orgaos envolvidos. Sao 5 balcoes diferentes hoje.',time:'25/09/2026 10:15'},
+      {nome:'Simone Ribeiro',uf:'GO',msg:'O mapeamento inicial mostra que 60% dos produtores rurais nao tem regularizacao completa.',time:'26/09/2026 14:30'}
+    ],
+    12: [
+      {nome:'Carla Mendes',uf:'MA',msg:'O licenciamento ambiental caiu de 90 para 25 dias. Os produtores rurais estao conseguindo operar legalmente.',time:'10/09/2026 11:45'},
+      {nome:'Paulo Rocha',uf:'MA',msg:'O acompanhamento em tempo real foi essencial. Antes ninguem sabia em que etapa o processo estava.',time:'13/09/2026 15:20'},
+      {nome:'Tatiana Sousa',uf:'PA',msg:'Para quer adotar o modelo. Podemos agendar uma visita tecnica ao sistema do MA?',time:'15/09/2026 08:50'}
+    ]
+  },
+  chamada: {
+    1: [
+      {nome:'Roberto Alves',uf:'SP',msg:'A chamada de licenciamento gerou 23 propostas excelentes. O nivel de inovacao superou as expectativas.',time:'20/12/2025 09:30'},
+      {nome:'Amanda Ferreira',uf:'MA',msg:'Nossa proposta para o MA foi selecionada! Agora estamos na fase de piloto com resultados promissores.',time:'22/12/2025 14:15'},
+      {nome:'Flavio Campos',uf:'MG',msg:'Sugiro que na proxima chamada incluam criterios de escalabilidade. Algumas propostas eram muito locais.',time:'10/01/2026 11:40'}
+    ],
+    2: [
+      {nome:'Vanessa Mota',uf:'CE',msg:'As 15 propostas estao em avaliacao. O comite tecnico deve dar o parecer ate o final do mes.',time:'20/09/2026 10:20'},
+      {nome:'Diego Rodrigues',uf:'CE',msg:'Nossa proposta do sandbox regulatorio esta entre as finalistas. Animados com o feedback.',time:'22/09/2026 15:30'},
+      {nome:'Marcia Lima',uf:'PE',msg:'O criterio de avaliacao deveria dar mais peso a viabilidade de implementacao com baixo custo.',time:'23/09/2026 09:45'}
+    ],
+    3: [
+      {nome:'Renata Vieira',uf:'PE',msg:'O desafio do alvara digital teve 31 propostas! O maior volume de submissoes ate agora.',time:'01/11/2025 11:00'},
+      {nome:'Cristiane Nunes',uf:'PR',msg:'Varias propostas convergem no mesmo ponto: aprovacao automatica para baixo risco. Consenso forte.',time:'15/11/2025 14:20'},
+      {nome:'Sergio Matos',uf:'RJ',msg:'A proposta vencedora de PE esta sendo referencia para outros estados. Parabens ao time.',time:'20/11/2025 09:10'}
+    ],
+    4: [
+      {nome:'Paula Rodrigues',uf:'RS',msg:'Temos 8 propostas recebidas e a chamada segue aberta. Precisamos de mais diversidade regional.',time:'15/09/2026 10:30'},
+      {nome:'Luciana Teixeira',uf:'RS',msg:'Sugiro divulgar nos Sebraes estaduais do Norte e Nordeste. Tem muita cooperativa nessas regioes.',time:'18/09/2026 14:45'},
+      {nome:'Andre Moreira',uf:'AM',msg:'Vou submeter uma proposta com foco em cooperativas ribeirinhas. O contexto e bem diferente do Sul.',time:'20/09/2026 08:50'}
+    ],
+    5: [
+      {nome:'Helena Campos',uf:'PR',msg:'12 propostas ja recebidas para capacitacao digital rural. Excelente diversidade tematica.',time:'01/09/2026 11:20'},
+      {nome:'Jose Carlos',uf:'MT',msg:'O Mato Grosso tem uma demanda enorme. Os produtores rurais precisam de marketplaces simples.',time:'05/09/2026 15:10'},
+      {nome:'Lucia Pereira',uf:'BA',msg:'Nossa experiencia com artesaos pode ser adaptada para o contexto rural. A base e a mesma.',time:'08/09/2026 09:35'}
+    ],
+    6: [
+      {nome:'Rafael Campos',uf:'MG',msg:'A chamada de tributacao abriu ha pouco, mas ja temos 6 propostas. O tema gera muito interesse.',time:'10/09/2026 10:15'},
+      {nome:'Fernanda Costa',uf:'DF',msg:'Importante que as propostas considerem a Reforma Tributaria. O cenario muda completamente em 2027.',time:'15/09/2026 14:40'},
+      {nome:'Thiago Monteiro',uf:'SC',msg:'Estamos desenvolvendo uma proposta com foco em simulador tributario integrado ao ERP do pequeno negocio.',time:'20/09/2026 08:20'}
+    ],
+    7: [
+      {nome:'Gustavo Araujo',uf:'SC',msg:'19 propostas recebidas sobre certificacao verde. A avaliacao esta na reta final.',time:'10/08/2026 11:30'},
+      {nome:'Larissa Santos',uf:'SC',msg:'O comite esta priorizando propostas com criterios simplificados. Selo verde nao pode ser burocracia.',time:'15/08/2026 14:20'},
+      {nome:'Marina Oliveira',uf:'MG',msg:'MG submete uma proposta com selo digital verificavel por QR code. Simples e rastreavel.',time:'20/08/2026 09:45'}
+    ],
+    8: [
+      {nome:'Simone Ribeiro',uf:'GO',msg:'A chamada de formalizacao encerrou com 27 propostas. GO contribuiu com 3 delas.',time:'05/10/2025 10:00'},
+      {nome:'Jorge Conceicao',uf:'BA',msg:'A proposta da Bahia para artesaos foi uma das selecionadas. Virou o experimento que hoje e referencia.',time:'15/10/2025 15:30'},
+      {nome:'Claudia Ramos',uf:'MA',msg:'Aprendizado principal: combinar formalizacao com capacitacao digital aumenta muito a adesao.',time:'20/10/2025 11:15'}
+    ]
+  },
+  hub: [
+    {nome:'Ana Carolina Ribeiro',uf:'MA',msg:'O lab do Maranhao concluiu a Fase 3 de formacao! Ja temos nosso primeiro experimento em andamento.',time:'02/09/2026 09:15'},
+    {nome:'Juliana Martins',uf:'SP',msg:'Alguem tem modelo de termo de cooperacao com a prefeitura? Precisamos formalizar a parceria em SP.',time:'05/09/2026 11:30'},
+    {nome:'Fernando Dias',uf:'RS',msg:'Compartilho o template que usamos no RS. Funcionou bem com 3 municipios. Vou enviar pelo drive da rede.',time:'05/09/2026 14:20'},
+    {nome:'Diego Rodrigues',uf:'CE',msg:'O workshop de design thinking da semana passada foi otimo. Quando teremos o proximo? A equipe do CE quer participar.',time:'10/09/2026 08:45'},
+    {nome:'Socorro Lima',uf:'BA',msg:'Temos vagas para mentoria cruzada. Labs iniciantes podem solicitar acompanhamento dos labs avancados.',time:'12/09/2026 10:10'},
+    {nome:'Marcos Pereira',uf:'SP',msg:'Proposta: criar um repositorio compartilhado de metodologias. Cada lab documenta o que funcionou e o que nao funcionou.',time:'15/09/2026 15:50'},
+    {nome:'Carla Mendes',uf:'MA',msg:'Apoio total a proposta do repositorio. O MA pode contribuir com os cases de licenciamento e ambiental.',time:'16/09/2026 09:30'},
+    {nome:'Renata Vieira',uf:'PE',msg:'PE tambem contribui. Nosso case de alvara digital ja esta documentado e pode ser o primeiro a entrar.',time:'17/09/2026 11:00'},
+    {nome:'Gabriel Souza',uf:'PR',msg:'O encontro presencial dos labs esta confirmado para outubro? Precisamos definir a pauta ate sexta.',time:'20/09/2026 14:25'},
+    {nome:'Patricia Almeida',uf:'MG',msg:'Sugestao de pauta: 1) Repositorio de metodologias 2) Mentoria cruzada 3) Metas 2027 4) Integracao com Observatorio.',time:'21/09/2026 08:40'}
+  ]
+};
+
+function renderForum(messages, context) {
+  if (!messages || !messages.length) return '';
+  const initials = n => n.split(' ').filter((_,i,a) => i===0||i===a.length-1).map(p => p[0]).join('').toUpperCase();
+  const items = messages.map(m => `
+    <div class="forum-msg">
+      <div class="forum-avatar">${initials(m.nome)}</div>
+      <div class="forum-bubble">
+        <div class="forum-meta">
+          <span class="forum-name">${m.nome}</span>
+          <span class="forum-uf">${m.uf}</span>
+          <span class="forum-time">${m.time}</span>
+        </div>
+        <div class="forum-text">${m.msg}</div>
+      </div>
+    </div>
+  `).join('');
+  return `
+    <div class="forum-section">
+      <div class="forum-title"><span class="ft-icon">&#128172;</span> Forum de Discussao <span class="forum-badge">${messages.length} mensagens</span></div>
+      <div class="forum-messages">${items}</div>
+      <div class="forum-input-row">
+        <input class="forum-input" placeholder="Disponivel na plataforma com dados reais..." disabled>
+      </div>
+    </div>
+  `;
+}
+
+function toggleInfoModal() {
+  document.getElementById('infoModal').classList.toggle('active');
+}
+
+// ============================================================
 // INITIALIZATION
 // ============================================================
 
@@ -1327,7 +1592,26 @@ function init(){
   renderTerritories();
   renderResults();
   renderHub();
+  renderHubForum();
   setupTabs();
+}
+
+function renderHubForum(){
+  const msgs = FORUM_MSGS.hub;
+  const initials = n => n.split(' ').filter((_,i,a) => i===0||i===a.length-1).map(p => p[0]).join('').toUpperCase();
+  document.getElementById('hubForum').innerHTML = msgs.map(m => `
+    <div class="forum-msg">
+      <div class="forum-avatar">${initials(m.nome)}</div>
+      <div class="forum-bubble">
+        <div class="forum-meta">
+          <span class="forum-name">${m.nome}</span>
+          <span class="forum-uf">${m.uf}</span>
+          <span class="forum-time">${m.time}</span>
+        </div>
+        <div class="forum-text">${m.msg}</div>
+      </div>
+    </div>
+  `).join('');
 }
 
 function populateFilterOptions(){
@@ -1719,6 +2003,7 @@ function showExpDetail(id){
         <span class="tag">${e.etapa}</span>
       </div>
     </div>
+    ${renderForum(FORUM_MSGS.exp[e.id], 'experimento')}
   `;
   openModal(html);
 
@@ -1813,6 +2098,7 @@ function showCallDetail(id){
       <h4>Experimentos Relacionados</h4>
       <div class="exp-list">${relatedExps.map(e => renderExpItem(e)).join('')}</div>
     </div>` : ''}
+    ${renderForum(FORUM_MSGS.chamada[c.id], 'chamada')}
   `;
   openModal(html);
 }
