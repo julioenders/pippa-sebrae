@@ -9,6 +9,17 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:100vh;}
 
+/* ── Header Nav ──────────────────────────────── */
+.top-nav{position:sticky;top:0;z-index:100;background:rgba(11,17,32,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);padding:14px 48px;display:flex;align-items:center;justify-content:space-between;}
+.top-nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.top-nav-logo{font-size:18px;font-weight:800;background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;}
+.top-nav-sep{width:1px;height:16px;background:rgba(255,255,255,.12);}
+.top-nav-label{font-size:12px;color:#64748b;font-weight:500;}
+.top-nav-links{display:flex;align-items:center;gap:8px;}
+.top-nav-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#94a3b8;text-decoration:none;padding:8px 16px;border:1px solid rgba(255,255,255,.08);border-radius:8px;transition:all .2s;font-family:inherit;}
+.top-nav-link:hover{border-color:rgba(16,185,129,.3);color:#e2e8f0;background:rgba(16,185,129,.06);}
+.top-nav-link svg{width:14px;height:14px;}
+
 /* ── Hero ─────────────────────────────────────── */
 .hero{position:relative;padding:60px 48px 48px;text-align:center;overflow:hidden;}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(16,185,129,.12) 0%,transparent 70%);pointer-events:none;}
@@ -121,12 +132,26 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
 </head>
 <body>
 
+<nav class="top-nav">
+  <a href="#" class="top-nav-brand">
+    <span class="top-nav-logo">PIPPA</span>
+    <span class="top-nav-sep"></span>
+    <span class="top-nav-label">Plataforma de Inteligencia</span>
+  </a>
+  <div class="top-nav-links">
+    <a href="../pippa-quem-somos/index.html" class="top-nav-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Quem Somos
+    </a>
+  </div>
+</nav>
+
 <section class="hero">
   <div class="hero-label">SEBRAE Nacional</div>
   <h1 class="hero-title">PIPPA</h1>
   <p class="hero-subtitle">Plataforma de Inteligencia em Politicas Publicas Aplicadas — ferramentas de monitoramento legislativo, orcamentario e territorial.</p>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">11</div><div class="hero-stat-label">Ferramentas</div></div>
+    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">10</div><div class="hero-stat-label">Ferramentas</div></div>
     <div class="hero-stat"><div class="hero-stat-value">6</div><div class="hero-stat-label">Dashboards</div></div>
     <div class="hero-stat"><div class="hero-stat-value">17</div><div class="hero-stat-label">Fontes de Dados</div></div>
     <div class="hero-stat"><div class="hero-stat-value">58</div><div class="hero-stat-label">Cubos Analiticos</div></div>
@@ -151,8 +176,8 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
     <div class="sidebar-desc">Selecione uma necessidade para filtrar as ferramentas.</div>
     <div class="questions-wrap" id="questionsWrap"></div>
     <div class="sidebar-stats">
-      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">11</div><div class="sidebar-stat-lbl">Visiveis</div></div>
-      <div class="sidebar-stat"><div class="sidebar-stat-val">11</div><div class="sidebar-stat-lbl">Total</div></div>
+      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">10</div><div class="sidebar-stat-lbl">Visiveis</div></div>
+      <div class="sidebar-stat"><div class="sidebar-stat-val">10</div><div class="sidebar-stat-lbl">Total</div></div>
     </div>
   </div>
 </aside>
@@ -160,7 +185,7 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
 <section class="grid-section">
   <div class="grid-header">
     <h2>Ferramentas Disponiveis</h2>
-    <div class="grid-count">Exibindo <span id="showCount">11</span> de 11</div>
+    <div class="grid-count">Exibindo <span id="showCount">10</span> de 10</div>
   </div>
   <div class="cards" id="cardsGrid"></div>
 </section>
@@ -282,17 +307,6 @@ const TOOLS = [
     descricao: "Plataforma de experimentacao baseada em evidencias para transformar o ambiente de negocios. Integra o ecossistema Observatorio-Laboratorio-Advocacy com 3 modelos de laboratorio (Lab Design & Experimentacao, Lab Pro-Negocios, Insight Lab), framework de 6 etapas com gates de decisao, e Hub TransformaLab com 27 laboratorios estaduais.",
     features: ["12 experimentos ativos", "6 etapas com gates", "3 modelos de laboratorio", "27 labs estaduais (Hub)", "Chamadas de desafios", "Resultados antes x depois", "Mapa de territorios", "Capacidades dinamicas"],
     destaque: "Acompanhe a experimentacao em politicas publicas para MPEs. Veja desafios regulatorios sendo testados em pilotos controlados, com metricas de impacto antes e depois — do licenciamento simplificado a certificacao digital para exportadores."
-  },
-  {
-    id: "quemsomos",
-    nome: "Quem Somos — PIPPA",
-    subtitulo: "Visao, Missao, Valores e Equipe",
-    accent: "#10b981",
-    icon: "👥",
-    url: "../pippa-quem-somos/index.html",
-    descricao: "Pagina institucional da PIPPA com a visao, missao e valores do projeto. Apresenta a metodologia de trabalho do Nucleo de Assessoria Legislativa (NAL), as 6 dimensoes de atuacao, o significado do acronimo PIPPA e a equipe responsavel pela plataforma.",
-    features: ["Visao e missao", "Valores institucionais", "Metodologia de trabalho", "6 dimensoes de atuacao", "Significado do PIPPA", "Equipe NAL", "Jornada de transformacao", "Ecossistema Observatorio-Lab-Advocacy"],
-    destaque: "Conheca a equipe e a metodologia por tras da PIPPA. Entenda como o Nucleo de Assessoria Legislativa transforma dados em inteligencia aplicada para politicas publicas voltadas a micro e pequenas empresas."
   }
 ];
 
@@ -312,9 +326,7 @@ const QUESTIONS = [
   { texto: "Como funcionam os laboratorios de experimentacao?", ferramentas: ["transformalab"], tema: "Experimentacao" },
   { texto: "Quero ver evidencias de impacto em politicas publicas", ferramentas: ["transformalab", "catalogo", "prototipo"], tema: "Evidencias" },
   { texto: "Quais normas do DOU afetam pequenas empresas?", ferramentas: ["regulatorio"], tema: "Regulatorio" },
-  { texto: "Preciso acompanhar o cenario regulatorio completo", ferramentas: ["regulatorio", "legislativo", "reforma"], tema: "Regulatorio" },
-  { texto: "Quem esta por tras da PIPPA?", ferramentas: ["quemsomos"], tema: "Institucional" },
-  { texto: "Qual a metodologia e valores do projeto?", ferramentas: ["quemsomos", "mindmap"], tema: "Institucional" }
+  { texto: "Preciso acompanhar o cenario regulatorio completo", ferramentas: ["regulatorio", "legislativo", "reforma"], tema: "Regulatorio" }
 ];
 
 let activeQuestion = null;
