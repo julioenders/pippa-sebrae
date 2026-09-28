@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIPPA Regulatório — Monitoramento DOU</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #242836;
+      --border: #2e3348;
+      --text: #e4e6ef;
+      --text-muted: #8b8fa8;
+      --accent: #4f8cff;
+      --accent-hover: #6ba0ff;
+      --p0: #ff4d6a;
+      --p1: #ff8c42;
+      --p2: #ffc542;
+      --p3: #4ecdc4;
+      --p4: #8b8fa8;
+      --success: #22c55e;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); color: var(--text); min-height: 100vh;
+    }
+    .header {
+      background: linear-gradient(135deg, #1a1d27 0%, #242836 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 100;
+    }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .logo {
+      font-size: 22px; font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .logo-sub { font-size: 13px; color: var(--text-muted); font-weight: 400; }
+    .header-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      background: var(--accent); color: #fff; border: none;
+      padding: 8px 20px; border-radius: var(--radius); font-size: 14px;
+      font-weight: 600; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 6px; text-decoration: none;
+    }
+    .btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
+    .pippa-home-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(15,23,42,.85); border: 1px solid rgba(16,185,129,.3);
+      color: #a7f3d0; padding: 7px 14px; border-radius: 8px;
+      font-size: 11.5px; font-weight: 600; font-family: inherit;
+      cursor: pointer; text-decoration: none; transition: all .2s;
+    }
+    .pippa-home-btn:hover { background: rgba(16,185,129,.15); border-color: #10b981; color: #fff; }
+    .pippa-home-btn svg { width: 13px; height: 13px; }
+    .date-input {
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); padding: 8px 14px; border-radius: var(--radius);
+      font-size: 14px; outline: none; cursor: pointer;
+    }
+    .date-input:focus { border-color: var(--accent); }
+    .date-input::-webkit-calendar-picker-indicator { filter: invert(0.7); }
+    .thermometer {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
+    }
+    .thermo-green { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .thermo-yellow { background: rgba(255,197,66,0.15); color: #ffc542; }
+    .thermo-orange { background: rgba(255,140,66,0.15); color: #ff8c42; }
+    .thermo-red { background: rgba(255,77,106,0.15); color: #ff4d6a; }
+    .loading-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(15,17,23,0.85); z-index: 200;
+      align-items: center; justify-content: center;
+      flex-direction: column; gap: 16px;
+    }
+    .loading-overlay.active { display: flex; }
+    .spinner {
+      width: 48px; height: 48px;
+      border: 4px solid var(--border); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: var(--text); font-size: 14px; }
+    .loading-progress { color: var(--text-muted); font-size: 12px; }
+    .info-btn {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text-muted); width: 32px; height: 32px;
+      border-radius: 50%; font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .info-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 64px); }
+    .sidebar {
+      background: var(--surface); border-right: 1px solid var(--border);
+      padding: 16px; overflow-y: auto; max-height: calc(100vh - 64px);
+      position: sticky; top: 64px;
+    }
+    .search-input {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); padding: 8px 12px; border-radius: var(--radius);
+      font-size: 13px; outline: none; margin-bottom: 16px;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--text-muted); }
+    .filter-section { margin-bottom: 4px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .filter-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px; cursor: pointer; background: var(--surface2);
+      transition: background 0.2s; user-select: none;
+    }
+    .filter-header:hover { background: var(--border); }
+    .filter-title {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 8px;
+    }
+    .filter-header-right { display: flex; align-items: center; gap: 6px; }
+    .filter-arrow { font-size: 10px; color: var(--text-muted); transition: transform 0.2s; }
+    .filter-section.open .filter-arrow { transform: rotate(180deg); }
+    .filter-badge {
+      background: var(--accent); color: #fff; font-size: 10px;
+      min-width: 18px; height: 18px; border-radius: 9px;
+      display: none; align-items: center; justify-content: center;
+      padding: 0 5px; font-weight: 700;
+    }
+    .filter-badge.visible { display: flex; }
+    .filter-body {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.25s ease, padding 0.25s ease; padding: 0 12px;
+    }
+    .filter-section.open .filter-body { max-height: 300px; padding: 10px 12px; overflow-y: auto; }
+    .filter-group { display: flex; flex-wrap: wrap; gap: 6px; }
+    .filter-chip {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-muted); padding: 4px 12px; border-radius: 16px;
+      font-size: 12px; cursor: pointer; transition: all 0.2s; user-select: none;
+    }
+    .filter-chip:hover { border-color: var(--accent); color: var(--text); }
+    .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .filter-chip.active-p0 { background: var(--p0); border-color: var(--p0); color: #fff; }
+    .filter-chip.active-p1 { background: var(--p1); border-color: var(--p1); color: #fff; }
+    .filter-chip.active-p2 { background: var(--p2); border-color: var(--p2); color: #000; }
+    .filter-chip.active-p3 { background: var(--p3); border-color: var(--p3); color: #000; }
+    .filter-chip.active-p4 { background: var(--p4); border-color: var(--p4); color: #fff; }
+    .filter-clear {
+      font-size: 11px; color: var(--accent); cursor: pointer;
+      margin-top: 8px; display: block; text-align: right;
+    }
+    .filter-clear:hover { text-decoration: underline; }
+    .sidebar-footer {
+      margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border);
+      font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.6;
+    }
+    .main { padding: 20px 24px; overflow-y: auto; }
+    .kpi-bar {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px; margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px; text-align: center;
+    }
+    .kpi-value { font-size: 32px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+    .kpi-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .kpi-bar-secondary {
+      display: flex; flex-wrap: nowrap; gap: 8px; margin-bottom: 24px; overflow-x: auto;
+    }
+    .kpi-card-sm {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 10px 8px; text-align: center;
+      min-height: 72px; display: flex; flex-direction: column; justify-content: center;
+      flex: 1 1 0; min-width: 90px;
+    }
+    .kpi-card-sm .kpi-value { font-size: 22px; }
+    .kpi-card-sm .kpi-label { font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+    .charts-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px; margin-bottom: 24px;
+    }
+    .chart-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px; min-width: 0; overflow: hidden;
+    }
+    .chart-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--text); }
+    .chart-wrapper { position: relative; height: 260px; }
+    .charts-row-timeline {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px; margin-bottom: 24px;
+    }
+    .impacto-group { margin-bottom: 24px; }
+    .impacto-group-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+      padding-bottom: 8px; border-bottom: 1px solid var(--border);
+    }
+    .impacto-group-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .impacto-group-title {
+      font-size: 15px; font-weight: 600; color: var(--text);
+    }
+    .impacto-group-count {
+      font-size: 12px; color: var(--text-muted); background: var(--surface2);
+      padding: 2px 10px; border-radius: 12px;
+    }
+    .impacto-group-list { display: flex; flex-direction: column; gap: 10px; }
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+    }
+    .section-title { font-size: 16px; font-weight: 600; }
+    .section-count {
+      font-size: 13px; color: var(--text-muted); background: var(--surface2);
+      padding: 4px 10px; border-radius: 12px;
+    }
+    .prop-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+    .prop-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; transition: all 0.2s;
+    }
+    .prop-card:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+    .prop-header {
+      padding: 16px; display: flex; align-items: flex-start; gap: 12px; cursor: pointer;
+    }
+    .prop-priority {
+      min-width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; flex-shrink: 0;
+    }
+    .priority-alto { background: rgba(255,77,106,0.2); color: var(--p0); }
+    .priority-medio { background: rgba(255,140,66,0.2); color: var(--p1); }
+    .priority-baixo { background: rgba(78,205,196,0.2); color: var(--p3); }
+    .priority-indefinido { background: rgba(139,143,168,0.2); color: var(--p4); }
+    .prop-info { flex: 1; min-width: 0; }
+    .prop-title {
+      font-size: 14px; font-weight: 600; margin-bottom: 4px;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .prop-title a { color: var(--text); text-decoration: none; }
+    .prop-title a:hover { color: var(--accent); }
+    .tipo-badge {
+      font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      background: rgba(79,140,255,0.2); color: var(--accent); white-space: nowrap;
+    }
+    .prop-ementa {
+      font-size: 13px; color: var(--text-muted); line-height: 1.5;
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .prop-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .prop-tag {
+      font-size: 11px; padding: 2px 8px; border-radius: 10px;
+      background: var(--surface2); color: var(--text-muted);
+    }
+    .prop-tag-cadeia { background: rgba(79,140,255,0.15); color: var(--accent); }
+    .prop-tag-reforma { background: rgba(255,77,106,0.15); color: var(--p0); }
+    .prop-tag-keyword { background: var(--surface2); color: var(--text-muted); }
+    .author-line {
+      font-size: 12px; color: var(--text-muted); margin-top: 4px;
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .prop-expand {
+      color: var(--text-muted); font-size: 18px; cursor: pointer;
+      transition: transform 0.2s; flex-shrink: 0; width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center; border-radius: 6px;
+    }
+    .prop-expand:hover { background: var(--surface2); }
+    .prop-card.expanded .prop-expand { transform: rotate(180deg); }
+    .prop-details {
+      display: none; padding: 0 16px 16px; border-top: 1px solid var(--border);
+    }
+    .prop-card.expanded .prop-details { display: block; }
+    .detail-columns {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;
+    }
+    .detail-panel {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px;
+    }
+    .detail-panel-title {
+      font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+    }
+    .detail-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 5px 0; border-bottom: 1px solid rgba(46,51,72,0.3);
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .detail-value { font-size: 13px; color: var(--text); text-align: right; max-width: 60%; }
+    .justificativa-section {
+      background: linear-gradient(135deg, rgba(79,140,255,0.06), rgba(168,85,247,0.06));
+      border: 1px solid rgba(79,140,255,0.15); border-radius: var(--radius);
+      padding: 16px; margin-top: 16px;
+    }
+    .justificativa-title {
+      font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--accent); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+    }
+    .justificativa-list { list-style: none; padding: 0; margin: 0; }
+    .justificativa-list li {
+      font-size: 12px; color: var(--text-muted); padding: 5px 0;
+      border-bottom: 1px solid rgba(46,51,72,0.2); display: flex; align-items: center; gap: 8px;
+    }
+    .justificativa-list li:last-child { border-bottom: none; }
+    .justif-icon { flex-shrink: 0; width: 18px; text-align: center; }
+    .justif-pos { color: var(--p3); }
+    .justif-neg { color: var(--p4); }
+    .score-display {
+      display: flex; align-items: center; gap: 12px; margin-top: 14px;
+      padding-top: 10px; border-top: 1px solid rgba(46,51,72,0.3);
+    }
+    .score-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .score-num { font-size: 20px; font-weight: 700; color: var(--accent); }
+    .score-bar-bg {
+      flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden;
+    }
+    .score-bar-fill { height: 100%; border-radius: 3px; }
+    .merito-section {
+      background: linear-gradient(135deg, rgba(79,140,255,0.08), rgba(168,85,247,0.08));
+      border: 1px solid rgba(79,140,255,0.2); border-radius: var(--radius);
+      padding: 16px; margin-top: 16px;
+    }
+    .merito-title {
+      font-size: 12px; font-weight: 600; color: var(--accent); text-transform: uppercase;
+      letter-spacing: 0.5px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+    }
+    .merito-content { font-size: 13px; color: var(--text-muted); line-height: 1.7; white-space: pre-wrap; }
+    .keyword-match {
+      background: rgba(79,140,255,0.2); color: var(--accent);
+      padding: 1px 6px; border-radius: 4px; font-size: 11px;
+      display: inline-block; margin: 2px;
+    }
+    .full-resumo {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px; margin-top: 16px;
+      font-size: 13px; line-height: 1.7; color: var(--text-muted);
+    }
+    .action-buttons { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+    .btn-action {
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); padding: 8px 16px; border-radius: 8px;
+      font-size: 12px; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 6px; text-decoration: none;
+    }
+    .btn-action:hover { border-color: var(--accent); color: var(--accent); }
+    @media (max-width: 768px) { .detail-columns { grid-template-columns: 1fr; } }
+    .modal-backdrop {
+      display: none; position: fixed; inset: 0;
+      background: rgba(15,17,23,0.8); z-index: 300;
+      align-items: center; justify-content: center;
+    }
+    .modal-backdrop.active { display: flex; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 24px; max-width: 600px;
+      width: 90%; max-height: 80vh; overflow-y: auto;
+    }
+    .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+    .modal-content {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px; font-size: 13px;
+      white-space: pre-wrap; line-height: 1.6; max-height: 400px;
+      overflow-y: auto; font-family: 'Segoe UI', sans-serif;
+    }
+    .modal-actions { display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end; }
+    .methodology-backdrop {
+      display: none; position: fixed; inset: 0;
+      background: rgba(15,17,23,0.85); z-index: 300;
+      align-items: flex-start; justify-content: center;
+      padding-top: 40px; overflow-y: auto;
+    }
+    .methodology-backdrop.active { display: flex; }
+    .methodology-modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 32px; max-width: 820px;
+      width: 92%; margin-bottom: 40px;
+    }
+    .methodology-modal h2 { font-size: 20px; margin-bottom: 20px; color: var(--accent); }
+    .methodology-modal h3 {
+      font-size: 15px; margin: 20px 0 8px; color: var(--text);
+      border-bottom: 1px solid var(--border); padding-bottom: 6px;
+    }
+    .methodology-modal p, .methodology-modal li { font-size: 13px; line-height: 1.7; color: var(--text-muted); }
+    .methodology-modal ul { padding-left: 20px; margin-bottom: 12px; }
+    .priority-table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; }
+    .priority-table th, .priority-table td {
+      padding: 10px 12px; text-align: left; font-size: 13px; border-bottom: 1px solid var(--border);
+    }
+    .priority-table th { color: var(--text); font-weight: 600; background: var(--surface2); }
+    .priority-table td { color: var(--text-muted); }
+    .priority-table .p-badge {
+      display: inline-block; padding: 2px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;
+    }
+    .score-formula {
+      background: var(--surface2); padding: 12px 16px; border-radius: 8px;
+      font-family: 'Consolas', monospace; font-size: 13px; color: var(--accent); margin: 12px 0;
+    }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; background: var(--success);
+      color: #fff; padding: 10px 20px; border-radius: var(--radius);
+      font-size: 13px; font-weight: 600; z-index: 400;
+      opacity: 0; transform: translateY(10px); transition: all 0.3s;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+    .empty-state-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; max-height: none; border-right: none; border-bottom: 1px solid var(--border); }
+      .header { flex-wrap: wrap; gap: 12px; }
+      .kpi-bar { grid-template-columns: repeat(2, 1fr); }
+      .charts-row { grid-template-columns: 1fr; }
+      .charts-row-timeline { grid-template-columns: 1fr; }
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div>
+      <div class="logo">PIPPA Regulat&#243;rio</div>
+      <div class="logo-sub">Plataforma de Intelig&#234;ncia em Pol&#237;ticas P&#250;blicas Aplicadas</div>
+    </div>
+    <button class="info-btn" onclick="toggleMethodology()" title="Metodologia de classifica&#231;&#227;o">&#8505;</button>
+  </div>
+  <div class="header-controls">
+    <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
+    <div id="thermometer" class="thermometer thermo-green">Sem dados carregados</div>
+    <input type="date" id="dateInputInicio" class="date-input" title="Data inicio">
+    <span style="color:var(--text-muted);font-size:13px">a</span>
+    <input type="date" id="dateInputFim" class="date-input" title="Data fim">
+    <button class="btn" id="btnFetch" onclick="fetchDOU()">Consultar DOU</button>
+    <button class="btn btn-outline" onclick="exportWhatsApp()">Exportar WhatsApp</button>
+  </div>
+</header>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Consultando DOU...</div>
+  <div class="loading-progress" id="loadingProgress"></div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <input type="text" class="search-input" id="searchInput" placeholder="Buscar norma, &#243;rg&#227;o, cadeia ou palavra-chave...">
+
+    <!-- Impacto -->
+    <div class="filter-section open" data-filter="impacto">
+      <div class="filter-header" onclick="toggleSection(this)">
+        <span class="filter-title">Impacto</span>
+        <div class="filter-header-right">
+          <span class="filter-badge" id="badge-impacto">0</span>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+      </div>
+      <div class="filter-body">
+        <div class="filter-group">
+          <span class="filter-chip" data-filter="impacto" data-value="alto" data-active-class="active-p0">Alto</span>
+          <span class="filter-chip" data-filter="impacto" data-value="medio" data-active-class="active-p1">M&#233;dio</span>
+          <span class="filter-chip" data-filter="impacto" data-value="baixo" data-active-class="active-p3">Baixo</span>
+          <span class="filter-chip" data-filter="impacto" data-value="indefinido" data-active-class="active-p4">Indefinido</span>
+        </div>
+        <span class="filter-clear" onclick="clearFilter('impacto')">Limpar</span>
+      </div>
+    </div>
+
+    <!-- Cadeia Produtiva -->
+    <div class="filter-section open" data-filter="cadeias">
+      <div class="filter-header" onclick="toggleSection(this)">
+        <span class="filter-title">Cadeia Produtiva</span>
+        <div class="filter-header-right">
+          <span class="filter-badge" id="badge-cadeias">0</span>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+      </div>
+      <div class="filter-body">
+        <div class="filter-group" id="cadeias-chips"></div>
+        <span class="filter-clear" onclick="clearFilter('cadeias')">Limpar</span>
+      </div>
+    </div>
+
+    <!-- Tipo de Ato -->
+    <div class="filter-section" data-filter="tipo">
+      <div class="filter-header" onclick="toggleSection(this)">
+        <span class="filter-title">Tipo de Ato</span>
+        <div class="filter-header-right">
+          <span class="filter-badge" id="badge-tipo">0</span>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+      </div>
+      <div class="filter-body">
+        <div class="filter-group" id="tipo-chips"></div>
+        <span class="filter-clear" onclick="clearFilter('tipo')">Limpar</span>
+      </div>
+    </div>
+
+    <!-- Orgao -->
+    <div class="filter-section" data-filter="orgao">
+      <div class="filter-header" onclick="toggleSection(this)">
+        <span class="filter-title">&#211;rg&#227;o</span>
+        <div class="filter-header-right">
+          <span class="filter-badge" id="badge-orgao">0</span>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+      </div>
+      <div class="filter-body">
+        <div class="filter-group" id="orgao-chips"></div>
+        <span class="filter-clear" onclick="clearFilter('orgao')">Limpar</span>
+      </div>
+    </div>
+
+    <!-- Reforma Tributaria -->
+    <div class="filter-section" data-filter="reforma">
+      <div class="filter-header" onclick="toggleSection(this)">
+        <span class="filter-title">Reforma Tribut&#225;ria</span>
+        <div class="filter-header-right">
+          <span class="filter-badge" id="badge-reforma">0</span>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+      </div>
+      <div class="filter-body">
+        <div class="filter-group">
+          <span class="filter-chip" data-filter="reforma" data-value="IBS">IBS</span>
+          <span class="filter-chip" data-filter="reforma" data-value="CBS">CBS</span>
+          <span class="filter-chip" data-filter="reforma" data-value="split_payment">Split Payment</span>
+          <span class="filter-chip" data-filter="reforma" data-value="simples_nacional">Simples Nacional</span>
+          <span class="filter-chip" data-filter="reforma" data-value="comite_gestor">Comit&#234; Gestor</span>
+          <span class="filter-chip" data-filter="reforma" data-value="periodo_transicao">Per&#237;odo Transi&#231;&#227;o</span>
+        </div>
+        <span class="filter-clear" onclick="clearFilter('reforma')">Limpar</span>
+      </div>
+    </div>
+
+    <!-- Segmento -->
+    <div class="filter-section" data-filter="segmento">
+      <div class="filter-header" onclick="toggleSection(this)">
+        <span class="filter-title">Segmento</span>
+        <div class="filter-header-right">
+          <span class="filter-badge" id="badge-segmento">0</span>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+      </div>
+      <div class="filter-body">
+        <div class="filter-group">
+          <span class="filter-chip" data-filter="segmento" data-value="MEI">MEI</span>
+          <span class="filter-chip" data-filter="segmento" data-value="ME">ME</span>
+          <span class="filter-chip" data-filter="segmento" data-value="EPP">EPP</span>
+        </div>
+        <span class="filter-clear" onclick="clearFilter('segmento')">Limpar</span>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      PIPPA Regulat&#243;rio v1.0<br>
+      Fonte: DOU &#8212; Imprensa Nacional<br>
+      Dados: 22&#8211;26/09/2026
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- KPI Primary -->
+    <div class="kpi-bar" id="kpiBar">
+      <div class="kpi-card">
+        <div class="kpi-value" id="kpi-total" style="color:var(--accent)">0</div>
+        <div class="kpi-label">Total Normas</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" id="kpi-relevantes" style="color:var(--success)">0</div>
+        <div class="kpi-label">Relevantes MPE</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" id="kpi-alto" style="color:var(--p0)">0</div>
+        <div class="kpi-label">Alto Impacto</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" id="kpi-medio" style="color:var(--p1)">0</div>
+        <div class="kpi-label">M&#233;dio Impacto</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" id="kpi-cadeias" style="color:var(--accent)">0</div>
+        <div class="kpi-label">Cadeias Afetadas</div>
+      </div>
+    </div>
+
+    <!-- KPI Secondary -->
+    <div class="kpi-bar-secondary" id="kpiSecondary"></div>
+
+    <!-- Charts -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">Normas por &#211;rg&#227;o (Top 10)</div>
+        <div class="chart-wrapper"><canvas id="chartOrgao"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Impacto MPE</div>
+        <div class="chart-wrapper"><canvas id="chartImpacto"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Cadeias Produtivas</div>
+        <div class="chart-wrapper"><canvas id="chartCadeias"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Timeline Charts -->
+    <div class="charts-row-timeline">
+      <div class="chart-card">
+        <div class="chart-title">Relevantes MPE &#8212; &#218;ltimos 7 dias</div>
+        <div class="chart-wrapper"><canvas id="chartRelevantes7d"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Movimenta&#231;&#245;es Totais &#8212; &#218;ltimos 7 dias</div>
+        <div class="chart-wrapper"><canvas id="chartTotal7d"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Normas List -->
+    <div class="section-header">
+      <span class="section-title">Normas Regulat&#243;rias</span>
+      <span class="section-count" id="normasCount">0 normas</span>
+    </div>
+    <div class="prop-list" id="normasList"></div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div class="empty-state-icon">&#128269;</div>
+      <div class="empty-state-title">Nenhuma norma encontrada</div>
+      <p style="color:var(--text-muted)">Tente ajustar os filtros ou a busca.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Methodology Modal -->
+<div class="methodology-backdrop" id="methodologyModal" onclick="if(event.target===this)toggleMethodology()">
+  <div class="methodology-modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h2 style="margin:0">&#128202; Metodologia &#8212; PIPPA Regulat&#243;rio</h2>
+      <button class="info-btn" onclick="toggleMethodology()">&times;</button>
+    </div>
+
+    <h3>Fase 1 &#8212; Monitor DOU</h3>
+    <p>O PIPPA Regulat&#243;rio (Fase 1) consulta em tempo real a API p&#250;blica da Imprensa Nacional (in.gov.br), coletando normas publicadas nas Se&#231;&#245;es 1 (Atos Normativos) e 3 (Contratos/Licita&#231;&#245;es) do Di&#225;rio Oficial da Uni&#227;o.</p>
+
+    <h3>Heur&#237;stica v2 &#8212; 3 Eixos</h3>
+    <p>Cada norma &#233; classificada por tr&#234;s eixos independentes:</p>
+
+    <h3 style="color:#4ecdc4;font-size:13px">Eixo 1 &#8212; Relev&#226;ncia Direta MPE (0 a 0.5)</h3>
+    <p>Analisa se o conte&#250;do menciona o universo MPE. Pontua&#231;&#227;o m&#225;xima por categoria:</p>
+    <ul>
+      <li><strong>0.50</strong> &#8212; Men&#231;&#227;o direta: MEI, microempresa, Simples Nacional, EPP</li>
+      <li><strong>0.30</strong> &#8212; Obriga&#231;&#245;es: nota fiscal, escritura&#231;&#227;o, alvar&#225;, licenciamento</li>
+      <li><strong>0.25</strong> &#8212; Tribut&#225;rio: IBS, CBS, ICMS, ISS, PIS, COFINS</li>
+      <li><strong>0.20</strong> &#8212; Licita&#231;&#245;es: preg&#227;o, compras p&#250;blicas, tratamento diferenciado</li>
+      <li><strong>0.15</strong> &#8212; Cr&#233;dito: financiamento, BNDES, Pronampe</li>
+    </ul>
+
+    <h3 style="color:#ff8c42;font-size:13px">Eixo 2 &#8212; Alcance Setorial (0 a 0.3)</h3>
+    <ul>
+      <li><strong>At&#233; 0.20</strong> &#8212; Match com cadeias produtivas (energia, alimentos, sa&#250;de, constru&#231;&#227;o, etc.)</li>
+      <li><strong>0.15</strong> &#8212; Regula&#231;&#227;o de atividade (sanit&#225;ria, ambiental, trabalhista)</li>
+      <li><strong>At&#233; 0.10</strong> &#8212; Tags de Reforma Tribut&#225;ria</li>
+    </ul>
+
+    <h3 style="color:#a855f7;font-size:13px">Eixo 3 &#8212; Pot&#234;ncia Normativa (multiplicador)</h3>
+    <p>O tipo de ato funciona como <strong>multiplicador</strong>, n&#227;o como pontua&#231;&#227;o base:</p>
+    <ul>
+      <li><strong>&#215;1.0</strong> &#8212; Lei, LC, MP, Emenda Constitucional</li>
+      <li><strong>&#215;0.9</strong> &#8212; Decreto, IN, Resolu&#231;&#227;o</li>
+      <li><strong>&#215;0.7</strong> &#8212; Portaria, Delibera&#231;&#227;o</li>
+      <li><strong>&#215;0.5</strong> &#8212; Despacho, Aviso, Retifica&#231;&#227;o</li>
+    </ul>
+
+    <h3>F&#243;rmula</h3>
+    <div class="score-formula">score = (Eixo1 + Eixo2) &#215; Multiplicador + Boost &#243;rg&#227;o (+0.1)</div>
+    <p>O <strong>n&#237;vel de impacto</strong> &#233; derivado do score final:</p>
+
+    <table class="priority-table">
+      <thead>
+        <tr><th>N&#237;vel</th><th>Score</th><th>Significado</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="p-badge" style="background:rgba(255,77,106,0.2);color:#ff4d6a">Alto</span></td><td>&#8805; 0.50</td><td>Afeta diretamente MPEs (menciona MEI/ME/EPP + ato vinculante)</td></tr>
+        <tr><td><span class="p-badge" style="background:rgba(255,140,66,0.2);color:#ff8c42">M&#233;dio</span></td><td>&#8805; 0.25</td><td>Impacto indireto ou setorial relevante</td></tr>
+        <tr><td><span class="p-badge" style="background:rgba(78,205,196,0.2);color:#4ecdc4">Baixo</span></td><td>&#8805; 0.10</td><td>Potencial impacto marginal</td></tr>
+        <tr><td><span class="p-badge" style="background:rgba(139,143,168,0.2);color:#8b8fa8">Indefinido</span></td><td>&lt; 0.10</td><td>Sem relev&#226;ncia identificada para MPEs</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Fonte de Dados</h3>
+    <p>API p&#250;blica da Imprensa Nacional (in.gov.br). Consulta em tempo real ao clicar &#8220;Consultar DOU&#8221;. Cobertura: Se&#231;&#245;es DO1 e DO3 + edi&#231;&#245;es extras.</p>
+
+    <h3>Pr&#243;ximas Fases</h3>
+    <ul>
+      <li><strong>Fase 2</strong> &#8212; Enriquecimento LLM (Gemini Flash) para normas com score &#8805; 0.10</li>
+      <li><strong>Fase 3</strong> &#8212; Chat RAG para consulta conversacional sobre normas</li>
+      <li><strong>Fase 4</strong> &#8212; Alertas inteligentes (push por cadeia/segmento)</li>
+    </ul>
+
+    <div style="margin-top:20px;text-align:right;">
+      <button class="btn" onclick="toggleMethodology()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- WhatsApp Export Modal -->
+<div class="modal-backdrop" id="whatsappModal" onclick="if(event.target===this)closeWhatsApp()">
+  <div class="modal">
+    <div class="modal-title">&#128172; Exportar para WhatsApp</div>
+    <div class="modal-content" id="whatsappContent"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeWhatsApp()">Fechar</button>
+      <button class="btn" onclick="copyWhatsApp()">&#128203; Copiar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">Copiado!</div>
+
+<script>
+let DATA = [];
+
+// ===== STATE =====
+const filters = {
+  impacto: new Set(),
+  cadeias: new Set(),
+  tipo: new Set(),
+  orgao: new Set(),
+  reforma: new Set(),
+  segmento: new Set()
+};
+let searchTerm = '';
+let chartOrgao, chartImpacto, chartCadeias, chartRelevantes7d, chartTotal7d;
+
+// ===== CADEIA LABELS =====
+const cadeiaLabels = {
+  'energia': 'Energia',
+  'casa-e-construcao': 'Casa e Construção',
+  'saude': 'Saúde',
+  'metalmecanico': 'Metalmecânico',
+  'alimentos-e-bebidas': 'Alimentos e Bebidas',
+  'agro': 'Agronegócio',
+  'textil': 'Têxtil',
+  'tecnologia': 'Tecnologia',
+  'transporte': 'Transporte',
+  'turismo': 'Turismo'
+};
+
+function cadeiaLabel(c) { return cadeiaLabels[c] || c.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase()); }
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  bindFilterChips();
+  document.getElementById('searchInput').addEventListener('input', e => {
+    searchTerm = e.target.value.toLowerCase();
+    if (DATA.length > 0) applyFilters();
+  });
+  showWelcome();
+});
+
+function showWelcome() {
+  document.getElementById('kpiBar').style.opacity = '0.3';
+  document.getElementById('kpiSecondary').innerHTML = '';
+  document.getElementById('normasList').innerHTML = '';
+  document.getElementById('normasCount').textContent = '';
+  const empty = document.getElementById('emptyState');
+  empty.style.display = 'block';
+  empty.querySelector('.empty-state-icon').textContent = '📋';
+  empty.querySelector('.empty-state-title').textContent = 'Selecione o período e clique em Consultar DOU';
+  empty.querySelector('p').textContent = 'Os dados serão carregados em tempo real da Imprensa Nacional.';
+}
+
+function buildDynamicFilters() {
+  // Cadeias
+  const cadeias = new Set();
+  DATA.forEach(d => (d.cadeias||[]).forEach(c => cadeias.add(c)));
+  const cContainer = document.getElementById('cadeias-chips');
+  [...cadeias].sort().forEach(c => {
+    const chip = document.createElement('span');
+    chip.className = 'filter-chip';
+    chip.dataset.filter = 'cadeias';
+    chip.dataset.value = c;
+    chip.textContent = cadeiaLabel(c);
+    cContainer.appendChild(chip);
+  });
+
+  // Tipo de ato
+  const tipos = {};
+  DATA.forEach(d => { tipos[d.tipo] = (tipos[d.tipo]||0)+1; });
+  const tContainer = document.getElementById('tipo-chips');
+  Object.keys(tipos).sort((a,b) => tipos[b]-tipos[a]).forEach(t => {
+    const chip = document.createElement('span');
+    chip.className = 'filter-chip';
+    chip.dataset.filter = 'tipo';
+    chip.dataset.value = t;
+    chip.textContent = t;
+    tContainer.appendChild(chip);
+  });
+
+  // Orgao (top level)
+  const orgaos = {};
+  DATA.forEach(d => {
+    const top = (d.orgao_lista && d.orgao_lista.length > 0) ? d.orgao_lista[0] : 'Outros';
+    orgaos[top] = (orgaos[top]||0)+1;
+  });
+  const oContainer = document.getElementById('orgao-chips');
+  Object.keys(orgaos).sort((a,b) => orgaos[b]-orgaos[a]).slice(0,12).forEach(o => {
+    const chip = document.createElement('span');
+    chip.className = 'filter-chip';
+    chip.dataset.filter = 'orgao';
+    chip.dataset.value = o;
+    chip.textContent = o.replace(/^Ministério d[aeo]s?\s*/,'Min. ').replace(/^Tribunal /,'Trib. ');
+    oContainer.appendChild(chip);
+  });
+}
+
+function bindFilterChips() {
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const f = chip.dataset.filter;
+      const v = chip.dataset.value;
+      const ac = chip.dataset.activeClass || 'active';
+      if (filters[f].has(v)) {
+        filters[f].delete(v);
+        chip.classList.remove(ac, 'active', 'active-p0', 'active-p1', 'active-p2', 'active-p3', 'active-p4');
+      } else {
+        filters[f].add(v);
+        chip.classList.add(ac || 'active');
+      }
+      updateBadges();
+      applyFilters();
+    });
+  });
+}
+
+function updateBadges() {
+  ['impacto','cadeias','tipo','orgao','reforma','segmento'].forEach(f => {
+    const badge = document.getElementById('badge-'+f);
+    if (!badge) return;
+    const c = filters[f].size;
+    badge.textContent = c;
+    badge.classList.toggle('visible', c > 0);
+  });
+}
+
+function clearFilter(name) {
+  filters[name].clear();
+  document.querySelectorAll('.filter-chip[data-filter="'+name+'"]').forEach(c => {
+    c.classList.remove('active','active-p0','active-p1','active-p2','active-p3','active-p4');
+  });
+  updateBadges();
+  applyFilters();
+}
+
+function toggleSection(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+// ===== FILTERING =====
+function getFiltered() {
+  return DATA.filter(d => {
+    if (searchTerm) {
+      const hay = ((d.titulo||'')+(d.resumo||'')+(d.orgao||'')+((d.cadeias||[]).map(cadeiaLabel).join(' '))+((d.keywords||[]).join(' '))).toLowerCase();
+      if (!hay.includes(searchTerm)) return false;
+    }
+    if (filters.impacto.size > 0 && !filters.impacto.has(d.impacto)) return false;
+    if (filters.cadeias.size > 0) {
+      if (!(d.cadeias||[]).some(c => filters.cadeias.has(c))) return false;
+    }
+    if (filters.tipo.size > 0 && !filters.tipo.has(d.tipo)) return false;
+    if (filters.orgao.size > 0) {
+      const top = (d.orgao_lista && d.orgao_lista.length > 0) ? d.orgao_lista[0] : 'Outros';
+      if (!filters.orgao.has(top)) return false;
+    }
+    if (filters.reforma.size > 0) {
+      if (!(d.tags_reforma||[]).some(t => filters.reforma.has(t))) return false;
+    }
+    if (filters.segmento.size > 0) {
+      if (!(d.segmentos||[]).some(s => filters.segmento.has(s))) return false;
+    }
+    return true;
+  });
+}
+
+function applyFilters() {
+  const filtered = getFiltered();
+  updateKPIs(filtered);
+  updateCharts(filtered);
+  renderCards(filtered);
+  updateThermometer(filtered);
+}
+
+// ===== KPIs =====
+function updateKPIs(data) {
+  document.getElementById('kpi-total').textContent = data.length;
+  const relevantes = data.filter(d =>
+    d.impacto === 'alto' || d.impacto === 'medio' ||
+    (d.cadeias && d.cadeias.length > 0) || (d.keywords && d.keywords.length > 0)
+  ).length;
+  document.getElementById('kpi-relevantes').textContent = relevantes;
+  document.getElementById('kpi-alto').textContent = data.filter(d=>d.impacto==='alto').length;
+  document.getElementById('kpi-medio').textContent = data.filter(d=>d.impacto==='medio').length;
+  const uniqueCadeias = new Set();
+  data.forEach(d => (d.cadeias||[]).forEach(c => uniqueCadeias.add(c)));
+  document.getElementById('kpi-cadeias').textContent = uniqueCadeias.size;
+
+  // Secondary KPIs (top 10 tipos)
+  const tipoCount = {};
+  data.forEach(d => { tipoCount[d.tipo] = (tipoCount[d.tipo]||0)+1; });
+  const sec = document.getElementById('kpiSecondary');
+  sec.innerHTML = '';
+  Object.keys(tipoCount).sort((a,b)=>tipoCount[b]-tipoCount[a]).slice(0,10).forEach(t => {
+    const label = t.length > 18 ? t.substring(0,16)+'…' : t;
+    sec.innerHTML += '<div class="kpi-card-sm"><div class="kpi-value" style="color:var(--accent)">'+tipoCount[t]+'</div><div class="kpi-label" title="'+escHtml(t)+'">'+escHtml(label)+'</div></div>';
+  });
+}
+
+// ===== CHARTS =====
+function updateCharts(data) {
+  if (chartOrgao) chartOrgao.destroy();
+  if (chartImpacto) chartImpacto.destroy();
+  if (chartCadeias) chartCadeias.destroy();
+  if (chartRelevantes7d) chartRelevantes7d.destroy();
+  if (chartTotal7d) chartTotal7d.destroy();
+
+  // Chart 1: Orgao horizontal bar
+  const orgaos = {};
+  data.forEach(d => {
+    const top = (d.orgao_lista && d.orgao_lista.length > 0) ? d.orgao_lista[0] : 'Outros';
+    orgaos[top] = (orgaos[top]||0)+1;
+  });
+  const sortedOrgaos = Object.entries(orgaos).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const orgaoLabels = sortedOrgaos.map(o => {
+    let l = o[0].replace(/^Ministério d[aeo]s?\s*/,'Min. ').replace(/^Secretaria Especial d[aeo]s?\s*/,'Sec. ').replace(/^Agência Nacional d[aeo]s?\s*/,'AN ').replace(/^Tribunal /,'Trib. ');
+    return l.length > 22 ? l.substring(0,20)+'…' : l;
+  });
+
+  chartOrgao = new Chart(document.getElementById('chartOrgao'), {
+    type: 'bar',
+    data: {
+      labels: orgaoLabels,
+      datasets: [{
+        data: sortedOrgaos.map(o=>o[1]),
+        backgroundColor: '#4f8cff',
+        borderRadius: 4,
+        barThickness: 16
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: { padding: { left: 4 } },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#8b8fa8', font: { size: 11 } }, grid: { color: 'rgba(46,51,72,0.5)' } },
+        y: { ticks: { color: '#e4e6ef', font: { size: 10 }, crossAlign: 'far' }, grid: { display: false }, afterFit: function(axis) { axis.width = 130; } }
+      }
+    }
+  });
+
+  // Chart 2: Impacto doughnut
+  const impactos = { alto: 0, medio: 0, baixo: 0, indefinido: 0 };
+  data.forEach(d => { impactos[d.impacto] = (impactos[d.impacto]||0)+1; });
+
+  chartImpacto = new Chart(document.getElementById('chartImpacto'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Alto', 'Médio', 'Baixo', 'Indefinido'],
+      datasets: [{
+        data: [impactos.alto, impactos.medio, impactos.baixo, impactos.indefinido],
+        backgroundColor: ['#ff4d6a', '#ff8c42', '#4ecdc4', '#8b8fa8'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '60%',
+      plugins: { legend: { position: 'bottom', labels: { color: '#8b8fa8', font: { size: 11 }, padding: 12, usePointStyle: true, pointStyleWidth: 8 } } }
+    }
+  });
+
+  // Chart 3: Cadeias doughnut
+  const cadeiasMap = {};
+  data.forEach(d => (d.cadeias||[]).forEach(c => { cadeiasMap[c] = (cadeiasMap[c]||0)+1; }));
+  const cadeiaColors = ['#4f8cff','#a855f7','#ff4d6a','#ff8c42','#4ecdc4','#ffc542','#22c55e','#e4e6ef'];
+  const sortedCadeias = Object.entries(cadeiasMap).sort((a,b)=>b[1]-a[1]);
+
+  if (sortedCadeias.length === 0) {
+    chartCadeias = new Chart(document.getElementById('chartCadeias'), {
+      type: 'doughnut',
+      data: { labels: ['Sem dados'], datasets: [{ data: [1], backgroundColor: ['#2e3348'], borderWidth: 0 }] },
+      options: { responsive: true, maintainAspectRatio: false, cutout: '60%',
+        plugins: { legend: { position: 'bottom', labels: { color: '#8b8fa8', font: { size: 11 }, padding: 12 } } } }
+    });
+  } else {
+    chartCadeias = new Chart(document.getElementById('chartCadeias'), {
+      type: 'doughnut',
+      data: {
+        labels: sortedCadeias.map(c => cadeiaLabel(c[0])),
+        datasets: [{
+          data: sortedCadeias.map(c => c[1]),
+          backgroundColor: sortedCadeias.map((_,i) => cadeiaColors[i % cadeiaColors.length]),
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, cutout: '60%',
+        plugins: { legend: { position: 'bottom', labels: { color: '#8b8fa8', font: { size: 11 }, padding: 12, usePointStyle: true, pointStyleWidth: 8 } } }
+      }
+    });
+  }
+
+  // Chart 4 & 5: Timeline últimos 7 dias
+  const today = new Date();
+  const days7 = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yyyy = d.getFullYear();
+    days7.push({ key: dd+'/'+mm+'/'+yyyy, label: dd+'/'+mm });
+  }
+  const dailyTotal = {};
+  const dailyRelevante = {};
+  days7.forEach(d => { dailyTotal[d.key] = 0; dailyRelevante[d.key] = 0; });
+  data.forEach(n => {
+    if (dailyTotal.hasOwnProperty(n.data)) {
+      dailyTotal[n.data]++;
+      if (n.impacto === 'alto' || n.impacto === 'medio' || (n.cadeias && n.cadeias.length > 0) || (n.keywords && n.keywords.length > 0)) {
+        dailyRelevante[n.data]++;
+      }
+    }
+  });
+
+  const timelineOpts = (color) => ({
+    responsive: true, maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#8b8fa8', font: { size: 11 } }, grid: { color: 'rgba(46,51,72,0.3)' } },
+      y: { beginAtZero: true, ticks: { color: '#8b8fa8', font: { size: 11 }, precision: 0 }, grid: { color: 'rgba(46,51,72,0.3)' } }
+    },
+    elements: { line: { tension: 0.4 }, point: { radius: 4, hoverRadius: 6 } }
+  });
+
+  chartRelevantes7d = new Chart(document.getElementById('chartRelevantes7d'), {
+    type: 'line',
+    data: {
+      labels: days7.map(d => d.label),
+      datasets: [{
+        data: days7.map(d => dailyRelevante[d.key]),
+        borderColor: '#2ecc71',
+        backgroundColor: 'rgba(46,204,113,0.15)',
+        fill: true, borderWidth: 2, pointBackgroundColor: '#2ecc71'
+      }]
+    },
+    options: timelineOpts('#2ecc71')
+  });
+
+  chartTotal7d = new Chart(document.getElementById('chartTotal7d'), {
+    type: 'line',
+    data: {
+      labels: days7.map(d => d.label),
+      datasets: [{
+        data: days7.map(d => dailyTotal[d.key]),
+        borderColor: '#4f8cff',
+        backgroundColor: 'rgba(79,140,255,0.15)',
+        fill: true, borderWidth: 2, pointBackgroundColor: '#4f8cff'
+      }]
+    },
+    options: timelineOpts('#4f8cff')
+  });
+}
+
+// ===== CARDS =====
+const MULT_MAP = {'Lei':1,'Lei Complementar':1,'Medida Provisória':1,'Emenda Constitucional':1,'Decreto':0.9,'Instrução Normativa':0.9,'Resolução':0.9,'Resolução Normativa':0.85,'Portaria':0.7,'Portaria Normativa':0.7,'Portaria Interministerial':0.7,'Deliberação':0.7,'Convênio ICMS':0.8,'Despacho':0.5,'Aviso':0.5,'Comunicado':0.5,'Retificação':0.5,'Portaria de Pessoal':0.3};
+const ORGAOS_PRIO = ['Ministério da Fazenda','Receita Federal','Comitê Gestor','CONFAZ','Ministério do Desenvolvimento','ANVISA','ANATEL','Ministério do Trabalho','INMETRO','INPI'];
+
+function buildJustificativa(d) {
+  const reasons = [];
+  const tipo = d.tipo || '';
+  const mult = MULT_MAP[tipo] || 0.5;
+
+  // Eixo 1: Relevancia Direta
+  const kws = d.keywords || [];
+  if (kws.length > 0) {
+    reasons.push({icon: '▲', cls: 'justif-pos', text: 'Relevância direta MPE — ' + kws.length + ' termo(s): ' + kws.slice(0,4).map(k => escHtml(k)).join(', ')});
+  } else {
+    reasons.push({icon: '—', cls: 'justif-neg', text: 'Sem menção direta a MPEs, tributos ou obrigações'});
+  }
+
+  // Eixo 2: Alcance Setorial
+  const cads = d.cadeias || [];
+  if (cads.length > 0) reasons.push({icon: '▲', cls: 'justif-pos', text: 'Impacta ' + cads.length + ' cadeia(s): ' + cads.slice(0,3).map(c => escHtml(cadeiaLabel(c))).join(', ')});
+
+  const tags = d.tags_reforma || [];
+  if (tags.length > 0) reasons.push({icon: '▲', cls: 'justif-pos', text: 'Reforma tributária: ' + tags.map(t => escHtml(t)).join(', ')});
+
+  if (cads.length === 0 && tags.length === 0) {
+    reasons.push({icon: '—', cls: 'justif-neg', text: 'Sem impacto setorial identificado'});
+  }
+
+  // Eixo 3: Potencia Normativa
+  const multLabel = mult >= 0.9 ? 'alta' : mult >= 0.7 ? 'média' : 'baixa';
+  const multIcon = mult >= 0.9 ? '▲' : mult >= 0.7 ? '●' : '▼';
+  const multCls = mult >= 0.7 ? 'justif-pos' : 'justif-neg';
+  reasons.push({icon: multIcon, cls: multCls, text: 'Potência normativa ' + multLabel + ' — "' + escHtml(tipo) + '" (×' + mult.toFixed(1) + ')'});
+
+  // Orgao
+  const topOrg = (d.orgao_lista && d.orgao_lista.length > 0) ? d.orgao_lista[0] : '';
+  const isPrio = ORGAOS_PRIO.some(o => topOrg.includes(o));
+  if (isPrio) reasons.push({icon: '▲', cls: 'justif-pos', text: 'Órgão prioritário (+0.1): ' + escHtml(topOrg)});
+
+  // Segmentos
+  const segs = d.segmentos || [];
+  if (segs.length > 0 && !segs.every(s => s === 'todas')) reasons.push({icon: '●', cls: 'justif-pos', text: 'Segmentos: ' + segs.map(s => escHtml(s.toUpperCase())).join(', ')});
+
+  return reasons;
+}
+
+function renderCardHtml(d, idx) {
+  const impClass = 'priority-' + (d.impacto || 'indefinido');
+  const impLetter = (d.impacto||'I')[0].toUpperCase();
+  const tipoBadge = '<span class="tipo-badge">' + escHtml(d.tipo) + '</span>';
+  const ementa = escHtml((d.resumo||'').substring(0, 250));
+
+  let tags = '';
+  (d.cadeias||[]).forEach(c => { tags += '<span class="prop-tag prop-tag-cadeia">' + escHtml(cadeiaLabel(c)) + '</span>'; });
+  (d.tags_reforma||[]).forEach(t => { tags += '<span class="prop-tag prop-tag-reforma">' + escHtml(t) + '</span>'; });
+  (d.keywords||[]).slice(0,5).forEach(k => { tags += '<span class="prop-tag prop-tag-keyword">' + escHtml(k) + '</span>'; });
+
+  const orgShort = (d.orgao_lista && d.orgao_lista.length > 0) ? d.orgao_lista[0] : (d.orgao||'');
+  const authorLine = escHtml(orgShort) + ' · ' + (d.data||'') + ' · Ed. ' + (d.edicao||'') + ' p. ' + (d.pagina||'');
+
+  const meritoHtml = d.resumo_mpe ? '<div class="merito-section"><div class="merito-title">💡 Análise de Impacto MPE</div><div class="merito-content">' + escHtml(d.resumo_mpe) + '</div></div>' : '';
+  const fullResumo = d.resumo ? '<div class="full-resumo">' + escHtml(d.resumo) + '</div>' : '';
+
+  const impactoLabel = {alto:'Alto',medio:'Médio',baixo:'Baixo',indefinido:'Indefinido'}[d.impacto||'indefinido'] || 'Indefinido';
+  const impactoColor = {alto:'var(--p0)',medio:'var(--p1)',baixo:'var(--p3)',indefinido:'var(--p4)'}[d.impacto||'indefinido'] || 'var(--p4)';
+  const score = d.score || 0;
+  const scoreColor = score >= 0.5 ? 'var(--p0)' : score >= 0.3 ? 'var(--p1)' : score >= 0.15 ? 'var(--p3)' : 'var(--p4)';
+
+  const justifs = buildJustificativa(d);
+  const justifHtml = justifs.map(j =>
+    '<li><span class="justif-icon ' + j.cls + '">' + j.icon + '</span>' + j.text + '</li>'
+  ).join('');
+
+  return '<div class="prop-card" id="card-' + idx + '">' +
+    '<div class="prop-header" onclick="toggleCard(' + idx + ')">' +
+      '<div class="prop-priority ' + impClass + '">' + impLetter + '</div>' +
+      '<div class="prop-info">' +
+        '<div class="prop-title">' +
+          '<a href="' + escHtml(d.url||'#') + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + escHtml(d.titulo) + '</a>' +
+          tipoBadge +
+        '</div>' +
+        '<div class="prop-ementa">' + ementa + '</div>' +
+        '<div class="prop-tags">' + tags + '</div>' +
+        '<div class="author-line">' + authorLine + '</div>' +
+      '</div>' +
+      '<div class="prop-expand">▼</div>' +
+    '</div>' +
+    '<div class="prop-details">' +
+      '<div class="detail-columns">' +
+        '<div class="detail-panel">' +
+          '<div class="detail-panel-title">📋 Dados da Publicação</div>' +
+          '<div class="detail-row"><span class="detail-label">Órgão</span><span class="detail-value">' + escHtml(orgShort) + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Seção</span><span class="detail-value">' + escHtml(d.secao||'') + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Edição</span><span class="detail-value">' + escHtml(d.edicao||'') + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Página</span><span class="detail-value">' + escHtml(d.pagina||'') + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Publicação</span><span class="detail-value">' + escHtml(d.data||'') + '</span></div>' +
+          '<div class="detail-row"><span class="detail-label">Impacto</span><span class="detail-value" style="color:' + impactoColor + ';font-weight:600">' + impactoLabel + '</span></div>' +
+        '</div>' +
+        '<div class="justificativa-section">' +
+          '<div class="justificativa-title">⚖️ Justificativa da Classificação</div>' +
+          '<ul class="justificativa-list">' + justifHtml + '</ul>' +
+          '<div class="score-display">' +
+            '<span class="score-label">Score</span>' +
+            '<span class="score-num" style="color:' + scoreColor + '">' + score.toFixed(2) + '</span>' +
+            '<div class="score-bar-bg"><div class="score-bar-fill" style="width:' + Math.min(score*100,100) + '%;background:' + scoreColor + '"></div></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      fullResumo +
+      meritoHtml +
+      '<div class="action-buttons"><a href="' + escHtml(d.url||'#') + '" target="_blank" rel="noopener" class="btn-action">🔗 Ver no DOU</a></div>' +
+    '</div>' +
+  '</div>';
+}
+
+function renderCards(data) {
+  const list = document.getElementById('normasList');
+  const sorted = [...data].sort((a,b) => (b.score||0) - (a.score||0));
+  const empty = document.getElementById('emptyState');
+
+  if (sorted.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    document.getElementById('normasCount').textContent = '0 normas';
+    return;
+  }
+  empty.style.display = 'none';
+  document.getElementById('normasCount').textContent = sorted.length + ' norma' + (sorted.length !== 1 ? 's' : '');
+
+  const groups = [
+    { key: 'alto', label: 'Alto Impacto', color: 'var(--p0)', icon: '🔴' },
+    { key: 'medio', label: 'Médio Impacto', color: 'var(--p1)', icon: '🟠' },
+    { key: 'baixo', label: 'Baixo Impacto', color: 'var(--p3)', icon: '🟢' },
+    { key: 'indefinido', label: 'Indefinido', color: 'var(--p4)', icon: '⚪' }
+  ];
+
+  let html = '';
+  let globalIdx = 0;
+  groups.forEach(g => {
+    const items = sorted.filter(d => (d.impacto||'indefinido') === g.key);
+    if (items.length === 0) return;
+    html += '<div class="impacto-group">' +
+      '<div class="impacto-group-header">' +
+        '<span class="impacto-group-dot" style="background:' + g.color + '"></span>' +
+        '<span class="impacto-group-title">' + g.label + '</span>' +
+        '<span class="impacto-group-count">' + items.length + '</span>' +
+      '</div>' +
+      '<div class="impacto-group-list">';
+    items.forEach(d => {
+      html += renderCardHtml(d, globalIdx);
+      globalIdx++;
+    });
+    html += '</div></div>';
+  });
+
+  list.innerHTML = html;
+}
+
+function toggleCard(idx) {
+  document.getElementById('card-'+idx).classList.toggle('expanded');
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ===== THERMOMETER =====
+function updateThermometer(filtered) {
+  const src = filtered || getFiltered();
+  const altoCount = src.filter(d => d.impacto === 'alto').length;
+  const thermo = document.getElementById('thermometer');
+  if (src.length === 0) {
+    thermo.className = 'thermometer thermo-green';
+    thermo.innerHTML = 'Sem dados carregados';
+  } else if (altoCount >= 10) {
+    thermo.className = 'thermometer thermo-red';
+    thermo.innerHTML = '🔴 Crítico — ' + altoCount + ' alto impacto';
+  } else if (altoCount >= 5) {
+    thermo.className = 'thermometer thermo-orange';
+    thermo.innerHTML = '🟠 Alerta — ' + altoCount + ' alto impacto';
+  } else if (altoCount >= 1) {
+    thermo.className = 'thermometer thermo-yellow';
+    thermo.innerHTML = '🟡 Atenção — ' + altoCount + ' alto impacto';
+  } else {
+    thermo.className = 'thermometer thermo-green';
+    thermo.innerHTML = '🟢 Tranquilo';
+  }
+}
+
+// ===== DATE INPUTS INIT =====
+(function initDates() {
+  const today = new Date();
+  const weekAgo = new Date(today);
+  weekAgo.setDate(today.getDate() - 7);
+  // Skip weekends for weekAgo
+  while (weekAgo.getDay() === 0 || weekAgo.getDay() === 6) weekAgo.setDate(weekAgo.getDate() - 1);
+  const friday = new Date(today);
+  while (friday.getDay() === 0 || friday.getDay() === 6) friday.setDate(friday.getDate() - 1);
+
+  const fmt = d => d.toISOString().split('T')[0];
+  document.getElementById('dateInputInicio').value = fmt(weekAgo);
+  document.getElementById('dateInputFim').value = fmt(friday);
+})();
+
+// ===== LOADING OVERLAY =====
+function showLoading(text, progress) {
+  const ov = document.getElementById('loadingOverlay');
+  document.getElementById('loadingText').textContent = text || 'Consultando DOU...';
+  document.getElementById('loadingProgress').textContent = progress || '';
+  ov.classList.add('active');
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('active');
+}
+
+// ===== FETCH DOU (live API) =====
+const DOU_BUSCA_URL = 'https://www.in.gov.br/consulta/-/buscar/dou';
+const DOU_QUERIES = [
+  'decreto OR portaria',
+  'receita federal OR instrucao normativa',
+  'microempresa OR MEI OR Simples Nacional',
+  'licitacao OR pregao',
+  'resolucao OR anvisa OR aneel',
+];
+const DOU_SECOES = ['do1', 'do3'];
+
+function parseDOUDate(isoDate) {
+  // Convert YYYY-MM-DD to DD-MM-YYYY
+  const [y, m, d] = isoDate.split('-');
+  return d + '-' + m + '-' + y;
+}
+
+async function fetchDOUPage(query, secao, dateFrom, dateTo) {
+  const params = new URLSearchParams({
+    q: query, s: secao, sortType: '0', delta: '75', start: '0',
+    exactDate: 'personalizado', publishFrom: dateFrom, publishTo: dateTo
+  });
+  const url = DOU_BUSCA_URL + '?' + params.toString();
+  try {
+    const resp = await fetch(url);
+    const html = await resp.text();
+    const m = html.match(/id="[^"]*BuscaDouPortlet_params"[^>]*>([\s\S]*?)<\/(?:script|div|span)>/);
+    if (!m) return [];
+    const raw = m[1].trim().replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'");
+    try {
+      const data = JSON.parse(raw);
+      return data.jsonArray || [];
+    } catch(e) { return []; }
+  } catch(e) {
+    console.warn('DOU fetch error:', e);
+    return [];
+  }
+}
+
+function classifyHeuristic(hit) {
+  const titulo = (hit.title || '').replace(/<[^>]+>/g, '');
+  const conteudo = (hit.content || '').replace(/<[^>]+>/g, '');
+  const texto = (titulo + ' ' + conteudo).toLowerCase();
+  const orgao = (hit.hierarchyStr || '').toLowerCase();
+  const tipo = hit.artType || '';
+
+  // --- Eixo 1: Relevancia Direta MPE (0-0.5) ---
+  const kwDiretaAlta = ['microempresa','micro empresa','pequena empresa','pequeno porte','mei','microempreendedor individual','simples nacional','simei','supersimples','lc 123'];
+  const kwDiretaMedia = ['inscricao cnpj','cadastro cnpj','nota fiscal','nf-e','nfc-e','escrituracao','alvara','licenciamento','obrigacao acessoria'];
+  const kwTributaria = ['ibs','cbs','icms','iss','pis','cofins','irpj','csll','split payment','reforma tributaria'];
+  const kwLicitacao = ['licitacao','pregao','compras publicas','dispensa de licitacao','tratamento diferenciado'];
+  const kwCredito = ['credito','financiamento','bndes','pronampe','fampe','microfinancas'];
+
+  let eixo1 = 0;
+  const keywords = [];
+  const matchKw = (k, t) => k.length <= 5 || k === 'cnpj' || k === 'garantia' ? new RegExp('\\b' + k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b').test(t) : t.includes(k);
+  const matchKws = (list) => list.filter(k => matchKw(k, texto));
+
+  const mAlta = matchKws(kwDiretaAlta); keywords.push(...mAlta);
+  if (mAlta.length > 0) eixo1 = Math.max(eixo1, 0.5);
+  const mMedia = matchKws(kwDiretaMedia); keywords.push(...mMedia);
+  if (mMedia.length > 0) eixo1 = Math.max(eixo1, 0.3);
+  const mTrib = matchKws(kwTributaria); keywords.push(...mTrib);
+  if (mTrib.length > 0) eixo1 = Math.max(eixo1, 0.25);
+  const mLicit = matchKws(kwLicitacao); keywords.push(...mLicit);
+  if (mLicit.length > 0) eixo1 = Math.max(eixo1, 0.2);
+  const mCred = matchKws(kwCredito); keywords.push(...mCred);
+  if (mCred.length > 0) eixo1 = Math.max(eixo1, 0.15);
+
+  const uniqueKws = [...new Set(keywords)];
+
+  // --- Eixo 2: Alcance Setorial (0-0.3) ---
+  let eixo2 = 0;
+  const cadeiaMap = {
+    'energia': ['energia','eletrica','solar','eolica','aneel'],
+    'alimentos-e-bebidas': ['alimento','bebida','rotulagem','anvisa','rdc'],
+    'casa-e-construcao': ['construcao','edificacao','obra','cimento','ceramica'],
+    'saude': ['saude','farmacia','medicamento','clinica','anvisa','vigilancia'],
+    'moda': ['textil','vestuario','calcado','couro'],
+    'turismo': ['turismo','hotelaria','hospedagem','cadastur'],
+    'metalmecanico': ['metalurgica','siderurgia','aco','ferro']
+  };
+  const cadeias = Object.entries(cadeiaMap)
+    .filter(([,kws]) => kws.some(k => texto.includes(k) || orgao.includes(k)))
+    .map(([id]) => id);
+  if (cadeias.length > 0) eixo2 += Math.min(cadeias.length * 0.1, 0.2);
+
+  const regulacaoKws = ['vigilancia sanitaria','registro sanitario','licenca ambiental','norma regulamentadora','seguranca do trabalho','fiscalizacao','regulamentacao','certificacao','homologacao'];
+  if (regulacaoKws.some(k => texto.includes(k))) eixo2 = Math.max(eixo2, 0.15);
+
+  const reformaKws = {IBS:['ibs'],CBS:['cbs'],split_payment:['split payment'],simples_nacional:['simples nacional','simei'],comite_gestor:['comite gestor','comitê gestor'],nota_fiscal:['nota fiscal','nf-e','escrituracao']};
+  const tagsReforma = Object.entries(reformaKws).filter(([,kws]) => kws.some(k => texto.includes(k))).map(([t]) => t);
+  if (tagsReforma.length > 0) eixo2 += Math.min(tagsReforma.length * 0.05, 0.1);
+  eixo2 = Math.min(eixo2, 0.3);
+
+  // --- Eixo 3: Potencia Normativa (multiplicador) ---
+  const multMap = {'Lei':1,'Lei Complementar':1,'Medida Provisória':1,'Emenda Constitucional':1,'Decreto':0.9,'Instrução Normativa':0.9,'Resolução':0.9,'Resolução Normativa':0.85,'Portaria':0.7,'Portaria Normativa':0.7,'Portaria Interministerial':0.7,'Deliberação':0.7,'Convênio ICMS':0.8,'Despacho':0.5,'Aviso':0.5,'Comunicado':0.5,'Retificação':0.5,'Portaria de Pessoal':0.3};
+  const mult = multMap[tipo] || 0.5;
+
+  // --- Orgao prioritario ---
+  const orgaosPrio = ['Ministério da Fazenda','Receita Federal','Comitê Gestor','CONFAZ','Ministério do Desenvolvimento','ANVISA','ANATEL','Ministério do Trabalho','INMETRO','INPI'];
+  const isPrio = orgaosPrio.some(o => orgao.includes(o.toLowerCase()));
+  const boostOrgao = isPrio ? 0.1 : 0;
+
+  // --- Score final ---
+  let score = (eixo1 + eixo2) * mult + boostOrgao;
+  score = Math.min(Math.round(score * 1000) / 1000, 1);
+
+  // --- Impacto derivado do score ---
+  let impacto;
+  if (score >= 0.50) impacto = 'alto';
+  else if (score >= 0.25) impacto = 'medio';
+  else if (score >= 0.10) impacto = 'baixo';
+  else impacto = 'indefinido';
+
+  // Segmentos
+  const segmentos = [];
+  if (/\bmei\b/.test(texto) || texto.includes('microempreendedor')) segmentos.push('MEI');
+  if (texto.includes('microempresa') || texto.includes('micro empresa')) segmentos.push('ME');
+  if (texto.includes('pequena empresa') || texto.includes('pequeno porte')) segmentos.push('EPP');
+  if (segmentos.length === 0 && score >= 0.10) segmentos.push('todas');
+
+  const urlTitle = hit.urlTitle || '';
+  return {
+    id: String(hit.classPK || ''),
+    titulo: titulo,
+    resumo: conteudo.substring(0, 300),
+    tipo: tipo,
+    secao: hit.pubName || '',
+    data: hit.pubDate || '',
+    edicao: String(hit.editionNumber || ''),
+    pagina: String(hit.numberPage || ''),
+    orgao: hit.hierarchyStr || '',
+    orgao_lista: hit.hierarchyList || [],
+    url: urlTitle ? 'https://www.in.gov.br/web/dou/-/' + urlTitle : '',
+    impacto: impacto,
+    cadeias: cadeias,
+    segmentos: segmentos,
+    keywords: uniqueKws,
+    tags_reforma: tagsReforma,
+    score: score,
+    resumo_mpe: ''
+  };
+}
+
+async function fetchDOU() {
+  const dateStart = document.getElementById('dateInputInicio').value;
+  const dateEnd = document.getElementById('dateInputFim').value;
+  if (!dateStart || !dateEnd) { alert('Selecione data início e data fim.'); return; }
+  if (dateEnd < dateStart) { alert('Data fim deve ser >= data início.'); return; }
+
+  const btn = document.getElementById('btnFetch');
+  btn.disabled = true;
+
+  const dateFrom = parseDOUDate(dateStart);
+  const dateTo = parseDOUDate(dateEnd);
+
+  try {
+    showLoading('Consultando DOU...', 'Período: ' + dateFrom + ' a ' + dateTo);
+
+    const seenIds = new Set();
+    const allNormas = [];
+    let step = 0;
+    const totalSteps = DOU_QUERIES.length * DOU_SECOES.length;
+
+    for (const secao of DOU_SECOES) {
+      for (const query of DOU_QUERIES) {
+        step++;
+        showLoading('Consultando DOU...', 'Etapa ' + step + '/' + totalSteps + ' — ' + secao.toUpperCase() + ': ' + query);
+
+        const hits = await fetchDOUPage(query, secao, dateFrom, dateTo);
+        for (const hit of hits) {
+          const id = String(hit.classPK || '');
+          if (id && !seenIds.has(id)) {
+            seenIds.add(id);
+            allNormas.push(classifyHeuristic(hit));
+          }
+        }
+
+        // Rate limit
+        await new Promise(r => setTimeout(r, 800));
+      }
+    }
+
+    showLoading('Processando ' + allNormas.length + ' normas...', 'Classificando e gerando dashboard...');
+
+    if (allNormas.length > 0) {
+      // Replace DATA
+      DATA.length = 0;
+      allNormas.forEach(n => DATA.push(n));
+      DATA.sort((a, b) => (b.score || 0) - (a.score || 0));
+
+      // Rebuild dynamic filter chips
+      document.getElementById('kpiBar').style.opacity = '1';
+      rebuildDynamicFilters();
+      applyFilters();
+    } else {
+      alert('Nenhuma norma encontrada no período selecionado.');
+    }
+
+  } catch(err) {
+    console.error('fetchDOU error:', err);
+    alert('Erro ao consultar DOU: ' + err.message);
+  } finally {
+    hideLoading();
+    btn.disabled = false;
+  }
+}
+
+function rebuildDynamicFilters() {
+  // Rebuild cadeia chips
+  const cadeiaSet = new Set();
+  DATA.forEach(d => (d.cadeias||[]).forEach(c => cadeiaSet.add(c)));
+  const cadeiaGroup = document.querySelector('[data-filter="cadeia"] .filter-group');
+  if (cadeiaGroup) {
+    cadeiaGroup.innerHTML = Array.from(cadeiaSet).sort().map(c =>
+      '<span class="filter-chip" data-filter="cadeia" data-value="' + c + '">' + c.replace(/-/g,' ') + '</span>'
+    ).join('');
+    cadeiaGroup.querySelectorAll('.filter-chip').forEach(el => el.addEventListener('click', () => toggleFilter(el)));
+  }
+
+  // Rebuild tipo chips
+  const tipoCount = {};
+  DATA.forEach(d => { if (d.tipo) tipoCount[d.tipo] = (tipoCount[d.tipo]||0) + 1; });
+  const tipoGroup = document.querySelector('[data-filter="tipo"] .filter-group');
+  if (tipoGroup) {
+    tipoGroup.innerHTML = Object.entries(tipoCount).sort((a,b) => b[1]-a[1]).map(([t,c]) =>
+      '<span class="filter-chip" data-filter="tipo" data-value="' + t + '">' + t + ' (' + c + ')</span>'
+    ).join('');
+    tipoGroup.querySelectorAll('.filter-chip').forEach(el => el.addEventListener('click', () => toggleFilter(el)));
+  }
+
+  // Rebuild orgao chips
+  const orgaoCount = {};
+  DATA.forEach(d => {
+    const o = (d.orgao_lista||[])[0] || (d.orgao||'').split('/')[0].trim();
+    if (o) orgaoCount[o] = (orgaoCount[o]||0) + 1;
+  });
+  const orgaoGroup = document.querySelector('[data-filter="orgao"] .filter-group');
+  if (orgaoGroup) {
+    orgaoGroup.innerHTML = Object.entries(orgaoCount).sort((a,b) => b[1]-a[1]).slice(0,15).map(([o,c]) =>
+      '<span class="filter-chip" data-filter="orgao" data-value="' + o + '">' + o.substring(0,30) + (o.length>30?'…':'') + ' (' + c + ')</span>'
+    ).join('');
+    orgaoGroup.querySelectorAll('.filter-chip').forEach(el => el.addEventListener('click', () => toggleFilter(el)));
+  }
+}
+
+// ===== METHODOLOGY MODAL =====
+function toggleMethodology() {
+  document.getElementById('methodologyModal').classList.toggle('active');
+}
+
+// ===== WHATSAPP EXPORT =====
+function exportWhatsApp() {
+  const filtered = getFiltered();
+  const top = [...filtered].sort((a,b) => (b.score||0) - (a.score||0)).slice(0, 10);
+  const altoCount = filtered.filter(d=>d.impacto==='alto').length;
+  const medioCount = filtered.filter(d=>d.impacto==='medio').length;
+
+  const di = document.getElementById('dateInputInicio').value || '?';
+  const df = document.getElementById('dateInputFim').value || '?';
+  let text = '*PIPPA Regulatório - Monitoramento DOU*\n';
+  text += '_' + di + ' a ' + df + '_\n\n';
+  text += '📊 *Resumo:*\n';
+  text += '• Total de normas: ' + filtered.length + '\n';
+  text += '• Alto impacto: ' + altoCount + ' 🔴\n';
+  text += '• Médio impacto: ' + medioCount + ' 🟠\n\n';
+  text += '📋 *Top normas por relevância:*\n\n';
+
+  top.forEach((d, i) => {
+    const icon = d.impacto === 'alto' ? '🔴' : d.impacto === 'medio' ? '🟠' : d.impacto === 'baixo' ? '🟢' : '⚪';
+    text += (i+1) + '. ' + icon + ' *' + d.titulo + '*\n';
+    text += '   ' + d.tipo + ' | ' + ((d.orgao_lista||[])[0] || d.orgao || '') + '\n';
+    if (d.resumo) text += '   ' + d.resumo.substring(0,120) + '...\n';
+    text += '   🔗 ' + (d.url||'') + '\n\n';
+  });
+
+  text += '_Gerado por PIPPA Regulatório v1.0_';
+
+  document.getElementById('whatsappContent').textContent = text;
+  document.getElementById('whatsappModal').classList.add('active');
+}
+
+function closeWhatsApp() {
+  document.getElementById('whatsappModal').classList.remove('active');
+}
+
+function copyWhatsApp() {
+  const text = document.getElementById('whatsappContent').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Texto copiado!');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Texto copiado!');
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+</script>
+</body>
+</html>

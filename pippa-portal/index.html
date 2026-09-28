@@ -19,10 +19,6 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
 .hero-stat{text-align:center;}
 .hero-stat-value{font-size:28px;font-weight:700;color:#e2e8f0;}
 .hero-stat-label{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
-.hero-actions{display:flex;justify-content:center;margin-top:24px;}
-.btn-quem-somos{display:inline-flex;align-items:center;gap:8px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#a7f3d0;padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .25s;text-decoration:none;letter-spacing:.3px;}
-.btn-quem-somos:hover{background:rgba(16,185,129,.18);border-color:#10b981;color:#fff;transform:translateY(-1px);box-shadow:0 4px 16px rgba(16,185,129,.15);}
-.btn-quem-somos svg{width:14px;height:14px;}
 
 /* ── Search ───────────────────────────────────── */
 .search-section{max-width:560px;margin:-8px auto 0;padding:0 48px 36px;position:relative;}
@@ -130,16 +126,10 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
   <h1 class="hero-title">PIPPA</h1>
   <p class="hero-subtitle">Plataforma de Inteligencia em Politicas Publicas Aplicadas — ferramentas de monitoramento legislativo, orcamentario e territorial.</p>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">9</div><div class="hero-stat-label">Ferramentas</div></div>
+    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">10</div><div class="hero-stat-label">Ferramentas</div></div>
     <div class="hero-stat"><div class="hero-stat-value">6</div><div class="hero-stat-label">Dashboards</div></div>
     <div class="hero-stat"><div class="hero-stat-value">17</div><div class="hero-stat-label">Fontes de Dados</div></div>
     <div class="hero-stat"><div class="hero-stat-value">58</div><div class="hero-stat-label">Cubos Analiticos</div></div>
-  </div>
-  <div class="hero-actions">
-    <a href="../pippa-quem-somos/index.html" class="btn-quem-somos">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Quem Somos?
-    </a>
   </div>
 </section>
 
@@ -161,8 +151,8 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
     <div class="sidebar-desc">Selecione uma necessidade para filtrar as ferramentas.</div>
     <div class="questions-wrap" id="questionsWrap"></div>
     <div class="sidebar-stats">
-      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">8</div><div class="sidebar-stat-lbl">Visiveis</div></div>
-      <div class="sidebar-stat"><div class="sidebar-stat-val">8</div><div class="sidebar-stat-lbl">Total</div></div>
+      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">10</div><div class="sidebar-stat-lbl">Visiveis</div></div>
+      <div class="sidebar-stat"><div class="sidebar-stat-val">10</div><div class="sidebar-stat-lbl">Total</div></div>
     </div>
   </div>
 </aside>
@@ -170,7 +160,7 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
 <section class="grid-section">
   <div class="grid-header">
     <h2>Ferramentas Disponiveis</h2>
-    <div class="grid-count">Exibindo <span id="showCount">8</span> de 8</div>
+    <div class="grid-count">Exibindo <span id="showCount">10</span> de 10</div>
   </div>
   <div class="cards" id="cardsGrid"></div>
 </section>
@@ -272,6 +262,17 @@ const TOOLS = [
     destaque: "Entenda a estrutura completa do NAL em uma unica visualizacao. Navegue pelas frentes de foresight, inteligencia, incidencia legislativa e planejamento com um mapa mental interativo e expandivel."
   },
   {
+    id: "regulatorio",
+    nome: "PIPPA - Regulatório (Teste)",
+    subtitulo: "Monitor do Diário Oficial da União",
+    accent: "#ef4444",
+    icon: "📰",
+    url: "../pippa-regulatorio/output/regulatorio_dou_20260928.html",
+    descricao: "Monitor em tempo real do Diário Oficial da União (DOU) com classificação automática de impacto em micro e pequenas empresas. Consulta a API da Imprensa Nacional, aplica heurística de 3 eixos (relevância direta MPE, alcance setorial e potência normativa) e apresenta normas agrupadas por nível de impacto com justificativa transparente do score.",
+    features: ["Consulta ao vivo da API do DOU", "Classificação heurística v2 (3 eixos)", "Justificativa transparente de score", "Filtros por impacto, cadeia, tipo, órgão", "Gráficos de órgão, impacto e cadeias", "Timeline de 7 dias", "Agrupamento por nível de impacto", "Exportar WhatsApp"],
+    destaque: "Fase 1 — Coleta e classificação do DOU. Identifica automaticamente quais normas publicadas no Diário Oficial impactam MPEs, com score baseado em relevância direta (menções a MEI/ME/EPP, tributos, licitações), alcance setorial (cadeias produtivas) e potência normativa (tipo de ato como multiplicador)."
+  },
+  {
     id: "transformalab",
     nome: "TransformaLab — PIPPA",
     subtitulo: "Plataforma de Experimentacao em Politicas Publicas",
@@ -298,7 +299,9 @@ const QUESTIONS = [
   { texto: "Como esta organizado o NAL?", ferramentas: ["mindmap"], tema: "Estrutura" },
   { texto: "Quero uma visao completa das frentes de trabalho", ferramentas: ["mindmap", "catalogo", "prototipo"], tema: "Estrategia" },
   { texto: "Como funcionam os laboratorios de experimentacao?", ferramentas: ["transformalab"], tema: "Experimentacao" },
-  { texto: "Quero ver evidencias de impacto em politicas publicas", ferramentas: ["transformalab", "catalogo", "prototipo"], tema: "Evidencias" }
+  { texto: "Quero ver evidencias de impacto em politicas publicas", ferramentas: ["transformalab", "catalogo", "prototipo"], tema: "Evidencias" },
+  { texto: "Quais normas do DOU afetam pequenas empresas?", ferramentas: ["regulatorio"], tema: "Regulatorio" },
+  { texto: "Preciso acompanhar o cenario regulatorio completo", ferramentas: ["regulatorio", "legislativo", "reforma"], tema: "Regulatorio" }
 ];
 
 let activeQuestion = null;
