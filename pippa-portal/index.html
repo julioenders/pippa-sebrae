@@ -287,6 +287,17 @@ const TOOLS = [
     destaque: "Entenda a estrutura completa do NAL em uma unica visualizacao. Navegue pelas frentes de foresight, inteligencia, incidencia legislativa e planejamento com um mapa mental interativo e expandivel."
   },
   {
+    id: "orcamento",
+    nome: "PIPPA Orçamento",
+    subtitulo: "Inteligência Orçamentária UPP 2027",
+    accent: "#06b6d4",
+    icon: "💲",
+    url: "../pippa-orcamento/index.html",
+    descricao: "Ferramenta de inteligência orçamentária da UPP — Unidade de Políticas Públicas do Sebrae Nacional. Acompanha a execução orçamentária 2027 em quatro camadas analíticas: descritiva (KPIs e evolução), diagnóstica (alertas e gap analysis), preditiva (projeções e risco de inexecução) e prescritiva (recomendações e remanejamento).",
+    features: ["4 camadas: Descritiva, Diagnóstica, Preditiva, Prescritiva", "Funil Empenhado → Liquidado → Pago", "Projeção de execução anual", "Alertas automáticos de inexecução", "Metas físicas com atingimento", "Sugestões de remanejamento", "Filtros por núcleo e projeto", "Exportar WhatsApp"],
+    destaque: "Acompanhe R$ 68,75 mi da UPP em tempo real. Visualize a execução por núcleo (Projetos Especiais, NAL, RelGov, Gestão), identifique riscos de inexecução e receba recomendações de ação baseadas no ritmo atual."
+  },
+  {
     id: "regulatorio",
     nome: "PIPPA - Regulatório (Teste)",
     subtitulo: "Monitor do Diário Oficial da União",
@@ -318,7 +329,8 @@ const QUESTIONS = [
   { texto: "Como a reforma tributaria afeta meu negocio?", ferramentas: ["reforma"], tema: "Tributacao" },
   { texto: "Quais dados tenho disponiveis para analise?", ferramentas: ["catalogo"], tema: "Dados" },
   { texto: "Quero ver a plataforma em producao", ferramentas: ["prototipo"], tema: "Plataforma" },
-  { texto: "Preciso de inteligencia orcamentaria completa", ferramentas: ["emendas", "compras"], tema: "Orcamento" },
+  { texto: "Como esta a execução orçamentária da UPP?", ferramentas: ["orcamento"], tema: "Orcamento" },
+  { texto: "Preciso de inteligencia orcamentaria completa", ferramentas: ["emendas", "compras", "orcamento"], tema: "Orcamento" },
   { texto: "Quero entender o cenario politico-legislativo", ferramentas: ["legislativo", "pesquisas", "emendas"], tema: "Politica" },
   { texto: "Preciso de dados territoriais e economicos", ferramentas: ["catalogo", "prototipo"], tema: "Territorial" },
   { texto: "Como esta organizado o NAL?", ferramentas: ["mindmap"], tema: "Estrutura" },

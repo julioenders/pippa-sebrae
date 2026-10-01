@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIPPA Orçamento — Inteligência Orçamentária UPP 2027</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0f172a; --surface: #1e293b; --surface2: #334155;
+  --text: #e2e8f0; --text2: #94a3b8; --accent: #3b82f6;
+  --accent2: #8b5cf6; --green: #22c55e; --red: #ef4444;
+  --yellow: #eab308; --orange: #f97316; --cyan: #06b6d4;
+  --radius: 12px; --shadow: 0 4px 24px rgba(0,0,0,.4);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; }
+a { color:var(--accent); text-decoration:none; }
+
+.header {
+  background:linear-gradient(135deg,#1e3a5f 0%,#0f172a 100%);
+  padding:1.2rem 2rem; display:flex; align-items:center; gap:1.5rem;
+  border-bottom:2px solid var(--accent); position:sticky; top:0; z-index:100;
+}
+.header-brand { display:flex; align-items:center; gap:.8rem; }
+.header-logo {
+  width:44px; height:44px; background:var(--accent); border-radius:10px;
+  display:flex; align-items:center; justify-content:center; font-size:1.4rem; font-weight:800; color:#fff;
+}
+.header h1 { font-size:1.3rem; font-weight:700; letter-spacing:-.5px; }
+.header h1 span { color:var(--accent); }
+.header-sub { font-size:.75rem; color:var(--text2); margin-top:2px; }
+.header-controls { margin-left:auto; display:flex; align-items:center; gap:10px; }
+.header-meta { font-size:.75rem; color:var(--text2); }
+.header-badge {
+  display:inline-block; padding:3px 10px; border-radius:20px;
+  font-size:.7rem; font-weight:600; margin-top:4px;
+}
+.badge-ok { background:rgba(34,197,94,.15); color:var(--green); }
+.badge-warn { background:rgba(234,179,8,.15); color:var(--yellow); }
+.badge-danger { background:rgba(239,68,68,.15); color:var(--red); }
+
+.info-btn {
+  background:transparent; border:1px solid rgba(255,255,255,.15); color:var(--text2);
+  width:32px; height:32px; border-radius:50%; font-size:16px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:all .2s; flex-shrink:0;
+}
+.info-btn:hover { border-color:var(--accent); color:var(--accent); }
+.pippa-home-btn {
+  display:flex; align-items:center; gap:6px; background:rgba(15,23,42,.85);
+  border:1px solid rgba(16,185,129,.3); color:#a7f3d0; padding:7px 14px;
+  border-radius:8px; font-size:11.5px; font-weight:600; cursor:pointer;
+  text-decoration:none; transition:all .2s;
+}
+.pippa-home-btn:hover { background:rgba(16,185,129,.15); border-color:#10b981; color:#fff; }
+.pippa-home-btn svg { width:13px; height:13px; }
+.btn-export {
+  display:flex; align-items:center; gap:6px; background:var(--accent);
+  color:#fff; border:none; padding:8px 16px; border-radius:8px;
+  font-size:.75rem; font-weight:600; cursor:pointer; transition:all .2s;
+}
+.btn-export:hover { background:#2563eb; transform:translateY(-1px); }
+.thermometer {
+  display:flex; align-items:center; gap:6px; font-size:.72rem;
+  padding:4px 12px; border-radius:20px; font-weight:600;
+}
+.thermo-green { background:rgba(34,197,94,.15); color:var(--green); }
+.thermo-yellow { background:rgba(234,179,8,.15); color:var(--yellow); }
+.thermo-orange { background:rgba(249,115,22,.15); color:var(--orange); }
+.thermo-red { background:rgba(239,68,68,.15); color:var(--red); }
+
+.modal-backdrop {
+  position:fixed; inset:0; background:rgba(15,23,42,.88); z-index:200;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .3s;
+}
+.modal-backdrop.active { opacity:1; pointer-events:all; }
+.modal {
+  background:var(--surface); border:1px solid rgba(255,255,255,.1);
+  border-radius:12px; padding:24px; max-width:680px; width:90%;
+  max-height:85vh; overflow-y:auto;
+}
+.modal-title { font-size:1.1rem; font-weight:700; margin-bottom:16px; }
+.modal-content {
+  font-size:.82rem; line-height:1.7; background:var(--surface2);
+  padding:16px; border-radius:8px; max-height:55vh; overflow-y:auto;
+}
+.modal-actions { display:flex; gap:10px; margin-top:16px; justify-content:flex-end; }
+.modal-actions button {
+  padding:8px 18px; border-radius:8px; font-size:.8rem; font-weight:600; cursor:pointer;
+  border:1px solid rgba(255,255,255,.15); background:var(--surface2); color:var(--text);
+  transition:all .2s;
+}
+.modal-actions button:hover { border-color:var(--accent); color:var(--accent); }
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px);
+  background:var(--accent); color:#fff; padding:10px 24px; border-radius:8px;
+  font-size:.85rem; font-weight:600; transition:transform .3s; z-index:300;
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+.controls {
+  display:flex; gap:.8rem; padding:.8rem 2rem;
+  background:var(--surface); border-bottom:1px solid var(--surface2);
+  flex-wrap:wrap; align-items:center;
+}
+.filter-group { display:flex; align-items:center; gap:.5rem; }
+.filter-group label { font-size:.75rem; color:var(--text2); font-weight:600; text-transform:uppercase; letter-spacing:.5px; }
+.filter-group select {
+  background:var(--surface2); color:var(--text); border:1px solid rgba(255,255,255,.1);
+  padding:6px 12px; border-radius:8px; font-size:.8rem; cursor:pointer;
+}
+.filter-group select:focus { outline:none; border-color:var(--accent); }
+
+.tabs {
+  display:flex; gap:0; padding:0 2rem; background:var(--surface);
+  border-bottom:2px solid var(--surface2);
+}
+.tab {
+  padding:.7rem 1.4rem; font-size:.8rem; font-weight:600; color:var(--text2);
+  cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px;
+  transition:all .2s; letter-spacing:.3px;
+}
+.tab:hover { color:var(--text); background:rgba(255,255,255,.03); }
+.tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+.tab-icon { margin-right:6px; }
+
+.main { padding:1.5rem 2rem 3rem; max-width:1400px; margin:0 auto; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+.kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+.kpi {
+  background:var(--surface); border-radius:var(--radius); padding:1.2rem;
+  border:1px solid rgba(255,255,255,.06); position:relative; overflow:hidden;
+}
+.kpi::before {
+  content:''; position:absolute; top:0; left:0; width:4px; height:100%;
+  border-radius:var(--radius) 0 0 var(--radius);
+}
+.kpi.kpi-blue::before { background:var(--accent); }
+.kpi.kpi-green::before { background:var(--green); }
+.kpi.kpi-yellow::before { background:var(--yellow); }
+.kpi.kpi-red::before { background:var(--red); }
+.kpi.kpi-purple::before { background:var(--accent2); }
+.kpi.kpi-cyan::before { background:var(--cyan); }
+.kpi-label { font-size:.7rem; color:var(--text2); text-transform:uppercase; letter-spacing:.5px; font-weight:600; }
+.kpi-value { font-size:1.6rem; font-weight:700; margin:4px 0; }
+.kpi-detail { font-size:.72rem; color:var(--text2); }
+.kpi-bar { height:4px; background:var(--surface2); border-radius:2px; margin-top:8px; }
+.kpi-bar-fill { height:100%; border-radius:2px; transition:width .6s ease; }
+
+.chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.5rem; }
+.chart-grid.full { grid-template-columns:1fr; }
+.chart-box {
+  background:var(--surface); border-radius:var(--radius); padding:1.2rem;
+  border:1px solid rgba(255,255,255,.06);
+}
+.chart-title { font-size:.85rem; font-weight:600; margin-bottom:1rem; display:flex; align-items:center; gap:.5rem; }
+.chart-title .dot { width:8px; height:8px; border-radius:50%; }
+.chart-canvas { position:relative; width:100%; }
+
+.data-table {
+  width:100%; border-collapse:collapse; font-size:.78rem;
+  background:var(--surface); border-radius:var(--radius); overflow:hidden;
+}
+.data-table th {
+  background:var(--surface2); padding:10px 12px; text-align:left;
+  font-weight:600; color:var(--text2); text-transform:uppercase;
+  font-size:.68rem; letter-spacing:.5px; position:sticky; top:0;
+}
+.data-table td { padding:8px 12px; border-bottom:1px solid rgba(255,255,255,.04); }
+.data-table tr:hover td { background:rgba(255,255,255,.02); }
+.data-table .num { text-align:right; font-variant-numeric:tabular-nums; }
+.data-table .pct-cell { min-width:100px; }
+.pct-bar { height:6px; background:var(--surface2); border-radius:3px; }
+.pct-bar-fill { height:100%; border-radius:3px; }
+
+.alert-list { display:flex; flex-direction:column; gap:.6rem; }
+.alert-item {
+  display:flex; align-items:flex-start; gap:.8rem; padding:.8rem 1rem;
+  border-radius:8px; font-size:.8rem;
+}
+.alert-item.critical { background:rgba(239,68,68,.08); border-left:3px solid var(--red); }
+.alert-item.warning { background:rgba(234,179,8,.08); border-left:3px solid var(--yellow); }
+.alert-item.info { background:rgba(59,130,246,.08); border-left:3px solid var(--accent); }
+.alert-item.success { background:rgba(34,197,94,.08); border-left:3px solid var(--green); }
+.alert-icon { font-size:1.1rem; flex-shrink:0; margin-top:1px; }
+.alert-text { flex:1; }
+.alert-title { font-weight:600; margin-bottom:2px; }
+.alert-desc { color:var(--text2); font-size:.74rem; }
+
+.rec-card {
+  background:var(--surface); border-radius:var(--radius); padding:1.2rem;
+  border:1px solid rgba(255,255,255,.06); margin-bottom:.8rem;
+}
+.rec-header { display:flex; align-items:center; gap:.6rem; margin-bottom:.6rem; }
+.rec-priority {
+  padding:2px 8px; border-radius:12px; font-size:.65rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.5px;
+}
+.rec-priority.high { background:rgba(239,68,68,.15); color:var(--red); }
+.rec-priority.medium { background:rgba(234,179,8,.15); color:var(--yellow); }
+.rec-priority.low { background:rgba(34,197,94,.15); color:var(--green); }
+.rec-title { font-weight:600; font-size:.85rem; }
+.rec-body { font-size:.78rem; color:var(--text2); line-height:1.5; }
+.rec-metric { margin-top:.5rem; font-size:.72rem; color:var(--cyan); font-weight:600; }
+
+.section-title { font-size:1rem; font-weight:700; margin:1.5rem 0 1rem; display:flex; align-items:center; gap:.5rem; }
+
+.table-wrapper { border-radius:var(--radius); overflow:auto; max-height:500px; border:1px solid rgba(255,255,255,.06); }
+
+.footer { text-align:center; padding:2rem; font-size:.7rem; color:var(--text2); }
+
+@media(max-width:900px) {
+  .chart-grid { grid-template-columns:1fr; }
+  .kpi-row { grid-template-columns:repeat(2,1fr); }
+  .header { padding:1rem; flex-wrap:wrap; }
+  .main { padding:1rem; }
+  .controls { padding:.6rem 1rem; }
+  .tabs { padding:0 1rem; overflow-x:auto; }
+}
+@media(max-width:600px) {
+  .kpi-row { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="header-logo">$</div>
+    <div>
+      <h1><span>PIPPA</span> Orçamento</h1>
+      <div class="header-sub">Plataforma de Inteligência em Políticas Públicas Aplicadas — Inteligência Orçamentária UPP 2027</div>
+    </div>
+    <button class="info-btn" onclick="openInfoModal()" title="Sobre o Dashboard">&#8505;</button>
+    <div class="thermometer" id="thermometer"></div>
+  </div>
+  <div class="header-controls" style="margin-left:auto;display:flex;align-items:center;gap:10px;">
+    <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
+    <button class="btn-export" onclick="exportWhatsApp()">&#128172; Exportar WhatsApp</button>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="filter-group">
+    <label>Núcleo</label>
+    <select id="filterNucleo" onchange="applyFilters()">
+      <option value="">Todos</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Projeto</label>
+    <select id="filterProjeto" onchange="applyFilters()">
+      <option value="">Todos</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Mês ref.</label>
+    <select id="filterMes" onchange="applyFilters()"></select>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="descritiva" onclick="switchTab('descritiva')">
+    <span class="tab-icon">&#x1F4CA;</span>Descritiva
+  </div>
+  <div class="tab" data-tab="diagnostica" onclick="switchTab('diagnostica')">
+    <span class="tab-icon">&#x1F50D;</span>Diagnóstica
+  </div>
+  <div class="tab" data-tab="preditiva" onclick="switchTab('preditiva')">
+    <span class="tab-icon">&#x1F4C8;</span>Preditiva
+  </div>
+  <div class="tab" data-tab="prescritiva" onclick="switchTab('prescritiva')">
+    <span class="tab-icon">&#x1F4A1;</span>Prescritiva
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ========== DESCRITIVA ========== -->
+<div class="tab-content active" id="tab-descritiva">
+  <div class="kpi-row" id="kpiRow"></div>
+  <div class="chart-grid">
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Execução Mensal Acumulada</div>
+      <div class="chart-canvas"><canvas id="chartTimeline" height="260"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--accent2)"></span>Execução por Núcleo</div>
+      <div class="chart-canvas"><canvas id="chartNucleos" height="260"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-grid full">
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Detalhamento por Ação</div>
+      <div class="table-wrapper" id="tableDetail"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== DIAGNÓSTICA ========== -->
+<div class="tab-content" id="tab-diagnostica">
+  <div class="section-title">&#x26A0;&#xFE0F; Alertas de Execução</div>
+  <div class="alert-list" id="alertList"></div>
+  <div class="chart-grid" style="margin-top:1.5rem">
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--yellow)"></span>Gap: Previsto vs. Realizado por Núcleo</div>
+      <div class="chart-canvas"><canvas id="chartGap" height="280"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--orange)"></span>Velocidade de Execução (Empenho mensal)</div>
+      <div class="chart-canvas"><canvas id="chartVelocity" height="280"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-grid full" style="margin-top:1rem">
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--red)"></span>Funil de Execução (Empenhado → Liquidado → Pago)</div>
+      <div class="chart-canvas"><canvas id="chartFunnel" height="240"></canvas></div>
+    </div>
+  </div>
+  <div class="section-title" style="margin-top:1.5rem">&#x1F3AF; Metas Físicas — Atingimento</div>
+  <div class="table-wrapper" id="tableMetas"></div>
+</div>
+
+<!-- ========== PREDITIVA ========== -->
+<div class="tab-content" id="tab-preditiva">
+  <div class="kpi-row" id="kpiPreditiva"></div>
+  <div class="chart-grid">
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Projeção de Execução até Dez/2027</div>
+      <div class="chart-canvas"><canvas id="chartProjection" height="280"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--red)"></span>Risco de Inexecução por Núcleo</div>
+      <div class="chart-canvas"><canvas id="chartRisk" height="280"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-grid full">
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--accent2)"></span>Projeção por Ação</div>
+      <div class="table-wrapper" id="tableProjection"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PRESCRITIVA ========== -->
+<div class="tab-content" id="tab-prescritiva">
+  <div class="section-title">&#x1F4A1; Recomendações Prioritárias</div>
+  <div id="recList"></div>
+  <div class="chart-grid" style="margin-top:1.5rem">
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Sugestão de Remanejamento</div>
+      <div class="chart-canvas"><canvas id="chartRealloc" height="280"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Impacto Estimado das Ações</div>
+      <div class="chart-canvas"><canvas id="chartImpact" height="280"></canvas></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  PIPPA Orçamento v1.0 — Plataforma Integrada de Pesquisa, Prospecção e Análise<br>
+  Sebrae Nacional · UPP — Unidade de Políticas Públicas · 2027
+</div>
+
+<div class="modal-backdrop" id="infoModal" onclick="if(event.target===this)closeInfoModal()">
+  <div class="modal">
+    <div class="modal-title">&#9432; Sobre o PIPPA Orçamento</div>
+    <div class="modal-content" style="text-align:left">
+
+      <p style="color:var(--yellow);font-size:.78rem;padding:10px;background:rgba(234,179,8,.08);border-radius:8px;border:1px solid rgba(234,179,8,.2);margin-bottom:16px"><strong>Dados sintéticos para validação.</strong> Este dashboard foi construído a partir da estrutura orçamentária real da UPP 2027 (LOA R$ 68,75 mi), porém os dados de execução mensal (Empenhado, Liquidado, Pago) e metas físicas foram simulados para fins de prototipagem e validação do layout. A atualização com dados reais será feita mensalmente via planilha Excel.</p>
+
+      <div style="font-size:.9rem;font-weight:700;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--accent)">O que é</div>
+      <p style="margin-bottom:12px">Ferramenta de inteligência orçamentária da <strong>UPP — Unidade de Políticas Públicas</strong> do Sebrae Nacional. Acompanha a execução orçamentária 2027 em quatro camadas analíticas.</p>
+
+      <div style="font-size:.9rem;font-weight:700;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--accent)">Camadas Analíticas</div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
+        <strong style="color:var(--accent)">Descritiva</strong> — O que aconteceu?<br>
+        <span style="color:var(--text2);font-size:.78rem">Visão geral de KPIs, evolução acumulada, execução por núcleo e detalhamento por ação orçamentária.</span>
+      </div>
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
+        <strong style="color:var(--accent)">Diagnóstica</strong> — Por que aconteceu?<br>
+        <span style="color:var(--text2);font-size:.78rem">Alertas automáticos, análise de gap (previsto vs. realizado), velocidade de execução, funil orçamentário e atingimento de metas físicas.</span>
+      </div>
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
+        <strong style="color:var(--accent)">Preditiva</strong> — O que vai acontecer?<br>
+        <span style="color:var(--text2);font-size:.78rem">Projeção de execução anual baseada no ritmo atual, índice de viabilidade, risco de inexecução por núcleo e projeção por ação.</span>
+      </div>
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:12px">
+        <strong style="color:var(--accent)">Prescritiva</strong> — O que fazer?<br>
+        <span style="color:var(--text2);font-size:.78rem">Recomendações priorizadas, sugestões de remanejamento orçamentário e cenários de impacto (base vs. acelerado).</span>
+      </div>
+
+      <div style="font-size:.9rem;font-weight:700;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--accent)">Glossário</div>
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
+        <strong style="color:var(--accent)">Empenhado</strong> — 1ª etapa da despesa pública: reserva de crédito orçamentário.<br>
+        <strong style="color:var(--accent)">Liquidado</strong> — 2ª etapa: comprovação da entrega do bem/serviço.<br>
+        <strong style="color:var(--accent)">Pago</strong> — 3ª etapa: efetiva saída financeira ao fornecedor.<br>
+        <strong style="color:var(--accent)">UPP</strong> — Unidade de Políticas Públicas.<br>
+        <strong style="color:var(--accent)">NAL</strong> — Núcleo de Assessoria Legislativa.<br>
+        <strong style="color:var(--accent)">RelGov</strong> — Relacionamento Governamental.
+      </div>
+
+      <div style="font-size:.9rem;font-weight:700;margin:12px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)">Atualização</div>
+      <p style="font-size:.78rem;color:var(--text2)">Mensal, via planilha <code style="background:var(--surface);padding:2px 6px;border-radius:4px">orcamento_upp_2027.xlsx</code> + script <code style="background:var(--surface);padding:2px 6px;border-radius:4px">atualizar_dashboard.py</code>.</p>
+    </div>
+    <div class="modal-actions">
+      <button onclick="closeInfoModal()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="exportModal" onclick="if(event.target===this)closeExportModal()">
+  <div class="modal">
+    <div class="modal-title">Exportar para WhatsApp</div>
+    <div class="modal-content" id="exportContent" style="white-space:pre-wrap"></div>
+    <div class="modal-actions">
+      <button onclick="closeExportModal()">Fechar</button>
+      <button onclick="copyExport()" style="background:var(--accent);color:#fff;border-color:var(--accent)">Copiar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copiado!</div>
+
+<script>
+const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const NUCLEO_COLORS = {
+  'Projetos Especiais':'#3b82f6',
+  'NAL — Núcleo de Assessoria Legislativa':'#8b5cf6',
+  'RelGov — Relacionamento Governamental':'#f97316',
+  'Gestão UPP':'#22c55e'
+};
+
+const DATA = {"orcamento":[{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Comunidades empreendedoras de aprendizagem","loa":6219397.7,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Sensibilizar gestores públicos","loa":0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Simplificar e desonerar o dia a dia do empreendedor","loa":3570662.66,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Abertura de oportunidades para MPE junto ao governo","loa":12170000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas e cadastramento","loa":300000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Avaliar políticas públicas voltadas ao empreendedorismo","loa":1500000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Promover jornadas formativas para a rede de PP","loa":1000000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Articular agendas legislativas para competitividade MPE","loa":2730250.32,"credito":0.0,"remanejamento":0.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Parlamento + Empreendedor","loa":1354000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Laboratórios e observatórios de políticas públicas","loa":2015000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de Políticas Públicas","acao":"Impulsionar ecossistemas empreendedores com parceiros públicos","loa":36069830.66,"credito":0.0,"remanejamento":0.0},{"nucleo":"Gestão UPP","projeto":"Gestão de Viagens UPP","acao":"Viagens Colaboradores","loa":1300000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Gestão UPP","projeto":"Bodyshop","acao":"Bodyshop — contrato compartilhado","loa":221662.44,"credito":0.0,"remanejamento":0.0},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Licitações — Brindes","loa":200000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Compra direta / impressões","loa":100000.0,"credito":0.0,"remanejamento":0.0}],"execucao":[{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Comunidades empreendedoras de aprendizagem","tipo":"Empenhado","meses":[332648.65,312588.88,526926.2,356790.65,395588.93,556425.81,658316.38,569629.3,732280.96,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Comunidades empreendedoras de aprendizagem","tipo":"Liquidado","meses":[234934.01,276365.39,380300.92,269255.45,296576.74,420162.78,461891.03,447194.67,574217.12,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Comunidades empreendedoras de aprendizagem","tipo":"Pago","meses":[199577.68,254755.25,333123.05,239896.9,271954.7,380695.98,436508.94,370271.07,468959.82,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Sensibilizar gestores públicos","tipo":"Empenhado","meses":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Sensibilizar gestores públicos","tipo":"Liquidado","meses":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Sensibilizar gestores públicos","tipo":"Pago","meses":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Simplificar e desonerar o dia a dia do empreendedor","tipo":"Empenhado","meses":[142533.39,240274.32,312752.62,311906.93,309063.49,269926.21,283580.54,317742.03,292486.83,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Simplificar e desonerar o dia a dia do empreendedor","tipo":"Liquidado","meses":[129972.43,212025.98,248523.74,266565.0,270783.8,208476.69,205666.89,251400.05,224262.65,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Simplificar e desonerar o dia a dia do empreendedor","tipo":"Pago","meses":[118102.14,190085.75,223514.12,254598.17,218860.57,169775.61,174824.1,217871.47,217220.32,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Abertura de oportunidades para MPE junto ao governo","tipo":"Empenhado","meses":[653539.77,791247.13,1073036.43,997003.33,876771.46,941211.53,1325518.06,961243.34,1029182.52,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Abertura de oportunidades para MPE junto ao governo","tipo":"Liquidado","meses":[557000.67,586195.93,922811.26,907983.87,620776.17,708492.94,1032140.44,892646.04,783883.94,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Abertura de oportunidades para MPE junto ao governo","tipo":"Pago","meses":[462758.92,508995.09,830761.72,853214.27,531869.57,687042.43,947483.21,787843.44,706315.7,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas e cadastramento","tipo":"Empenhado","meses":[13220.56,16619.75,21351.22,18108.55,24027.0,32761.59,32460.72,27271.38,30776.33,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas e cadastramento","tipo":"Liquidado","meses":[11186.53,12545.09,15431.11,15516.52,17200.49,27266.77,22815.68,22750.95,22401.72,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas e cadastramento","tipo":"Pago","meses":[10757.06,12288.63,12475.76,14625.47,14941.92,26579.49,21212.42,19293.45,19674.48,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Avaliar políticas públicas voltadas ao empreendedorismo","tipo":"Empenhado","meses":[73264.64,77148.27,128170.85,120315.91,141406.93,133241.96,104464.03,145729.1,170919.44,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Avaliar políticas públicas voltadas ao empreendedorismo","tipo":"Liquidado","meses":[68755.49,63658.63,117613.37,102538.34,118052.83,93288.42,97389.16,113213.81,160106.63,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Avaliar políticas públicas voltadas ao empreendedorismo","tipo":"Pago","meses":[65843.94,52973.99,100408.9,84851.61,110987.69,80073.94,93315.37,91751.47,130553.76,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Promover jornadas formativas para a rede de PP","tipo":"Empenhado","meses":[49649.76,66086.84,72597.21,72117.67,92913.79,109162.78,92472.23,76586.9,82427.08,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Promover jornadas formativas para a rede de PP","tipo":"Liquidado","meses":[35613.93,48382.03,55628.64,54300.97,69712.08,94149.57,67527.94,64875.01,59161.9,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Promover jornadas formativas para a rede de PP","tipo":"Pago","meses":[33366.99,42844.75,53238.72,48711.95,59681.14,82744.11,56753.55,54587.18,54050.22,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Articular agendas legislativas para competitividade MPE","tipo":"Empenhado","meses":[118011.1,125090.99,165760.47,212042.48,262501.85,230661.07,278938.69,181836.7,308964.62,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Articular agendas legislativas para competitividade MPE","tipo":"Liquidado","meses":[109320.17,95006.75,121515.35,173486.32,196247.03,185888.53,242213.94,145588.52,235481.73,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Articular agendas legislativas para competitividade MPE","tipo":"Pago","meses":[104371.72,87445.73,117674.56,163290.79,160421.66,164337.44,236679.29,125362.56,196447.72,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Parlamento + Empreendedor","tipo":"Empenhado","meses":[65960.57,69102.77,113236.53,126901.07,136887.54,117624.42,96726.32,99586.87,124763.12,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Parlamento + Empreendedor","tipo":"Liquidado","meses":[53129.29,64321.99,94844.8,115353.95,124865.24,88622.57,76872.59,89231.6,117193.67,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Parlamento + Empreendedor","tipo":"Pago","meses":[45167.23,56588.15,76739.49,112403.11,103630.16,77295.47,75131.85,78693.48,114753.24,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Laboratórios e observatórios de políticas públicas","tipo":"Empenhado","meses":[103559.33,105594.02,145740.41,157485.67,139155.29,148616.01,160253.31,146609.33,185305.16,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Laboratórios e observatórios de políticas públicas","tipo":"Liquidado","meses":[91091.0,99488.29,129270.85,130037.9,130833.07,126139.14,116980.37,124417.04,156752.99,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Laboratórios e observatórios de políticas públicas","tipo":"Pago","meses":[75410.91,89962.53,104746.85,123989.78,106553.08,116242.04,112330.6,113404.73,140152.99,0.0,0.0,0.0]},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de Políticas Públicas","acao":"Impulsionar ecossistemas empreendedores com parceiros públicos","tipo":"Empenhado","meses":[2195486.06,1829161.48,2299447.97,2127051.14,3751407.34,2785583.5,3933410.93,3507407.72,4298799.45,0.0,0.0,0.0]},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de Políticas Públicas","acao":"Impulsionar ecossistemas empreendedores com parceiros públicos","tipo":"Liquidado","meses":[1648952.3,1461402.09,1791371.84,1732634.99,2694692.84,2599826.43,3116763.12,3072085.75,3711987.87,0.0,0.0,0.0]},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de Políticas Públicas","acao":"Impulsionar ecossistemas empreendedores com parceiros públicos","tipo":"Pago","meses":[1531735.74,1345811.38,1675533.87,1697500.27,2259143.64,2492078.06,2581909.21,2795911.38,2974817.37,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Gestão de Viagens UPP","acao":"Viagens Colaboradores","tipo":"Empenhado","meses":[75305.88,92476.1,73990.61,102610.45,115604.56,136803.51,114613.06,123018.96,139610.01,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Gestão de Viagens UPP","acao":"Viagens Colaboradores","tipo":"Liquidado","meses":[58350.36,67837.95,62026.77,90235.95,88552.62,124699.95,88156.93,105707.53,116982.03,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Gestão de Viagens UPP","acao":"Viagens Colaboradores","tipo":"Pago","meses":[53647.91,55679.84,52662.13,75495.68,78629.04,101831.69,70581.81,89550.34,102591.33,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Bodyshop","acao":"Bodyshop — contrato compartilhado","tipo":"Empenhado","meses":[8365.93,15541.77,16348.83,15030.86,21803.3,16966.47,24221.68,15281.35,26300.59,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Bodyshop","acao":"Bodyshop — contrato compartilhado","tipo":"Liquidado","meses":[6013.52,12999.1,12049.47,13899.72,20162.19,12312.54,19415.97,14249.4,23741.36,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Bodyshop","acao":"Bodyshop — contrato compartilhado","tipo":"Pago","meses":[5766.72,12352.1,9916.0,13111.63,16892.16,11578.97,17701.91,13617.14,22759.77,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Licitações — Brindes","tipo":"Empenhado","meses":[7623.93,14179.76,16367.81,12060.72,14353.61,15795.42,13966.92,19702.94,20522.53,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Licitações — Brindes","tipo":"Liquidado","meses":[6740.63,12769.71,12549.22,11072.24,12977.77,14197.5,10451.2,18554.7,16416.38,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Licitações — Brindes","tipo":"Pago","meses":[5795.55,12201.86,11817.95,10568.97,11457.49,11939.63,8978.5,15775.99,16032.35,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Compra direta / impressões","tipo":"Empenhado","meses":[5090.54,7205.34,6252.69,8357.04,8380.93,7676.91,11117.22,9341.46,7522.79,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Compra direta / impressões","tipo":"Liquidado","meses":[4758.68,5365.39,4546.34,6505.28,6673.72,6734.16,9278.58,8105.18,6515.18,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Compra direta / impressões","tipo":"Pago","meses":[3905.74,5221.9,3992.69,5914.07,6031.62,5389.38,8624.41,7015.52,5599.38,0.0,0.0,0.0]}],"metas":[{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em PP","acao":"Comunidades empreendedoras","indicador":"Comunidades criadas","unidade":"unidade","meta":15.0,"realizado":9.0},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em PP","acao":"Sensibilizar gestores públicos","indicador":"Gestores sensibilizados","unidade":"pessoas","meta":500.0,"realizado":320.0},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Oportunidades para MPE","indicador":"Editais monitorados","unidade":"unidade","meta":2000.0,"realizado":1450.0},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas","indicador":"MPE cadastradas","unidade":"empresas","meta":5000.0,"realizado":3800.0},{"nucleo":"Projetos Especiais","projeto":"Gestão Movimenta","acao":"Avaliar PP empreendedorismo","indicador":"Políticas avaliadas","unidade":"unidade","meta":12.0,"realizado":7.0},{"nucleo":"Projetos Especiais","projeto":"Gestão Movimenta","acao":"Jornadas formativas","indicador":"Jornadas realizadas","unidade":"evento","meta":8.0,"realizado":6.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa","acao":"Agendas legislativas","indicador":"Proposições monitoradas","unidade":"proposição","meta":300.0,"realizado":245.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa","acao":"Parlamento + Empreendedor","indicador":"Eventos realizados","unidade":"evento","meta":20.0,"realizado":14.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa","acao":"Laboratórios e observatórios","indicador":"Laboratórios implementados","unidade":"unidade","meta":4.0,"realizado":2.0},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de PP","acao":"Ecossistemas empreendedores","indicador":"Parcerias firmadas","unidade":"parceria","meta":50.0,"realizado":38.0},{"nucleo":"Gestão UPP","projeto":"Viagens","acao":"Viagens","indicador":"Viagens realizadas","unidade":"viagem","meta":150.0,"realizado":98.0},{"nucleo":"Gestão UPP","projeto":"Conteúdos Estratégicos","acao":"Brindes e impressões","indicador":"Materiais produzidos","unidade":"lote","meta":30.0,"realizado":22.0}],"ano":2027,"unidade":"UPP — Unidade de Políticas Públicas","mes_atual":9};
+
+let filteredOrc, filteredExec, filteredMetas, currentMes;
+let charts = {};
+
+function init() {
+  currentMes = DATA.mes_atual;
+  populateFilters();
+  applyFilters();
+}
+
+function populateFilters() {
+  const nucleos = [...new Set(DATA.orcamento.map(o=>o.nucleo))];
+  const selN = document.getElementById('filterNucleo');
+  nucleos.forEach(n => { const o = document.createElement('option'); o.value=n; o.textContent=n.replace('— ',''); selN.appendChild(o); });
+
+  const selM = document.getElementById('filterMes');
+  for (let i=0; i<12; i++) {
+    const o = document.createElement('option');
+    o.value = i;
+    o.textContent = MESES[i] + '/2027';
+    if (i+1 === DATA.mes_atual) o.selected = true;
+    selM.appendChild(o);
+  }
+}
+
+function applyFilters() {
+  const nucleo = document.getElementById('filterNucleo').value;
+  const projeto = document.getElementById('filterProjeto').value;
+  currentMes = parseInt(document.getElementById('filterMes').value) + 1;
+
+  const projs = [...new Set(DATA.orcamento.filter(o=> !nucleo || o.nucleo===nucleo).map(o=>o.projeto))];
+  const selP = document.getElementById('filterProjeto');
+  const prevProj = selP.value;
+  selP.innerHTML = '<option value="">Todos</option>';
+  projs.forEach(p => { const o=document.createElement('option'); o.value=p; o.textContent=p; if(p===prevProj) o.selected=true; selP.appendChild(o); });
+  const activeProjeto = selP.value;
+
+  filteredOrc = DATA.orcamento.filter(o => (!nucleo || o.nucleo===nucleo) && (!activeProjeto || o.projeto===activeProjeto));
+  filteredExec = DATA.execucao.filter(e => (!nucleo || e.nucleo===nucleo) && (!activeProjeto || e.projeto===activeProjeto));
+  filteredMetas = DATA.metas.filter(m => (!nucleo || m.nucleo===nucleo));
+
+  renderAll();
+}
+
+function fmt(v) {
+  if (v>=1e6) return 'R$ '+(v/1e6).toFixed(2)+' mi';
+  if (v>=1e3) return 'R$ '+(v/1e3).toFixed(1)+' mil';
+  return 'R$ '+v.toFixed(2);
+}
+function fmtN(v) { return v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function pct(v,t) { return t>0 ? (v/t*100).toFixed(1)+'%' : '0%'; }
+
+function sumMeses(rows, tipo, upTo) {
+  return rows.filter(r=>r.tipo===tipo).reduce((s,r)=> s + r.meses.slice(0,upTo).reduce((a,b)=>a+b,0), 0);
+}
+function mesesTotals(rows, tipo) {
+  const totals = new Array(12).fill(0);
+  rows.filter(r=>r.tipo===tipo).forEach(r=> r.meses.forEach((v,i)=> totals[i]+=v));
+  return totals;
+}
+
+function renderAll() {
+  renderHeader();
+  renderKPIs();
+  updateThermometer();
+  renderDescritiva();
+  renderDiagnostica();
+  renderPreditiva();
+  renderPrescritiva();
+}
+
+function renderHeader() {}
+
+function renderKPIs() {
+  const totalLoa = filteredOrc.reduce((s,o)=>s+o.loa,0);
+  const totalAtualizado = filteredOrc.reduce((s,o)=>s+o.loa+o.credito+o.remanejamento,0);
+  const empenhado = sumMeses(filteredExec,'Empenhado',currentMes);
+  const liquidado = sumMeses(filteredExec,'Liquidado',currentMes);
+  const pago = sumMeses(filteredExec,'Pago',currentMes);
+  const saldo = totalAtualizado - empenhado;
+  const pctEmp = totalAtualizado>0 ? empenhado/totalAtualizado*100 : 0;
+  const pctLiq = empenhado>0 ? liquidado/empenhado*100 : 0;
+  const pctPago = totalAtualizado>0 ? pago/totalAtualizado*100 : 0;
+
+  document.getElementById('kpiRow').innerHTML = `
+    <div class="kpi kpi-blue">
+      <div class="kpi-label">Orçamento Atualizado</div>
+      <div class="kpi-value">${fmt(totalAtualizado)}</div>
+      <div class="kpi-detail">Dotação aprovada: ${fmt(totalLoa)}</div>
+    </div>
+    <div class="kpi kpi-purple">
+      <div class="kpi-label">Empenhado</div>
+      <div class="kpi-value">${fmt(empenhado)}</div>
+      <div class="kpi-detail">${pctEmp.toFixed(1)}% do orçamento</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${Math.min(pctEmp,100)}%;background:var(--accent2)"></div></div>
+    </div>
+    <div class="kpi kpi-cyan">
+      <div class="kpi-label">Liquidado</div>
+      <div class="kpi-value">${fmt(liquidado)}</div>
+      <div class="kpi-detail">${pctLiq.toFixed(1)}% do empenhado</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${Math.min(pctLiq,100)}%;background:var(--cyan)"></div></div>
+    </div>
+    <div class="kpi kpi-green">
+      <div class="kpi-label">Pago</div>
+      <div class="kpi-value">${fmt(pago)}</div>
+      <div class="kpi-detail">${pctPago.toFixed(1)}% do orçamento</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${Math.min(pctPago,100)}%;background:var(--green)"></div></div>
+    </div>
+    <div class="kpi kpi-yellow">
+      <div class="kpi-label">Saldo a Empenhar</div>
+      <div class="kpi-value">${fmt(saldo)}</div>
+      <div class="kpi-detail">${(100-pctEmp).toFixed(1)}% restante · ${12-currentMes} meses</div>
+    </div>
+    <div class="kpi kpi-red">
+      <div class="kpi-label">Restos a Pagar</div>
+      <div class="kpi-value">${fmt(empenhado-pago)}</div>
+      <div class="kpi-detail">Empenhado não pago</div>
+    </div>
+  `;
+}
+
+function renderDescritiva() {
+  renderTimelineChart();
+  renderNucleosChart();
+  renderDetailTable();
+}
+
+function renderTimelineChart() {
+  const empM = mesesTotals(filteredExec,'Empenhado');
+  const liqM = mesesTotals(filteredExec,'Liquidado');
+  const pagM = mesesTotals(filteredExec,'Pago');
+
+  let empAcc=[], liqAcc=[], pagAcc=[], se=0, sl=0, sp=0;
+  for(let i=0;i<12;i++) { se+=empM[i]; sl+=liqM[i]; sp+=pagM[i]; empAcc.push(se); liqAcc.push(sl); pagAcc.push(sp); }
+
+  const totalLoa = filteredOrc.reduce((s,o)=>s+o.loa,0);
+  const ideal = MESES.map((_,i)=> totalLoa/12*(i+1));
+
+  if(charts.timeline) charts.timeline.destroy();
+  charts.timeline = new Chart(document.getElementById('chartTimeline'), {
+    type:'line',
+    data:{
+      labels:MESES,
+      datasets:[
+        {label:'Ideal (linear)',data:ideal,borderColor:'rgba(255,255,255,.2)',borderDash:[5,5],pointRadius:0,fill:false,borderWidth:1.5},
+        {label:'Empenhado',data:empAcc,borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,.1)',fill:true,tension:.3,pointRadius:2},
+        {label:'Liquidado',data:liqAcc,borderColor:'#06b6d4',backgroundColor:'rgba(6,182,212,.08)',fill:true,tension:.3,pointRadius:2},
+        {label:'Pago',data:pagAcc,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.08)',fill:true,tension:.3,pointRadius:2},
+      ]
+    },
+    options:{
+      responsive:true, plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',boxWidth:12,padding:12,font:{size:11}}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10}}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmt(v)}}
+      }
+    }
+  });
+}
+
+function renderNucleosChart() {
+  const nucleos = [...new Set(filteredOrc.map(o=>o.nucleo))];
+  const loaByN = nucleos.map(n=> filteredOrc.filter(o=>o.nucleo===n).reduce((s,o)=>s+o.loa,0));
+  const empByN = nucleos.map(n=> sumMeses(filteredExec.filter(e=>e.nucleo===n),'Empenhado',currentMes));
+  const pagByN = nucleos.map(n=> sumMeses(filteredExec.filter(e=>e.nucleo===n),'Pago',currentMes));
+  const labels = nucleos.map(n=> n.length>25 ? n.substring(0,22)+'...' : n);
+
+  if(charts.nucleos) charts.nucleos.destroy();
+  charts.nucleos = new Chart(document.getElementById('chartNucleos'), {
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[
+        {label:'Orçamento',data:loaByN,backgroundColor:'rgba(255,255,255,.1)',borderRadius:4},
+        {label:'Empenhado',data:empByN,backgroundColor:'rgba(139,92,246,.6)',borderRadius:4},
+        {label:'Pago',data:pagByN,backgroundColor:'rgba(34,197,94,.6)',borderRadius:4},
+      ]
+    },
+    options:{
+      responsive:true, indexAxis:'y',
+      plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',boxWidth:12,padding:12,font:{size:11}}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmt(v)}},
+        y:{grid:{display:false},ticks:{color:'#e2e8f0',font:{size:10}}}
+      }
+    }
+  });
+}
+
+function renderDetailTable() {
+  const acoes = filteredOrc.map(o => {
+    const exec = filteredExec.filter(e=> e.acao===o.acao && e.nucleo===o.nucleo);
+    const emp = sumMeses(exec,'Empenhado',currentMes);
+    const liq = sumMeses(exec,'Liquidado',currentMes);
+    const pag = sumMeses(exec,'Pago',currentMes);
+    const orc = o.loa+o.credito+o.remanejamento;
+    return {...o, orc, emp, liq, pag, pctEmp: orc>0?emp/orc*100:0, pctPago: orc>0?pag/orc*100:0};
+  });
+
+  const colorForPct = p => p>=75?'var(--green)':p>=50?'var(--accent)':p>=30?'var(--yellow)':'var(--red)';
+
+  let html = `<table class="data-table"><thead><tr>
+    <th>Núcleo</th><th>Projeto</th><th>Ação</th>
+    <th class="num">Orçamento</th><th class="num">Empenhado</th><th class="num">Pago</th>
+    <th class="pct-cell">% Emp.</th><th class="pct-cell">% Pago</th>
+  </tr></thead><tbody>`;
+
+  acoes.filter(a=>a.orc>0).forEach(a => {
+    html += `<tr>
+      <td>${a.nucleo.replace('— ','')}</td><td>${a.projeto}</td><td>${a.acao}</td>
+      <td class="num">${fmtN(a.orc)}</td><td class="num">${fmtN(a.emp)}</td><td class="num">${fmtN(a.pag)}</td>
+      <td class="pct-cell"><div style="display:flex;align-items:center;gap:6px"><span>${a.pctEmp.toFixed(1)}%</span>
+        <div class="pct-bar" style="flex:1"><div class="pct-bar-fill" style="width:${Math.min(a.pctEmp,100)}%;background:${colorForPct(a.pctEmp)}"></div></div>
+      </div></td>
+      <td class="pct-cell"><div style="display:flex;align-items:center;gap:6px"><span>${a.pctPago.toFixed(1)}%</span>
+        <div class="pct-bar" style="flex:1"><div class="pct-bar-fill" style="width:${Math.min(a.pctPago,100)}%;background:${colorForPct(a.pctPago)}"></div></div>
+      </div></td>
+    </tr>`;
+  });
+
+  const totOrc = acoes.reduce((s,a)=>s+a.orc,0);
+  const totEmp = acoes.reduce((s,a)=>s+a.emp,0);
+  const totPag = acoes.reduce((s,a)=>s+a.pag,0);
+  html += `<tr style="font-weight:700;background:var(--surface2)">
+    <td colspan="3">TOTAL</td><td class="num">${fmtN(totOrc)}</td><td class="num">${fmtN(totEmp)}</td><td class="num">${fmtN(totPag)}</td>
+    <td>${totOrc>0?(totEmp/totOrc*100).toFixed(1)+'%':'-'}</td><td>${totOrc>0?(totPag/totOrc*100).toFixed(1)+'%':'-'}</td>
+  </tr>`;
+  html += '</tbody></table>';
+  document.getElementById('tableDetail').innerHTML = html;
+}
+
+function renderDiagnostica() {
+  renderAlerts();
+  renderGapChart();
+  renderVelocityChart();
+  renderFunnelChart();
+  renderMetasTable();
+}
+
+function renderAlerts() {
+  const alerts = [];
+  const expected = currentMes/12;
+
+  filteredOrc.filter(o=>o.loa>0).forEach(o => {
+    const exec = filteredExec.filter(e=> e.acao===o.acao && e.nucleo===o.nucleo);
+    const emp = sumMeses(exec,'Empenhado',currentMes);
+    const pag = sumMeses(exec,'Pago',currentMes);
+    const orc = o.loa+o.credito+o.remanejamento;
+    const pctEmp = orc>0 ? emp/orc : 0;
+    const pctPago = orc>0 ? pag/orc : 0;
+
+    if (pctEmp < expected*0.5 && orc > 500000) {
+      alerts.push({type:'critical', icon:'&#x1F534;', title:`Execução crítica: ${o.acao}`,
+        desc:`Apenas ${(pctEmp*100).toFixed(1)}% empenhado (esperado: ~${(expected*100).toFixed(0)}%). Orçamento: ${fmt(orc)}`});
+    } else if (pctEmp < expected*0.7 && orc > 200000) {
+      alerts.push({type:'warning', icon:'&#x1F7E1;', title:`Execução abaixo do esperado: ${o.acao}`,
+        desc:`${(pctEmp*100).toFixed(1)}% empenhado vs ${(expected*100).toFixed(0)}% esperado. Gap de ${fmt(orc*expected - emp)}`});
+    }
+
+    if (emp > 0 && pctPago < pctEmp*0.6 && emp-pag > 200000) {
+      alerts.push({type:'warning', icon:'&#x1F7E0;', title:`Restos a pagar elevados: ${o.acao}`,
+        desc:`${fmt(emp-pag)} empenhados mas não pagos (${((1-pag/emp)*100).toFixed(0)}% pendente)`});
+    }
+  });
+
+  filteredMetas.forEach(m => {
+    const pctMeta = m.meta>0 ? m.realizado/m.meta : 0;
+    if (pctMeta < expected*0.6) {
+      alerts.push({type:'info', icon:'&#x1F535;', title:`Meta física em risco: ${m.indicador}`,
+        desc:`${m.realizado}/${m.meta} ${m.unidade}s (${(pctMeta*100).toFixed(0)}% vs ${(expected*100).toFixed(0)}% esperado)`});
+    }
+  });
+
+  if (alerts.length === 0) {
+    alerts.push({type:'success', icon:'&#x2705;', title:'Execução dentro dos parâmetros',
+      desc:'Não há alertas críticos no período selecionado.'});
+  }
+
+  alerts.sort((a,b)=> {const o={critical:0,warning:1,info:2,success:3}; return o[a.type]-o[b.type];});
+  document.getElementById('alertList').innerHTML = alerts.map(a=>
+    `<div class="alert-item ${a.type}"><span class="alert-icon">${a.icon}</span><div class="alert-text"><div class="alert-title">${a.title}</div><div class="alert-desc">${a.desc}</div></div></div>`
+  ).join('');
+}
+
+function renderGapChart() {
+  const nucleos = [...new Set(filteredOrc.map(o=>o.nucleo))];
+  const expected = currentMes/12;
+  const labels = nucleos.map(n=> n.length>22 ? n.substring(0,20)+'...' : n);
+
+  const previsto = nucleos.map(n=> filteredOrc.filter(o=>o.nucleo===n).reduce((s,o)=>s+o.loa,0)*expected);
+  const realizado = nucleos.map(n=> sumMeses(filteredExec.filter(e=>e.nucleo===n),'Empenhado',currentMes));
+
+  if(charts.gap) charts.gap.destroy();
+  charts.gap = new Chart(document.getElementById('chartGap'), {
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[
+        {label:'Previsto (linear)',data:previsto,backgroundColor:'rgba(255,255,255,.12)',borderRadius:4},
+        {label:'Realizado (Empenhado)',data:realizado,backgroundColor: nucleos.map(n=>NUCLEO_COLORS[n]||'#3b82f6'),borderRadius:4},
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',boxWidth:12,font:{size:11}}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#e2e8f0',font:{size:10}}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmt(v)}}
+      }
+    }
+  });
+}
+
+function renderVelocityChart() {
+  const nucleos = [...new Set(filteredOrc.map(o=>o.nucleo))];
+  const datasets = nucleos.map(n => {
+    const mTotals = mesesTotals(filteredExec.filter(e=>e.nucleo===n),'Empenhado');
+    return {
+      label: n.length>20 ? n.substring(0,18)+'...' : n,
+      data: mTotals.slice(0,currentMes),
+      borderColor: NUCLEO_COLORS[n]||'#3b82f6',
+      backgroundColor: 'transparent',
+      tension:.3, pointRadius:3, borderWidth:2
+    };
+  });
+
+  if(charts.velocity) charts.velocity.destroy();
+  charts.velocity = new Chart(document.getElementById('chartVelocity'), {
+    type:'line',
+    data:{labels:MESES.slice(0,currentMes), datasets},
+    options:{
+      responsive:true,
+      plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',boxWidth:12,font:{size:11}}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10}}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmt(v)}}
+      }
+    }
+  });
+}
+
+function renderFunnelChart() {
+  const nucleos = [...new Set(filteredOrc.map(o=>o.nucleo))];
+  const labels = nucleos.map(n=> n.length>22 ? n.substring(0,20)+'...' : n);
+
+  const empByN = nucleos.map(n=> sumMeses(filteredExec.filter(e=>e.nucleo===n),'Empenhado',currentMes));
+  const liqByN = nucleos.map(n=> sumMeses(filteredExec.filter(e=>e.nucleo===n),'Liquidado',currentMes));
+  const pagByN = nucleos.map(n=> sumMeses(filteredExec.filter(e=>e.nucleo===n),'Pago',currentMes));
+
+  if(charts.funnel) charts.funnel.destroy();
+  charts.funnel = new Chart(document.getElementById('chartFunnel'), {
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[
+        {label:'Empenhado',data:empByN,backgroundColor:'rgba(139,92,246,.5)',borderRadius:4},
+        {label:'Liquidado',data:liqByN,backgroundColor:'rgba(6,182,212,.5)',borderRadius:4},
+        {label:'Pago',data:pagByN,backgroundColor:'rgba(34,197,94,.5)',borderRadius:4},
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',boxWidth:12,font:{size:11}}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#e2e8f0',font:{size:10}}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmt(v)}}
+      }
+    }
+  });
+}
+
+function renderMetasTable() {
+  let html = `<table class="data-table"><thead><tr>
+    <th>Núcleo</th><th>Indicador</th><th class="num">Meta</th>
+    <th class="num">Realizado</th><th class="pct-cell">% Atingimento</th><th>Status</th>
+  </tr></thead><tbody>`;
+
+  const expected = currentMes/12;
+  filteredMetas.forEach(m => {
+    const pctAt = m.meta>0 ? m.realizado/m.meta*100 : 0;
+    const ratio = pctAt/100/expected;
+    const status = ratio>=0.9?'<span style="color:var(--green)">No ritmo</span>'
+                  :ratio>=0.7?'<span style="color:var(--yellow)">Atenção</span>'
+                  :'<span style="color:var(--red)">Em risco</span>';
+    const barColor = ratio>=0.9?'var(--green)':ratio>=0.7?'var(--yellow)':'var(--red)';
+
+    html += `<tr>
+      <td>${m.nucleo.replace('— ','')}</td><td>${m.indicador}</td>
+      <td class="num">${m.meta} ${m.unidade}</td><td class="num">${m.realizado} ${m.unidade}</td>
+      <td class="pct-cell"><div style="display:flex;align-items:center;gap:6px"><span>${pctAt.toFixed(0)}%</span>
+        <div class="pct-bar" style="flex:1"><div class="pct-bar-fill" style="width:${Math.min(pctAt,100)}%;background:${barColor}"></div></div>
+      </div></td>
+      <td>${status}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('tableMetas').innerHTML = html;
+}
+
+function renderPreditiva() {
+  const totalLoa = filteredOrc.reduce((s,o)=>s+o.loa,0);
+  const empM = mesesTotals(filteredExec,'Empenhado');
+  const pagM = mesesTotals(filteredExec,'Pago');
+
+  const empExec = empM.slice(0,currentMes);
+  const pagExec = pagM.slice(0,currentMes);
+  const avgEmpMensal = empExec.reduce((a,b)=>a+b,0)/currentMes;
+  const avgPagMensal = pagExec.reduce((a,b)=>a+b,0)/currentMes;
+
+  const projEmpAnual = empExec.reduce((a,b)=>a+b,0) + avgEmpMensal*(12-currentMes);
+  const projPagAnual = pagExec.reduce((a,b)=>a+b,0) + avgPagMensal*(12-currentMes);
+
+  const pctProjEmp = totalLoa>0 ? projEmpAnual/totalLoa*100 : 0;
+  const pctProjPag = totalLoa>0 ? projPagAnual/totalLoa*100 : 0;
+  const mesesRest = 12-currentMes;
+  const saldoNecessario = totalLoa - empExec.reduce((a,b)=>a+b,0);
+  const mediaNecessaria = mesesRest>0 ? saldoNecessario/mesesRest : 0;
+  const viabilidade = mediaNecessaria>0 ? avgEmpMensal/mediaNecessaria : 999;
+
+  document.getElementById('kpiPreditiva').innerHTML = `
+    <div class="kpi kpi-purple">
+      <div class="kpi-label">Projeção Empenho Anual</div>
+      <div class="kpi-value">${fmt(projEmpAnual)}</div>
+      <div class="kpi-detail">${pctProjEmp.toFixed(1)}% do orçamento</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${Math.min(pctProjEmp,100)}%;background:var(--accent2)"></div></div>
+    </div>
+    <div class="kpi kpi-green">
+      <div class="kpi-label">Projeção Pagamento Anual</div>
+      <div class="kpi-value">${fmt(projPagAnual)}</div>
+      <div class="kpi-detail">${pctProjPag.toFixed(1)}% do orçamento</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${Math.min(pctProjPag,100)}%;background:var(--green)"></div></div>
+    </div>
+    <div class="kpi kpi-yellow">
+      <div class="kpi-label">Média Mensal Necessária</div>
+      <div class="kpi-value">${fmt(mediaNecessaria)}</div>
+      <div class="kpi-detail">Para executar 100% em ${mesesRest} meses</div>
+    </div>
+    <div class="kpi ${viabilidade>=0.9?'kpi-green':viabilidade>=0.7?'kpi-yellow':'kpi-red'}">
+      <div class="kpi-label">Índice de Viabilidade</div>
+      <div class="kpi-value">${Math.min(viabilidade*100,999).toFixed(0)}%</div>
+      <div class="kpi-detail">${viabilidade>=0.9?'Ritmo atual é suficiente':viabilidade>=0.7?'Necessário acelerar':'Risco alto de inexecução'}</div>
+    </div>
+  `;
+
+  renderProjectionChart(empM, pagM, totalLoa, avgEmpMensal, avgPagMensal);
+  renderRiskChart();
+  renderProjectionTable(avgEmpMensal, avgPagMensal);
+}
+
+function renderProjectionChart(empM, pagM, totalLoa, avgEmp, avgPag) {
+  let empAcc=[], pagAcc=[], projEmpAcc=[], projPagAcc=[];
+  let se=0, sp=0;
+
+  for(let i=0;i<12;i++) {
+    if(i<currentMes) { se+=empM[i]; sp+=pagM[i]; empAcc.push(se); pagAcc.push(sp); projEmpAcc.push(null); projPagAcc.push(null); }
+    else { const pe=se+avgEmp*(i-currentMes+1); const pp=sp+avgPag*(i-currentMes+1); empAcc.push(null); pagAcc.push(null); projEmpAcc.push(pe); projPagAcc.push(pp); }
+  }
+  if(currentMes<12) { projEmpAcc[currentMes-1]=empAcc[currentMes-1]; projPagAcc[currentMes-1]=pagAcc[currentMes-1]; }
+
+  if(charts.projection) charts.projection.destroy();
+  charts.projection = new Chart(document.getElementById('chartProjection'), {
+    type:'line',
+    data:{
+      labels:MESES,
+      datasets:[
+        {label:'Meta 100%',data:Array(12).fill(totalLoa),borderColor:'rgba(255,255,255,.15)',borderDash:[4,4],pointRadius:0,borderWidth:1},
+        {label:'Empenhado (real)',data:empAcc,borderColor:'#8b5cf6',pointRadius:3,borderWidth:2.5,tension:.3},
+        {label:'Pago (real)',data:pagAcc,borderColor:'#22c55e',pointRadius:3,borderWidth:2.5,tension:.3},
+        {label:'Empenho (projeção)',data:projEmpAcc,borderColor:'#8b5cf6',borderDash:[6,4],pointRadius:2,borderWidth:2,tension:.3},
+        {label:'Pago (projeção)',data:projPagAcc,borderColor:'#22c55e',borderDash:[6,4],pointRadius:2,borderWidth:2,tension:.3},
+      ]
+    },
+    options:{
+      responsive:true, spanGaps:false,
+      plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',boxWidth:12,font:{size:11}}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10}}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmt(v)}}
+      }
+    }
+  });
+}
+
+function renderRiskChart() {
+  const nucleos = [...new Set(filteredOrc.map(o=>o.nucleo))];
+  const expected = currentMes/12;
+
+  const riskData = nucleos.map(n => {
+    const loa = filteredOrc.filter(o=>o.nucleo===n).reduce((s,o)=>s+o.loa,0);
+    const emp = sumMeses(filteredExec.filter(e=>e.nucleo===n),'Empenhado',currentMes);
+    const pctExec = loa>0 ? emp/loa : 0;
+    const gap = expected - pctExec;
+    return Math.max(0, gap*100);
+  });
+
+  const colors = riskData.map(r=> r>20?'rgba(239,68,68,.7)':r>10?'rgba(234,179,8,.7)':'rgba(34,197,94,.7)');
+  const labels = nucleos.map(n=> n.length>22 ? n.substring(0,20)+'...' : n);
+
+  if(charts.risk) charts.risk.destroy();
+  charts.risk = new Chart(document.getElementById('chartRisk'), {
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[{label:'Gap de execução (p.p.)',data:riskData,backgroundColor:colors,borderRadius:6}]
+    },
+    options:{
+      responsive:true, indexAxis:'y',
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>v+'%'},max:50},
+        y:{grid:{display:false},ticks:{color:'#e2e8f0',font:{size:10}}}
+      }
+    }
+  });
+}
+
+function renderProjectionTable(avgEmp, avgPag) {
+  const acoes = filteredOrc.filter(o=>o.loa>0).map(o => {
+    const exec = filteredExec.filter(e=> e.acao===o.acao && e.nucleo===o.nucleo);
+    const empAcum = sumMeses(exec,'Empenhado',currentMes);
+    const pagAcum = sumMeses(exec,'Pago',currentMes);
+    const loa = o.loa;
+    const avgE = currentMes>0 ? empAcum/currentMes : 0;
+    const avgP = currentMes>0 ? pagAcum/currentMes : 0;
+    const projEmp = empAcum + avgE*(12-currentMes);
+    const projPag = pagAcum + avgP*(12-currentMes);
+    const pctProj = loa>0 ? projEmp/loa*100 : 0;
+    return {...o, empAcum, projEmp, projPag, pctProj};
+  });
+
+  let html = `<table class="data-table"><thead><tr>
+    <th>Ação</th><th class="num">Orçamento</th><th class="num">Executado</th>
+    <th class="num">Projeção Anual</th><th class="pct-cell">% Projetado</th><th>Risco</th>
+  </tr></thead><tbody>`;
+
+  acoes.forEach(a => {
+    const risco = a.pctProj>=90?'<span style="color:var(--green)">Baixo</span>'
+                 :a.pctProj>=70?'<span style="color:var(--yellow)">Médio</span>'
+                 :'<span style="color:var(--red)">Alto</span>';
+    const barColor = a.pctProj>=90?'var(--green)':a.pctProj>=70?'var(--yellow)':'var(--red)';
+    html += `<tr>
+      <td>${a.acao}</td><td class="num">${fmtN(a.loa)}</td><td class="num">${fmtN(a.empAcum)}</td>
+      <td class="num">${fmtN(a.projEmp)}</td>
+      <td class="pct-cell"><div style="display:flex;align-items:center;gap:6px"><span>${a.pctProj.toFixed(0)}%</span>
+        <div class="pct-bar" style="flex:1"><div class="pct-bar-fill" style="width:${Math.min(a.pctProj,100)}%;background:${barColor}"></div></div>
+      </div></td>
+      <td>${risco}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('tableProjection').innerHTML = html;
+}
+
+function renderPrescritiva() {
+  renderRecommendations();
+  renderReallocChart();
+  renderImpactChart();
+}
+
+function renderRecommendations() {
+  const recs = [];
+  const expected = currentMes/12;
+  const totalLoa = filteredOrc.reduce((s,o)=>s+o.loa,0);
+
+  filteredOrc.filter(o=>o.loa>0).forEach(o => {
+    const exec = filteredExec.filter(e=> e.acao===o.acao && e.nucleo===o.nucleo);
+    const emp = sumMeses(exec,'Empenhado',currentMes);
+    const liq = sumMeses(exec,'Liquidado',currentMes);
+    const pag = sumMeses(exec,'Pago',currentMes);
+    const orc = o.loa;
+    const pctEmp = emp/orc;
+    const avgM = emp/currentMes;
+    const projAnual = emp + avgM*(12-currentMes);
+
+    if (pctEmp < expected*0.5 && orc > 1e6) {
+      const deficit = orc*expected - emp;
+      recs.push({priority:'high', title:`Acelerar execução: ${o.acao}`,
+        body:`Execução em ${(pctEmp*100).toFixed(1)}% quando o esperado seria ${(expected*100).toFixed(0)}%. Déficit de ${fmt(deficit)}. Recomenda-se antecipar empenhos programados e revisar cronograma de contratações.`,
+        metric:`Projeção anual: ${fmt(projAnual)} (${(projAnual/orc*100).toFixed(0)}% do orçamento)`});
+    }
+
+    if (emp > 0 && liq/emp < 0.65) {
+      recs.push({priority:'medium', title:`Agilizar liquidações: ${o.acao}`,
+        body:`Taxa de liquidação em ${(liq/emp*100).toFixed(0)}% do empenhado. Verificar pendências de atesto e documentação comprobatória com os fornecedores.`,
+        metric:`${fmt(emp-liq)} empenhados aguardando liquidação`});
+    }
+
+    if (pctEmp > expected*1.3 && orc > 500000) {
+      const excedente = emp - orc*expected;
+      recs.push({priority:'low', title:`Execução acima do previsto: ${o.acao}`,
+        body:`Execução ${(pctEmp/expected*100-100).toFixed(0)}% acima do ritmo linear. Avaliar possibilidade de remanejamento do excedente (${fmt(excedente)}) para ações deficitárias.`,
+        metric:`Excedente disponível: ${fmt(excedente)}`});
+    }
+  });
+
+  filteredMetas.forEach(m => {
+    const pctMeta = m.meta>0 ? m.realizado/m.meta : 0;
+    if (pctMeta < expected*0.6) {
+      recs.push({priority:'high', title:`Meta física em risco: ${m.indicador}`,
+        body:`Atingimento de ${(pctMeta*100).toFixed(0)}% (${m.realizado}/${m.meta} ${m.unidade}s). Ritmo atual insuficiente para atingir a meta anual. Necessário intensificar ações no próximo trimestre.`,
+        metric:`Necessário: +${Math.ceil(m.meta*expected - m.realizado)} ${m.unidade}s até ${MESES[currentMes-1]}`});
+    }
+  });
+
+  if (recs.length === 0) {
+    recs.push({priority:'low', title:'Execução dentro dos parâmetros', body:'Todas as ações estão com execução compatível com o período. Manter ritmo atual.', metric:''});
+  }
+
+  recs.sort((a,b)=> {const o={high:0,medium:1,low:2}; return o[a.priority]-o[b.priority];});
+
+  document.getElementById('recList').innerHTML = recs.map(r=> `
+    <div class="rec-card">
+      <div class="rec-header">
+        <span class="rec-priority ${r.priority}">${r.priority==='high'?'Alta':r.priority==='medium'?'Média':'Baixa'}</span>
+        <span class="rec-title">${r.title}</span>
+      </div>
+      <div class="rec-body">${r.body}</div>
+      ${r.metric ? `<div class="rec-metric">${r.metric}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function renderReallocChart() {
+  const expected = currentMes/12;
+  const acoes = filteredOrc.filter(o=>o.loa>500000).map(o => {
+    const exec = filteredExec.filter(e=> e.acao===o.acao && e.nucleo===o.nucleo);
+    const emp = sumMeses(exec,'Empenhado',currentMes);
+    const orc = o.loa;
+    const gap = (emp/orc) - expected;
+    return {acao: o.acao.length>30 ? o.acao.substring(0,28)+'...' : o.acao, gap: gap*100, value: Math.abs(gap*orc)};
+  });
+
+  acoes.sort((a,b)=> a.gap - b.gap);
+  const labels = acoes.map(a=>a.acao);
+  const values = acoes.map(a=>a.gap);
+  const colors = values.map(v=> v>=0?'rgba(34,197,94,.6)':'rgba(239,68,68,.6)');
+
+  if(charts.realloc) charts.realloc.destroy();
+  charts.realloc = new Chart(document.getElementById('chartRealloc'), {
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[{label:'Desvio da meta (%)',data:values,backgroundColor:colors,borderRadius:4}]
+    },
+    options:{
+      responsive:true, indexAxis:'y',
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>`${ctx.raw>0?'+':''}${ctx.raw.toFixed(1)}% vs. meta linear`}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>(v>0?'+':'')+v+'%'}},
+        y:{grid:{display:false},ticks:{color:'#e2e8f0',font:{size:9}}}
+      }
+    }
+  });
+}
+
+function renderImpactChart() {
+  const nucleos = [...new Set(filteredOrc.map(o=>o.nucleo))];
+  const avgRest = 12-currentMes;
+
+  const impactData = nucleos.map(n => {
+    const loa = filteredOrc.filter(o=>o.nucleo===n).reduce((s,o)=>s+o.loa,0);
+    const emp = sumMeses(filteredExec.filter(e=>e.nucleo===n),'Empenhado',currentMes);
+    const avgM = currentMes>0 ? emp/currentMes : 0;
+    const projBase = emp + avgM*avgRest;
+    const projAcel = emp + avgM*1.3*avgRest;
+    return {nucleo:n, base:Math.min(projBase/loa*100,120), acelerado:Math.min(projAcel/loa*100,120)};
+  });
+
+  const labels = impactData.map(d=> d.nucleo.length>22 ? d.nucleo.substring(0,20)+'...' : d.nucleo);
+
+  if(charts.impact) charts.impact.destroy();
+  charts.impact = new Chart(document.getElementById('chartImpact'), {
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[
+        {label:'Cenário Base',data:impactData.map(d=>d.base),backgroundColor:'rgba(59,130,246,.5)',borderRadius:4},
+        {label:'Cenário Acelerado (+30%)',data:impactData.map(d=>d.acelerado),backgroundColor:'rgba(34,197,94,.5)',borderRadius:4},
+        {label:'Meta 100%',data:impactData.map(()=>100),type:'line',borderColor:'rgba(255,255,255,.3)',borderDash:[4,4],pointRadius:0,borderWidth:1.5},
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',boxWidth:12,font:{size:11}}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#e2e8f0',font:{size:10}}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>v+'%'},max:120}
+      }
+    }
+  });
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t=> t.classList.toggle('active', t.dataset.tab===name));
+  document.querySelectorAll('.tab-content').forEach(c=> c.classList.toggle('active', c.id==='tab-'+name));
+}
+
+function openInfoModal() { document.getElementById('infoModal').classList.add('active'); }
+function closeInfoModal() { document.getElementById('infoModal').classList.remove('active'); }
+function openExportModal() { document.getElementById('exportModal').classList.add('active'); }
+function closeExportModal() { document.getElementById('exportModal').classList.remove('active'); }
+
+function updateThermometer() {
+  const totalLoa = filteredOrc.reduce((s,o)=>s+o.loa,0);
+  const pago = sumMeses(filteredExec,'Pago',currentMes);
+  const pctPago = totalLoa>0 ? pago/totalLoa*100 : 0;
+  const expected = currentMes/12*100;
+  const ratio = expected>0 ? pctPago/expected : 0;
+
+  const el = document.getElementById('thermometer');
+  let cls, label;
+  if(ratio>=0.9) { cls='thermo-green'; label='Saudável'; }
+  else if(ratio>=0.7) { cls='thermo-yellow'; label='Moderado'; }
+  else if(ratio>=0.5) { cls='thermo-orange'; label='Atenção'; }
+  else { cls='thermo-red'; label='Crítico'; }
+
+  const nucleoCount = [...new Set(filteredOrc.map(o=>o.nucleo))].length;
+  const acaoCount = filteredOrc.filter(o=>o.loa>0).length;
+  el.className = 'thermometer '+cls;
+  el.innerHTML = `${acaoCount} ações · ${nucleoCount} núcleos — ${label}`;
+}
+
+function exportWhatsApp() {
+  const totalLoa = filteredOrc.reduce((s,o)=>s+o.loa,0);
+  const empenhado = sumMeses(filteredExec,'Empenhado',currentMes);
+  const liquidado = sumMeses(filteredExec,'Liquidado',currentMes);
+  const pago = sumMeses(filteredExec,'Pago',currentMes);
+  const pctEmp = totalLoa>0?(empenhado/totalLoa*100).toFixed(1):'0';
+  const pctPag = totalLoa>0?(pago/totalLoa*100).toFixed(1):'0';
+
+  const nucleos = [...new Set(filteredOrc.map(o=>o.nucleo))];
+  let nucleoLines = nucleos.map(n => {
+    const loa = filteredOrc.filter(o=>o.nucleo===n).reduce((s,o)=>s+o.loa,0);
+    const emp = sumMeses(filteredExec.filter(e=>e.nucleo===n),'Empenhado',currentMes);
+    const pg = sumMeses(filteredExec.filter(e=>e.nucleo===n),'Pago',currentMes);
+    const shortName = n.replace('— ','').replace('Núcleo de Assessoria Legislativa','NAL').replace('Relacionamento Governamental','RelGov');
+    return `  ${shortName}: ${fmt(emp)} emp. (${loa>0?(emp/loa*100).toFixed(0):'0'}%) | ${fmt(pg)} pago`;
+  }).join('\n');
+
+  const text = `📊 *PIPPA Orçamento — UPP 2027*
+📅 Referência: ${MESES[currentMes-1]}/2027
+
+💰 *Orçamento:* ${fmt(totalLoa)}
+📌 *Empenhado:* ${fmt(empenhado)} (${pctEmp}%)
+✅ *Pago:* ${fmt(pago)} (${pctPag}%)
+⏳ *Saldo:* ${fmt(totalLoa-empenhado)}
+
+📋 *Por Núcleo:*
+${nucleoLines}
+
+_Gerado pelo PIPPA Orçamento — Sebrae Nacional_`;
+
+  document.getElementById('exportContent').textContent = text;
+  openExportModal();
+}
+
+function copyExport() {
+  const text = document.getElementById('exportContent').textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(()=> toast.classList.remove('show'), 2000);
+  });
+}
+
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.font.family = "'Segoe UI',system-ui,sans-serif";
+init();
+</script>
+
+</body>
+</html>
