@@ -285,11 +285,11 @@ a { color:var(--accent); text-decoration:none; }
   <div class="chart-grid">
     <div class="chart-box">
       <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Execução Mensal Acumulada</div>
-      <div class="chart-canvas"><canvas id="chartTimeline" height="260"></canvas></div>
+      <div class="chart-canvas"><canvas id="chartTimeline" height="200"></canvas></div>
     </div>
     <div class="chart-box">
       <div class="chart-title"><span class="dot" style="background:var(--accent2)"></span>Execução por Núcleo</div>
-      <div class="chart-canvas"><canvas id="chartNucleos" height="260"></canvas></div>
+      <div class="chart-canvas"><canvas id="chartNucleos" height="200"></canvas></div>
     </div>
   </div>
   <div class="chart-grid full">
@@ -307,17 +307,17 @@ a { color:var(--accent); text-decoration:none; }
   <div class="chart-grid" style="margin-top:1.5rem">
     <div class="chart-box">
       <div class="chart-title"><span class="dot" style="background:var(--yellow)"></span>Gap: Previsto vs. Realizado por Núcleo</div>
-      <div class="chart-canvas"><canvas id="chartGap" height="280"></canvas></div>
+      <div class="chart-canvas"><canvas id="chartGap" height="210"></canvas></div>
     </div>
     <div class="chart-box">
       <div class="chart-title"><span class="dot" style="background:var(--orange)"></span>Velocidade de Execução (Empenho mensal)</div>
-      <div class="chart-canvas"><canvas id="chartVelocity" height="280"></canvas></div>
+      <div class="chart-canvas"><canvas id="chartVelocity" height="210"></canvas></div>
     </div>
   </div>
   <div class="chart-grid full" style="margin-top:1rem">
     <div class="chart-box">
       <div class="chart-title"><span class="dot" style="background:var(--red)"></span>Funil de Execução (Empenhado → Liquidado → Pago)</div>
-      <div class="chart-canvas"><canvas id="chartFunnel" height="240"></canvas></div>
+      <div class="chart-canvas"><canvas id="chartFunnel" height="190"></canvas></div>
     </div>
   </div>
   <div class="section-title" style="margin-top:1.5rem">&#x1F3AF; Metas Físicas — Atingimento</div>
@@ -330,11 +330,11 @@ a { color:var(--accent); text-decoration:none; }
   <div class="chart-grid">
     <div class="chart-box">
       <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Projeção de Execução até Dez/2027</div>
-      <div class="chart-canvas"><canvas id="chartProjection" height="280"></canvas></div>
+      <div class="chart-canvas"><canvas id="chartProjection" height="210"></canvas></div>
     </div>
     <div class="chart-box">
       <div class="chart-title"><span class="dot" style="background:var(--red)"></span>Risco de Inexecução por Núcleo</div>
-      <div class="chart-canvas"><canvas id="chartRisk" height="280"></canvas></div>
+      <div class="chart-canvas"><canvas id="chartRisk" height="210"></canvas></div>
     </div>
   </div>
   <div class="chart-grid full">
@@ -352,11 +352,11 @@ a { color:var(--accent); text-decoration:none; }
   <div class="chart-grid" style="margin-top:1.5rem">
     <div class="chart-box">
       <div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Sugestão de Remanejamento</div>
-      <div class="chart-canvas"><canvas id="chartRealloc" height="280"></canvas></div>
+      <div class="chart-canvas"><canvas id="chartRealloc" height="210"></canvas></div>
     </div>
     <div class="chart-box">
       <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Impacto Estimado das Ações</div>
-      <div class="chart-canvas"><canvas id="chartImpact" height="280"></canvas></div>
+      <div class="chart-canvas"><canvas id="chartImpact" height="210"></canvas></div>
     </div>
   </div>
 </div>
@@ -405,6 +405,43 @@ a { color:var(--accent); text-decoration:none; }
         <strong style="color:var(--accent)">UPP</strong> — Unidade de Políticas Públicas.<br>
         <strong style="color:var(--accent)">NAL</strong> — Núcleo de Assessoria Legislativa.<br>
         <strong style="color:var(--accent)">RelGov</strong> — Relacionamento Governamental.
+      </div>
+
+      <div style="font-size:.9rem;font-weight:700;margin:12px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)">Classificações e Critérios</div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
+        <strong style="color:var(--accent)">Termômetro (header)</strong><br>
+        <span style="color:var(--text2);font-size:.78rem">Compara o percentual pago acumulado com o esperado para o mês (linear). Razão pago/esperado:</span><br>
+        <span style="color:#22c55e;font-size:.78rem;font-weight:600">&#x25CF; Saudável</span><span style="color:var(--text2);font-size:.78rem"> — ≥ 90% do ritmo linear</span><br>
+        <span style="color:#eab308;font-size:.78rem;font-weight:600">&#x25CF; Moderado</span><span style="color:var(--text2);font-size:.78rem"> — 70% a 89%</span><br>
+        <span style="color:#f97316;font-size:.78rem;font-weight:600">&#x25CF; Atenção</span><span style="color:var(--text2);font-size:.78rem"> — 50% a 69%</span><br>
+        <span style="color:#ef4444;font-size:.78rem;font-weight:600">&#x25CF; Crítico</span><span style="color:var(--text2);font-size:.78rem"> — &lt; 50%</span>
+      </div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
+        <strong style="color:var(--accent)">Alertas de Execução (Diagnóstica)</strong><br>
+        <span style="color:var(--text2);font-size:.78rem">Gerados automaticamente por ação orçamentária, comparando execução acumulada com o previsto linear para o mês:</span><br>
+        <span style="color:#ef4444;font-size:.78rem;font-weight:600">&#x1F534; Crítico</span><span style="color:var(--text2);font-size:.78rem"> — Empenho &lt; 50% do esperado em ações &gt; R$ 500 mil</span><br>
+        <span style="color:#eab308;font-size:.78rem;font-weight:600">&#x1F7E1; Atenção</span><span style="color:var(--text2);font-size:.78rem"> — Empenho &lt; 70% do esperado em ações &gt; R$ 200 mil</span><br>
+        <span style="color:#f97316;font-size:.78rem;font-weight:600">&#x1F7E0; Restos a pagar</span><span style="color:var(--text2);font-size:.78rem"> — Pagamento &lt; 60% do empenhado quando diferença &gt; R$ 200 mil</span><br>
+        <span style="color:#3b82f6;font-size:.78rem;font-weight:600">&#x1F535; Meta física</span><span style="color:var(--text2);font-size:.78rem"> — Atingimento &lt; 60% do esperado para o período</span><br>
+        <span style="color:#22c55e;font-size:.78rem;font-weight:600">&#x2705; Sem alertas</span><span style="color:var(--text2);font-size:.78rem"> — Todas as ações dentro dos parâmetros</span>
+      </div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
+        <strong style="color:var(--accent)">Recomendações (Prescritiva)</strong><br>
+        <span style="color:var(--text2);font-size:.78rem">Priorizadas automaticamente com base nos gaps identificados:</span><br>
+        <span style="color:#ef4444;font-size:.78rem;font-weight:600">ALTA</span><span style="color:var(--text2);font-size:.78rem"> — Execução &lt; 50% do esperado em ações &gt; R$ 1 mi, ou meta física &lt; 60%</span><br>
+        <span style="color:#eab308;font-size:.78rem;font-weight:600">MÉDIA</span><span style="color:var(--text2);font-size:.78rem"> — Taxa de liquidação &lt; 65% do empenhado (gargalo de atesto/documentação)</span><br>
+        <span style="color:#22c55e;font-size:.78rem;font-weight:600">BAIXA</span><span style="color:var(--text2);font-size:.78rem"> — Execução acima de 130% do ritmo (possibilidade de remanejamento)</span>
+      </div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:12px">
+        <strong style="color:var(--accent)">Risco de Inexecução (Preditiva)</strong><br>
+        <span style="color:var(--text2);font-size:.78rem">Projeta a execução anual com base na média mensal acumulada:</span><br>
+        <span style="color:#22c55e;font-size:.78rem;font-weight:600">Baixo</span><span style="color:var(--text2);font-size:.78rem"> — Projeção ≥ 90% do orçamento</span><br>
+        <span style="color:#eab308;font-size:.78rem;font-weight:600">Médio</span><span style="color:var(--text2);font-size:.78rem"> — Projeção entre 70% e 89%</span><br>
+        <span style="color:#ef4444;font-size:.78rem;font-weight:600">Alto</span><span style="color:var(--text2);font-size:.78rem"> — Projeção &lt; 70%</span>
       </div>
 
       <div style="font-size:.9rem;font-weight:700;margin:12px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)">Atualização</div>
