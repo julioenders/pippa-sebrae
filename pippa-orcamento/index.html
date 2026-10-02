@@ -407,6 +407,56 @@ a { color:var(--accent); text-decoration:none; }
         <strong style="color:var(--accent)">RelGov</strong> — Relacionamento Governamental.
       </div>
 
+      <div style="font-size:.9rem;font-weight:700;margin:12px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)">Como é calculado</div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
+        <strong style="color:var(--accent)">% Execução (Empenho)</strong><br>
+        <em style="color:var(--text2);font-size:.76rem">Fórmula:</em> <span style="font-size:.78rem">Total Empenhado Acumulado &divide; Orçamento Atualizado &times; 100</span><br>
+        <em style="color:var(--text2);font-size:.76rem">Interpretação:</em> <span style="color:var(--text2);font-size:.78rem">Quanto do orçamento já foi comprometido. É a 1ª etapa da execução — o governo reservou o recurso para aquela despesa.</span>
+      </div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
+        <strong style="color:var(--accent)">% Execução (Pagamento)</strong><br>
+        <em style="color:var(--text2);font-size:.76rem">Fórmula:</em> <span style="font-size:.78rem">Total Pago Acumulado &divide; Orçamento Atualizado &times; 100</span><br>
+        <em style="color:var(--text2);font-size:.76rem">Interpretação:</em> <span style="color:var(--text2);font-size:.78rem">Quanto efetivamente saiu do caixa. É o indicador mais concreto de execução — o dinheiro já foi transferido ao fornecedor.</span>
+      </div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
+        <strong style="color:var(--accent)">Ritmo Esperado (linear)</strong><br>
+        <em style="color:var(--text2);font-size:.76rem">Fórmula:</em> <span style="font-size:.78rem">(Mês Atual &divide; 12) &times; 100</span><br>
+        <em style="color:var(--text2);font-size:.76rem">Interpretação:</em> <span style="color:var(--text2);font-size:.78rem">Se o orçamento fosse gasto uniformemente, qual % deveria estar executado. Ex.: em Set (mês 9) o esperado é 75%. Serve de referência para comparar a execução real.</span>
+      </div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
+        <strong style="color:var(--accent)">Projeção Anual</strong><br>
+        <em style="color:var(--text2);font-size:.76rem">Fórmula:</em> <span style="font-size:.78rem">Acumulado + (Média Mensal &times; Meses Restantes)</span><br>
+        <em style="color:var(--text2);font-size:.76rem">Interpretação:</em> <span style="color:var(--text2);font-size:.78rem">Estima quanto será executado até dezembro, mantendo o ritmo atual. Ex.: se a média mensal de empenho é R$ 5,5 mi e faltam 3 meses, projeta +R$ 16,5 mi sobre o acumulado.</span>
+      </div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
+        <strong style="color:var(--accent)">Índice de Viabilidade</strong><br>
+        <em style="color:var(--text2);font-size:.76rem">Fórmula:</em> <span style="font-size:.78rem">Média Mensal Atual &divide; Média Mensal Necessária &times; 100</span><br>
+        <em style="color:var(--text2);font-size:.76rem">Interpretação:</em> <span style="color:var(--text2);font-size:.78rem">Compara o ritmo atual com o ritmo necessário para executar 100% até dezembro. &ge;100% = ritmo suficiente. &lt;100% = precisa acelerar.</span>
+      </div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
+        <strong style="color:var(--accent)">Cenário Acelerado (+30%)</strong><br>
+        <em style="color:var(--text2);font-size:.76rem">Fórmula:</em> <span style="font-size:.78rem">Acumulado + (Média Mensal &times; 1,3 &times; Meses Restantes)</span><br>
+        <em style="color:var(--text2);font-size:.76rem">Interpretação:</em> <span style="color:var(--text2);font-size:.78rem">Simula o que acontece se o ritmo de execução aumentar 30% nos meses restantes. Permite avaliar se uma aceleração realista resolve o gap.</span>
+      </div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
+        <strong style="color:var(--accent)">Desvio de Remanejamento</strong><br>
+        <em style="color:var(--text2);font-size:.76rem">Fórmula:</em> <span style="font-size:.78rem">(% Empenhado Real &minus; % Esperado Linear) &times; 100</span><br>
+        <em style="color:var(--text2);font-size:.76rem">Interpretação:</em> <span style="color:var(--text2);font-size:.78rem">Valores positivos indicam ações com folga (potencial doador de recursos). Negativos indicam ações deficitárias (potencial receptor). Usado para sugerir remanejamentos.</span>
+      </div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:12px">
+        <strong style="color:var(--accent)">% Atingimento de Meta</strong><br>
+        <em style="color:var(--text2);font-size:.76rem">Fórmula:</em> <span style="font-size:.78rem">Realizado Acumulado &divide; Meta Anual &times; 100</span><br>
+        <em style="color:var(--text2);font-size:.76rem">Interpretação:</em> <span style="color:var(--text2);font-size:.78rem">Mede o progresso da meta física (entregas, eventos, parcerias). Comparado com o ritmo esperado para o mês, indica se a meta será atingida até dezembro.</span>
+      </div>
+
       <div style="font-size:.9rem;font-weight:700;margin:12px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)">Classificações e Critérios</div>
 
       <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
