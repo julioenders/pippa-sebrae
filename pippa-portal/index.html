@@ -151,9 +151,9 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
   <h1 class="hero-title">PIPPA</h1>
   <p class="hero-subtitle">Plataforma de Inteligencia em Politicas Publicas Aplicadas — ferramentas de monitoramento legislativo, orcamentario e territorial.</p>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">12</div><div class="hero-stat-label">Ferramentas</div></div>
-    <div class="hero-stat"><div class="hero-stat-value">12</div><div class="hero-stat-label">Dashboards</div></div>
-    <div class="hero-stat"><div class="hero-stat-value">22</div><div class="hero-stat-label">Fontes de Dados</div></div>
+    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">13</div><div class="hero-stat-label">Ferramentas</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">13</div><div class="hero-stat-label">Dashboards</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">23</div><div class="hero-stat-label">Fontes de Dados</div></div>
     <div class="hero-stat"><div class="hero-stat-value">58</div><div class="hero-stat-label">Cubos Analiticos</div></div>
   </div>
 </section>
@@ -329,6 +329,17 @@ const TOOLS = [
     descricao: "Painel de indicadores compostos de ambiente de negocios para municipios brasileiros. Cobre 5 temas — Burocracia e Formalizacao, Compras Publicas, Sobrevivencia e Emprego, Inclusao e Diversidade, Credito e Financiamento — com 13 sub-indicadores cruzando dados do Observatorio Sebrae (OLAP) com 5 APIs publicas (REDESIM Gov, PNCP, BCB SGS, IBGE SIDRA, IBGE Localidades). Cada tema possui dashboard interativo com botao Consultar APIs para dados em tempo real.",
     features: ["5 temas de indicadores", "13 sub-indicadores", "Consultar APIs em tempo real", "REDESIM Gov (tempo de abertura)", "PNCP (compras publicas)", "BCB SGS (credito e Selic)", "IBGE SIDRA (demografia e PIB)", "14 scripts de coleta Python", "Dados por UF e municipio"],
     destaque: "Avalie o ambiente de negocios brasileiro em 5 dimensoes. Tempo de abertura de empresas, compras publicas para MPEs, sobrevivencia empresarial, inclusao produtiva e acesso a credito — tudo com dados ao vivo de 5 APIs publicas e 14 scripts de coleta."
+  },
+  {
+    id: "raioxmunicipal",
+    nome: "Raio-X Municipal",
+    subtitulo: "Diagnostico Completo por Municipio",
+    accent: "#f59e0b",
+    icon: "🔍",
+    url: "https://julioenders.github.io/indicadores-ambiente-negocios/dashboard/raio_x_porto_de_pedras.html",
+    descricao: "Relatorio-diagnostico que cruza ~20 cubos OLAP do Observatorio Sebrae com APIs publicas (IBGE, BCB, CAGED, INEP, ANS, ANATEL) para gerar um panorama completo de qualquer municipio brasileiro. Cobre tecido empresarial (RF), complexidade economica (ECI/RCA), emprego formal (CAGED), PIB e VAB, infraestrutura financeira (ESTBAN), educacao (IDEB), saude, conectividade (IBC) e presenca Sebrae — tudo filtrado por codigo IBGE.",
+    features: ["~20 cubos OLAP cruzados", "Vocacoes territoriais (RCA)", "Complexidade economica (ECI)", "CAGED mensal", "PIB e composicao VAB", "Cobertura bancaria (ESTBAN)", "IDEB e censo escolar", "IBC conectividade (ANATEL)", "Benchmarking UF vs municipio", "Geracao automatica via Python"],
+    destaque: "Panorama completo de Porto de Pedras — AL: 9.520 habitantes, 756 empresas, forte vocacao turistica (RCA Alojamento 2.360), saldo emprego +190, IBC 37.1 e 20 setores especializados. Relatorio gerado automaticamente cruzando dados de 10 fontes oficiais."
   }
 ];
 
@@ -352,7 +363,10 @@ const QUESTIONS = [
   { texto: "Preciso acompanhar o cenario regulatorio completo", ferramentas: ["regulatorio", "legislativo", "reforma"], tema: "Regulatorio" },
   { texto: "Como esta o ambiente de negocios no Brasil?", ferramentas: ["indicadores"], tema: "Indicadores" },
   { texto: "Qual o tempo de abertura de empresas por estado?", ferramentas: ["indicadores"], tema: "Indicadores" },
-  { texto: "Quero uma visao completa de indicadores socioeconomicos", ferramentas: ["indicadores", "catalogo", "prototipo"], tema: "Indicadores" }
+  { texto: "Quero uma visao completa de indicadores socioeconomicos", ferramentas: ["indicadores", "catalogo", "prototipo"], tema: "Indicadores" },
+  { texto: "Quero um diagnostico completo de um municipio", ferramentas: ["raioxmunicipal"], tema: "Territorial" },
+  { texto: "Quais sao as vocacoes economicas de um municipio?", ferramentas: ["raioxmunicipal", "indicadores"], tema: "Territorial" },
+  { texto: "Preciso de um raio-x territorial com dados cruzados", ferramentas: ["raioxmunicipal", "catalogo", "indicadores"], tema: "Territorial" }
 ];
 
 let activeQuestion = null;
