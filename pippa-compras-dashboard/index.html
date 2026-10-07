@@ -521,7 +521,7 @@
   <div class="landing-container">
     <div class="landing-title">
       <h1>Compras Publicas e Orcamento Educacional</h1>
-      <p>Monitore oportunidades de venda ao governo para micro e pequenas empresas, acompanhe a execucao orcamentaria do PDDE e analise a execucao dos estados brasileiros.</p>
+      <p>Monitore oportunidades de venda ao governo para micro e pequenas empresas, acompanhe os repasses do PDDE por escola e UF, e analise a execucao orcamentaria dos estados brasileiros.</p>
     </div>
     <div class="landing-grid">
       <div class="landing-card" onclick="showView('compras')">
@@ -536,7 +536,7 @@
         <div class="card-num">2</div>
         <div class="card-body">
           <h3>Analise do PDDE</h3>
-          <p>Execucao orcamentaria do Programa Dinheiro Direto na Escola — empenhado, liquidado e pago de 2020 a 2026. Dados reais do Portal da Transparencia.</p>
+          <p>Repasses do Programa Dinheiro Direto na Escola por UF, regiao e escola — custeio, capital e escolas atendidas de 2018 a 2026. Dados reais do FNDE.</p>
         </div>
         <span class="card-arrow">&rsaquo;</span>
       </div>
@@ -770,7 +770,7 @@
         </div>
         <div class="kpi-card">
           <div class="kpi-value" style="color:#06b6d4" id="kpiMEIPrimary">—</div>
-          <div class="kpi-label">Oportunidades MEI</div>
+          <div class="kpi-label">Oportunidades MPEs</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-value kpi-pregao" id="kpiPregao">—</div>
@@ -897,12 +897,27 @@
       <button class="back-btn" onclick="showView('landing')">&larr; Voltar</button>
       <div>
         <div class="logo">Analise do PDDE</div>
-        <div class="logo-sub">Programa Dinheiro Direto na Escola — Execucao Orcamentaria</div>
+        <div class="logo-sub">Programa Dinheiro Direto na Escola — Repasses por Escola, Municipio e UF</div>
       </div>
     </div>
     <div class="header-controls">
       <div id="pddeThermometer" class="thermometer thermo-green">Aguardando dados...</div>
-      <button class="btn btn-green" id="btnPdde" onclick="pddeLoaded=false;fetchPddeData()">Atualizar Dados</button>
+      <select id="pddeNivel" class="select-input" onchange="renderPddeDashboard()" style="width:160px;">
+        <option value="brasil">Brasil</option>
+        <option value="regiao">Por Regiao</option>
+        <option value="estado">Por Estado</option>
+      </select>
+      <select id="pddeRegiao" class="select-input" onchange="renderPddeDashboard()" style="width:160px;display:none;">
+        <option value="">Todas as Regioes</option>
+        <option value="NO">Norte</option>
+        <option value="NE">Nordeste</option>
+        <option value="SE">Sudeste</option>
+        <option value="CO">Centro-Oeste</option>
+        <option value="SU">Sul</option>
+      </select>
+      <select id="pddeUf" class="select-input" onchange="renderPddeDashboard()" style="width:120px;display:none;">
+        <option value="">Todos</option>
+      </select>
     </div>
   </header>
 
@@ -911,81 +926,80 @@
     <div class="pdde-summary" id="pddeSummary">
       <strong>PDDE — Programa Dinheiro Direto na Escola</strong><br>
       Programa do FNDE/MEC que transfere recursos financeiros diretamente as escolas publicas da educacao basica.
-      Os valores sao classificados em tres fases da execucao orcamentaria:
-      <strong>Empenhado</strong> (comprometido), <strong>Liquidado</strong> (verificado/entregue) e <strong>Pago</strong> (efetivamente desembolsado).<br>
-      <em>Acao orcamentaria 0515 — Dinheiro Direto na Escola para a Educacao Basica.</em><br>
-      <em>Fonte: API do Portal da Transparencia (portaldatransparencia.gov.br).</em>
+      Os repasses sao divididos em <strong>Custeio</strong> (manutencao e pequenos reparos) e <strong>Capital</strong> (equipamentos e material permanente).
+      Dados no nivel de escola beneficiada, agregados por UF e ano.<br>
+      <em>Fonte: Plataforma Antonieta de Barros — FNDE (fnde.gov.br). Dados reais de 2018 a 2026.</em>
     </div>
 
-    <div class="kpi-bar" id="pddeKpis" style="display:none">
+    <div class="kpi-bar" id="pddeKpis">
       <div class="kpi-card">
-        <div class="kpi-value" style="color:var(--accent)" id="pddeKpiEmpenhado">—</div>
-        <div class="kpi-label">Empenhado (ultimo ano)</div>
+        <div class="kpi-value" style="color:var(--green)" id="pddeKpiTotal">—</div>
+        <div class="kpi-label" id="pddeKpiTotalLabel">Total Repassado</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-value" style="color:var(--green)" id="pddeKpiLiquidado">—</div>
-        <div class="kpi-label">Liquidado</div>
+        <div class="kpi-value" style="color:var(--accent)" id="pddeKpiCusteio">—</div>
+        <div class="kpi-label">Custeio</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-value" style="color:var(--cyan)" id="pddeKpiPago">—</div>
-        <div class="kpi-label">Pago</div>
+        <div class="kpi-value" style="color:var(--purple)" id="pddeKpiCapital">—</div>
+        <div class="kpi-label">Capital</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-value" style="color:var(--orange)" id="pddeKpiTaxa">—</div>
-        <div class="kpi-label">Taxa de Execucao</div>
+        <div class="kpi-value" style="color:var(--cyan)" id="pddeKpiEscolas">—</div>
+        <div class="kpi-label" id="pddeKpiEscolasLabel">Escolas Atendidas</div>
       </div>
     </div>
 
-    <div id="pddeExecBarContainer" style="display:none">
-      <div style="font-size:13px;color:var(--text-muted);margin-bottom:6px;font-weight:600;">Execucao Orcamentaria do Ano Mais Recente</div>
+    <div id="pddeExecBarContainer">
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:6px;font-weight:600;" id="pddeBarTitle">Distribuicao Custeio vs Capital (acumulado)</div>
       <div class="pdde-exec-bar" id="pddeExecBar"></div>
       <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:4px;">
         <span id="pddeExecLabel1"></span>
         <span id="pddeExecLabel2"></span>
-        <span id="pddeExecLabel3"></span>
       </div>
     </div>
 
     <div class="charts-row-half" style="margin-top:24px">
       <div class="chart-card">
-        <div class="chart-title">Evolucao Anual — Empenhado vs Liquidado vs Pago</div>
+        <div class="chart-title" id="pddeChart1Title">Evolucao Anual — Total Repassado</div>
         <div class="chart-wrapper" style="height:300px"><canvas id="chartPddeEvolucao"></canvas></div>
       </div>
       <div class="chart-card">
-        <div class="chart-title">Taxa de Execucao por Ano (%)</div>
-        <div class="chart-wrapper" style="height:300px"><canvas id="chartPddeTaxa"></canvas></div>
+        <div class="chart-title">Custeio vs Capital por Ano</div>
+        <div class="chart-wrapper" style="height:300px"><canvas id="chartPddeCusteioCapital"></canvas></div>
       </div>
     </div>
 
     <div class="charts-row-half">
       <div class="chart-card">
-        <div class="chart-title">Empenhado por Ano</div>
-        <div class="chart-wrapper" style="height:260px"><canvas id="chartPddeEmpenhado"></canvas></div>
+        <div class="chart-title" id="pddeChart3Title">Ranking — Total Repassado (ano mais recente)</div>
+        <div class="chart-wrapper" style="height:350px"><canvas id="chartPddeRanking"></canvas></div>
       </div>
       <div class="chart-card">
-        <div class="chart-title">Pago por Ano</div>
-        <div class="chart-wrapper" style="height:260px"><canvas id="chartPddePago"></canvas></div>
+        <div class="chart-title" id="pddeChart4Title">Escolas Atendidas por Ano</div>
+        <div class="chart-wrapper" style="height:350px"><canvas id="chartPddeEscolas"></canvas></div>
       </div>
     </div>
 
     <div class="charts-row-full">
       <div class="chart-card">
-        <div class="chart-title">Diferenca entre Empenhado e Pago (Restos a Pagar)</div>
-        <div class="chart-wrapper" style="height:260px"><canvas id="chartPddeDiferenca"></canvas></div>
+        <div class="chart-title">Proporcao Capital / Total por Ano (%)</div>
+        <div class="chart-wrapper" style="height:260px"><canvas id="chartPddePropCapital"></canvas></div>
       </div>
     </div>
 
-    <div id="pddeTableContainer" style="display:none">
+    <div id="pddeTableContainer">
       <div class="chart-card" style="overflow-x:auto">
-        <div class="chart-title">Detalhamento por Ano</div>
+        <div class="chart-title" id="pddeTableTitle">Detalhamento por Ano</div>
         <table style="width:100%;border-collapse:collapse;font-size:13px;" id="pddeTable">
           <thead>
-            <tr style="border-bottom:2px solid var(--border);">
+            <tr style="border-bottom:2px solid var(--border);" id="pddeTableHead">
               <th style="padding:10px 8px;text-align:left;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Ano</th>
-              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Empenhado</th>
-              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Liquidado</th>
-              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Pago</th>
-              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Taxa Exec.</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Total</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Custeio</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Capital</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Escolas</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Municipios</th>
             </tr>
           </thead>
           <tbody id="pddeTableBody"></tbody>
@@ -993,12 +1007,8 @@
       </div>
     </div>
 
-    <div id="pddeFonte" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;margin-bottom:16px;font-size:12px;color:var(--text-muted);text-align:center;"></div>
-
-    <div id="pddeEmpty" class="empty-state">
-      <div class="empty-state-icon">&#127979;</div>
-      <div class="empty-state-title">Clique em "Consultar PDDE" para carregar</div>
-      <p>O painel consultara a API do Portal da Transparencia para obter dados reais de execucao orcamentaria do PDDE (empenhado, liquidado e pago) de 2020 a 2026.</p>
+    <div id="pddeFonte" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;margin-bottom:16px;font-size:12px;color:var(--text-muted);text-align:center;">
+      Dados reais da Plataforma Antonieta de Barros — FNDE/MEC. Produto de dados #24: Execucao financeira do PDDE Basico (2018-2026).
     </div>
 
   </div>
@@ -1198,7 +1208,7 @@ function showView(view) {
   window.scrollTo(0, 0);
   if (view === 'pdde' && !pddeLoaded) {
     pddeLoaded = true;
-    setTimeout(() => fetchPddeData(), 200);
+    setTimeout(() => loadPddeData(), 200);
   }
   if (view === 'execucao' && !execLoaded) {
     execLoaded = true;
@@ -1721,13 +1731,13 @@ function renderCards() {
     return;
   }
 
-  const groups = { 'Oportunidades MEI': [] };
+  const groups = { 'Oportunidades MPEs': [] };
   filteredItems.forEach(item => {
-    if (item._acessivelMEI) { groups['Oportunidades MEI'].push(item); }
+    if (item._acessivelMEI) { groups['Oportunidades MPEs'].push(item); }
     else { const g = item._oportunidadeMPE; if (!groups[g]) groups[g] = []; groups[g].push(item); }
   });
 
-  const order = ['Oportunidades MEI', 'Exclusiva MPE', 'Cota MPE', 'Ampla'];
+  const order = ['Oportunidades MPEs', 'Exclusiva MPE', 'Cota MPE', 'Ampla'];
   let html = '';
 
   order.forEach(group => {
@@ -1837,149 +1847,361 @@ function showToast(msg) { const t = document.getElementById('toast'); t.textCont
 function toggleInfoModal() { document.getElementById('infoModal').classList.toggle('active'); }
 
 // =====================================================
-// PDDE DASHBOARD — PORTAL DA TRANSPARENCIA ENGINE
+// PDDE DASHBOARD — FNDE ANTONIETA DE BARROS ENGINE
 // =====================================================
 
-const PDDE_API_KEY = 'f8f32b5a12fc10b5e4df04448ece2682';
-const PDDE_BASE = 'https://api.portaldatransparencia.gov.br/api-de-dados';
-const PDDE_ACAO = '0515';
-const PDDE_ANOS = [2020, 2021, 2022, 2023, 2024, 2025, 2026];
+const PDDE_UF_REGIAO = {
+  AC:'NO',AL:'NE',AM:'NO',AP:'NO',BA:'NE',CE:'NE',DF:'CO',ES:'SE',GO:'CO',
+  MA:'NE',MG:'SE',MS:'CO',MT:'CO',PA:'NO',PB:'NE',PE:'NE',PI:'NE',PR:'SU',
+  RJ:'SE',RN:'NE',RO:'NO',RR:'NO',RS:'SU',SC:'SU',SE:'NE',SP:'SE',TO:'NO'
+};
+const PDDE_UF_NOME = {
+  AC:'Acre',AL:'Alagoas',AM:'Amazonas',AP:'Amapa',BA:'Bahia',CE:'Ceara',DF:'Distrito Federal',
+  ES:'Espirito Santo',GO:'Goias',MA:'Maranhao',MG:'Minas Gerais',MS:'Mato Grosso do Sul',
+  MT:'Mato Grosso',PA:'Para',PB:'Paraiba',PE:'Pernambuco',PI:'Piaui',PR:'Parana',
+  RJ:'Rio de Janeiro',RN:'Rio Grande do Norte',RO:'Rondonia',RR:'Roraima',
+  RS:'Rio Grande do Sul',SC:'Santa Catarina',SE:'Sergipe',SP:'Sao Paulo',TO:'Tocantins'
+};
+const PDDE_REGIAO_NAMES = { NO:'Norte', NE:'Nordeste', SE:'Sudeste', CO:'Centro-Oeste', SU:'Sul' };
+const PDDE_REGIAO_COLORS = { NO:'#22c55e', NE:'#f59e0b', SE:'#3b82f6', CO:'#a855f7', SU:'#06b6d4' };
 
-// Dados REAIS consultados via API do Portal da Transparencia em 07/10/2026
-// Acao 0515 — DINHEIRO DIRETO NA ESCOLA PARA A EDUCACAO BASICA
 const PDDE_CACHE = [
-  { ano: 2020, empenhado: 1888393845.91, liquidado: 1347420933.73, pago: 1347420933.73 },
-  { ano: 2021, empenhado: 1932112208.62, liquidado: 1654624846.02, pago: 1654624846.02 },
-  { ano: 2022, empenhado: 2029680594.76, liquidado: 1846850271.66, pago: 1846850271.66 },
-  { ano: 2023, empenhado: 2032688612.17, liquidado: 1894669535.51, pago: 1894669535.51 },
-  { ano: 2024, empenhado: 1988229649.32, liquidado: 1732411658.09, pago: 1732411658.09 },
-  { ano: 2025, empenhado: 1937500444.23, liquidado: 1850118094.63, pago: 1850151399.63 },
-  { ano: 2026, empenhado: 1855180630.36, liquidado: 1228665082.00, pago: 1128636005.00 }
+  {uf:"AC",ano:2018,custeio:6047885.11,capital:1695429.08,total:7743314.19,escolas:152,municipios:16,alunos:385038},
+  {uf:"AC",ano:2019,custeio:3307511.23,capital:1001778.24,total:4309289.47,escolas:51,municipios:11,alunos:288098},
+  {uf:"AC",ano:2020,custeio:21541070.99,capital:6907782.99,total:28448853.98,escolas:197,municipios:19,alunos:2236079},
+  {uf:"AC",ano:2021,custeio:3798249.83,capital:1269566.20,total:5067816.03,escolas:87,municipios:14,alunos:277952},
+  {uf:"AC",ano:2022,custeio:10504253.12,capital:1267452.44,total:11771705.56,escolas:845,municipios:22,alunos:562899},
+  {uf:"AC",ano:2023,custeio:3209438.36,capital:910694.78,total:4120133.14,escolas:61,municipios:13,alunos:249068},
+  {uf:"AC",ano:2024,custeio:38418128.74,capital:9222727.80,total:47640856.54,escolas:1453,municipios:22,alunos:3043798},
+  {uf:"AC",ano:2025,custeio:11221287.29,capital:3457666.48,total:14678953.77,escolas:203,municipios:19,alunos:957238},
+  {uf:"AC",ano:2026,custeio:1825492.43,capital:552400.98,total:2377893.41,escolas:19,municipios:7,alunos:180532},
+  {uf:"AL",ano:2018,custeio:13747231.08,capital:4208514.44,total:17955745.52,escolas:227,municipios:61,alunos:1228502},
+  {uf:"AL",ano:2019,custeio:7802882.78,capital:2637939.12,total:10440821.90,escolas:81,municipios:38,alunos:792913},
+  {uf:"AL",ano:2020,custeio:7928790.77,capital:2838909.37,total:10767700.14,escolas:139,municipios:35,alunos:841118},
+  {uf:"AL",ano:2021,custeio:18851814.57,capital:5862727.63,total:24714542.20,escolas:190,municipios:60,alunos:1954052},
+  {uf:"AL",ano:2022,custeio:36188445.61,capital:12470124.43,total:48658570.04,escolas:358,municipios:71,alunos:3916281},
+  {uf:"AL",ano:2023,custeio:30008964.18,capital:9920970.71,total:39929934.89,escolas:475,municipios:83,alunos:2975661},
+  {uf:"AL",ano:2024,custeio:65266436.83,capital:17817489.77,total:83083926.60,escolas:2512,municipios:100,alunos:6305426},
+  {uf:"AL",ano:2025,custeio:51763686.17,capital:16309257.47,total:68072943.64,escolas:602,municipios:95,alunos:5187176},
+  {uf:"AL",ano:2026,custeio:20596702.61,capital:7310996.65,total:27907699.26,escolas:180,municipios:52,alunos:2234878},
+  {uf:"AM",ano:2018,custeio:11616008.75,capital:4037663.82,total:15653672.57,escolas:288,municipios:28,alunos:1110691},
+  {uf:"AM",ano:2019,custeio:7510160.05,capital:2685626.07,total:10195786.12,escolas:117,municipios:18,alunos:817798},
+  {uf:"AM",ano:2020,custeio:6359315.07,capital:2440068.97,total:8799384.04,escolas:91,municipios:21,alunos:671349},
+  {uf:"AM",ano:2021,custeio:9240852.57,capital:3681660.96,total:12922513.53,escolas:171,municipios:36,alunos:937161},
+  {uf:"AM",ano:2022,custeio:48115370.66,capital:18893439.62,total:67008810.28,escolas:424,municipios:52,alunos:5646177},
+  {uf:"AM",ano:2023,custeio:57813359.66,capital:22274976.13,total:80088335.79,escolas:633,municipios:60,alunos:6548367},
+  {uf:"AM",ano:2024,custeio:85768036.94,capital:17908938.83,total:103676975.77,escolas:5788,municipios:62,alunos:6648905},
+  {uf:"AM",ano:2025,custeio:53190013.77,capital:20294782.09,total:73484795.86,escolas:857,municipios:58,alunos:5523114},
+  {uf:"AM",ano:2026,custeio:8977062.13,capital:3334714.79,total:12311776.92,escolas:157,municipios:23,alunos:898813},
+  {uf:"AP",ano:2018,custeio:3355188.25,capital:1490363.82,total:4845552.07,escolas:63,municipios:14,alunos:349320},
+  {uf:"AP",ano:2019,custeio:3110436.54,capital:1551584.78,total:4662021.32,escolas:59,municipios:12,alunos:362190},
+  {uf:"AP",ano:2020,custeio:2298879.92,capital:1119065.07,total:3417944.99,escolas:40,municipios:11,alunos:231834},
+  {uf:"AP",ano:2021,custeio:1396597.07,capital:641030.95,total:2037628.02,escolas:37,municipios:9,alunos:153742},
+  {uf:"AP",ano:2022,custeio:2876926.67,capital:1383202.43,total:4260129.10,escolas:43,municipios:10,alunos:336908},
+  {uf:"AP",ano:2023,custeio:5928986.02,capital:3155353.61,total:9084339.63,escolas:100,municipios:14,alunos:718302},
+  {uf:"AP",ano:2024,custeio:8425598.73,capital:3139996.53,total:11565595.26,escolas:352,municipios:16,alunos:787995},
+  {uf:"AP",ano:2025,custeio:7300653.76,capital:3747580.97,total:11048234.73,escolas:172,municipios:15,alunos:844416},
+  {uf:"AP",ano:2026,custeio:661072.26,capital:302038.79,total:963111.05,escolas:11,municipios:5,alunos:73164},
+  {uf:"BA",ano:2018,custeio:113801267.70,capital:35311182.09,total:149112449.79,escolas:1562,municipios:291,alunos:10942061},
+  {uf:"BA",ano:2019,custeio:43248262.10,capital:13597841.49,total:56846103.59,escolas:580,municipios:169,alunos:4142136},
+  {uf:"BA",ano:2020,custeio:40814837.57,capital:12063890.54,total:52878728.11,escolas:1020,municipios:162,alunos:3880366},
+  {uf:"BA",ano:2021,custeio:124203040.24,capital:36872802.14,total:161075842.38,escolas:1954,municipios:265,alunos:10785108},
+  {uf:"BA",ano:2022,custeio:103413675.85,capital:31647176.23,total:135060852.08,escolas:1627,municipios:259,alunos:9187599},
+  {uf:"BA",ano:2023,custeio:135943368.77,capital:40510250.15,total:176453618.92,escolas:2081,municipios:324,alunos:12084803},
+  {uf:"BA",ano:2024,custeio:236228384.32,capital:39273936.17,total:275502320.49,escolas:19750,municipios:411,alunos:16302328},
+  {uf:"BA",ano:2025,custeio:354480822.09,capital:107397669.75,total:461878491.84,escolas:5434,municipios:387,alunos:32684334},
+  {uf:"BA",ano:2026,custeio:28416258.56,capital:8364296.24,total:36780554.80,escolas:469,municipios:119,alunos:2333938},
+  {uf:"CE",ano:2018,custeio:19970758.06,capital:6593630.96,total:26564389.02,escolas:315,municipios:97,alunos:1819575},
+  {uf:"CE",ano:2019,custeio:16619074.03,capital:6099520.87,total:22718594.90,escolas:185,municipios:80,alunos:1743461},
+  {uf:"CE",ano:2020,custeio:11582729.00,capital:3617489.75,total:15200218.75,escolas:161,municipios:56,alunos:1209198},
+  {uf:"CE",ano:2021,custeio:33188229.77,capital:10155866.58,total:43344096.35,escolas:409,municipios:94,alunos:3142999},
+  {uf:"CE",ano:2022,custeio:60745620.88,capital:18167533.82,total:78913154.70,escolas:815,municipios:146,alunos:5885377},
+  {uf:"CE",ano:2023,custeio:82109285.87,capital:25958032.74,total:108067318.61,escolas:955,municipios:152,alunos:8023230},
+  {uf:"CE",ano:2024,custeio:125450748.79,capital:30805058.38,total:156255807.17,escolas:8638,municipios:183,alunos:11182801},
+  {uf:"CE",ano:2025,custeio:235847948.84,capital:72152251.16,total:308000200.00,escolas:2702,municipios:180,alunos:22991118},
+  {uf:"CE",ano:2026,custeio:25293690.35,capital:7553143.14,total:32846833.49,escolas:398,municipios:81,alunos:2524084},
+  {uf:"DF",ano:2018,custeio:6779449.43,capital:2209627.51,total:8989076.94,escolas:54,municipios:1,alunos:884413},
+  {uf:"DF",ano:2019,custeio:5255871.22,capital:1762717.13,total:7018588.35,escolas:34,municipios:1,alunos:707740},
+  {uf:"DF",ano:2020,custeio:14399530.66,capital:5186577.84,total:19586108.50,escolas:107,municipios:1,alunos:1938953},
+  {uf:"DF",ano:2021,custeio:3099647.64,capital:1165277.61,total:4264925.25,escolas:40,municipios:1,alunos:407132},
+  {uf:"DF",ano:2022,custeio:4927950.11,capital:1880195.57,total:6808145.68,escolas:36,municipios:1,alunos:636602},
+  {uf:"DF",ano:2023,custeio:8066047.87,capital:2814286.35,total:10880334.22,escolas:55,municipios:1,alunos:1065099},
+  {uf:"DF",ano:2024,custeio:20803891.43,capital:7799555.63,total:28603447.06,escolas:151,municipios:1,alunos:2750575},
+  {uf:"DF",ano:2025,custeio:5929407.05,capital:2051225.93,total:7980632.98,escolas:41,municipios:1,alunos:774650},
+  {uf:"DF",ano:2026,custeio:902079.15,capital:322734.11,total:1224813.26,escolas:6,municipios:1,alunos:126531},
+  {uf:"ES",ano:2018,custeio:20500083.01,capital:7501645.43,total:28001728.44,escolas:886,municipios:69,alunos:2441855},
+  {uf:"ES",ano:2019,custeio:10951824.96,capital:4164029.93,total:15115854.89,escolas:116,municipios:39,alunos:1331300},
+  {uf:"ES",ano:2020,custeio:7869099.51,capital:2929214.15,total:10798313.66,escolas:152,municipios:39,alunos:935013},
+  {uf:"ES",ano:2021,custeio:15352986.14,capital:5918366.21,total:21271352.35,escolas:181,municipios:59,alunos:1775733},
+  {uf:"ES",ano:2022,custeio:31642197.87,capital:11764110.57,total:43406308.44,escolas:326,municipios:56,alunos:3832735},
+  {uf:"ES",ano:2023,custeio:14987146.60,capital:6155230.10,total:21142376.70,escolas:249,municipios:55,alunos:1626653},
+  {uf:"ES",ano:2024,custeio:40896836.20,capital:12118553.38,total:53015389.58,escolas:2223,municipios:77,alunos:3911395},
+  {uf:"ES",ano:2025,custeio:46588155.83,capital:17269899.27,total:63858055.10,escolas:614,municipios:73,alunos:5305106},
+  {uf:"ES",ano:2026,custeio:7821735.39,capital:3815148.13,total:11636883.52,escolas:87,municipios:16,alunos:1026124},
+  {uf:"GO",ano:2018,custeio:25227414.11,capital:7482652.57,total:32710066.68,escolas:227,municipios:106,alunos:2559879},
+  {uf:"GO",ano:2019,custeio:10687908.02,capital:3257261.43,total:13945169.45,escolas:156,municipios:71,alunos:1091346},
+  {uf:"GO",ano:2020,custeio:16171318.50,capital:5044082.73,total:21215401.23,escolas:141,municipios:52,alunos:1743834},
+  {uf:"GO",ano:2021,custeio:29772123.35,capital:9377943.78,total:39150067.13,escolas:341,municipios:103,alunos:3029519},
+  {uf:"GO",ano:2022,custeio:40846440.36,capital:13235192.35,total:54081632.71,escolas:380,municipios:112,alunos:4421833},
+  {uf:"GO",ano:2023,custeio:54904014.40,capital:17278114.55,total:72182128.95,escolas:501,municipios:138,alunos:5758018},
+  {uf:"GO",ano:2024,custeio:76891715.64,capital:24669835.16,total:101561550.80,escolas:1808,municipios:213,alunos:8252186},
+  {uf:"GO",ano:2025,custeio:77990667.88,capital:26551254.81,total:104541922.69,escolas:993,municipios:184,alunos:8117263},
+  {uf:"GO",ano:2026,custeio:18473867.70,capital:6552952.09,total:25026819.79,escolas:214,municipios:71,alunos:1938833},
+  {uf:"MA",ano:2018,custeio:65653287.44,capital:21606420.41,total:87259707.85,escolas:979,municipios:143,alunos:6217098},
+  {uf:"MA",ano:2019,custeio:27548368.36,capital:9048283.96,total:36596652.32,escolas:479,municipios:102,alunos:2431128},
+  {uf:"MA",ano:2020,custeio:15177815.38,capital:4466600.28,total:19644415.66,escolas:386,municipios:81,alunos:1306355},
+  {uf:"MA",ano:2021,custeio:103145830.75,capital:33737843.77,total:136883674.52,escolas:2015,municipios:161,alunos:8362065},
+  {uf:"MA",ano:2022,custeio:45585054.75,capital:15213479.42,total:60798534.17,escolas:835,municipios:137,alunos:3987479},
+  {uf:"MA",ano:2023,custeio:56196699.92,capital:18919889.59,total:75116589.51,escolas:978,municipios:153,alunos:5099779},
+  {uf:"MA",ano:2024,custeio:152499937.80,capital:20700115.00,total:173200052.80,escolas:13231,municipios:217,alunos:9632821},
+  {uf:"MA",ano:2025,custeio:132480285.80,capital:44074718.47,total:176555004.27,escolas:2365,municipios:185,alunos:11437577},
+  {uf:"MA",ano:2026,custeio:35993811.87,capital:11822089.05,total:47815900.92,escolas:746,municipios:92,alunos:3172273},
+  {uf:"MG",ano:2018,custeio:72378285.33,capital:30027749.99,total:102406035.32,escolas:875,municipios:338,alunos:9485567},
+  {uf:"MG",ano:2019,custeio:65794753.40,capital:30306971.16,total:96101724.56,escolas:675,municipios:351,alunos:9338101},
+  {uf:"MG",ano:2020,custeio:67111897.36,capital:29523997.84,total:96635895.20,escolas:784,municipios:304,alunos:9614185},
+  {uf:"MG",ano:2021,custeio:49711724.51,capital:21839850.39,total:71551574.90,escolas:819,municipios:327,alunos:5998477},
+  {uf:"MG",ano:2022,custeio:70647037.83,capital:29382983.36,total:100030021.19,escolas:1028,municipios:373,alunos:8770988},
+  {uf:"MG",ano:2023,custeio:200738695.25,capital:90383614.91,total:291122310.16,escolas:1932,municipios:576,alunos:28654307},
+  {uf:"MG",ano:2024,custeio:108044190.57,capital:30241878.16,total:138286068.73,escolas:7896,municipios:815,alunos:10243830},
+  {uf:"MG",ano:2025,custeio:237352905.64,capital:93156254.99,total:330509160.63,escolas:3422,municipios:633,alunos:29129391},
+  {uf:"MG",ano:2026,custeio:25316009.27,capital:12523171.06,total:37839180.33,escolas:338,municipios:131,alunos:3409867},
+  {uf:"MS",ano:2018,custeio:3759836.77,capital:1352480.22,total:5112316.99,escolas:35,municipios:22,alunos:403870},
+  {uf:"MS",ano:2019,custeio:3378549.88,capital:1164874.86,total:4543424.74,escolas:26,municipios:20,alunos:404947},
+  {uf:"MS",ano:2020,custeio:5343936.91,capital:2130696.17,total:7474633.08,escolas:36,municipios:24,alunos:622671},
+  {uf:"MS",ano:2021,custeio:13109228.98,capital:5262162.27,total:18371391.25,escolas:90,municipios:36,alunos:1539942},
+  {uf:"MS",ano:2022,custeio:22624053.17,capital:9521511.43,total:32145564.60,escolas:186,municipios:53,alunos:2722065},
+  {uf:"MS",ano:2023,custeio:28867297.36,capital:11994762.41,total:40862059.77,escolas:225,municipios:60,alunos:3482111},
+  {uf:"MS",ano:2024,custeio:47171319.53,capital:18737971.50,total:65909291.03,escolas:389,municipios:74,alunos:5679372},
+  {uf:"MS",ano:2025,custeio:50145477.74,capital:21211641.23,total:71357118.97,escolas:468,municipios:72,alunos:5939820},
+  {uf:"MS",ano:2026,custeio:6376444.26,capital:2724962.24,total:9101406.50,escolas:51,municipios:27,alunos:781857},
+  {uf:"MT",ano:2018,custeio:2161835.23,capital:799426.60,total:2961261.83,escolas:41,municipios:25,alunos:202327},
+  {uf:"MT",ano:2019,custeio:5384000.41,capital:1822869.79,total:7206870.20,escolas:63,municipios:43,alunos:584740},
+  {uf:"MT",ano:2020,custeio:1938180.31,capital:857968.03,total:2796148.34,escolas:33,municipios:27,alunos:198122},
+  {uf:"MT",ano:2021,custeio:7645927.32,capital:2713053.42,total:10358980.74,escolas:88,municipios:48,alunos:867007},
+  {uf:"MT",ano:2022,custeio:10272067.16,capital:4788900.64,total:15060967.80,escolas:216,municipios:79,alunos:1087017},
+  {uf:"MT",ano:2023,custeio:12899149.44,capital:5913106.87,total:18812256.31,escolas:199,municipios:76,alunos:1390778},
+  {uf:"MT",ano:2024,custeio:114279062.35,capital:40093226.53,total:154372288.88,escolas:2455,municipios:141,alunos:12636990},
+  {uf:"MT",ano:2025,custeio:51014145.10,capital:23516190.79,total:74530335.89,escolas:625,municipios:107,alunos:5992021},
+  {uf:"MT",ano:2026,custeio:16437739.88,capital:7597436.94,total:24035176.82,escolas:210,municipios:50,alunos:1903282},
+  {uf:"PA",ano:2018,custeio:13426771.03,capital:4203876.67,total:17630647.70,escolas:273,municipios:49,alunos:1099622},
+  {uf:"PA",ano:2019,custeio:6801936.46,capital:2130094.01,total:8932030.47,escolas:110,municipios:41,alunos:615770},
+  {uf:"PA",ano:2020,custeio:11302463.69,capital:3891629.69,total:15194093.38,escolas:173,municipios:49,alunos:1102820},
+  {uf:"PA",ano:2021,custeio:22491154.31,capital:7304576.66,total:29795730.97,escolas:457,municipios:75,alunos:1886172},
+  {uf:"PA",ano:2022,custeio:51340932.47,capital:17260024.97,total:68600957.44,escolas:830,municipios:114,alunos:4892975},
+  {uf:"PA",ano:2023,custeio:82141153.99,capital:28211822.82,total:110352976.81,escolas:1272,municipios:119,alunos:7850316},
+  {uf:"PA",ano:2024,custeio:204908864.77,capital:44146636.75,total:249055501.52,escolas:11937,municipios:130,alunos:15994899},
+  {uf:"PA",ano:2025,custeio:181640204.34,capital:61439381.82,total:243079586.16,escolas:3290,municipios:128,alunos:17756918},
+  {uf:"PA",ano:2026,custeio:29911269.22,capital:9724960.40,total:39636229.62,escolas:579,municipios:80,alunos:2666787},
+  {uf:"PB",ano:2018,custeio:9769775.36,capital:2622921.35,total:12392696.71,escolas:197,municipios:75,alunos:705522},
+  {uf:"PB",ano:2019,custeio:5041255.33,capital:1541954.66,total:6583209.99,escolas:81,municipios:38,alunos:438159},
+  {uf:"PB",ano:2020,custeio:4737803.57,capital:1380986.17,total:6118789.74,escolas:80,municipios:47,alunos:411385},
+  {uf:"PB",ano:2021,custeio:16689144.94,capital:4884989.12,total:21574134.06,escolas:230,municipios:83,alunos:1460259},
+  {uf:"PB",ano:2022,custeio:24724957.73,capital:7415957.51,total:32140915.24,escolas:358,municipios:120,alunos:2145998},
+  {uf:"PB",ano:2023,custeio:50513614.09,capital:15208877.75,total:65722491.84,escolas:595,municipios:164,alunos:4831413},
+  {uf:"PB",ano:2024,custeio:77199631.67,capital:13352759.16,total:90552390.83,escolas:5270,municipios:223,alunos:5504863},
+  {uf:"PB",ano:2025,custeio:128323242.12,capital:39114575.24,total:167437817.36,escolas:1531,municipios:206,alunos:12320888},
+  {uf:"PB",ano:2026,custeio:11050412.10,capital:3301334.15,total:14351746.25,escolas:144,municipios:67,alunos:1013322},
+  {uf:"PE",ano:2018,custeio:35802400.97,capital:11685407.33,total:47487808.30,escolas:376,municipios:99,alunos:3709303},
+  {uf:"PE",ano:2019,custeio:17513846.73,capital:6249131.81,total:23762978.54,escolas:193,municipios:63,alunos:1835351},
+  {uf:"PE",ano:2020,custeio:13913251.51,capital:4686026.14,total:18599277.65,escolas:173,municipios:57,alunos:1428705},
+  {uf:"PE",ano:2021,custeio:53802962.30,capital:17244671.88,total:71047634.18,escolas:599,municipios:108,alunos:5310232},
+  {uf:"PE",ano:2022,custeio:40731488.38,capital:13724435.62,total:54455924.00,escolas:448,municipios:102,alunos:4216649},
+  {uf:"PE",ano:2023,custeio:75342184.51,capital:24927160.45,total:100269344.96,escolas:800,municipios:150,alunos:7503154},
+  {uf:"PE",ano:2024,custeio:132671065.00,capital:29197964.57,total:161869029.57,escolas:7260,municipios:184,alunos:11029661},
+  {uf:"PE",ano:2025,custeio:208739889.62,capital:66395238.83,total:275135128.45,escolas:2444,municipios:177,alunos:20608687},
+  {uf:"PE",ano:2026,custeio:18761223.42,capital:6253420.58,total:25014644.00,escolas:200,municipios:53,alunos:1839450},
+  {uf:"PI",ano:2018,custeio:22048515.46,capital:7167206.84,total:29215722.30,escolas:388,municipios:116,alunos:1913361},
+  {uf:"PI",ano:2019,custeio:13618772.58,capital:6527700.94,total:20146473.52,escolas:229,municipios:62,alunos:1377768},
+  {uf:"PI",ano:2020,custeio:9677349.29,capital:3164848.65,total:12842197.94,escolas:166,municipios:70,alunos:830689},
+  {uf:"PI",ano:2021,custeio:35987776.71,capital:11282896.10,total:47270672.81,escolas:597,municipios:124,alunos:3042800},
+  {uf:"PI",ano:2022,custeio:26067227.77,capital:10408450.31,total:36475678.08,escolas:399,municipios:115,alunos:2606625},
+  {uf:"PI",ano:2023,custeio:26980170.30,capital:8706764.56,total:35686934.86,escolas:458,municipios:140,alunos:2388093},
+  {uf:"PI",ano:2024,custeio:57182218.48,capital:7084836.39,total:64267054.87,escolas:6674,municipios:223,alunos:3465231},
+  {uf:"PI",ano:2025,custeio:74111444.35,capital:23041032.89,total:97152477.24,escolas:1420,municipios:196,alunos:6440833},
+  {uf:"PI",ano:2026,custeio:9029393.13,capital:2794640.99,total:11824034.12,escolas:138,municipios:48,alunos:780361},
+  {uf:"PR",ano:2018,custeio:2209037.81,capital:1201971.62,total:3411009.43,escolas:54,municipios:34,alunos:252872},
+  {uf:"PR",ano:2019,custeio:3078157.93,capital:1774611.13,total:4852769.06,escolas:59,municipios:41,alunos:394195},
+  {uf:"PR",ano:2020,custeio:2511404.77,capital:1371470.62,total:3882875.39,escolas:160,municipios:39,alunos:291582},
+  {uf:"PR",ano:2021,custeio:71816283.79,capital:58297849.00,total:130114132.79,escolas:776,municipios:272,alunos:11530885},
+  {uf:"PR",ano:2022,custeio:114497239.92,capital:75986706.25,total:190483946.17,escolas:1597,municipios:347,alunos:16338547},
+  {uf:"PR",ano:2023,custeio:65490293.72,capital:41960560.34,total:107450854.06,escolas:1074,municipios:263,alunos:8834934},
+  {uf:"PR",ano:2024,custeio:88989980.40,capital:54258684.25,total:143248664.65,escolas:3624,municipios:357,alunos:11483252},
+  {uf:"PR",ano:2025,custeio:155482159.14,capital:107385662.19,total:262867821.33,escolas:2359,municipios:347,alunos:22509698},
+  {uf:"PR",ano:2026,custeio:37404151.66,capital:28357947.88,total:65762099.54,escolas:470,municipios:167,alunos:5832539},
+  {uf:"RJ",ano:2018,custeio:90969556.19,capital:38248005.79,total:129217561.98,escolas:840,municipios:69,alunos:12290087},
+  {uf:"RJ",ano:2019,custeio:31739996.02,capital:13793301.97,total:45533297.99,escolas:332,municipios:64,alunos:4206866},
+  {uf:"RJ",ano:2020,custeio:27291281.19,capital:12330777.24,total:39622058.43,escolas:297,municipios:55,alunos:3717387},
+  {uf:"RJ",ano:2021,custeio:30277001.11,capital:13746264.98,total:44023266.09,escolas:347,municipios:69,alunos:3960549},
+  {uf:"RJ",ano:2022,custeio:73074336.32,capital:34694768.83,total:107769105.15,escolas:780,municipios:77,alunos:10011359},
+  {uf:"RJ",ano:2023,custeio:54661946.91,capital:24947337.67,total:79609284.58,escolas:645,municipios:75,alunos:7243434},
+  {uf:"RJ",ano:2024,custeio:79875711.62,capital:33717017.07,total:113592728.69,escolas:2262,municipios:90,alunos:10221331},
+  {uf:"RJ",ano:2025,custeio:125047202.55,capital:56253763.27,total:181300965.82,escolas:1338,municipios:87,alunos:16902635},
+  {uf:"RJ",ano:2026,custeio:11221351.60,capital:4684962.70,total:15906314.30,escolas:433,municipios:72,alunos:1382322},
+  {uf:"RN",ano:2018,custeio:9317409.89,capital:2929909.43,total:12247319.32,escolas:145,municipios:61,alunos:810199},
+  {uf:"RN",ano:2019,custeio:3383511.67,capital:1154457.99,total:4537969.66,escolas:54,municipios:32,alunos:287397},
+  {uf:"RN",ano:2020,custeio:10334019.55,capital:3713848.64,total:14047868.19,escolas:126,municipios:49,alunos:1029037},
+  {uf:"RN",ano:2021,custeio:14928765.58,capital:4493190.54,total:19421956.12,escolas:244,municipios:78,alunos:1229353},
+  {uf:"RN",ano:2022,custeio:20006760.57,capital:6424784.40,total:26431544.97,escolas:271,municipios:61,alunos:1861250},
+  {uf:"RN",ano:2023,custeio:47603943.92,capital:17676273.09,total:65280217.01,escolas:793,municipios:148,alunos:4955080},
+  {uf:"RN",ano:2024,custeio:36725632.55,capital:7423921.97,total:44149554.52,escolas:2472,municipios:163,alunos:2806467},
+  {uf:"RN",ano:2025,custeio:57077124.83,capital:19162078.86,total:76239203.69,escolas:720,municipios:121,alunos:5544103},
+  {uf:"RN",ano:2026,custeio:40281659.20,capital:16021843.68,total:56303502.88,escolas:350,municipios:121,alunos:4383656},
+  {uf:"RO",ano:2018,custeio:13859902.96,capital:5799718.14,total:19659621.10,escolas:146,municipios:34,alunos:1541624},
+  {uf:"RO",ano:2019,custeio:7968379.97,capital:3323877.38,total:11292257.35,escolas:64,municipios:16,alunos:937220},
+  {uf:"RO",ano:2020,custeio:5481770.50,capital:2399067.59,total:7880838.09,escolas:47,municipios:27,alunos:626445},
+  {uf:"RO",ano:2021,custeio:6088121.88,capital:2418330.21,total:8506452.09,escolas:63,municipios:29,alunos:635645},
+  {uf:"RO",ano:2022,custeio:7718695.87,capital:3480803.69,total:11199499.56,escolas:82,municipios:26,alunos:867229},
+  {uf:"RO",ano:2023,custeio:13197483.96,capital:5627793.50,total:18825277.46,escolas:120,municipios:38,alunos:1549904},
+  {uf:"RO",ano:2024,custeio:26111778.25,capital:9936000.87,total:36047779.12,escolas:2028,municipios:52,alunos:2649144},
+  {uf:"RO",ano:2025,custeio:21255694.44,capital:9065842.34,total:30321536.78,escolas:230,municipios:43,alunos:2400420},
+  {uf:"RO",ano:2026,custeio:5372484.09,capital:2160314.69,total:7532798.78,escolas:224,municipios:34,alunos:566919},
+  {uf:"RR",ano:2018,custeio:629302.08,capital:238879.02,total:868181.10,escolas:9,municipios:4,alunos:67245},
+  {uf:"RR",ano:2019,custeio:584960.35,capital:242675.62,total:827635.97,escolas:6,municipios:3,alunos:60973},
+  {uf:"RR",ano:2020,custeio:957935.88,capital:284511.91,total:1242447.79,escolas:46,municipios:5,alunos:95914},
+  {uf:"RR",ano:2021,custeio:775248.61,capital:311997.05,total:1087245.66,escolas:8,municipios:5,alunos:85127},
+  {uf:"RR",ano:2022,custeio:2670719.15,capital:1057233.19,total:3727952.34,escolas:40,municipios:10,alunos:284409},
+  {uf:"RR",ano:2023,custeio:3189557.97,capital:1285945.23,total:4475503.20,escolas:39,municipios:11,alunos:345432},
+  {uf:"RR",ano:2024,custeio:12207948.43,capital:2747329.67,total:14955278.10,escolas:886,municipios:15,alunos:927878},
+  {uf:"RR",ano:2025,custeio:15275420.43,capital:5873248.90,total:21148669.33,escolas:217,municipios:15,alunos:1641533},
+  {uf:"RR",ano:2026,custeio:1880294.18,capital:678079.92,total:2558374.10,escolas:23,municipios:11,alunos:203066},
+  {uf:"RS",ano:2018,custeio:9105280.99,capital:2666563.48,total:11771844.47,escolas:157,municipios:96,alunos:896226},
+  {uf:"RS",ano:2019,custeio:9444026.54,capital:3102227.54,total:12546254.08,escolas:144,municipios:99,alunos:949234},
+  {uf:"RS",ano:2020,custeio:6844112.05,capital:2379132.17,total:9223244.22,escolas:138,municipios:66,alunos:705587},
+  {uf:"RS",ano:2021,custeio:17259800.97,capital:5515030.76,total:22774831.73,escolas:212,municipios:128,alunos:1806327},
+  {uf:"RS",ano:2022,custeio:80716205.23,capital:26907788.19,total:107623993.42,escolas:1398,municipios:388,alunos:8767353},
+  {uf:"RS",ano:2023,custeio:101589136.98,capital:35675746.75,total:137264883.73,escolas:1108,municipios:330,alunos:11036645},
+  {uf:"RS",ano:2024,custeio:149650506.56,capital:46607955.93,total:196258462.49,escolas:4488,municipios:486,alunos:15060033},
+  {uf:"RS",ano:2025,custeio:244137900.26,capital:83227520.70,total:327365420.96,escolas:2790,municipios:456,alunos:26220601},
+  {uf:"RS",ano:2026,custeio:30260708.06,capital:11774680.37,total:42035388.43,escolas:365,municipios:131,alunos:3377650},
+  {uf:"SC",ano:2018,custeio:3390921.11,capital:1636429.68,total:5027350.79,escolas:75,municipios:48,alunos:408522},
+  {uf:"SC",ano:2019,custeio:2962521.92,capital:1353969.71,total:4316491.63,escolas:77,municipios:50,alunos:295522},
+  {uf:"SC",ano:2020,custeio:4045890.04,capital:2212048.73,total:6257938.77,escolas:108,municipios:57,alunos:492160},
+  {uf:"SC",ano:2021,custeio:5505478.19,capital:2677154.87,total:8182633.06,escolas:99,municipios:61,alunos:630573},
+  {uf:"SC",ano:2022,custeio:27507477.90,capital:14251895.86,total:41759373.76,escolas:379,municipios:138,alunos:3535198},
+  {uf:"SC",ano:2023,custeio:48825614.68,capital:25182599.60,total:74008214.28,escolas:681,municipios:175,alunos:6203333},
+  {uf:"SC",ano:2024,custeio:108589522.30,capital:50111783.44,total:158701305.74,escolas:3356,municipios:285,alunos:13175749},
+  {uf:"SC",ano:2025,custeio:164353638.39,capital:85267007.40,total:249620645.79,escolas:2594,municipios:287,alunos:21063234},
+  {uf:"SC",ano:2026,custeio:13598493.42,capital:7158008.50,total:20756501.92,escolas:194,municipios:97,alunos:1721699},
+  {uf:"SE",ano:2018,custeio:6172231.88,capital:1795269.37,total:7967501.25,escolas:121,municipios:40,alunos:489498},
+  {uf:"SE",ano:2019,custeio:3070435.33,capital:1018302.69,total:4088738.02,escolas:45,municipios:28,alunos:274860},
+  {uf:"SE",ano:2020,custeio:2083276.61,capital:685728.46,total:2769005.07,escolas:40,municipios:18,alunos:145060},
+  {uf:"SE",ano:2021,custeio:6963008.47,capital:2120723.59,total:9083732.06,escolas:100,municipios:32,alunos:563347},
+  {uf:"SE",ano:2022,custeio:22801582.00,capital:7937074.33,total:30738656.33,escolas:228,municipios:54,alunos:2335524},
+  {uf:"SE",ano:2023,custeio:16259866.27,capital:5148732.28,total:21408598.55,escolas:175,municipios:48,alunos:1489949},
+  {uf:"SE",ano:2024,custeio:25226635.39,capital:5860697.89,total:31087333.28,escolas:1410,municipios:74,alunos:1994665},
+  {uf:"SE",ano:2025,custeio:68067912.40,capital:22452677.88,total:90520590.28,escolas:694,municipios:72,alunos:6912936},
+  {uf:"SE",ano:2026,custeio:5485242.65,capital:1736456.57,total:7221699.22,escolas:72,municipios:24,alunos:482104},
+  {uf:"SP",ano:2018,custeio:41639327.19,capital:16347328.39,total:57986655.58,escolas:566,municipios:169,alunos:5238628},
+  {uf:"SP",ano:2019,custeio:41814325.95,capital:16047136.72,total:57861462.67,escolas:494,municipios:148,alunos:5342837},
+  {uf:"SP",ano:2020,custeio:43516012.63,capital:17023669.83,total:60539682.46,escolas:500,municipios:142,alunos:5589763},
+  {uf:"SP",ano:2021,custeio:67669398.29,capital:26852427.83,total:94521826.12,escolas:788,municipios:202,alunos:8673787},
+  {uf:"SP",ano:2022,custeio:104626555.44,capital:44776186.74,total:149402742.18,escolas:2746,municipios:398,alunos:13116643},
+  {uf:"SP",ano:2023,custeio:267122495.86,capital:105103759.20,total:372226255.06,escolas:2545,municipios:416,alunos:34797978},
+  {uf:"SP",ano:2024,custeio:259971798.31,capital:111730772.29,total:371702570.60,escolas:5857,municipios:560,alunos:33140248},
+  {uf:"SP",ano:2025,custeio:1032397223.86,capital:399518201.28,total:1431915425.14,escolas:9352,municipios:611,alunos:135793010},
+  {uf:"SP",ano:2026,custeio:51192765.23,capital:26462986.32,total:77655751.55,escolas:745,municipios:166,alunos:6947851},
+  {uf:"TO",ano:2018,custeio:5179463.18,capital:2205034.66,total:7384497.84,escolas:51,municipios:37,alunos:601743},
+  {uf:"TO",ano:2019,custeio:4505665.50,capital:2085567.56,total:6591233.06,escolas:78,municipios:46,alunos:477880},
+  {uf:"TO",ano:2020,custeio:3314542.03,capital:1499491.05,total:4814033.08,escolas:45,municipios:29,alunos:348899},
+  {uf:"TO",ano:2021,custeio:9663289.67,capital:4897979.98,total:14561269.65,escolas:154,municipios:65,alunos:1023608},
+  {uf:"TO",ano:2022,custeio:8716252.52,capital:4549377.62,total:13265630.14,escolas:197,municipios:64,alunos:970124},
+  {uf:"TO",ano:2023,custeio:13460722.47,capital:5813828.83,total:19274551.30,escolas:219,municipios:78,alunos:1353805},
+  {uf:"TO",ano:2024,custeio:21583116.29,capital:7595601.66,total:29178717.95,escolas:1731,municipios:135,alunos:1977015},
+  {uf:"TO",ano:2025,custeio:35225698.64,capital:16197414.06,total:51423112.70,escolas:544,municipios:121,alunos:3928332},
+  {uf:"TO",ano:2026,custeio:7824571.51,capital:2962775.64,total:10787347.15,escolas:221,municipios:48,alunos:821395}
 ];
 const PDDE_CACHE_DATE = '07/10/2026';
 
-let pddeData = [];
 let pddeCharts = {};
 
-function parseBRL(str) {
-  if (!str) return 0;
-  return parseFloat(str.replace(/\./g, '').replace(',', '.')) || 0;
-}
+function getPddeFiltered() {
+  const nivel = document.getElementById('pddeNivel').value;
+  const regSel = document.getElementById('pddeRegiao');
+  const ufSel = document.getElementById('pddeUf');
 
-async function fetchPddeYear(ano) {
-  const url = `${PDDE_BASE}/despesas/por-funcional-programatica?ano=${ano}&acao=${PDDE_ACAO}&pagina=1`;
-  const headers = { 'Accept': 'application/json', 'chave-api-dados': PDDE_API_KEY };
-  try {
-    const resp = await fetch(url, { headers });
-    if (resp.ok) {
-      const data = await resp.json();
-      return Array.isArray(data) ? data : [];
-    }
-  } catch (e) { console.warn(`PDDE ${ano}: CORS/rede — usando cache`, e); }
-  return [];
-}
+  regSel.style.display = nivel === 'regiao' ? '' : 'none';
+  ufSel.style.display = nivel === 'estado' ? '' : 'none';
 
-async function fetchPddeData() {
-  const btn = document.getElementById('btnPdde');
-  const overlay = document.getElementById('loadingOverlay');
-  const loadText = document.getElementById('loadingText');
-  const loadProg = document.getElementById('loadingProgress');
-
-  btn.disabled = true;
-  overlay.classList.add('active');
-  loadText.textContent = 'Consultando PDDE via API...';
-  loadProg.textContent = '';
-
-  let fromApi = false;
-  pddeData = [];
-
-  // Tenta buscar dados atualizados da API
-  for (let i = 0; i < PDDE_ANOS.length; i++) {
-    const ano = PDDE_ANOS[i];
-    loadText.textContent = `Consultando PDDE ${ano}...`;
-    loadProg.textContent = `${i+1} de ${PDDE_ANOS.length} anos`;
-
-    const items = await fetchPddeYear(ano);
-    if (items.length > 0) {
-      let empenhado = 0, liquidado = 0, pago = 0;
-      items.forEach(item => {
-        empenhado += parseBRL(item.empenhado);
-        liquidado += parseBRL(item.liquidado);
-        pago += parseBRL(item.pago);
-      });
-      if (empenhado > 0 || liquidado > 0 || pago > 0) {
-        pddeData.push({ ano, empenhado, liquidado, pago });
-        fromApi = true;
-      }
-    }
-
-    if (i === 0 && !fromApi) {
-      loadText.textContent = 'API indisponivel (CORS) — carregando dados reais em cache...';
-      break;
-    }
+  if (nivel === 'estado' && ufSel.options.length <= 1) {
+    Object.keys(PDDE_UF_NOME).sort().forEach(u => {
+      const o = document.createElement('option');
+      o.value = u; o.textContent = u + ' — ' + PDDE_UF_NOME[u];
+      ufSel.appendChild(o);
+    });
   }
 
-  // Fallback: usa cache de dados reais se API nao retornou
-  if (pddeData.length === 0) {
-    pddeData = PDDE_CACHE.map(d => ({ ...d }));
-    fromApi = false;
+  let data = PDDE_CACHE;
+  if (nivel === 'regiao' && regSel.value) {
+    data = data.filter(d => PDDE_UF_REGIAO[d.uf] === regSel.value);
   }
-
-  overlay.classList.remove('active');
-  btn.disabled = false;
-
-  document.getElementById('pddeEmpty').style.display = 'none';
-  document.getElementById('pddeKpis').style.display = '';
-  document.getElementById('pddeExecBarContainer').style.display = '';
-  document.getElementById('pddeTableContainer').style.display = '';
-
-  const fonte = fromApi
-    ? 'Dados atualizados da API em tempo real'
-    : `Dados reais consultados via API em ${PDDE_CACHE_DATE} (cache local — API bloqueada por CORS)`;
-  document.getElementById('pddeFonte').textContent = fonte;
-  document.getElementById('pddeFonte').style.display = '';
-
-  renderPddeKpis();
-  renderPddeExecBar();
-  renderPddeCharts();
-  renderPddeTable();
-  updatePddeThermometer();
+  if (nivel === 'estado' && ufSel.value) {
+    data = data.filter(d => d.uf === ufSel.value);
+  }
+  return data;
 }
 
-function renderPddeKpis() {
-  const latest = pddeData[pddeData.length - 1];
-  document.getElementById('pddeKpiEmpenhado').textContent = formatCurrency(latest.empenhado);
-  document.getElementById('pddeKpiLiquidado').textContent = formatCurrency(latest.liquidado);
-  document.getElementById('pddeKpiPago').textContent = formatCurrency(latest.pago);
-  const taxa = latest.empenhado > 0 ? (latest.pago / latest.empenhado * 100) : 0;
-  document.getElementById('pddeKpiTaxa').textContent = taxa.toFixed(1) + '%';
+function pddeAggByYear(data) {
+  const map = {};
+  data.forEach(d => {
+    if (!map[d.ano]) map[d.ano] = { ano: d.ano, custeio: 0, capital: 0, total: 0, escolas: 0, municipios: 0 };
+    map[d.ano].custeio += d.custeio;
+    map[d.ano].capital += d.capital;
+    map[d.ano].total += d.total;
+    map[d.ano].escolas += d.escolas;
+    map[d.ano].municipios += d.municipios;
+  });
+  return Object.values(map).sort((a, b) => a.ano - b.ano);
 }
 
-function renderPddeExecBar() {
-  const latest = pddeData[pddeData.length - 1];
-  const total = latest.empenhado || 1;
-  const pctPago = (latest.pago / total * 100);
-  const pctLiqNaoPago = ((latest.liquidado - latest.pago) / total * 100);
-  const pctEmpNaoLiq = ((latest.empenhado - latest.liquidado) / total * 100);
+function pddeAggByGroup(data, groupFn, nameFn) {
+  const map = {};
+  data.forEach(d => {
+    const g = groupFn(d);
+    if (!map[g]) map[g] = { key: g, name: nameFn(g), custeio: 0, capital: 0, total: 0, escolas: 0, municipios: 0 };
+    map[g].custeio += d.custeio;
+    map[g].capital += d.capital;
+    map[g].total += d.total;
+    map[g].escolas += d.escolas;
+    map[g].municipios += d.municipios;
+  });
+  return Object.values(map).sort((a, b) => b.total - a.total);
+}
 
+function loadPddeData() {
+  renderPddeDashboard();
+}
+
+function renderPddeDashboard() {
+  const nivel = document.getElementById('pddeNivel').value;
+  const data = getPddeFiltered();
+  const byYear = pddeAggByYear(data);
+
+  const totalGeral = data.reduce((s, d) => s + d.total, 0);
+  const totalCusteio = data.reduce((s, d) => s + d.custeio, 0);
+  const totalCapital = data.reduce((s, d) => s + d.capital, 0);
+  const totalEscolas = data.reduce((s, d) => s + d.escolas, 0);
+
+  document.getElementById('pddeKpiTotal').textContent = formatCurrency(totalGeral);
+  document.getElementById('pddeKpiCusteio').textContent = formatCurrency(totalCusteio);
+  document.getElementById('pddeKpiCapital').textContent = formatCurrency(totalCapital);
+  document.getElementById('pddeKpiEscolas').textContent = totalEscolas.toLocaleString('pt-BR');
+
+  const pctCust = totalGeral > 0 ? (totalCusteio / totalGeral * 100) : 0;
+  const pctCap = 100 - pctCust;
   const bar = document.getElementById('pddeExecBar');
   bar.innerHTML = `
-    <div class="pdde-exec-seg" style="width:${Math.max(pctPago, 0)}%;background:#22c55e;">${pctPago > 8 ? formatCurrency(latest.pago) : ''}</div>
-    <div class="pdde-exec-seg" style="width:${Math.max(pctLiqNaoPago, 0)}%;background:#3b82f6;">${pctLiqNaoPago > 8 ? formatCurrency(latest.liquidado - latest.pago) : ''}</div>
-    <div class="pdde-exec-seg" style="width:${Math.max(pctEmpNaoLiq, 0)}%;background:#64748b;">${pctEmpNaoLiq > 8 ? formatCurrency(latest.empenhado - latest.liquidado) : ''}</div>
+    <div class="pdde-exec-seg" style="width:${pctCust}%;background:#3b82f6;">${pctCust > 10 ? formatCurrency(totalCusteio) : ''}</div>
+    <div class="pdde-exec-seg" style="width:${pctCap}%;background:#a855f7;">${pctCap > 10 ? formatCurrency(totalCapital) : ''}</div>
   `;
-  document.getElementById('pddeExecLabel1').innerHTML = `<span style="color:#22c55e">●</span> Pago (${pctPago.toFixed(1)}%)`;
-  document.getElementById('pddeExecLabel2').innerHTML = `<span style="color:#3b82f6">●</span> Liquidado n/ pago (${pctLiqNaoPago.toFixed(1)}%)`;
-  document.getElementById('pddeExecLabel3').innerHTML = `<span style="color:#64748b">●</span> Empenhado n/ liquidado (${pctEmpNaoLiq.toFixed(1)}%)`;
-}
+  document.getElementById('pddeExecLabel1').innerHTML = `<span style="color:#3b82f6">&#9679;</span> Custeio (${pctCust.toFixed(1)}%)`;
+  document.getElementById('pddeExecLabel2').innerHTML = `<span style="color:#a855f7">&#9679;</span> Capital (${pctCap.toFixed(1)}%)`;
 
-function renderPddeCharts() {
-  const anos = pddeData.map(d => d.ano);
-  const empenhados = pddeData.map(d => d.empenhado);
-  const liquidados = pddeData.map(d => d.liquidado);
-  const pagos = pddeData.map(d => d.pago);
-  const taxas = pddeData.map(d => d.empenhado > 0 ? (d.pago / d.empenhado * 100) : 0);
-  const diferencas = pddeData.map(d => d.empenhado - d.pago);
+  const anos = byYear.map(d => d.ano);
+  const totais = byYear.map(d => d.total);
+  const custeios = byYear.map(d => d.custeio);
+  const capitais = byYear.map(d => d.capital);
+  const escolasArr = byYear.map(d => d.escolas);
+  const propCapital = byYear.map(d => d.total > 0 ? (d.capital / d.total * 100) : 0);
 
   const chartOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#64748b', font: { size: 11 } } } } };
   const gridColor = 'rgba(255,255,255,.06)';
@@ -1987,76 +2209,113 @@ function renderPddeCharts() {
   if (pddeCharts.evolucao) pddeCharts.evolucao.destroy();
   pddeCharts.evolucao = new Chart(document.getElementById('chartPddeEvolucao'), {
     type: 'bar',
+    data: { labels: anos, datasets: [{ label: 'Total Repassado', data: totais, backgroundColor: 'rgba(34,197,94,.7)', borderRadius: 4, barPercentage: 0.65 }] },
+    options: { ...chartOpts, plugins: { ...chartOpts.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gridColor }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } } }
+  });
+
+  if (pddeCharts.custeioCapital) pddeCharts.custeioCapital.destroy();
+  pddeCharts.custeioCapital = new Chart(document.getElementById('chartPddeCusteioCapital'), {
+    type: 'bar',
     data: {
       labels: anos,
       datasets: [
-        { label: 'Empenhado', data: empenhados, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 4, barPercentage: 0.8 },
-        { label: 'Liquidado', data: liquidados, backgroundColor: 'rgba(34,197,94,.7)', borderRadius: 4, barPercentage: 0.8 },
-        { label: 'Pago', data: pagos, backgroundColor: 'rgba(6,182,212,.7)', borderRadius: 4, barPercentage: 0.8 }
+        { label: 'Custeio', data: custeios, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 4, barPercentage: 0.8 },
+        { label: 'Capital', data: capitais, backgroundColor: 'rgba(168,85,247,.7)', borderRadius: 4, barPercentage: 0.8 }
       ]
     },
     options: { ...chartOpts, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gridColor }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } }, plugins: { ...chartOpts.plugins, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatCurrency(ctx.raw) } } } }
   });
 
-  if (pddeCharts.taxa) pddeCharts.taxa.destroy();
-  pddeCharts.taxa = new Chart(document.getElementById('chartPddeTaxa'), {
+  // Ranking chart
+  let rankData, rankLabels, rankColors, rankTitle;
+  const latestAno = Math.max(...anos);
+
+  if (nivel === 'brasil') {
+    const byReg = pddeAggByGroup(data.filter(d => d.ano === latestAno), d => PDDE_UF_REGIAO[d.uf], g => PDDE_REGIAO_NAMES[g]);
+    rankLabels = byReg.map(d => d.name);
+    rankData = byReg.map(d => d.total);
+    rankColors = byReg.map(d => PDDE_REGIAO_COLORS[d.key]);
+    rankTitle = `Total Repassado por Regiao (${latestAno})`;
+  } else if (nivel === 'regiao') {
+    const byUf = pddeAggByGroup(data.filter(d => d.ano === latestAno), d => d.uf, g => g);
+    rankLabels = byUf.map(d => d.name);
+    rankData = byUf.map(d => d.total);
+    rankColors = byUf.map(d => PDDE_REGIAO_COLORS[PDDE_UF_REGIAO[d.key]]);
+    rankTitle = `Ranking UFs — Total Repassado (${latestAno})`;
+  } else {
+    rankLabels = anos.map(String);
+    rankData = totais;
+    rankColors = totais.map(() => '#22c55e');
+    rankTitle = `Evolucao Total — ${document.getElementById('pddeUf').value || 'Todos'}`;
+  }
+  document.getElementById('pddeChart3Title').textContent = rankTitle;
+
+  if (pddeCharts.ranking) pddeCharts.ranking.destroy();
+  pddeCharts.ranking = new Chart(document.getElementById('chartPddeRanking'), {
+    type: 'bar',
+    data: { labels: rankLabels, datasets: [{ label: 'Total', data: rankData, backgroundColor: rankColors, borderRadius: 4, barPercentage: 0.65 }] },
+    options: { ...chartOpts, indexAxis: nivel !== 'estado' ? 'y' : 'x', plugins: { ...chartOpts.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { color: gridColor }, ticks: { color: '#64748b', callback: v => nivel !== 'estado' ? formatCurrency(v) : v } }, y: { grid: { display: false }, ticks: { color: '#e2e8f0' } } } }
+  });
+
+  if (pddeCharts.escolas) pddeCharts.escolas.destroy();
+  pddeCharts.escolas = new Chart(document.getElementById('chartPddeEscolas'), {
     type: 'line',
-    data: {
-      labels: anos,
-      datasets: [{
-        label: 'Taxa de Execucao (Pago/Empenhado)',
-        data: taxas,
-        borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,.15)',
-        fill: true, tension: 0.3, pointRadius: 5, pointBackgroundColor: '#22c55e'
-      }]
-    },
-    options: { ...chartOpts, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gridColor }, ticks: { color: '#64748b', callback: v => v.toFixed(0) + '%' }, min: 0, max: 100 } }, plugins: { ...chartOpts.plugins, tooltip: { callbacks: { label: ctx => ctx.raw.toFixed(1) + '%' } } } }
+    data: { labels: anos, datasets: [{ label: 'Escolas Atendidas', data: escolasArr, borderColor: '#06b6d4', backgroundColor: 'rgba(6,182,212,.15)', fill: true, tension: 0.3, pointRadius: 5, pointBackgroundColor: '#06b6d4' }] },
+    options: { ...chartOpts, plugins: { ...chartOpts.plugins, tooltip: { callbacks: { label: ctx => ctx.raw.toLocaleString('pt-BR') + ' escolas' } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gridColor }, ticks: { color: '#64748b', callback: v => v >= 1000 ? (v/1000).toFixed(0) + 'k' : v } } } }
   });
 
-  if (pddeCharts.empenhado) pddeCharts.empenhado.destroy();
-  pddeCharts.empenhado = new Chart(document.getElementById('chartPddeEmpenhado'), {
-    type: 'bar',
-    data: { labels: anos, datasets: [{ label: 'Empenhado', data: empenhados, backgroundColor: '#3b82f6', borderRadius: 4, barPercentage: 0.65 }] },
-    options: { ...chartOpts, plugins: { ...chartOpts.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gridColor }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } } }
+  if (pddeCharts.propCapital) pddeCharts.propCapital.destroy();
+  pddeCharts.propCapital = new Chart(document.getElementById('chartPddePropCapital'), {
+    type: 'line',
+    data: { labels: anos, datasets: [{ label: '% Capital', data: propCapital, borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,.15)', fill: true, tension: 0.3, pointRadius: 5, pointBackgroundColor: '#a855f7' }] },
+    options: { ...chartOpts, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gridColor }, ticks: { color: '#64748b', callback: v => v.toFixed(0) + '%' }, min: 0, max: 60 } }, plugins: { ...chartOpts.plugins, tooltip: { callbacks: { label: ctx => ctx.raw.toFixed(1) + '%' } } } }
   });
 
-  if (pddeCharts.pago) pddeCharts.pago.destroy();
-  pddeCharts.pago = new Chart(document.getElementById('chartPddePago'), {
-    type: 'bar',
-    data: { labels: anos, datasets: [{ label: 'Pago', data: pagos, backgroundColor: '#06b6d4', borderRadius: 4, barPercentage: 0.65 }] },
-    options: { ...chartOpts, plugins: { ...chartOpts.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gridColor }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } } }
-  });
-
-  if (pddeCharts.diferenca) pddeCharts.diferenca.destroy();
-  pddeCharts.diferenca = new Chart(document.getElementById('chartPddeDiferenca'), {
-    type: 'bar',
-    data: { labels: anos, datasets: [{ label: 'Empenhado - Pago', data: diferencas, backgroundColor: diferencas.map(d => d > 500e6 ? '#ef4444' : d > 200e6 ? '#f59e0b' : '#22c55e'), borderRadius: 4, barPercentage: 0.65 }] },
-    options: { ...chartOpts, plugins: { ...chartOpts.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gridColor }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } } }
-  });
-}
-
-function renderPddeTable() {
-  const tbody = document.getElementById('pddeTableBody');
-  tbody.innerHTML = pddeData.map(d => {
-    const taxa = d.empenhado > 0 ? (d.pago / d.empenhado * 100) : 0;
-    const taxaColor = taxa >= 90 ? '#22c55e' : taxa >= 70 ? '#f59e0b' : '#ef4444';
-    return `<tr style="border-bottom:1px solid var(--border);">
+  // Table
+  const thStyle = 'padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;';
+  if (nivel !== 'estado' || !document.getElementById('pddeUf').value) {
+    document.getElementById('pddeTableHead').innerHTML = `
+      <th style="${thStyle}text-align:left;">Ano</th>
+      <th style="${thStyle}">Total</th>
+      <th style="${thStyle}">Custeio</th>
+      <th style="${thStyle}">Capital</th>
+      <th style="${thStyle}">Escolas</th>
+      <th style="${thStyle}">Municipios</th>
+    `;
+    document.getElementById('pddeTableBody').innerHTML = byYear.map(d => `<tr style="border-bottom:1px solid var(--border);">
       <td style="padding:10px 8px;font-weight:600;">${d.ano}</td>
-      <td style="padding:10px 8px;text-align:right;color:var(--accent);">R$ ${d.empenhado.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
-      <td style="padding:10px 8px;text-align:right;color:var(--green);">R$ ${d.liquidado.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
-      <td style="padding:10px 8px;text-align:right;color:var(--cyan);">R$ ${d.pago.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
-      <td style="padding:10px 8px;text-align:right;font-weight:700;color:${taxaColor};">${taxa.toFixed(1)}%</td>
-    </tr>`;
-  }).join('');
-}
+      <td style="padding:10px 8px;text-align:right;color:var(--green);font-weight:700;">${formatCurrency(d.total)}</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--accent);">${formatCurrency(d.custeio)}</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--purple);">${formatCurrency(d.capital)}</td>
+      <td style="padding:10px 8px;text-align:right;">${d.escolas.toLocaleString('pt-BR')}</td>
+      <td style="padding:10px 8px;text-align:right;">${d.municipios.toLocaleString('pt-BR')}</td>
+    </tr>`).join('');
+  } else {
+    document.getElementById('pddeTableHead').innerHTML = `
+      <th style="${thStyle}text-align:left;">Ano</th>
+      <th style="${thStyle}">Total</th>
+      <th style="${thStyle}">Custeio</th>
+      <th style="${thStyle}">Capital</th>
+      <th style="${thStyle}">Escolas</th>
+      <th style="${thStyle}">Municipios</th>
+    `;
+    document.getElementById('pddeTableBody').innerHTML = data.sort((a, b) => a.ano - b.ano).map(d => `<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:10px 8px;font-weight:600;">${d.ano}</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--green);font-weight:700;">${formatCurrency(d.total)}</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--accent);">${formatCurrency(d.custeio)}</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--purple);">${formatCurrency(d.capital)}</td>
+      <td style="padding:10px 8px;text-align:right;">${d.escolas.toLocaleString('pt-BR')}</td>
+      <td style="padding:10px 8px;text-align:right;">${d.municipios.toLocaleString('pt-BR')}</td>
+    </tr>`).join('');
+  }
 
-function updatePddeThermometer() {
+  // Thermometer
   const el = document.getElementById('pddeThermometer');
-  const latest = pddeData[pddeData.length - 1];
-  const taxa = latest.empenhado > 0 ? (latest.pago / latest.empenhado * 100) : 0;
-  if (taxa >= 85) { el.className = 'thermometer thermo-green'; el.textContent = `${latest.ano}: ${taxa.toFixed(1)}% executado — ${formatCurrency(latest.pago)} pago`; }
-  else if (taxa >= 60) { el.className = 'thermometer thermo-yellow'; el.textContent = `${latest.ano}: ${taxa.toFixed(1)}% executado — ${formatCurrency(latest.pago)} pago`; }
-  else { el.className = 'thermometer thermo-red'; el.textContent = `${latest.ano}: ${taxa.toFixed(1)}% executado — ${formatCurrency(latest.empenhado - latest.pago)} pendente`; }
+  const latestYr = byYear.find(d => d.ano === latestAno);
+  if (latestYr) {
+    el.className = 'thermometer thermo-green';
+    el.textContent = `${latestAno}: ${formatCurrency(latestYr.total)} repassado — ${latestYr.escolas.toLocaleString('pt-BR')} escolas`;
+  }
 }
 
 // =====================================================
