@@ -913,6 +913,9 @@
     <div class="header-controls">
       <div id="pddeThermometer" class="thermometer thermo-green">Aguardando dados...</div>
       <button class="btn btn-green" onclick="pddeLoaded=false;loadPddeData()">Consultar APIs</button>
+      <select id="pddeAno" class="select-input" onchange="renderPddeDashboard()" style="width:100px;">
+        <option value="">Todos os Anos</option>
+      </select>
       <select id="pddeNivel" class="select-input" onchange="onPddeNivelChange()" style="width:160px;">
         <option value="brasil">Brasil</option>
         <option value="regiao">Por Regiao</option>
@@ -1045,6 +1048,9 @@
     <div class="header-controls">
       <div id="pnaeThermometer" class="thermometer thermo-green">Aguardando dados...</div>
       <button class="btn btn-green" onclick="pnaeLoaded=false;loadPnaeData()">Consultar APIs</button>
+      <select id="pnaeAno" class="select-input" onchange="renderPnaeDashboard()" style="width:100px;">
+        <option value="">Todos os Anos</option>
+      </select>
       <select id="pnaeNivel" class="select-input" onchange="onPnaeNivelChange()" style="width:160px;">
         <option value="brasil">Brasil</option>
         <option value="regiao">Por Regiao</option>
@@ -1165,6 +1171,9 @@
     </div>
     <div class="header-controls">
       <div id="execThermometer" class="thermometer thermo-green">Aguardando dados...</div>
+      <select id="execAno" class="select-input" onchange="renderExecDashboard()" style="width:100px;">
+        <option value="">Todos os Anos</option>
+      </select>
       <select id="execNivel" class="select-input" onchange="renderExecDashboard()" style="width:160px;">
         <option value="brasil">Brasil</option>
         <option value="regiao">Por Regiao</option>
@@ -29462,6 +29471,7 @@ function getPddeFiltered() {
   const regSel = document.getElementById('pddeRegiao');
   const ufSel = document.getElementById('pddeUf');
   const munSel = document.getElementById('pddeMun');
+  const anoSel = document.getElementById('pddeAno').value;
 
   if (nivel === 'municipio') {
     const uf = ufSel.value;
@@ -29469,6 +29479,7 @@ function getPddeFiltered() {
     let data = pddeParseMun();
     if (uf) data = data.filter(d => d.uf === uf);
     if (cod) data = data.filter(d => d.cod === cod);
+    if (anoSel) data = data.filter(d => d.ano === parseInt(anoSel));
     return data;
   }
 
@@ -29479,6 +29490,7 @@ function getPddeFiltered() {
   if (nivel === 'estado' && ufSel.value) {
     data = data.filter(d => d.uf === ufSel.value);
   }
+  if (anoSel) data = data.filter(d => d.ano === parseInt(anoSel));
   return data;
 }
 
@@ -29510,6 +29522,11 @@ function pddeAggByGroup(data, groupFn, nameFn) {
 }
 
 function loadPddeData() {
+  const sel = document.getElementById('pddeAno');
+  if (sel.options.length <= 1) {
+    const anos = [...new Set(PDDE_CACHE.map(d => d.ano))].sort();
+    anos.forEach(a => { const o = document.createElement('option'); o.value = a; o.textContent = a; sel.appendChild(o); });
+  }
   renderPddeDashboard();
 }
 
@@ -130468,6 +130485,7 @@ function getPnaeFiltered() {
   const regSel = document.getElementById('pnaeRegiao');
   const ufSel = document.getElementById('pnaeUf');
   const munSel = document.getElementById('pnaeMun');
+  const anoSel = document.getElementById('pnaeAno').value;
 
   if (nivel === 'municipio') {
     const uf = ufSel.value;
@@ -130475,6 +130493,7 @@ function getPnaeFiltered() {
     let data = pnaeParseMun();
     if (uf) data = data.filter(d => d.uf === uf);
     if (mun) data = data.filter(d => d.mun === mun);
+    if (anoSel) data = data.filter(d => d.ano === parseInt(anoSel));
     return data;
   }
 
@@ -130485,6 +130504,7 @@ function getPnaeFiltered() {
   if (nivel === 'estado' && ufSel.value) {
     data = data.filter(d => d.uf === ufSel.value);
   }
+  if (anoSel) data = data.filter(d => d.ano === parseInt(anoSel));
   return data;
 }
 
@@ -130513,6 +130533,11 @@ function pnaeAggByGroup(data, groupFn, nameFn) {
 }
 
 function loadPnaeData() {
+  const sel = document.getElementById('pnaeAno');
+  if (sel.options.length <= 1) {
+    const anos = [...new Set(PNAE_CACHE.map(d => d.ano))].sort();
+    anos.forEach(a => { const o = document.createElement('option'); o.value = a; o.textContent = a; sel.appendChild(o); });
+  }
   renderPnaeDashboard();
 }
 
@@ -130857,6 +130882,12 @@ function loadExecData() {
   const sel = document.getElementById('execUf');
   sel.innerHTML = '<option value="">Todos</option>' + ufs.map(u => `<option value="${u}">${u}</option>`).join('');
 
+  const anoSel = document.getElementById('execAno');
+  if (anoSel.options.length <= 1) {
+    const anos = [...new Set(EXEC_CACHE.map(d => d.ano))].sort();
+    anos.forEach(a => { const o = document.createElement('option'); o.value = a; o.textContent = a; anoSel.appendChild(o); });
+  }
+
   document.getElementById('execKpis').style.display = '';
   document.getElementById('execExecBarContainer').style.display = '';
   document.getElementById('execTableContainer').style.display = '';
@@ -130870,6 +130901,7 @@ function getExecFiltered() {
   const nivel = document.getElementById('execNivel').value;
   const regSel = document.getElementById('execRegiao');
   const ufSel = document.getElementById('execUf');
+  const anoSel = document.getElementById('execAno').value;
 
   regSel.style.display = (nivel === 'regiao' || nivel === 'estado') ? '' : 'none';
   ufSel.style.display = nivel === 'estado' ? '' : 'none';
@@ -130880,6 +130912,7 @@ function getExecFiltered() {
 
   if (regiao) filtered = filtered.filter(d => d.regiao === regiao);
   if (nivel === 'estado' && uf) filtered = filtered.filter(d => d.uf === uf);
+  if (anoSel) filtered = filtered.filter(d => d.ano === parseInt(anoSel));
 
   return { filtered, nivel, regiao, uf };
 }
