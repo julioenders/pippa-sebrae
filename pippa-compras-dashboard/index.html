@@ -4,17 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PIPPA Compras Publicas — Radar de Oportunidades para MPE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg: #0f1117;
-      --surface: #1a1d27;
-      --surface2: #242836;
-      --border: #2e3348;
-      --text: #e4e6ef;
-      --text-muted: #8b8fa8;
-      --accent: #10b981;
-      --accent-hover: #34d399;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface2: #334155;
+      --border: rgba(255,255,255,.06);
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+      --accent: #3b82f6;
+      --green: #22c55e;
+      --orange: #f97316;
+      --purple: #a855f7;
+      --cyan: #06b6d4;
       --pregao: #4f8cff;
       --dispensa: #f59e0b;
       --concorrencia: #a855f7;
@@ -38,15 +42,166 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
     }
 
+    /* ── Landing Page ─────────────────────────────────────── */
+    .landing-header {
+      background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+      border-bottom: 2px solid rgba(59,130,246,.3);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .landing-header .logo {
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10b981, #4f8cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .landing-header .logo-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    .landing-header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .landing-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+    .landing-title {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .landing-title h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10b981, #4f8cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .landing-title p {
+      font-size: .88rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+    .landing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1rem;
+      margin-top: 36px;
+    }
+    .landing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.5rem 1.5rem 1.8rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all .25s;
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .landing-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+    }
+    .landing-card:nth-child(1)::before { background: var(--accent); }
+    .landing-card:nth-child(2)::before { background: var(--green); }
+    .landing-card:nth-child(3)::before { background: var(--orange); }
+    .landing-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(59,130,246,.3);
+      box-shadow: 0 8px 32px rgba(0,0,0,.3);
+    }
+    .card-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .landing-card:nth-child(1) .card-num { background: rgba(59,130,246,.12); color: var(--accent); }
+    .landing-card:nth-child(2) .card-num { background: rgba(34,197,94,.12); color: var(--green); }
+    .landing-card:nth-child(3) .card-num { background: rgba(249,115,22,.12); color: var(--orange); }
+    .card-body h3 { font-size: .92rem; font-weight: 700; margin-bottom: .35rem; }
+    .card-body p { font-size: .78rem; color: var(--text-muted); line-height: 1.65; }
+    .card-arrow {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      transition: all .2s;
+    }
+    .landing-card:hover .card-arrow {
+      transform: translateY(-50%) translateX(4px);
+      color: var(--accent);
+    }
+    .landing-footer {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ── Back button ──────────────────────────────────────── */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15,23,42,.85);
+      border: 1px solid rgba(59,130,246,.3);
+      color: #93c5fd;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .back-btn:hover { background: rgba(59,130,246,.15); border-color: var(--accent); color: #fff; }
+
+    /* ── Dashboard Sections ───────────────────────────────── */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ── Compras Header ───────────────────────────────────── */
     .header {
-      background: linear-gradient(135deg, #1a1d27 0%, #242836 100%);
-      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+      border-bottom: 2px solid rgba(59,130,246,.3);
       padding: 16px 24px;
       display: flex;
       align-items: center;
@@ -55,9 +210,7 @@
       top: 0;
       z-index: 100;
     }
-
     .header-left { display: flex; align-items: center; gap: 16px; }
-
     .logo {
       font-size: 22px;
       font-weight: 700;
@@ -66,18 +219,8 @@
       -webkit-text-fill-color: transparent;
       letter-spacing: -0.5px;
     }
-
-    .logo-sub {
-      font-size: 13px;
-      color: var(--text-muted);
-      font-weight: 400;
-    }
-
-    .header-controls {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .logo-sub { font-size: 13px; color: var(--text-muted); font-weight: 400; }
+    .header-controls { display: flex; align-items: center; gap: 12px; }
 
     .select-input, .date-input {
       background: var(--surface2);
@@ -88,8 +231,8 @@
       font-size: 14px;
       outline: none;
       cursor: pointer;
+      font-family: inherit;
     }
-
     .select-input:focus, .date-input:focus { border-color: var(--accent); }
 
     .btn {
@@ -106,18 +249,18 @@
       align-items: center;
       gap: 6px;
       white-space: nowrap;
+      font-family: inherit;
     }
-
-    .btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn:hover { background: #60a5fa; transform: translateY(-1px); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
     .btn-outline {
       background: transparent;
       border: 1px solid var(--border);
       color: var(--text);
     }
-
     .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
+    .btn-green { background: var(--green); }
+    .btn-green:hover { background: #4ade80; }
 
     .thermometer {
       display: flex;
@@ -128,17 +271,16 @@
       font-size: 13px;
       font-weight: 600;
     }
-
     .thermo-green { background: rgba(34,197,94,0.15); color: #22c55e; }
     .thermo-yellow { background: rgba(245,158,11,0.15); color: #f59e0b; }
     .thermo-red { background: rgba(239,68,68,0.15); color: #ef4444; }
 
+    /* ── Layout ───────────────────────────────────────────── */
     .layout {
       display: grid;
       grid-template-columns: 280px 1fr;
       min-height: calc(100vh - 64px);
     }
-
     .sidebar {
       background: var(--surface);
       border-right: 1px solid var(--border);
@@ -149,154 +291,58 @@
       top: 64px;
     }
 
-    .filter-section {
-      margin-bottom: 4px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-
+    .filter-section { margin-bottom: 4px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
     .filter-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      cursor: pointer;
-      background: var(--surface2);
-      transition: background 0.2s;
-      user-select: none;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px; cursor: pointer; background: var(--surface2);
+      transition: background 0.2s; user-select: none;
     }
-
     .filter-header:hover { background: var(--border); }
-
     .filter-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-muted);
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 8px;
     }
-
-    .filter-arrow {
-      font-size: 10px;
-      color: var(--text-muted);
-      transition: transform 0.2s;
-    }
-
+    .filter-arrow { font-size: 10px; color: var(--text-muted); transition: transform 0.2s; }
     .filter-section.open .filter-arrow { transform: rotate(180deg); }
-
     .filter-badge {
-      background: var(--accent);
-      color: #fff;
-      font-size: 10px;
-      min-width: 18px;
-      height: 18px;
-      border-radius: 9px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 0 5px;
-      font-weight: 700;
+      background: var(--accent); color: #fff; font-size: 10px; min-width: 18px; height: 18px;
+      border-radius: 9px; display: none; align-items: center; justify-content: center;
+      padding: 0 5px; font-weight: 700;
     }
-
     .filter-badge.visible { display: flex; }
-
-    .filter-body {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.25s ease, padding 0.25s ease;
-      padding: 0 12px;
-    }
-
-    .filter-section.open .filter-body {
-      max-height: 300px;
-      padding: 10px 12px;
-    }
-
-    .filter-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
+    .filter-body { max-height: 0; overflow: hidden; transition: max-height 0.25s ease, padding 0.25s ease; padding: 0 12px; }
+    .filter-section.open .filter-body { max-height: 300px; padding: 10px 12px; }
+    .filter-group { display: flex; flex-wrap: wrap; gap: 6px; }
     .filter-chip {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 4px 12px;
-      border-radius: 16px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      user-select: none;
+      background: var(--surface); border: 1px solid var(--border); color: var(--text-muted);
+      padding: 4px 12px; border-radius: 16px; font-size: 12px; cursor: pointer;
+      transition: all 0.2s; user-select: none;
     }
-
     .filter-chip:hover { border-color: var(--accent); color: var(--text); }
     .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-    .filter-clear {
-      font-size: 11px;
-      color: var(--accent);
-      cursor: pointer;
-      margin-top: 8px;
-      display: block;
-      text-align: right;
-    }
-
+    .filter-clear { font-size: 11px; color: var(--accent); cursor: pointer; margin-top: 8px; display: block; text-align: right; }
     .filter-clear:hover { text-decoration: underline; }
 
     .search-input {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 8px 12px;
-      border-radius: var(--radius);
-      font-size: 13px;
-      outline: none;
-      margin-bottom: 16px;
+      width: 100%; background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); padding: 8px 12px; border-radius: var(--radius);
+      font-size: 13px; outline: none; margin-bottom: 16px; font-family: inherit;
     }
-
     .search-input:focus { border-color: var(--accent); }
     .search-input::placeholder { color: var(--text-muted); }
 
-    .main {
-      padding: 20px 24px;
-      overflow-y: auto;
-    }
+    .main { padding: 20px 24px; overflow-y: auto; }
 
     .kpi-bar {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px; margin-bottom: 16px;
     }
-
     .kpi-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      text-align: center;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px; text-align: center;
     }
-
-    .kpi-value {
-      font-size: 32px;
-      font-weight: 700;
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-
-    .kpi-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
+    .kpi-value { font-size: 32px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+    .kpi-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
     .kpi-total { color: var(--accent); }
     .kpi-pregao { color: var(--pregao); }
     .kpi-dispensa { color: var(--dispensa); }
@@ -304,480 +350,228 @@
     .kpi-valor { color: #f59e0b; }
 
     .kpi-bar-secondary {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 10px;
-      margin-bottom: 24px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px; margin-bottom: 24px;
     }
-
     .kpi-card-sm {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 12px;
-      text-align: center;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 12px; text-align: center;
     }
-
     .kpi-card-sm .kpi-value { font-size: 24px; }
     .kpi-card-sm .kpi-label { font-size: 11px; }
 
-    .charts-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
+    .charts-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .charts-row-half { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+    .charts-row-full { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; }
 
     .chart-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px;
     }
+    .chart-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--text); }
+    .chart-wrapper { position: relative; height: 220px; }
 
-    .chart-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 12px;
-      color: var(--text);
-    }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .section-title { font-size: 16px; font-weight: 600; }
+    .section-count { font-size: 13px; color: var(--text-muted); background: var(--surface2); padding: 4px 10px; border-radius: 12px; }
 
-    .chart-wrapper {
-      position: relative;
-      height: 220px;
-    }
-
-    .chart-card-full {
-      grid-column: 1 / -1;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-
-    .section-title {
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .section-count {
-      font-size: 13px;
-      color: var(--text-muted);
-      background: var(--surface2);
-      padding: 4px 10px;
-      border-radius: 12px;
-    }
-
-    .news-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-
+    .news-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
     .news-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      transition: all 0.2s;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; transition: all 0.2s;
     }
-
     .news-card:hover { border-color: var(--accent); box-shadow: var(--shadow); }
-
+    .news-card.mei-card { border-left: 3px solid #06b6d4; }
     .news-card.exclusiva-mpe { border-left: 3px solid var(--exclusiva); }
     .news-card.urgente { border-left: 3px solid var(--urgente); }
 
-    .news-header {
-      padding: 16px;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      cursor: pointer;
-    }
-
+    .news-header { padding: 16px; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
     .news-status-badge {
-      min-width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
+      min-width: 36px; height: 36px; border-radius: 8px; display: flex;
+      align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
     }
-
     .badge-pregao { background: rgba(79,140,255,0.2); }
     .badge-dispensa { background: rgba(245,158,11,0.2); }
     .badge-concorrencia { background: rgba(168,85,247,0.2); }
     .badge-credenciamento { background: rgba(244,114,182,0.2); }
     .badge-inexigibilidade { background: rgba(139,143,168,0.2); }
-
     .news-info { flex: 1; min-width: 0; }
-
-    .news-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-      line-height: 1.4;
-      color: var(--text);
-    }
-
-    .news-meta {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .news-source {
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      background: rgba(16,185,129,0.2);
-      color: var(--accent);
-    }
-
-    .news-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 6px;
-    }
-
-    .news-tag {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 10px;
-      background: var(--surface2);
-      color: var(--text-muted);
-    }
-
+    .news-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; line-height: 1.4; color: var(--text); }
+    .news-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .news-source { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(16,185,129,0.2); color: var(--accent); }
+    .news-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .news-tag { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--surface2); color: var(--text-muted); }
     .tag-modalidade { background: rgba(79,140,255,0.15); color: var(--pregao); }
     .tag-exclusiva { background: rgba(34,197,94,0.15); color: var(--exclusiva); }
     .tag-cota { background: rgba(16,185,129,0.15); color: var(--cota); }
     .tag-urgente { background: rgba(239,68,68,0.15); color: var(--urgente); }
     .tag-valor { background: rgba(245,158,11,0.15); color: var(--dispensa); }
     .tag-uf { background: rgba(168,85,247,0.15); color: var(--concorrencia); }
+    .tag-mei { background: rgba(6,182,212,0.15); color: #06b6d4; }
 
     .news-expand {
-      color: var(--text-muted);
-      font-size: 18px;
-      cursor: pointer;
-      transition: transform 0.2s;
-      flex-shrink: 0;
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 6px;
+      color: var(--text-muted); font-size: 18px; cursor: pointer;
+      transition: transform 0.2s; flex-shrink: 0; width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center; border-radius: 6px;
     }
-
     .news-expand:hover { background: var(--surface2); }
     .news-card.expanded .news-expand { transform: rotate(180deg); }
-
-    .news-details {
-      display: none;
-      padding: 0 16px 16px;
-      border-top: 1px solid var(--border);
-    }
-
+    .news-details { display: none; padding: 0 16px 16px; border-top: 1px solid var(--border); }
     .news-card.expanded .news-details { display: block; }
-
-    .detail-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .detail-item {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .detail-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .detail-value {
-      font-size: 13px;
-      color: var(--text);
-    }
-
-    .detail-value a {
-      color: var(--accent);
-      text-decoration: none;
-    }
+    .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
+    .detail-item { display: flex; flex-direction: column; gap: 2px; }
+    .detail-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .detail-value { font-size: 13px; color: var(--text); }
+    .detail-value a { color: var(--accent); text-decoration: none; }
     .detail-value a:hover { text-decoration: underline; }
 
     .loading-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15,17,23,0.85);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 16px;
+      display: none; position: fixed; inset: 0; background: rgba(15,17,23,0.85);
+      z-index: 200; align-items: center; justify-content: center; flex-direction: column; gap: 16px;
     }
-
     .loading-overlay.active { display: flex; }
-
-    .spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
+    .spinner { width: 48px; height: 48px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     .loading-text { color: var(--text); font-size: 14px; }
     .loading-progress { color: var(--text-muted); font-size: 12px; }
 
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-muted);
-    }
-
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
     .empty-state-icon { font-size: 48px; margin-bottom: 16px; }
     .empty-state-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
 
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--success);
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: var(--radius);
-      font-size: 13px;
-      font-weight: 600;
-      z-index: 400;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.3s;
-    }
-
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--success); color: #fff; padding: 10px 20px; border-radius: var(--radius); font-size: 13px; font-weight: 600; z-index: 400; opacity: 0; transform: translateY(10px); transition: all 0.3s; }
     .toast.show { opacity: 1; transform: translateY(0); }
 
-    .info-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      background: var(--surface2);
-      color: var(--text-muted);
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-right: 10px;
-    }
-
+    .info-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 10px; }
     .info-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-    .info-modal-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15,17,23,0.8);
-      z-index: 300;
-      align-items: center;
-      justify-content: center;
-    }
-
+    .info-modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(15,17,23,0.8); z-index: 300; align-items: center; justify-content: center; }
     .info-modal-backdrop.active { display: flex; }
-
-    .info-modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 28px;
-      max-width: 620px;
-      width: 90%;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-
-    .info-modal h2 {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      background: linear-gradient(135deg, #10b981, #4f8cff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .info-modal h3 {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 16px;
-      margin-bottom: 8px;
-    }
-
-    .info-modal ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    .info-modal li {
-      font-size: 13px;
-      color: var(--text-muted);
-      padding: 4px 0;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      line-height: 1.5;
-    }
-
-    .info-modal li::before {
-      content: '•';
-      color: var(--accent);
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .info-modal .info-footer {
-      margin-top: 20px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-      font-size: 11px;
-      color: var(--text-muted);
-      text-align: center;
-      line-height: 1.6;
-    }
-
-    .info-close {
-      float: right;
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 20px;
-      cursor: pointer;
-      padding: 0 4px;
-    }
-
+    .info-modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; max-width: 620px; width: 90%; max-height: 80vh; overflow-y: auto; }
+    .info-modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; background: linear-gradient(135deg, #10b981, #4f8cff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .info-modal h3 { font-size: 13px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 16px; margin-bottom: 8px; }
+    .info-modal ul { list-style: none; padding: 0; }
+    .info-modal li { font-size: 13px; color: var(--text-muted); padding: 4px 0; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+    .info-modal li::before { content: '\2022'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+    .info-modal .info-footer { margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.6; }
+    .info-close { float: right; background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0 4px; }
     .info-close:hover { color: var(--text); }
 
-    .date-range {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
+    .date-range { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); }
 
-    .date-range-label {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .mpe-note {
-      margin-top: 16px;
-      padding: 12px 10px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: rgba(255,255,255,0.03);
-      font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.6;
-    }
-    .mpe-note-title {
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 8px;
-      font-size: 11.5px;
-      text-align: center;
-    }
-    .mpe-note .mpe-level {
-      display: flex;
-      align-items: flex-start;
-      gap: 6px;
-      margin-bottom: 6px;
-    }
-    .mpe-note .mpe-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      margin-top: 4px;
-    }
+    .mpe-note { margin-top: 16px; padding: 12px 10px; border: 1px solid var(--border); border-radius: 8px; background: rgba(255,255,255,0.03); font-size: 11px; color: var(--text-muted); line-height: 1.6; }
+    .mpe-note-title { font-weight: 700; color: var(--text); margin-bottom: 8px; font-size: 11.5px; text-align: center; }
+    .mpe-note .mpe-level { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 6px; }
+    .mpe-note .mpe-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
     .mpe-note .mpe-dot.green { background: #22c55e; }
     .mpe-note .mpe-dot.blue { background: #4f8cff; }
     .mpe-note .mpe-dot.gray { background: #8b8fa8; }
     .mpe-note .mpe-label { font-weight: 600; color: var(--text); }
 
-    .sidebar-footer {
-      margin-top: 16px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-      font-size: 11px;
-      color: var(--text-muted);
-      text-align: center;
-      line-height: 1.6;
+    .sidebar-footer { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.6; }
+
+    .pippa-home-btn{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
+    .pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff;}
+    .pippa-home-btn svg{width:13px;height:13px;}
+
+    /* ── PDDE Specific ────────────────────────────────────── */
+    .pdde-main { padding: 20px 24px; max-width: 1200px; margin: 0 auto; }
+    .pdde-summary {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; margin-bottom: 24px; font-size: 13px; color: var(--text-muted); line-height: 1.7;
     }
+    .pdde-summary strong { color: var(--text); }
+    .pdde-exec-bar {
+      display: flex; align-items: center; gap: 4px; margin-top: 12px;
+      height: 28px; border-radius: 6px; overflow: hidden; background: var(--surface2);
+    }
+    .pdde-exec-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; transition: width .5s; }
 
     @media (max-width: 768px) {
       .layout { grid-template-columns: 1fr; }
-      .sidebar {
-        position: static;
-        max-height: none;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-      }
+      .sidebar { position: static; max-height: none; border-right: none; border-bottom: 1px solid var(--border); }
       .header { flex-wrap: wrap; gap: 12px; }
       .kpi-bar { grid-template-columns: repeat(2, 1fr); }
       .charts-row { grid-template-columns: 1fr; }
+      .charts-row-half { grid-template-columns: 1fr; }
+      .landing-grid { grid-template-columns: 1fr; }
     }
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-    .pippa-home-btn{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
-    .pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff;}
-    .pippa-home-btn svg{width:13px;height:13px;}
   </style>
 </head>
 <body>
 
+<!-- ╔══════════════════════════════════════════════════════════════╗ -->
+<!-- ║  LANDING PAGE                                               ║ -->
+<!-- ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="viewLanding" class="view active">
+  <header class="landing-header">
+    <div>
+      <div class="logo">PIPPA Compras Publicas</div>
+      <div class="logo-sub">Plataforma de Inteligencia em Politicas Publicas Aplicadas</div>
+    </div>
+    <div class="landing-header-right">
+      <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
+    </div>
+  </header>
+  <div class="landing-container">
+    <div class="landing-title">
+      <h1>Compras Publicas e Orcamento Educacional</h1>
+      <p>Monitore oportunidades de venda ao governo para micro e pequenas empresas, acompanhe a execucao orcamentaria do PDDE e analise a execucao dos estados brasileiros.</p>
+    </div>
+    <div class="landing-grid">
+      <div class="landing-card" onclick="showView('compras')">
+        <div class="card-num">1</div>
+        <div class="card-body">
+          <h3>Oportunidades em Compras Publicas</h3>
+          <p>Radar de licitacoes abertas no PNCP — pregoes, dispensas, concorrencias. Classificacao MPE e MEI, filtros por setor, modalidade, valor e urgencia.</p>
+        </div>
+        <span class="card-arrow">&rsaquo;</span>
+      </div>
+      <div class="landing-card" onclick="showView('pdde')">
+        <div class="card-num">2</div>
+        <div class="card-body">
+          <h3>Analise do PDDE</h3>
+          <p>Execucao orcamentaria do Programa Dinheiro Direto na Escola — empenhado, liquidado e pago de 2020 a 2026. Dados reais do Portal da Transparencia.</p>
+        </div>
+        <span class="card-arrow">&rsaquo;</span>
+      </div>
+      <div class="landing-card" onclick="showView('execucao')">
+        <div class="card-num">3</div>
+        <div class="card-body">
+          <h3>Execucao Orcamentaria Estadual</h3>
+          <p>Empenhado, liquidado e pago dos 27 estados brasileiros — por regiao, UF e serie historica 2020-2026. Dados reais do SICONFI/Tesouro Nacional.</p>
+        </div>
+        <span class="card-arrow">&rsaquo;</span>
+      </div>
+    </div>
+    <div class="landing-footer">
+      PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas<br>
+      Sebrae Nacional — Observatorio Setorial Territorial<br>
+      Fontes: PNCP (pncp.gov.br) | Portal da Transparencia (portaldatransparencia.gov.br) | SICONFI/Tesouro Nacional
+    </div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════════════╗ -->
+<!-- ║  COMPRAS PUBLICAS DASHBOARD                                 ║ -->
+<!-- ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="viewCompras" class="view">
+
   <header class="header">
     <div class="header-left">
+      <button class="back-btn" onclick="showView('landing')">&larr; Voltar</button>
       <div>
-        <div class="logo">PIPPA Compras Publicas</div>
-        <div class="logo-sub">Plataforma de Inteligencia em Politicas Publicas Aplicadas</div>
+        <div class="logo">Oportunidades em Compras Publicas</div>
+        <div class="logo-sub">Radar PNCP — Licitacoes abertas para MPE e MEI</div>
       </div>
       <button class="info-btn" onclick="toggleInfoModal()" title="Sobre o painel">i</button>
     </div>
     <div class="header-controls">
-      <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
       <div id="thermometer" class="thermometer thermo-green">Sem dados carregados</div>
       <div class="date-range">
         <input type="date" id="dateFrom" class="date-input" title="Data inicial">
@@ -867,6 +661,21 @@
         </div>
       </div>
 
+      <div class="filter-section" data-section="mei">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <div class="filter-title">Oportunidade MEI <span class="filter-badge" id="badge-mei"></span></div>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+        <div class="filter-body">
+          <div class="filter-group" id="filterMei">
+            <span class="filter-chip" data-filter="mei" data-value="Portal MEI" onclick="toggleFilter(this)">Portal MEI</span>
+            <span class="filter-chip" data-filter="mei" data-value="Dispensa MEI" onclick="toggleFilter(this)">Dispensa MEI</span>
+            <span class="filter-chip" data-filter="mei" data-value="Setor MEI" onclick="toggleFilter(this)">Setor MEI</span>
+          </div>
+          <span class="filter-clear" onclick="clearFilter('mei')">Limpar</span>
+        </div>
+      </div>
+
       <div class="filter-section" data-section="faixaValor">
         <div class="filter-header" onclick="toggleSection(this)">
           <div class="filter-title">Faixa de Valor <span class="filter-badge" id="badge-faixaValor"></span></div>
@@ -909,6 +718,22 @@
         </div>
       </div>
 
+      <div class="mpe-note" style="border-color:rgba(6,182,212,0.3);margin-bottom:8px;">
+        <div class="mpe-note-title" style="color:#06b6d4">Oportunidades para MEI</div>
+        <div class="mpe-level">
+          <span class="mpe-dot" style="background:#06b6d4"></span>
+          <div><span class="mpe-label">Portal MEI</span> — Contratacoes via Contrata+Brasil, portal federal desenhado para MEIs participarem diretamente.</div>
+        </div>
+        <div class="mpe-level">
+          <span class="mpe-dot" style="background:#22d3ee"></span>
+          <div><span class="mpe-label">Dispensa MEI</span> — Dispensas ate R$ 50.000 (Art. 75, II, Lei 14.133/2021), compativeis com faturamento anual MEI (R$ 81.000).</div>
+        </div>
+        <div class="mpe-level">
+          <span class="mpe-dot" style="background:#67e8f9"></span>
+          <div><span class="mpe-label">Setor MEI</span> — Licitacoes em atividades tipicas de MEI (alimentacao, limpeza, textil, grafica, construcao, eletrico, agro).</div>
+        </div>
+      </div>
+
       <div class="mpe-note">
         <div class="mpe-note-title">Vantagens para MPE nas Compras Publicas</div>
         <div class="mpe-level">
@@ -926,7 +751,7 @@
       </div>
 
       <div class="sidebar-footer">
-        PIPPA Compras Publicas v1.0<br>
+        PIPPA Compras Publicas v3.0<br>
         Sebrae Nacional — Observatorio<br>
         Fonte: PNCP (pncp.gov.br)
       </div>
@@ -942,6 +767,10 @@
         <div class="kpi-card">
           <div class="kpi-value kpi-exclusiva" id="kpiExclusiva">—</div>
           <div class="kpi-label">Exclusivas MPE</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" style="color:#06b6d4" id="kpiMEIPrimary">—</div>
+          <div class="kpi-label">Oportunidades MEI</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-value kpi-pregao" id="kpiPregao">—</div>
@@ -995,9 +824,60 @@
         </div>
       </div>
 
+      <div class="charts-row-half">
+        <div class="chart-card">
+          <div class="chart-title">Oportunidades Acessiveis ao MEI</div>
+          <div class="chart-wrapper"><canvas id="chartMEI"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">MEI por Setor</div>
+          <div class="chart-wrapper"><canvas id="chartMEISetor"></canvas></div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">Top 10 Setores</div>
+          <div class="chart-wrapper"><canvas id="chartSetores"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Faixa de Valor</div>
+          <div class="chart-wrapper"><canvas id="chartFaixaValor"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Distribuicao de Urgencia</div>
+          <div class="chart-wrapper"><canvas id="chartUrgencia"></canvas></div>
+        </div>
+      </div>
+
+      <div class="charts-row-half">
+        <div class="chart-card">
+          <div class="chart-title">Valor Total por Modalidade</div>
+          <div class="chart-wrapper"><canvas id="chartValorModalidade"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Valor Total por UF (Top 10)</div>
+          <div class="chart-wrapper"><canvas id="chartValorUF"></canvas></div>
+        </div>
+      </div>
+
+      <div class="charts-row-full">
+        <div class="chart-card">
+          <div class="chart-title">Top 10 Orgaos Compradores</div>
+          <div class="chart-wrapper" style="height:280px"><canvas id="chartOrgaos"></canvas></div>
+        </div>
+      </div>
+
+      <div class="charts-row-full">
+        <div class="chart-card">
+          <div class="chart-title">Calendario de Encerramento</div>
+          <div class="chart-wrapper" style="height:250px"><canvas id="chartCalendario"></canvas></div>
+        </div>
+      </div>
+
       <div id="newsContainer">
         <div class="empty-state">
-          <div class="empty-state-icon">🏛️</div>
+          <div class="empty-state-icon">&#127963;</div>
           <div class="empty-state-title">Clique em "Buscar Licitacoes" para carregar</div>
           <p>O painel buscara licitacoes abertas no Portal Nacional de Contratacoes Publicas (PNCP), classificando por modalidade, valor e oportunidade para MPEs.</p>
         </div>
@@ -1005,88 +885,329 @@
 
     </main>
   </div>
+</div>
 
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="spinner"></div>
-    <div class="loading-text" id="loadingText">Buscando licitacoes...</div>
-    <div class="loading-progress" id="loadingProgress"></div>
-  </div>
+<!-- ╔══════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PDDE DASHBOARD                                             ║ -->
+<!-- ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="viewPdde" class="view">
 
-  <div class="toast" id="toast">Copiado!</div>
-
-  <div class="info-modal-backdrop" id="exportModal" onclick="if(event.target===this)closeExportModal()">
-    <div class="info-modal">
-      <button class="info-close" onclick="closeExportModal()">&times;</button>
-      <h2>Exportar para WhatsApp</h2>
-      <div id="exportContent" style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;font-size:13px;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;font-family:'Segoe UI',sans-serif;"></div>
-      <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">
-        <button class="btn btn-outline" onclick="closeExportModal()">Fechar</button>
-        <button class="btn" onclick="copyExport()">Copiar</button>
+  <header class="header">
+    <div class="header-left">
+      <button class="back-btn" onclick="showView('landing')">&larr; Voltar</button>
+      <div>
+        <div class="logo">Analise do PDDE</div>
+        <div class="logo-sub">Programa Dinheiro Direto na Escola — Execucao Orcamentaria</div>
       </div>
     </div>
-  </div>
+    <div class="header-controls">
+      <div id="pddeThermometer" class="thermometer thermo-green">Aguardando dados...</div>
+      <button class="btn btn-green" id="btnPdde" onclick="pddeLoaded=false;fetchPddeData()">Atualizar Dados</button>
+    </div>
+  </header>
 
-  <div class="info-modal-backdrop" id="infoModal" onclick="if(event.target===this)toggleInfoModal()">
-    <div class="info-modal">
-      <button class="info-close" onclick="toggleInfoModal()">&times;</button>
-      <h2>PIPPA Compras Publicas</h2>
-      <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">Radar de oportunidades de venda ao governo federal, estadual e municipal para micro e pequenas empresas.</p>
+  <div class="pdde-main">
 
-      <h3>Fonte de Dados</h3>
-      <ul>
-        <li>Portal Nacional de Contratacoes Publicas (PNCP) — API oficial do governo, mandatoria pela Lei 14.133/2021 (Nova Lei de Licitacoes).</li>
-        <li>Dados atualizados em tempo real, sem autenticacao, cobrindo todas as esferas (federal, estadual e municipal).</li>
-      </ul>
+    <div class="pdde-summary" id="pddeSummary">
+      <strong>PDDE — Programa Dinheiro Direto na Escola</strong><br>
+      Programa do FNDE/MEC que transfere recursos financeiros diretamente as escolas publicas da educacao basica.
+      Os valores sao classificados em tres fases da execucao orcamentaria:
+      <strong>Empenhado</strong> (comprometido), <strong>Liquidado</strong> (verificado/entregue) e <strong>Pago</strong> (efetivamente desembolsado).<br>
+      <em>Acao orcamentaria 0515 — Dinheiro Direto na Escola para a Educacao Basica.</em><br>
+      <em>Fonte: API do Portal da Transparencia (portaldatransparencia.gov.br).</em>
+    </div>
 
-      <h3>O que o Painel Faz</h3>
-      <ul>
-        <li>Busca licitacoes abertas em 5 modalidades: Pregao Eletronico, Dispensa, Concorrencia, Inexigibilidade e Credenciamento.</li>
-        <li>Classifica automaticamente por oportunidade MPE: <strong>Exclusiva</strong> (ate R$ 80 mil), <strong>Cota 25%</strong> (SRP) ou <strong>Ampla</strong>.</li>
-        <li>Calcula urgencia em dias ate o encerramento da proposta (urgente, atencao, tranquilo).</li>
-      </ul>
-
-      <h3>Indicadores (KPIs)</h3>
-      <ul>
-        <li>Total de licitacoes, exclusivas MPE, pregoes, dispensas, valor total estimado.</li>
-        <li>Licitacoes ate R$ 80 mil, registro de precos (SRP), orgaos compradores, UFs e urgentes.</li>
-      </ul>
-
-      <h3>Graficos</h3>
-      <ul>
-        <li>Distribuicao por modalidade (rosca), por oportunidade MPE (rosca) e top 10 UFs (barras).</li>
-      </ul>
-
-      <h3>Filtros</h3>
-      <ul>
-        <li>Modalidade, oportunidade MPE, faixa de valor, urgencia, UF e busca por texto no objeto.</li>
-        <li>Selecao de periodo (data inicial e final) e filtragem por UF no cabecalho.</li>
-      </ul>
-
-      <h3>Recursos</h3>
-      <ul>
-        <li>Cards expandiveis com detalhes completos: objeto, orgao, valor, amparo legal, processo e links diretos para o PNCP e sistema de origem.</li>
-        <li>Exportar WhatsApp: gera resumo executivo com oportunidades exclusivas MPE.</li>
-      </ul>
-
-      <h3>Base Legal — Vantagens para MPE</h3>
-      <ul>
-        <li><strong>LC 123/2006, Art. 47:</strong> Licitacoes ate R$ 80.000 sao exclusivas para MPEs.</li>
-        <li><strong>LC 123/2006, Art. 48:</strong> Cota de 25% obrigatoria para MPEs em compras divisiveis.</li>
-        <li><strong>LC 123/2006, Art. 44:</strong> Empate ficto — proposta de MPE ate 5% acima da melhor e considerada empatada.</li>
-        <li><strong>Lei 14.133/2021:</strong> Nova Lei de Licitacoes — consolida e amplia vantagens para pequenos negocios.</li>
-      </ul>
-
-      <div class="info-footer">
-        PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas<br>
-        Sebrae Nacional — Observatorio Setorial Territorial<br>
-        Fonte: PNCP (pncp.gov.br)
+    <div class="kpi-bar" id="pddeKpis" style="display:none">
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--accent)" id="pddeKpiEmpenhado">—</div>
+        <div class="kpi-label">Empenhado (ultimo ano)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--green)" id="pddeKpiLiquidado">—</div>
+        <div class="kpi-label">Liquidado</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--cyan)" id="pddeKpiPago">—</div>
+        <div class="kpi-label">Pago</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--orange)" id="pddeKpiTaxa">—</div>
+        <div class="kpi-label">Taxa de Execucao</div>
       </div>
     </div>
+
+    <div id="pddeExecBarContainer" style="display:none">
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:6px;font-weight:600;">Execucao Orcamentaria do Ano Mais Recente</div>
+      <div class="pdde-exec-bar" id="pddeExecBar"></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:4px;">
+        <span id="pddeExecLabel1"></span>
+        <span id="pddeExecLabel2"></span>
+        <span id="pddeExecLabel3"></span>
+      </div>
+    </div>
+
+    <div class="charts-row-half" style="margin-top:24px">
+      <div class="chart-card">
+        <div class="chart-title">Evolucao Anual — Empenhado vs Liquidado vs Pago</div>
+        <div class="chart-wrapper" style="height:300px"><canvas id="chartPddeEvolucao"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Taxa de Execucao por Ano (%)</div>
+        <div class="chart-wrapper" style="height:300px"><canvas id="chartPddeTaxa"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-row-half">
+      <div class="chart-card">
+        <div class="chart-title">Empenhado por Ano</div>
+        <div class="chart-wrapper" style="height:260px"><canvas id="chartPddeEmpenhado"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Pago por Ano</div>
+        <div class="chart-wrapper" style="height:260px"><canvas id="chartPddePago"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-row-full">
+      <div class="chart-card">
+        <div class="chart-title">Diferenca entre Empenhado e Pago (Restos a Pagar)</div>
+        <div class="chart-wrapper" style="height:260px"><canvas id="chartPddeDiferenca"></canvas></div>
+      </div>
+    </div>
+
+    <div id="pddeTableContainer" style="display:none">
+      <div class="chart-card" style="overflow-x:auto">
+        <div class="chart-title">Detalhamento por Ano</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;" id="pddeTable">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border);">
+              <th style="padding:10px 8px;text-align:left;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Ano</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Empenhado</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Liquidado</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Pago</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Taxa Exec.</th>
+            </tr>
+          </thead>
+          <tbody id="pddeTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="pddeFonte" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;margin-bottom:16px;font-size:12px;color:var(--text-muted);text-align:center;"></div>
+
+    <div id="pddeEmpty" class="empty-state">
+      <div class="empty-state-icon">&#127979;</div>
+      <div class="empty-state-title">Clique em "Consultar PDDE" para carregar</div>
+      <p>O painel consultara a API do Portal da Transparencia para obter dados reais de execucao orcamentaria do PDDE (empenhado, liquidado e pago) de 2020 a 2026.</p>
+    </div>
+
   </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════════════╗ -->
+<!-- ║  EXECUCAO ORCAMENTARIA ESTADUAL                             ║ -->
+<!-- ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="viewExecucao" class="view">
+
+  <header class="header">
+    <div class="header-left">
+      <button class="back-btn" onclick="showView('landing')">&larr; Voltar</button>
+      <div>
+        <div class="logo">Execucao Orcamentaria Estadual</div>
+        <div class="logo-sub">Empenhado, Liquidado e Pago — 27 UFs (RREO/SICONFI)</div>
+      </div>
+    </div>
+    <div class="header-controls">
+      <div id="execThermometer" class="thermometer thermo-green">Aguardando dados...</div>
+      <select id="execNivel" class="select-input" onchange="renderExecDashboard()" style="width:160px;">
+        <option value="brasil">Brasil</option>
+        <option value="regiao">Por Regiao</option>
+        <option value="estado">Por Estado</option>
+      </select>
+      <select id="execRegiao" class="select-input" onchange="renderExecDashboard()" style="width:160px;display:none;">
+        <option value="">Todas as Regioes</option>
+        <option value="NO">Norte</option>
+        <option value="NE">Nordeste</option>
+        <option value="SE">Sudeste</option>
+        <option value="CO">Centro-Oeste</option>
+        <option value="SU">Sul</option>
+      </select>
+      <select id="execUf" class="select-input" onchange="renderExecDashboard()" style="width:120px;display:none;">
+        <option value="">Todos</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="pdde-main">
+    <div class="pdde-summary" id="execSummary">
+      <strong>Execucao Orcamentaria dos Estados Brasileiros</strong><br>
+      Dados do RREO (Relatorio Resumido de Execucao Orcamentaria) publicado por cada estado no SICONFI/Tesouro Nacional.
+      Mostra as tres fases da despesa: <strong>Empenhado</strong> (comprometido), <strong>Liquidado</strong> (verificado) e <strong>Pago</strong> (desembolsado).<br>
+      <em>2020-2025: periodo 6 (ano completo) | 2026: periodo 4 (ate ago/2026).</em><br>
+      <em>Fonte: SICONFI — Sistema de Informacoes Contabeis e Fiscais (Tesouro Nacional).</em>
+    </div>
+
+    <div id="execFonte" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;margin-bottom:16px;font-size:12px;color:var(--text-muted);text-align:center;"></div>
+
+    <div class="kpi-bar" id="execKpis" style="display:none">
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--accent)" id="execKpiEmpenhado">—</div>
+        <div class="kpi-label" id="execKpiEmpLabel">Empenhado</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--green)" id="execKpiLiquidado">—</div>
+        <div class="kpi-label" id="execKpiLiqLabel">Liquidado</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--cyan)" id="execKpiPago">—</div>
+        <div class="kpi-label" id="execKpiPagLabel">Pago</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--orange)" id="execKpiTaxa">—</div>
+        <div class="kpi-label">Taxa de Execucao</div>
+      </div>
+    </div>
+
+    <div id="execExecBarContainer" style="display:none">
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:6px;font-weight:600;" id="execBarTitle">Execucao Orcamentaria Ano Mais Recente</div>
+      <div class="pdde-exec-bar" id="execExecBar"></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:4px;">
+        <span id="execExecLabel1"></span>
+        <span id="execExecLabel2"></span>
+        <span id="execExecLabel3"></span>
+      </div>
+    </div>
+
+    <div class="charts-row-half" style="margin-top:24px">
+      <div class="chart-card">
+        <div class="chart-title" id="execChart1Title">Evolucao Anual — Empenhado vs Liquidado vs Pago</div>
+        <div class="chart-wrapper" style="height:300px"><canvas id="chartExecEvolucao"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Taxa de Execucao por Ano (%)</div>
+        <div class="chart-wrapper" style="height:300px"><canvas id="chartExecTaxa"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-row-half">
+      <div class="chart-card">
+        <div class="chart-title" id="execChart3Title">Ranking — Empenhado (ano mais recente)</div>
+        <div class="chart-wrapper" style="height:350px"><canvas id="chartExecRanking"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" id="execChart4Title">Ranking — Taxa de Execucao (ano mais recente)</div>
+        <div class="chart-wrapper" style="height:350px"><canvas id="chartExecRankingTaxa"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-row-full">
+      <div class="chart-card">
+        <div class="chart-title">Diferenca entre Empenhado e Pago por Ano</div>
+        <div class="chart-wrapper" style="height:260px"><canvas id="chartExecDiferenca"></canvas></div>
+      </div>
+    </div>
+
+    <div id="execTableContainer" style="display:none">
+      <div class="chart-card" style="overflow-x:auto">
+        <div class="chart-title" id="execTableTitle">Detalhamento</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;" id="execTable">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border);" id="execTableHead">
+              <th style="padding:10px 8px;text-align:left;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Ano</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Empenhado</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Liquidado</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Pago</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Taxa Exec.</th>
+            </tr>
+          </thead>
+          <tbody id="execTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Modals & Overlays ─────────────────────────────────── -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Buscando dados...</div>
+  <div class="loading-progress" id="loadingProgress"></div>
+</div>
+
+<div class="toast" id="toast">Copiado!</div>
+
+<div class="info-modal-backdrop" id="exportModal" onclick="if(event.target===this)closeExportModal()">
+  <div class="info-modal">
+    <button class="info-close" onclick="closeExportModal()">&times;</button>
+    <h2>Exportar para WhatsApp</h2>
+    <div id="exportContent" style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;font-size:13px;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;font-family:'Segoe UI',sans-serif;"></div>
+    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">
+      <button class="btn btn-outline" onclick="closeExportModal()">Fechar</button>
+      <button class="btn" onclick="copyExport()">Copiar</button>
+    </div>
+  </div>
+</div>
+
+<div class="info-modal-backdrop" id="infoModal" onclick="if(event.target===this)toggleInfoModal()">
+  <div class="info-modal">
+    <button class="info-close" onclick="toggleInfoModal()">&times;</button>
+    <h2>PIPPA Compras Publicas</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">Radar de oportunidades de venda ao governo federal, estadual e municipal para micro e pequenas empresas.</p>
+
+    <h3>Fonte de Dados</h3>
+    <ul>
+      <li>Portal Nacional de Contratacoes Publicas (PNCP) — API oficial do governo, mandatoria pela Lei 14.133/2021 (Nova Lei de Licitacoes).</li>
+      <li>Dados atualizados em tempo real, sem autenticacao, cobrindo todas as esferas (federal, estadual e municipal).</li>
+    </ul>
+
+    <h3>Classificacao MEI (Microempreendedor Individual)</h3>
+    <ul>
+      <li><strong>Portal MEI:</strong> Contratacoes publicadas via Contrata+Brasil — identificado pelo campo Portal de Contratacao no PNCP.</li>
+      <li><strong>Dispensa MEI:</strong> Dispensas ate R$ 50.000 (Art. 75, II da Lei 14.133/2021).</li>
+      <li><strong>Setor MEI:</strong> Licitacoes em setores compativeis com atividades tipicas de MEI.</li>
+    </ul>
+
+    <h3>Base Legal — Vantagens para MPE</h3>
+    <ul>
+      <li><strong>LC 123/2006, Art. 47:</strong> Licitacoes ate R$ 80.000 sao exclusivas para MPEs.</li>
+      <li><strong>LC 123/2006, Art. 48:</strong> Cota de 25% obrigatoria para MPEs em compras divisiveis.</li>
+      <li><strong>LC 123/2006, Art. 44:</strong> Empate ficto — proposta de MPE ate 5% acima da melhor e considerada empatada.</li>
+      <li><strong>Lei 14.133/2021:</strong> Nova Lei de Licitacoes — consolida e amplia vantagens para pequenos negocios.</li>
+    </ul>
+
+    <div class="info-footer">
+      PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas<br>
+      Sebrae Nacional — Observatorio Setorial Territorial<br>
+      Fontes: PNCP (pncp.gov.br) | Portal da Transparencia
+    </div>
+  </div>
+</div>
 
 <script>
 // =====================================================
-// PIPPA COMPRAS PUBLICAS — PNCP MONITOR ENGINE
+// VIEW NAVIGATION
+// =====================================================
+
+let pddeLoaded = false;
+let execLoaded = false;
+function showView(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const viewMap = { landing: 'viewLanding', compras: 'viewCompras', pdde: 'viewPdde', execucao: 'viewExecucao' };
+  document.getElementById(viewMap[view] || 'viewLanding').classList.add('active');
+  window.scrollTo(0, 0);
+  if (view === 'pdde' && !pddeLoaded) {
+    pddeLoaded = true;
+    setTimeout(() => fetchPddeData(), 200);
+  }
+  if (view === 'execucao' && !execLoaded) {
+    execLoaded = true;
+    setTimeout(() => loadExecData(), 200);
+  }
+}
+
+// =====================================================
+// COMPRAS PUBLICAS — PNCP MONITOR ENGINE
 // =====================================================
 
 const PNCP_BASE = 'https://pncp.gov.br/api/consulta/v1';
@@ -1125,7 +1246,7 @@ const MODALIDADES = [
 
 let allItems = [];
 let filteredItems = [];
-let activeFilters = { setor: [], modalidade: [], oportunidadeMPE: [], faixaValor: [], urgencia: [], uf: [] };
+let activeFilters = { setor: [], modalidade: [], oportunidadeMPE: [], mei: [], faixaValor: [], urgencia: [], uf: [] };
 
 const SETOR_KEYWORDS = {
   'alimentacao': ['aliment','refeicao','refeição','merenda','cozinha','nutricao','nutrição','generos alimenticios','gêneros alimentícios','cafe','café','agua mineral','água mineral','lanch'],
@@ -1181,7 +1302,7 @@ function diasRestantes(item) {
 
 function formatCurrency(v) {
   if (!v || v <= 0) return 'N/I';
-  if (v >= 1e9) return 'R$ ' + (v/1e9).toFixed(1) + ' bi';
+  if (v >= 1e9) return 'R$ ' + (v/1e9).toFixed(2) + ' bi';
   if (v >= 1e6) return 'R$ ' + (v/1e6).toFixed(1) + ' mi';
   if (v >= 1e3) return 'R$ ' + (v/1e3).toFixed(0) + ' mil';
   return 'R$ ' + v.toFixed(0);
@@ -1196,19 +1317,35 @@ function formatDate(d) {
 function sanitizeValor(item) {
   const est = item.valorTotalEstimado || 0;
   const hom = item.valorTotalHomologado || 0;
-  // Prefere homologado quando disponível (mais confiável)
   if (hom > 0 && est > 0) {
-    // Se estimado é absurdamente maior que homologado (>1000x), é erro de cadastro
     if (est / hom > 1000) return { valor: hom, outlier: true };
     return { valor: est, outlier: false };
   }
-  // Outlier: dispensa acima de R$ 1 bi é quase certamente erro
   if (est > 1e9 && (item.modalidadeNome || '').includes('Dispensa'))
     return { valor: est, outlier: true };
-  // Outlier: qualquer licitação acima de R$ 10 bi recebe alerta
   if (est > 1e10)
     return { valor: est, outlier: true };
   return { valor: est > 0 ? est : hom, outlier: false };
+}
+
+function detectSetores(item) {
+  const obj = (item.objetoCompra || '').toLowerCase();
+  const found = [];
+  Object.entries(SETOR_KEYWORDS).forEach(([setor, kws]) => {
+    if (kws.some(kw => obj.includes(kw.toLowerCase()))) found.push(setor);
+  });
+  return found.length > 0 ? found : ['outros'];
+}
+
+const SETORES_MEI = ['alimentacao','limpeza','textil','grafica','construcao','eletrico','agro','combustivel','mobiliario'];
+
+function classifyMEI(item) {
+  const usuario = (item.usuarioNome || '').toLowerCase();
+  if (usuario.includes('contrata+brasil') || usuario.includes('compras.gov.br')) return 'Portal MEI';
+  const isDispensa = (item.modalidadeNome || '').includes('Dispensa');
+  const valor = item._valor || item.valorTotalEstimado || 0;
+  if (isDispensa && valor > 0 && valor <= 50000) return 'Dispensa MEI';
+  return null;
 }
 
 function enrichItem(item) {
@@ -1225,6 +1362,9 @@ function enrichItem(item) {
   item._faixaValor = classifyFaixaValor(item);
   item._urgencia = classifyUrgencia(item);
   item._diasRestantes = diasRestantes(item);
+  item._setores = detectSetores(item);
+  item._acessivelMEI = classifyMEI(item);
+  item._setorMEI = (item._setores || []).some(s => SETORES_MEI.includes(s));
   return item;
 }
 
@@ -1327,7 +1467,6 @@ async function fetchData() {
 
   allItems = allItems.map(enrichItem);
 
-  // Deduplicate
   const seen = new Set();
   allItems = allItems.filter(item => {
     const key = item.numeroControlePNCP || `${item._orgao}-${item.sequencialCompra}`;
@@ -1336,10 +1475,7 @@ async function fetchData() {
     return true;
   });
 
-  // Filter out already closed
   allItems = allItems.filter(item => item._urgencia !== 'Encerrada');
-
-  // Sort by urgency
   allItems.sort((a, b) => (a._diasRestantes || 999) - (b._diasRestantes || 999));
 
   overlay.classList.remove('active');
@@ -1399,6 +1535,14 @@ function applyFilters() {
     if (activeFilters.modalidade.length && !activeFilters.modalidade.includes(item._modalidade)) return false;
     if (activeFilters.oportunidadeMPE.length && !activeFilters.oportunidadeMPE.includes(item._oportunidadeMPE)) return false;
     if (activeFilters.faixaValor.length && !activeFilters.faixaValor.includes(item._faixaValor)) return false;
+    if (activeFilters.mei.length) {
+      const meiMatch = activeFilters.mei.some(f => {
+        if (f === 'Portal MEI' || f === 'Dispensa MEI') return item._acessivelMEI === f;
+        if (f === 'Setor MEI') return item._setorMEI;
+        return false;
+      });
+      if (!meiMatch) return false;
+    }
     if (activeFilters.urgencia.length && !activeFilters.urgencia.includes(item._urgencia)) return false;
     if (activeFilters.uf.length && !activeFilters.uf.includes(item._uf)) return false;
     if (activeFilters.setor.length) {
@@ -1424,15 +1568,14 @@ function renderKPIs() {
   document.getElementById('kpiExclusiva').textContent = items.filter(i => i._oportunidadeMPE === 'Exclusiva MPE').length;
   document.getElementById('kpiPregao').textContent = items.filter(i => i._modalidade.includes('Pregão')).length;
   document.getElementById('kpiDispensa').textContent = items.filter(i => i._modalidade.includes('Dispensa')).length;
-
   const valorTotal = items.reduce((s, i) => s + (i._valor || 0), 0);
   document.getElementById('kpiValor').textContent = formatCurrency(valorTotal);
-
   document.getElementById('kpiAte80k').textContent = items.filter(i => i._faixaValor === 'Ate R$ 80 mil').length;
   document.getElementById('kpiSRP').textContent = items.filter(i => i.srp).length;
   document.getElementById('kpiOrgaos').textContent = new Set(items.map(i => i._orgao)).size;
   document.getElementById('kpiUFs').textContent = new Set(items.map(i => i._uf).filter(u => u !== 'N/I')).size;
   document.getElementById('kpiUrgentes').textContent = items.filter(i => i._urgencia === 'Urgente').length;
+  document.getElementById('kpiMEIPrimary').textContent = items.filter(i => i._acessivelMEI).length;
 }
 
 // ── Charts ───────────────────────────────────────────────────────
@@ -1445,13 +1588,8 @@ function countBy(items, key) {
 
 function renderCharts() {
   const items = filteredItems;
-  const chartOpts = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { labels: { color: '#8b8fa8', font: { size: 11 } } } }
-  };
+  const chartOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#64748b', font: { size: 11 } } } } };
 
-  // Modalidade
   const modData = countBy(items, '_modalidade');
   function modColor(k) {
     if (k.includes('Pregão')) return '#4f8cff';
@@ -1464,46 +1602,92 @@ function renderCharts() {
   if (charts.modalidade) charts.modalidade.destroy();
   charts.modalidade = new Chart(document.getElementById('chartModalidade'), {
     type: 'doughnut',
-    data: {
-      labels: Object.keys(modData).map(k => k.replace(' - Eletrônico','').replace(' - Eletrônica','').replace(' de Licitação','')),
-      datasets: [{ data: Object.values(modData), backgroundColor: Object.keys(modData).map(k => modColor(k)), borderWidth: 0 }]
-    },
+    data: { labels: Object.keys(modData).map(k => k.replace(' - Eletrônico','').replace(' - Eletrônica','').replace(' de Licitação','')), datasets: [{ data: Object.values(modData), backgroundColor: Object.keys(modData).map(k => modColor(k)), borderWidth: 0 }] },
     options: { ...chartOpts, cutout: '65%' }
   });
 
-  // MPE
   const mpeData = countBy(items, '_oportunidadeMPE');
   const mpeColors = { 'Exclusiva MPE': '#22c55e', 'Cota MPE': '#f59e0b', 'Ampla': '#a855f7' };
   if (charts.mpe) charts.mpe.destroy();
   charts.mpe = new Chart(document.getElementById('chartMPE'), {
     type: 'doughnut',
-    data: {
-      labels: Object.keys(mpeData),
-      datasets: [{ data: Object.values(mpeData), backgroundColor: Object.keys(mpeData).map(k => mpeColors[k] || '#6b7280'), borderWidth: 0 }]
-    },
+    data: { labels: Object.keys(mpeData), datasets: [{ data: Object.values(mpeData), backgroundColor: Object.keys(mpeData).map(k => mpeColors[k] || '#6b7280'), borderWidth: 0 }] },
     options: { ...chartOpts, cutout: '65%' }
   });
 
-  // UF
   const ufData = countBy(items, '_uf');
   const ufSorted = Object.entries(ufData).sort((a,b) => b[1] - a[1]).slice(0, 10);
   if (charts.uf) charts.uf.destroy();
   charts.uf = new Chart(document.getElementById('chartUF'), {
     type: 'bar',
-    data: {
-      labels: ufSorted.map(e => e[0]),
-      datasets: [{ data: ufSorted.map(e => e[1]), backgroundColor: '#4f8cff', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.8 }]
-    },
-    options: {
-      ...chartOpts,
-      indexAxis: 'y',
-      plugins: { ...chartOpts.plugins, legend: { display: false } },
-      scales: {
-        x: { grid: { color: '#2e3348' }, ticks: { color: '#8b8fa8' } },
-        y: { grid: { display: false }, ticks: { color: '#e4e6ef', font: { size: 11 } } }
-      }
-    }
+    data: { labels: ufSorted.map(e => e[0]), datasets: [{ data: ufSorted.map(e => e[1]), backgroundColor: '#4f8cff', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.8 }] },
+    options: { ...chartOpts, indexAxis: 'y', plugins: { ...chartOpts.plugins, legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,.06)' }, ticks: { color: '#64748b' } }, y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { size: 11 } } } } }
   });
+
+  const SETOR_LABELS = { 'alimentacao':'Alimentacao','construcao':'Construcao','ti':'TI / Software','saude':'Saude','limpeza':'Limpeza','mobiliario':'Mobiliario','veiculos':'Veiculos','grafica':'Grafica','textil':'Textil / Uniformes','combustivel':'Combustivel','eletrico':'Eletrico','seguranca':'Seguranca','educacao':'Educacao','agro':'Agropecuario','outros':'Outros' };
+  const SETOR_COLORS = ['#4f8cff','#22c55e','#f59e0b','#a855f7','#ef4444','#f472b6','#14b8a6','#8b5cf6','#06b6d4','#84cc16','#fb923c','#6366f1','#ec4899','#10b981','#64748b'];
+  const setorCount = {};
+  items.forEach(item => { (item._setores || ['outros']).forEach(s => { setorCount[s] = (setorCount[s] || 0) + 1; }); });
+  const setorSorted = Object.entries(setorCount).sort((a,b) => b[1] - a[1]).slice(0, 10);
+  if (charts.setores) charts.setores.destroy();
+  charts.setores = new Chart(document.getElementById('chartSetores'), {
+    type: 'bar',
+    data: { labels: setorSorted.map(e => SETOR_LABELS[e[0]] || e[0]), datasets: [{ data: setorSorted.map(e => e[1]), backgroundColor: setorSorted.map((_,i) => SETOR_COLORS[i % SETOR_COLORS.length]), borderRadius: 4, barPercentage: 0.7 }] },
+    options: { ...chartOpts, indexAxis: 'y', plugins: { ...chartOpts.plugins, legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,.06)' }, ticks: { color: '#64748b' } }, y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { size: 11 } } } } }
+  });
+
+  const faixaData = countBy(items, '_faixaValor');
+  const faixaOrder = ['Ate R$ 80 mil','R$ 80 mil a R$ 500 mil','R$ 500 mil a R$ 2 mi','Acima de R$ 2 mi'];
+  const faixaColors = ['#22c55e','#4f8cff','#a855f7','#f59e0b'];
+  const faixaLabels = faixaOrder.filter(f => faixaData[f]);
+  if (charts.faixaValor) charts.faixaValor.destroy();
+  charts.faixaValor = new Chart(document.getElementById('chartFaixaValor'), { type: 'doughnut', data: { labels: faixaLabels, datasets: [{ data: faixaLabels.map(f => faixaData[f]), backgroundColor: faixaLabels.map(f => faixaColors[faixaOrder.indexOf(f)]), borderWidth: 0 }] }, options: { ...chartOpts, cutout: '65%' } });
+
+  const urgData = countBy(items, '_urgencia');
+  const urgOrder = ['Urgente','Atencao','Tranquilo'];
+  const urgColors = { 'Urgente':'#ef4444','Atencao':'#f59e0b','Tranquilo':'#22c55e' };
+  const urgLabels = urgOrder.filter(u => urgData[u]);
+  if (charts.urgencia) charts.urgencia.destroy();
+  charts.urgencia = new Chart(document.getElementById('chartUrgencia'), { type: 'doughnut', data: { labels: urgLabels, datasets: [{ data: urgLabels.map(u => urgData[u]), backgroundColor: urgLabels.map(u => urgColors[u]), borderWidth: 0 }] }, options: { ...chartOpts, cutout: '65%' } });
+
+  const meiData = { 'Portal MEI': 0, 'Dispensa MEI': 0, 'Nao classificado': 0 };
+  items.forEach(i => { if (i._acessivelMEI) meiData[i._acessivelMEI] = (meiData[i._acessivelMEI] || 0) + 1; else meiData['Nao classificado']++; });
+  const meiLabels = Object.keys(meiData).filter(k => meiData[k] > 0);
+  const meiChartColors = { 'Portal MEI': '#06b6d4', 'Dispensa MEI': '#22d3ee', 'Nao classificado': '#64748b' };
+  if (charts.mei) charts.mei.destroy();
+  charts.mei = new Chart(document.getElementById('chartMEI'), { type: 'doughnut', data: { labels: meiLabels, datasets: [{ data: meiLabels.map(k => meiData[k]), backgroundColor: meiLabels.map(k => meiChartColors[k] || '#64748b'), borderWidth: 0 }] }, options: { ...chartOpts, cutout: '65%' } });
+
+  const meiSetorCount = {};
+  items.filter(i => i._acessivelMEI || i._setorMEI).forEach(item => { (item._setores || []).forEach(s => { if (SETORES_MEI.includes(s)) meiSetorCount[s] = (meiSetorCount[s] || 0) + 1; }); });
+  const meiSetorSorted = Object.entries(meiSetorCount).sort((a,b) => b[1] - a[1]).slice(0, 8);
+  if (charts.meiSetor) charts.meiSetor.destroy();
+  if (meiSetorSorted.length > 0) {
+    charts.meiSetor = new Chart(document.getElementById('chartMEISetor'), { type: 'bar', data: { labels: meiSetorSorted.map(e => SETOR_LABELS[e[0]] || e[0]), datasets: [{ data: meiSetorSorted.map(e => e[1]), backgroundColor: '#06b6d4', borderRadius: 4, barPercentage: 0.7 }] }, options: { ...chartOpts, indexAxis: 'y', plugins: { ...chartOpts.plugins, legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,.06)' }, ticks: { color: '#64748b' } }, y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { size: 11 } } } } } });
+  }
+
+  const valorModMap = {};
+  items.forEach(i => { valorModMap[i._modalidade] = (valorModMap[i._modalidade] || 0) + (i._valor || 0); });
+  const valorModSorted = Object.entries(valorModMap).sort((a,b) => b[1] - a[1]);
+  if (charts.valorModalidade) charts.valorModalidade.destroy();
+  charts.valorModalidade = new Chart(document.getElementById('chartValorModalidade'), { type: 'bar', data: { labels: valorModSorted.map(e => e[0].replace(' - Eletrônico','').replace(' - Eletrônica','').replace(' de Licitação','')), datasets: [{ data: valorModSorted.map(e => e[1]), backgroundColor: valorModSorted.map(e => modColor(e[0])), borderRadius: 4, barPercentage: 0.7 }] }, options: { ...chartOpts, indexAxis: 'y', plugins: { ...chartOpts.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { color: 'rgba(255,255,255,.06)' }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } }, y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { size: 11 } } } } } });
+
+  const valorUfMap = {};
+  items.forEach(i => { if (i._uf !== 'N/I') valorUfMap[i._uf] = (valorUfMap[i._uf] || 0) + (i._valor || 0); });
+  const valorUfSorted = Object.entries(valorUfMap).sort((a,b) => b[1] - a[1]).slice(0, 10);
+  if (charts.valorUF) charts.valorUF.destroy();
+  charts.valorUF = new Chart(document.getElementById('chartValorUF'), { type: 'bar', data: { labels: valorUfSorted.map(e => e[0]), datasets: [{ data: valorUfSorted.map(e => e[1]), backgroundColor: '#a855f7', borderRadius: 4, barPercentage: 0.7 }] }, options: { ...chartOpts, indexAxis: 'y', plugins: { ...chartOpts.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { color: 'rgba(255,255,255,.06)' }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } }, y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { size: 11 } } } } } });
+
+  const orgaoCount = countBy(items, '_orgao');
+  const orgaoSorted = Object.entries(orgaoCount).sort((a,b) => b[1] - a[1]).slice(0, 10);
+  if (charts.orgaos) charts.orgaos.destroy();
+  charts.orgaos = new Chart(document.getElementById('chartOrgaos'), { type: 'bar', data: { labels: orgaoSorted.map(e => e[0].length > 45 ? e[0].slice(0,45) + '...' : e[0]), datasets: [{ data: orgaoSorted.map(e => e[1]), backgroundColor: '#14b8a6', borderRadius: 4, barPercentage: 0.7 }] }, options: { ...chartOpts, indexAxis: 'y', plugins: { ...chartOpts.plugins, legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,.06)' }, ticks: { color: '#64748b' } }, y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { size: 10 } } } } } });
+
+  const calMap = {};
+  items.forEach(i => { if (!i.dataEncerramentoProposta) return; const d = new Date(i.dataEncerramentoProposta).toLocaleDateString('pt-BR'); calMap[d] = (calMap[d] || 0) + 1; });
+  const calEntries = Object.entries(calMap).sort((a, b) => { const pa = a[0].split('/'); const pb = b[0].split('/'); return (pa[2]+pa[1]+pa[0]).localeCompare(pb[2]+pb[1]+pb[0]); });
+  const calColors = calEntries.map(e => { const p = e[0].split('/'); const days = Math.ceil((new Date(p[2], p[1]-1, p[0]) - new Date()) / 864e5); return days <= 3 ? '#ef4444' : days <= 7 ? '#f59e0b' : '#22c55e'; });
+  if (charts.calendario) charts.calendario.destroy();
+  charts.calendario = new Chart(document.getElementById('chartCalendario'), { type: 'bar', data: { labels: calEntries.map(e => e[0]), datasets: [{ data: calEntries.map(e => e[1]), backgroundColor: calColors, borderRadius: 4, barPercentage: 0.85 }] }, options: { ...chartOpts, plugins: { ...chartOpts.plugins, legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { size: 10 }, maxRotation: 45 } }, y: { grid: { color: 'rgba(255,255,255,.06)' }, ticks: { color: '#64748b' } } } } });
 }
 
 // ── Cards ────────────────────────────────────────────────────────
@@ -1529,59 +1713,40 @@ function getModalidadeBadgeClass(mod) {
 function renderCards() {
   const container = document.getElementById('newsContainer');
   if (filteredItems.length === 0 && allItems.length === 0) {
-    container.innerHTML = `<div class="empty-state">
-      <div class="empty-state-icon">🏛️</div>
-      <div class="empty-state-title">Clique em "Buscar Licitacoes" para carregar</div>
-      <p>O painel buscara licitacoes abertas no Portal Nacional de Contratacoes Publicas (PNCP).</p>
-    </div>`;
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">&#127963;</div><div class="empty-state-title">Clique em "Buscar Licitacoes" para carregar</div><p>O painel buscara licitacoes abertas no Portal Nacional de Contratacoes Publicas (PNCP).</p></div>`;
     return;
   }
-
   if (filteredItems.length === 0) {
-    container.innerHTML = `<div class="empty-state">
-      <div class="empty-state-icon">🔍</div>
-      <div class="empty-state-title">Nenhuma licitacao encontrada com os filtros atuais</div>
-      <p>Tente remover ou alterar os filtros na barra lateral.</p>
-    </div>`;
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">&#128269;</div><div class="empty-state-title">Nenhuma licitacao encontrada com os filtros atuais</div><p>Tente remover ou alterar os filtros na barra lateral.</p></div>`;
     return;
   }
 
-  // Group by oportunidade
-  const groups = {};
+  const groups = { 'Oportunidades MEI': [] };
   filteredItems.forEach(item => {
-    const g = item._oportunidadeMPE;
-    if (!groups[g]) groups[g] = [];
-    groups[g].push(item);
+    if (item._acessivelMEI) { groups['Oportunidades MEI'].push(item); }
+    else { const g = item._oportunidadeMPE; if (!groups[g]) groups[g] = []; groups[g].push(item); }
   });
 
-  const order = ['Exclusiva MPE', 'Cota MPE', 'Ampla'];
+  const order = ['Oportunidades MEI', 'Exclusiva MPE', 'Cota MPE', 'Ampla'];
   let html = '';
 
   order.forEach(group => {
     const items = groups[group];
     if (!items || items.length === 0) return;
-
-    html += `<div class="section-header">
-      <span class="section-title">${group}</span>
-      <span class="section-count">${items.length} licitacoes</span>
-    </div>
-    <div class="news-list">`;
+    html += `<div class="section-header"><span class="section-title">${group}</span><span class="section-count">${items.length} licitacoes</span></div><div class="news-list">`;
 
     items.forEach((item, idx) => {
-      const cardClass = item._oportunidadeMPE === 'Exclusiva MPE' ? 'exclusiva-mpe' :
-                         item._urgencia === 'Urgente' ? 'urgente' : '';
-      const urgTag = item._urgencia === 'Urgente' ? `<span class="news-tag tag-urgente">${item._diasRestantes}d restantes</span>` :
-                     item._urgencia === 'Atencao' ? `<span class="news-tag tag-urgente" style="background:rgba(245,158,11,0.15);color:#f59e0b">${item._diasRestantes}d restantes</span>` :
-                     item._diasRestantes ? `<span class="news-tag" style="background:rgba(34,197,94,0.1);color:#22c55e">${item._diasRestantes}d restantes</span>` : '';
+      const cardClass = item._acessivelMEI ? 'mei-card' : item._oportunidadeMPE === 'Exclusiva MPE' ? 'exclusiva-mpe' : item._urgencia === 'Urgente' ? 'urgente' : '';
+      const urgTag = item._urgencia === 'Urgente' ? `<span class="news-tag tag-urgente">${item._diasRestantes}d restantes</span>` : item._urgencia === 'Atencao' ? `<span class="news-tag tag-urgente" style="background:rgba(245,158,11,0.15);color:#f59e0b">${item._diasRestantes}d restantes</span>` : item._diasRestantes ? `<span class="news-tag" style="background:rgba(34,197,94,0.1);color:#22c55e">${item._diasRestantes}d restantes</span>` : '';
       const valorTag = item._valor > 0 ? `<span class="news-tag tag-valor">${formatCurrency(item._valor)}</span>` : '';
       const outlierTag = item._outlier ? '<span class="news-tag tag-urgente" title="Valor possivelmente incorreto na fonte">⚠ Valor suspeito</span>' : '';
-      const mpeTag = item._oportunidadeMPE === 'Exclusiva MPE' ? `<span class="news-tag tag-exclusiva">Exclusiva MPE</span>` :
-                     item._oportunidadeMPE === 'Cota MPE' ? `<span class="news-tag tag-cota">Cota 25% MPE</span>` : '';
+      const mpeTag = item._oportunidadeMPE === 'Exclusiva MPE' ? `<span class="news-tag tag-exclusiva">Exclusiva MPE</span>` : item._oportunidadeMPE === 'Cota MPE' ? `<span class="news-tag tag-cota">Cota 25% MPE</span>` : '';
       const srpTag = item.srp ? '<span class="news-tag" style="background:rgba(79,140,255,0.1);color:#4f8cff">SRP</span>' : '';
+      const meiTag = item._acessivelMEI ? `<span class="news-tag tag-mei">${item._acessivelMEI}</span>` : '';
+      const setorMeiTag = item._setorMEI && !item._acessivelMEI ? '<span class="news-tag tag-mei">Setor MEI</span>' : '';
       const linkOrigem = item.linkSistemaOrigem ? `<a href="${item.linkSistemaOrigem}" target="_blank">Acessar no sistema</a>` : 'N/I';
       const cnpjPNCP = (item.orgaoEntidade || {}).cnpj;
-      const linkPNCP = cnpjPNCP && item.anoCompra && item.sequencialCompra
-        ? `<a href="https://pncp.gov.br/app/editais/${cnpjPNCP}/${item.anoCompra}/${item.sequencialCompra}" target="_blank">Ver no PNCP</a>` : '';
+      const linkPNCP = cnpjPNCP && item.anoCompra && item.sequencialCompra ? `<a href="https://pncp.gov.br/app/editais/${cnpjPNCP}/${item.anoCompra}/${item.sequencialCompra}" target="_blank">Ver no PNCP</a>` : '';
       const amparo = item.amparoLegal ? item.amparoLegal.nome : 'N/I';
 
       html += `<div class="news-card ${cardClass}" id="card-${group}-${idx}">
@@ -1589,77 +1754,30 @@ function renderCards() {
           <div class="news-status-badge ${getModalidadeBadgeClass(item._modalidade)}">${getModalidadeIcon(item._modalidade)}</div>
           <div class="news-info">
             <div class="news-title">${item._objeto.length > 150 ? item._objeto.slice(0,150) + '...' : item._objeto}</div>
-            <div class="news-meta">
-              <span class="news-source">${item._orgao.length > 40 ? item._orgao.slice(0,40) + '...' : item._orgao}</span>
-              <span>${item._uf} — ${item._municipio}</span>
-              <span>Encerra: ${formatDate(item.dataEncerramentoProposta)}</span>
-            </div>
-            <div class="news-tags">
-              <span class="news-tag tag-modalidade">${item._modalidade.replace(' - Eletrônico','').replace(' - Eletrônica','').replace(' de Licitação','')}</span>
-              ${mpeTag}${valorTag}${outlierTag}${urgTag}${srpTag}
-              <span class="news-tag tag-uf">${item._uf}</span>
-            </div>
+            <div class="news-meta"><span class="news-source">${item._orgao.length > 40 ? item._orgao.slice(0,40) + '...' : item._orgao}</span><span>${item._uf} — ${item._municipio}</span><span>Encerra: ${formatDate(item.dataEncerramentoProposta)}</span></div>
+            <div class="news-tags"><span class="news-tag tag-modalidade">${item._modalidade.replace(' - Eletrônico','').replace(' - Eletrônica','').replace(' de Licitação','')}</span>${mpeTag}${meiTag}${setorMeiTag}${valorTag}${outlierTag}${urgTag}${srpTag}<span class="news-tag tag-uf">${item._uf}</span></div>
           </div>
           <span class="news-expand">&#9660;</span>
         </div>
-        <div class="news-details">
-          <div class="detail-grid">
-            <div class="detail-item">
-              <div class="detail-label">Objeto Completo</div>
-              <div class="detail-value">${item._objeto}</div>
-            </div>
-            <div class="detail-item">
-              <div class="detail-label">Orgao</div>
-              <div class="detail-value">${item._orgao}</div>
-            </div>
-            <div class="detail-item">
-              <div class="detail-label">Municipio / UF</div>
-              <div class="detail-value">${item._municipio} / ${item._uf}</div>
-            </div>
-            <div class="detail-item">
-              <div class="detail-label">Valor Estimado</div>
-              <div class="detail-value">${item._valor > 0 ? 'R$ ' + item._valor.toLocaleString('pt-BR', {minimumFractionDigits:2}) : 'Nao informado'}${item._outlier ? ' <span style="color:var(--urgente);font-size:11px">⚠ Valor possivelmente incorreto na fonte (estimado: R$ ' + (item.valorTotalEstimado||0).toLocaleString('pt-BR') + ' / homologado: R$ ' + (item.valorTotalHomologado||0).toLocaleString('pt-BR') + ')</span>' : ''}</div>
-            </div>
-            <div class="detail-item">
-              <div class="detail-label">Modalidade</div>
-              <div class="detail-value">${item._modalidade}</div>
-            </div>
-            <div class="detail-item">
-              <div class="detail-label">Modo de Disputa</div>
-              <div class="detail-value">${item.modoDisputaNome || 'N/I'}</div>
-            </div>
-            <div class="detail-item">
-              <div class="detail-label">Abertura Propostas</div>
-              <div class="detail-value">${formatDate(item.dataAberturaProposta)}</div>
-            </div>
-            <div class="detail-item">
-              <div class="detail-label">Encerramento</div>
-              <div class="detail-value">${formatDate(item.dataEncerramentoProposta)}</div>
-            </div>
-            <div class="detail-item">
-              <div class="detail-label">Amparo Legal</div>
-              <div class="detail-value">${amparo}</div>
-            </div>
-            <div class="detail-item">
-              <div class="detail-label">Processo</div>
-              <div class="detail-value">${item.processo || 'N/I'}</div>
-            </div>
-            <div class="detail-item">
-              <div class="detail-label">Numero PNCP</div>
-              <div class="detail-value">${item.numeroControlePNCP || 'N/I'}</div>
-            </div>
-            <div class="detail-item">
-              <div class="detail-label">Links</div>
-              <div class="detail-value">${linkPNCP} ${item.linkSistemaOrigem ? ' | ' + linkOrigem : ''}</div>
-            </div>
-          </div>
-        </div>
+        <div class="news-details"><div class="detail-grid">
+          <div class="detail-item"><div class="detail-label">Objeto Completo</div><div class="detail-value">${item._objeto}</div></div>
+          <div class="detail-item"><div class="detail-label">Orgao</div><div class="detail-value">${item._orgao}</div></div>
+          <div class="detail-item"><div class="detail-label">Municipio / UF</div><div class="detail-value">${item._municipio} / ${item._uf}</div></div>
+          <div class="detail-item"><div class="detail-label">Valor Estimado</div><div class="detail-value">${item._valor > 0 ? 'R$ ' + item._valor.toLocaleString('pt-BR', {minimumFractionDigits:2}) : 'Nao informado'}${item._outlier ? ' <span style="color:var(--urgente);font-size:11px">⚠ Valor possivelmente incorreto</span>' : ''}</div></div>
+          <div class="detail-item"><div class="detail-label">Modalidade</div><div class="detail-value">${item._modalidade}</div></div>
+          <div class="detail-item"><div class="detail-label">Modo de Disputa</div><div class="detail-value">${item.modoDisputaNome || 'N/I'}</div></div>
+          <div class="detail-item"><div class="detail-label">Acessivel MEI</div><div class="detail-value" style="${item._acessivelMEI ? 'color:#06b6d4;font-weight:600' : ''}">${item._acessivelMEI ? item._acessivelMEI + (item._setorMEI ? ' + Setor compativel' : '') : item._setorMEI ? 'Setor compativel' : 'Nao classificado'}</div></div>
+          <div class="detail-item"><div class="detail-label">Abertura Propostas</div><div class="detail-value">${formatDate(item.dataAberturaProposta)}</div></div>
+          <div class="detail-item"><div class="detail-label">Encerramento</div><div class="detail-value">${formatDate(item.dataEncerramentoProposta)}</div></div>
+          <div class="detail-item"><div class="detail-label">Amparo Legal</div><div class="detail-value">${amparo}</div></div>
+          <div class="detail-item"><div class="detail-label">Processo</div><div class="detail-value">${item.processo || 'N/I'}</div></div>
+          <div class="detail-item"><div class="detail-label">Numero PNCP</div><div class="detail-value">${item.numeroControlePNCP || 'N/I'}</div></div>
+          <div class="detail-item"><div class="detail-label">Links</div><div class="detail-value">${linkPNCP} ${item.linkSistemaOrigem ? ' | ' + linkOrigem : ''}</div></div>
+        </div></div>
       </div>`;
     });
-
     html += '</div>';
   });
-
   container.innerHTML = html;
 }
 
@@ -1668,18 +1786,11 @@ function renderCards() {
 function updateThermometer() {
   const el = document.getElementById('thermometer');
   const exclusivas = allItems.filter(i => i._oportunidadeMPE === 'Exclusiva MPE').length;
+  const meiCount = allItems.filter(i => i._acessivelMEI).length;
   const urgentes = allItems.filter(i => i._urgencia === 'Urgente').length;
-
-  if (urgentes > 5) {
-    el.className = 'thermometer thermo-red';
-    el.textContent = `${urgentes} urgentes — ${allItems.length} abertas`;
-  } else if (exclusivas > 0) {
-    el.className = 'thermometer thermo-green';
-    el.textContent = `${exclusivas} exclusivas MPE — ${allItems.length} abertas`;
-  } else {
-    el.className = 'thermometer thermo-yellow';
-    el.textContent = `${allItems.length} licitacoes abertas`;
-  }
+  if (urgentes > 5) { el.className = 'thermometer thermo-red'; el.textContent = `${urgentes} urgentes — ${meiCount} MEI — ${allItems.length} abertas`; }
+  else if (exclusivas > 0 || meiCount > 0) { el.className = 'thermometer thermo-green'; el.textContent = `${exclusivas} exclusivas MPE — ${meiCount} MEI — ${allItems.length} abertas`; }
+  else { el.className = 'thermometer thermo-yellow'; el.textContent = `${allItems.length} licitacoes abertas`; }
 }
 
 // ── WhatsApp Export ──────────────────────────────────────────────
@@ -1691,37 +1802,22 @@ function generateExportText() {
   const cotas = filteredItems.filter(i => i._oportunidadeMPE === 'Cota MPE');
   const urgentes = filteredItems.filter(i => i._urgencia === 'Urgente');
   const valorTotal = filteredItems.reduce((s,i) => s + (i._valor || 0), 0);
-
-  let t = `🏛️ *PIPPA Compras Publicas*\n`;
-  t += `📅 ${new Date().toLocaleDateString('pt-BR')}\n\n`;
-  t += `📊 *Resumo:* ${filteredItems.length} licitacoes abertas\n`;
-  t += `✅ *Exclusivas MPE:* ${exclusivas.length}\n`;
-  t += `📋 *Cota MPE (25%):* ${cotas.length}\n`;
-  t += `⚠️ *Urgentes (ate 3 dias):* ${urgentes.length}\n`;
-  t += `💰 *Valor total estimado:* ${formatCurrency(valorTotal)}\n\n`;
-
+  let t = `🏛️ *PIPPA Compras Publicas*\n📅 ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+  t += `📊 *Resumo:* ${filteredItems.length} licitacoes abertas\n✅ *Exclusivas MPE:* ${exclusivas.length}\n📋 *Cota MPE (25%):* ${cotas.length}\n⚠️ *Urgentes (ate 3 dias):* ${urgentes.length}\n🏪 *Acessiveis ao MEI:* ${filteredItems.filter(i => i._acessivelMEI).length}\n💰 *Valor total estimado:* ${formatCurrency(valorTotal)}\n\n`;
   if (exclusivas.length > 0) {
     t += `🟢 *OPORTUNIDADES EXCLUSIVAS MPE:*\n\n`;
-    exclusivas.slice(0, 10).forEach((item, i) => {
-      t += `${i+1}. ${item._objeto.slice(0,120)}\n`;
-      t += `   📍 ${item._orgao} — ${item._uf}\n`;
-      t += `   💰 ${formatCurrency(item._valor)}\n`;
-      t += `   ⏰ Encerra: ${formatDate(item.dataEncerramentoProposta)}\n`;
-      t += `   📋 ${item._modalidade}\n\n`;
-    });
+    exclusivas.slice(0, 10).forEach((item, i) => { t += `${i+1}. ${item._objeto.slice(0,120)}\n   📍 ${item._orgao} — ${item._uf}\n   💰 ${formatCurrency(item._valor)}\n   ⏰ Encerra: ${formatDate(item.dataEncerramentoProposta)}\n   📋 ${item._modalidade}\n\n`; });
   }
-
+  const meis = filteredItems.filter(i => i._acessivelMEI);
+  if (meis.length > 0) {
+    t += `🏪 *ACESSIVEIS AO MEI (${meis.length}):*\n\n`;
+    meis.filter(i => i._oportunidadeMPE !== 'Exclusiva MPE').slice(0, 5).forEach((item, i) => { t += `${i+1}. ${item._objeto.slice(0,120)}\n   📍 ${item._orgao} — ${item._uf}\n   💰 ${formatCurrency(item._valor)} | ${item._acessivelMEI}\n\n`; });
+  }
   if (urgentes.length > 0) {
     t += `🔴 *URGENTES (ate 3 dias):*\n\n`;
-    urgentes.filter(i => i._oportunidadeMPE !== 'Exclusiva MPE').slice(0, 5).forEach((item, i) => {
-      t += `${i+1}. ${item._objeto.slice(0,120)}\n`;
-      t += `   📍 ${item._orgao} — ${item._uf}\n`;
-      t += `   💰 ${formatCurrency(item._valor)} | ⏰ ${formatDate(item.dataEncerramentoProposta)}\n\n`;
-    });
+    urgentes.filter(i => i._oportunidadeMPE !== 'Exclusiva MPE').slice(0, 5).forEach((item, i) => { t += `${i+1}. ${item._objeto.slice(0,120)}\n   📍 ${item._orgao} — ${item._uf}\n   💰 ${formatCurrency(item._valor)} | ⏰ ${formatDate(item.dataEncerramentoProposta)}\n\n`; });
   }
-
-  t += `\n🔗 Fonte: PNCP (pncp.gov.br)\n`;
-  t += `📡 PIPPA — Sebrae Nacional`;
+  t += `\n🔗 Fonte: PNCP (pncp.gov.br)\n📡 PIPPA — Sebrae Nacional`;
   return t;
 }
 
@@ -1731,34 +1827,617 @@ function openExportModal() {
   document.getElementById('exportContent').textContent = exportText;
   document.getElementById('exportModal').classList.add('active');
 }
-
-function closeExportModal() {
-  document.getElementById('exportModal').classList.remove('active');
-}
-
+function closeExportModal() { document.getElementById('exportModal').classList.remove('active'); }
 function copyExport() {
   navigator.clipboard.writeText(exportText).then(() => showToast('Copiado para WhatsApp!')).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = exportText;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast('Copiado!');
+    const ta = document.createElement('textarea'); ta.value = exportText; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('Copiado!');
+  });
+}
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+function toggleInfoModal() { document.getElementById('infoModal').classList.toggle('active'); }
+
+// =====================================================
+// PDDE DASHBOARD — PORTAL DA TRANSPARENCIA ENGINE
+// =====================================================
+
+const PDDE_API_KEY = 'f8f32b5a12fc10b5e4df04448ece2682';
+const PDDE_BASE = 'https://api.portaldatransparencia.gov.br/api-de-dados';
+const PDDE_ACAO = '0515';
+const PDDE_ANOS = [2020, 2021, 2022, 2023, 2024, 2025, 2026];
+
+// Dados REAIS consultados via API do Portal da Transparencia em 07/10/2026
+// Acao 0515 — DINHEIRO DIRETO NA ESCOLA PARA A EDUCACAO BASICA
+const PDDE_CACHE = [
+  { ano: 2020, empenhado: 1888393845.91, liquidado: 1347420933.73, pago: 1347420933.73 },
+  { ano: 2021, empenhado: 1932112208.62, liquidado: 1654624846.02, pago: 1654624846.02 },
+  { ano: 2022, empenhado: 2029680594.76, liquidado: 1846850271.66, pago: 1846850271.66 },
+  { ano: 2023, empenhado: 2032688612.17, liquidado: 1894669535.51, pago: 1894669535.51 },
+  { ano: 2024, empenhado: 1988229649.32, liquidado: 1732411658.09, pago: 1732411658.09 },
+  { ano: 2025, empenhado: 1937500444.23, liquidado: 1850118094.63, pago: 1850151399.63 },
+  { ano: 2026, empenhado: 1855180630.36, liquidado: 1228665082.00, pago: 1128636005.00 }
+];
+const PDDE_CACHE_DATE = '07/10/2026';
+
+let pddeData = [];
+let pddeCharts = {};
+
+function parseBRL(str) {
+  if (!str) return 0;
+  return parseFloat(str.replace(/\./g, '').replace(',', '.')) || 0;
+}
+
+async function fetchPddeYear(ano) {
+  const url = `${PDDE_BASE}/despesas/por-funcional-programatica?ano=${ano}&acao=${PDDE_ACAO}&pagina=1`;
+  const headers = { 'Accept': 'application/json', 'chave-api-dados': PDDE_API_KEY };
+  try {
+    const resp = await fetch(url, { headers });
+    if (resp.ok) {
+      const data = await resp.json();
+      return Array.isArray(data) ? data : [];
+    }
+  } catch (e) { console.warn(`PDDE ${ano}: CORS/rede — usando cache`, e); }
+  return [];
+}
+
+async function fetchPddeData() {
+  const btn = document.getElementById('btnPdde');
+  const overlay = document.getElementById('loadingOverlay');
+  const loadText = document.getElementById('loadingText');
+  const loadProg = document.getElementById('loadingProgress');
+
+  btn.disabled = true;
+  overlay.classList.add('active');
+  loadText.textContent = 'Consultando PDDE via API...';
+  loadProg.textContent = '';
+
+  let fromApi = false;
+  pddeData = [];
+
+  // Tenta buscar dados atualizados da API
+  for (let i = 0; i < PDDE_ANOS.length; i++) {
+    const ano = PDDE_ANOS[i];
+    loadText.textContent = `Consultando PDDE ${ano}...`;
+    loadProg.textContent = `${i+1} de ${PDDE_ANOS.length} anos`;
+
+    const items = await fetchPddeYear(ano);
+    if (items.length > 0) {
+      let empenhado = 0, liquidado = 0, pago = 0;
+      items.forEach(item => {
+        empenhado += parseBRL(item.empenhado);
+        liquidado += parseBRL(item.liquidado);
+        pago += parseBRL(item.pago);
+      });
+      if (empenhado > 0 || liquidado > 0 || pago > 0) {
+        pddeData.push({ ano, empenhado, liquidado, pago });
+        fromApi = true;
+      }
+    }
+
+    if (i === 0 && !fromApi) {
+      loadText.textContent = 'API indisponivel (CORS) — carregando dados reais em cache...';
+      break;
+    }
+  }
+
+  // Fallback: usa cache de dados reais se API nao retornou
+  if (pddeData.length === 0) {
+    pddeData = PDDE_CACHE.map(d => ({ ...d }));
+    fromApi = false;
+  }
+
+  overlay.classList.remove('active');
+  btn.disabled = false;
+
+  document.getElementById('pddeEmpty').style.display = 'none';
+  document.getElementById('pddeKpis').style.display = '';
+  document.getElementById('pddeExecBarContainer').style.display = '';
+  document.getElementById('pddeTableContainer').style.display = '';
+
+  const fonte = fromApi
+    ? 'Dados atualizados da API em tempo real'
+    : `Dados reais consultados via API em ${PDDE_CACHE_DATE} (cache local — API bloqueada por CORS)`;
+  document.getElementById('pddeFonte').textContent = fonte;
+  document.getElementById('pddeFonte').style.display = '';
+
+  renderPddeKpis();
+  renderPddeExecBar();
+  renderPddeCharts();
+  renderPddeTable();
+  updatePddeThermometer();
+}
+
+function renderPddeKpis() {
+  const latest = pddeData[pddeData.length - 1];
+  document.getElementById('pddeKpiEmpenhado').textContent = formatCurrency(latest.empenhado);
+  document.getElementById('pddeKpiLiquidado').textContent = formatCurrency(latest.liquidado);
+  document.getElementById('pddeKpiPago').textContent = formatCurrency(latest.pago);
+  const taxa = latest.empenhado > 0 ? (latest.pago / latest.empenhado * 100) : 0;
+  document.getElementById('pddeKpiTaxa').textContent = taxa.toFixed(1) + '%';
+}
+
+function renderPddeExecBar() {
+  const latest = pddeData[pddeData.length - 1];
+  const total = latest.empenhado || 1;
+  const pctPago = (latest.pago / total * 100);
+  const pctLiqNaoPago = ((latest.liquidado - latest.pago) / total * 100);
+  const pctEmpNaoLiq = ((latest.empenhado - latest.liquidado) / total * 100);
+
+  const bar = document.getElementById('pddeExecBar');
+  bar.innerHTML = `
+    <div class="pdde-exec-seg" style="width:${Math.max(pctPago, 0)}%;background:#22c55e;">${pctPago > 8 ? formatCurrency(latest.pago) : ''}</div>
+    <div class="pdde-exec-seg" style="width:${Math.max(pctLiqNaoPago, 0)}%;background:#3b82f6;">${pctLiqNaoPago > 8 ? formatCurrency(latest.liquidado - latest.pago) : ''}</div>
+    <div class="pdde-exec-seg" style="width:${Math.max(pctEmpNaoLiq, 0)}%;background:#64748b;">${pctEmpNaoLiq > 8 ? formatCurrency(latest.empenhado - latest.liquidado) : ''}</div>
+  `;
+  document.getElementById('pddeExecLabel1').innerHTML = `<span style="color:#22c55e">●</span> Pago (${pctPago.toFixed(1)}%)`;
+  document.getElementById('pddeExecLabel2').innerHTML = `<span style="color:#3b82f6">●</span> Liquidado n/ pago (${pctLiqNaoPago.toFixed(1)}%)`;
+  document.getElementById('pddeExecLabel3').innerHTML = `<span style="color:#64748b">●</span> Empenhado n/ liquidado (${pctEmpNaoLiq.toFixed(1)}%)`;
+}
+
+function renderPddeCharts() {
+  const anos = pddeData.map(d => d.ano);
+  const empenhados = pddeData.map(d => d.empenhado);
+  const liquidados = pddeData.map(d => d.liquidado);
+  const pagos = pddeData.map(d => d.pago);
+  const taxas = pddeData.map(d => d.empenhado > 0 ? (d.pago / d.empenhado * 100) : 0);
+  const diferencas = pddeData.map(d => d.empenhado - d.pago);
+
+  const chartOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#64748b', font: { size: 11 } } } } };
+  const gridColor = 'rgba(255,255,255,.06)';
+
+  if (pddeCharts.evolucao) pddeCharts.evolucao.destroy();
+  pddeCharts.evolucao = new Chart(document.getElementById('chartPddeEvolucao'), {
+    type: 'bar',
+    data: {
+      labels: anos,
+      datasets: [
+        { label: 'Empenhado', data: empenhados, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 4, barPercentage: 0.8 },
+        { label: 'Liquidado', data: liquidados, backgroundColor: 'rgba(34,197,94,.7)', borderRadius: 4, barPercentage: 0.8 },
+        { label: 'Pago', data: pagos, backgroundColor: 'rgba(6,182,212,.7)', borderRadius: 4, barPercentage: 0.8 }
+      ]
+    },
+    options: { ...chartOpts, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gridColor }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } }, plugins: { ...chartOpts.plugins, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatCurrency(ctx.raw) } } } }
+  });
+
+  if (pddeCharts.taxa) pddeCharts.taxa.destroy();
+  pddeCharts.taxa = new Chart(document.getElementById('chartPddeTaxa'), {
+    type: 'line',
+    data: {
+      labels: anos,
+      datasets: [{
+        label: 'Taxa de Execucao (Pago/Empenhado)',
+        data: taxas,
+        borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,.15)',
+        fill: true, tension: 0.3, pointRadius: 5, pointBackgroundColor: '#22c55e'
+      }]
+    },
+    options: { ...chartOpts, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gridColor }, ticks: { color: '#64748b', callback: v => v.toFixed(0) + '%' }, min: 0, max: 100 } }, plugins: { ...chartOpts.plugins, tooltip: { callbacks: { label: ctx => ctx.raw.toFixed(1) + '%' } } } }
+  });
+
+  if (pddeCharts.empenhado) pddeCharts.empenhado.destroy();
+  pddeCharts.empenhado = new Chart(document.getElementById('chartPddeEmpenhado'), {
+    type: 'bar',
+    data: { labels: anos, datasets: [{ label: 'Empenhado', data: empenhados, backgroundColor: '#3b82f6', borderRadius: 4, barPercentage: 0.65 }] },
+    options: { ...chartOpts, plugins: { ...chartOpts.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gridColor }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } } }
+  });
+
+  if (pddeCharts.pago) pddeCharts.pago.destroy();
+  pddeCharts.pago = new Chart(document.getElementById('chartPddePago'), {
+    type: 'bar',
+    data: { labels: anos, datasets: [{ label: 'Pago', data: pagos, backgroundColor: '#06b6d4', borderRadius: 4, barPercentage: 0.65 }] },
+    options: { ...chartOpts, plugins: { ...chartOpts.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gridColor }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } } }
+  });
+
+  if (pddeCharts.diferenca) pddeCharts.diferenca.destroy();
+  pddeCharts.diferenca = new Chart(document.getElementById('chartPddeDiferenca'), {
+    type: 'bar',
+    data: { labels: anos, datasets: [{ label: 'Empenhado - Pago', data: diferencas, backgroundColor: diferencas.map(d => d > 500e6 ? '#ef4444' : d > 200e6 ? '#f59e0b' : '#22c55e'), borderRadius: 4, barPercentage: 0.65 }] },
+    options: { ...chartOpts, plugins: { ...chartOpts.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gridColor }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } } }
   });
 }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+function renderPddeTable() {
+  const tbody = document.getElementById('pddeTableBody');
+  tbody.innerHTML = pddeData.map(d => {
+    const taxa = d.empenhado > 0 ? (d.pago / d.empenhado * 100) : 0;
+    const taxaColor = taxa >= 90 ? '#22c55e' : taxa >= 70 ? '#f59e0b' : '#ef4444';
+    return `<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:10px 8px;font-weight:600;">${d.ano}</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--accent);">R$ ${d.empenhado.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--green);">R$ ${d.liquidado.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--cyan);">R$ ${d.pago.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+      <td style="padding:10px 8px;text-align:right;font-weight:700;color:${taxaColor};">${taxa.toFixed(1)}%</td>
+    </tr>`;
+  }).join('');
 }
 
-// ── Info Modal ───────────────────────────────────────────────────
+function updatePddeThermometer() {
+  const el = document.getElementById('pddeThermometer');
+  const latest = pddeData[pddeData.length - 1];
+  const taxa = latest.empenhado > 0 ? (latest.pago / latest.empenhado * 100) : 0;
+  if (taxa >= 85) { el.className = 'thermometer thermo-green'; el.textContent = `${latest.ano}: ${taxa.toFixed(1)}% executado — ${formatCurrency(latest.pago)} pago`; }
+  else if (taxa >= 60) { el.className = 'thermometer thermo-yellow'; el.textContent = `${latest.ano}: ${taxa.toFixed(1)}% executado — ${formatCurrency(latest.pago)} pago`; }
+  else { el.className = 'thermometer thermo-red'; el.textContent = `${latest.ano}: ${taxa.toFixed(1)}% executado — ${formatCurrency(latest.empenhado - latest.pago)} pendente`; }
+}
 
-function toggleInfoModal() {
-  document.getElementById('infoModal').classList.toggle('active');
+// =====================================================
+// EXECUCAO ORCAMENTARIA ESTADUAL — SICONFI ENGINE
+// =====================================================
+
+const EXEC_CACHE = [
+  {ano:2020,uf:"RO",nome:"Rondonia",regiao:"NO",empenhado:8369996131.75,liquidado:7444484802.6,pago:7259024891.63},
+  {ano:2020,uf:"AC",nome:"Acre",regiao:"NO",empenhado:6948506613.65,liquidado:6542126946.91,pago:6479571762.1},
+  {ano:2020,uf:"AM",nome:"Amazonas",regiao:"NO",empenhado:21587826653.85,liquidado:20382069020.53,pago:20261424862.87},
+  {ano:2020,uf:"RR",nome:"Roraima",regiao:"NO",empenhado:3988453282.52,liquidado:3718963768.97,pago:3960011987.41},
+  {ano:2020,uf:"PA",nome:"Para",regiao:"NO",empenhado:30733855133.35,liquidado:30604399393.78,pago:30228668283.24},
+  {ano:2020,uf:"AP",nome:"Amapa",regiao:"NO",empenhado:5356076345.04,liquidado:4963023831.63,pago:4328858427.05},
+  {ano:2020,uf:"TO",nome:"Tocantins",regiao:"NO",empenhado:10413755985.7,liquidado:10067985996.09,pago:9606621831.77},
+  {ano:2020,uf:"MA",nome:"Maranhao",regiao:"NE",empenhado:17898547556.37,liquidado:17225102397.93,pago:16813432975.17},
+  {ano:2020,uf:"PI",nome:"Piaui",regiao:"NE",empenhado:12485992671.58,liquidado:12101135116.36,pago:11100270102.57},
+  {ano:2020,uf:"CE",nome:"Ceara",regiao:"NE",empenhado:28481403133.69,liquidado:27399427175.87,pago:27062994499.8},
+  {ano:2020,uf:"RN",nome:"Rio Grande do Norte",regiao:"NE",empenhado:13463076040.22,liquidado:12917696453.0,pago:12207927832.23},
+  {ano:2020,uf:"PB",nome:"Paraiba",regiao:"NE",empenhado:13179722795.57,liquidado:12726133561.06,pago:12392254960.52},
+  {ano:2020,uf:"PE",nome:"Pernambuco",regiao:"NE",empenhado:34913455135.06,liquidado:32750107456.15,pago:32454668629.89},
+  {ano:2020,uf:"AL",nome:"Alagoas",regiao:"NE",empenhado:10939137424.5,liquidado:10420946002.0,pago:10212803979.0},
+  {ano:2020,uf:"SE",nome:"Sergipe",regiao:"NE",empenhado:9697832932.31,liquidado:9326267682.03,pago:8935810574.37},
+  {ano:2020,uf:"BA",nome:"Bahia",regiao:"NE",empenhado:48709453753.68,liquidado:47001988488.36,pago:46167973025.59},
+  {ano:2020,uf:"MG",nome:"Minas Gerais",regiao:"SE",empenhado:86929756832.27,liquidado:81316627178.88,pago:78654505757.25},
+  {ano:2020,uf:"ES",nome:"Espirito Santo",regiao:"SE",empenhado:15722655802.4,liquidado:14878698447.45,pago:14676958476.91},
+  {ano:2020,uf:"RJ",nome:"Rio de Janeiro",regiao:"SE",empenhado:69780261771.63,liquidado:60818660419.49,pago:59137989891.71},
+  {ano:2020,uf:"SP",nome:"Sao Paulo",regiao:"SE",empenhado:238831629416.94,liquidado:229620268145.9,pago:213574048107.53},
+  {ano:2020,uf:"PR",nome:"Parana",regiao:"SU",empenhado:44738717862.59,liquidado:40991505571.97,pago:40688270488.54},
+  {ano:2020,uf:"SC",nome:"Santa Catarina",regiao:"SU",empenhado:29277853605.54,liquidado:27140399654.63,pago:26965949432.86},
+  {ano:2020,uf:"RS",nome:"Rio Grande do Sul",regiao:"SU",empenhado:50919499455.81,liquidado:47820853137.77,pago:47289413143.59},
+  {ano:2020,uf:"MS",nome:"Mato Grosso do Sul",regiao:"CO",empenhado:15375082095.55,liquidado:14524805766.67,pago:14303178899.65},
+  {ano:2020,uf:"MT",nome:"Mato Grosso",regiao:"CO",empenhado:21067244694.48,liquidado:19975296011.77,pago:19707009576.89},
+  {ano:2020,uf:"GO",nome:"Goias",regiao:"CO",empenhado:28934073814.96,liquidado:28309764685.33,pago:26030427458.48},
+  {ano:2020,uf:"DF",nome:"Distrito Federal",regiao:"CO",empenhado:25440095553.6,liquidado:24194069159.04,pago:23133821696.4},
+  {ano:2021,uf:"RO",nome:"Rondonia",regiao:"NO",empenhado:9984591662.3,liquidado:8307221032.74,pago:8117574698.13},
+  {ano:2021,uf:"AC",nome:"Acre",regiao:"NO",empenhado:7873508660.56,liquidado:7522020478.67,pago:7464698605.25},
+  {ano:2021,uf:"AM",nome:"Amazonas",regiao:"NO",empenhado:24489221620.58,liquidado:22834979803.09,pago:22541102009.62},
+  {ano:2021,uf:"RR",nome:"Roraima",regiao:"NO",empenhado:4791453612.0,liquidado:4399139395.1,pago:4341773135.75},
+  {ano:2021,uf:"PA",nome:"Para",regiao:"NO",empenhado:34102424308.52,liquidado:33782613447.53,pago:33358048539.24},
+  {ano:2021,uf:"AP",nome:"Amapa",regiao:"NO",empenhado:6012988073.07,liquidado:5561484668.95,pago:4999891741.16},
+  {ano:2021,uf:"TO",nome:"Tocantins",regiao:"NO",empenhado:11894002103.08,liquidado:11357068979.93,pago:11042411363.21},
+  {ano:2021,uf:"MA",nome:"Maranhao",regiao:"NE",empenhado:21140832653.69,liquidado:20313999938.6,pago:19766997268.94},
+  {ano:2021,uf:"PI",nome:"Piaui",regiao:"NE",empenhado:14529684889.87,liquidado:13866389485.05,pago:12771665637.82},
+  {ano:2021,uf:"CE",nome:"Ceara",regiao:"NE",empenhado:30671775735.3,liquidado:29408000898.45,pago:28836113018.79},
+  {ano:2021,uf:"RN",nome:"Rio Grande do Norte",regiao:"NE",empenhado:15009181221.97,liquidado:13910458747.81,pago:12896802723.37},
+  {ano:2021,uf:"PB",nome:"Paraiba",regiao:"NE",empenhado:14782966574.82,liquidado:14125782750.86,pago:13786218505.72},
+  {ano:2021,uf:"PE",nome:"Pernambuco",regiao:"NE",empenhado:37756741411.23,liquidado:35098429006.68,pago:34810553399.66},
+  {ano:2021,uf:"AL",nome:"Alagoas",regiao:"NE",empenhado:11783759870.04,liquidado:11252804832.49,pago:11008891816.17},
+  {ano:2021,uf:"SE",nome:"Sergipe",regiao:"NE",empenhado:10625199262.47,liquidado:10242973012.85,pago:9737759766.74},
+  {ano:2021,uf:"BA",nome:"Bahia",regiao:"NE",empenhado:52991285063.45,liquidado:50971620481.49,pago:50044853759.94},
+  {ano:2021,uf:"MG",nome:"Minas Gerais",regiao:"SE",empenhado:97327484050.78,liquidado:91371704174.25,pago:87965019263.22},
+  {ano:2021,uf:"ES",nome:"Espirito Santo",regiao:"SE",empenhado:18014694960.77,liquidado:16826802746.83,pago:16621555765.92},
+  {ano:2021,uf:"RJ",nome:"Rio de Janeiro",regiao:"SE",empenhado:73949411684.11,liquidado:64424898704.5,pago:62999854853.05},
+  {ano:2021,uf:"SP",nome:"Sao Paulo",regiao:"SE",empenhado:264367752652.29,liquidado:256178429268.49,pago:233875988891.44},
+  {ano:2021,uf:"PR",nome:"Parana",regiao:"SU",empenhado:50375098117.59,liquidado:44613479605.19,pago:44338752523.44},
+  {ano:2021,uf:"SC",nome:"Santa Catarina",regiao:"SU",empenhado:32760849023.43,liquidado:30461429652.44,pago:30268736973.18},
+  {ano:2021,uf:"RS",nome:"Rio Grande do Sul",regiao:"SU",empenhado:55016131558.75,liquidado:51449285999.46,pago:50862459757.59},
+  {ano:2021,uf:"MS",nome:"Mato Grosso do Sul",regiao:"CO",empenhado:17115361990.39,liquidado:15898814199.28,pago:15601547456.42},
+  {ano:2021,uf:"MT",nome:"Mato Grosso",regiao:"CO",empenhado:24285361539.67,liquidado:22907139175.08,pago:22566093792.69},
+  {ano:2021,uf:"GO",nome:"Goias",regiao:"CO",empenhado:31620999484.48,liquidado:30879244543.3,pago:28449523766.32},
+  {ano:2021,uf:"DF",nome:"Distrito Federal",regiao:"CO",empenhado:28017050101.41,liquidado:26707543503.81,pago:24929831764.15},
+  {ano:2022,uf:"RO",nome:"Rondonia",regiao:"NO",empenhado:12263723810.98,liquidado:11205756805.47,pago:11083792461.08},
+  {ano:2022,uf:"AC",nome:"Acre",regiao:"NO",empenhado:9732012645.96,liquidado:9427413082.04,pago:9349474449.04},
+  {ano:2022,uf:"AM",nome:"Amazonas",regiao:"NO",empenhado:29123730028.11,liquidado:28297870068.34,pago:27349831903.64},
+  {ano:2022,uf:"RR",nome:"Roraima",regiao:"NO",empenhado:7008831858.1,liquidado:6706009267.18,pago:6578373403.55},
+  {ano:2022,uf:"PA",nome:"Para",regiao:"NO",empenhado:38358753397.89,liquidado:38110791759.44,pago:37315006261.1},
+  {ano:2022,uf:"AP",nome:"Amapa",regiao:"NO",empenhado:7407023484.95,liquidado:6943973478.36,pago:6299285069.86},
+  {ano:2022,uf:"TO",nome:"Tocantins",regiao:"NO",empenhado:14624709804.24,liquidado:13871133268.84,pago:13803143497.97},
+  {ano:2022,uf:"MA",nome:"Maranhao",regiao:"NE",empenhado:24058870424.31,liquidado:23171236866.59,pago:22647746866.73},
+  {ano:2022,uf:"PI",nome:"Piaui",regiao:"NE",empenhado:17221267261.49,liquidado:16510785498.36,pago:15495792362.15},
+  {ano:2022,uf:"CE",nome:"Ceara",regiao:"NE",empenhado:34283159093.24,liquidado:32764710696.38,pago:32476009752.06},
+  {ano:2022,uf:"RN",nome:"Rio Grande do Norte",regiao:"NE",empenhado:17138741271.31,liquidado:16180668399.49,pago:15332093505.76},
+  {ano:2022,uf:"PB",nome:"Paraiba",regiao:"NE",empenhado:16638803073.94,liquidado:15928181279.03,pago:15663697779.64},
+  {ano:2022,uf:"PE",nome:"Pernambuco",regiao:"NE",empenhado:42091561024.27,liquidado:39262752752.02,pago:38991704987.22},
+  {ano:2022,uf:"AL",nome:"Alagoas",regiao:"NE",empenhado:12783982143.14,liquidado:12259620990.18,pago:12001949373.54},
+  {ano:2022,uf:"SE",nome:"Sergipe",regiao:"NE",empenhado:12203093044.85,liquidado:11793095363.42,pago:11240696397.98},
+  {ano:2022,uf:"BA",nome:"Bahia",regiao:"NE",empenhado:59780665429.44,liquidado:57429009889.0,pago:56458523484.02},
+  {ano:2022,uf:"MG",nome:"Minas Gerais",regiao:"SE",empenhado:105825296571.34,liquidado:101124218757.39,pago:99081416684.16},
+  {ano:2022,uf:"ES",nome:"Espirito Santo",regiao:"SE",empenhado:20419754001.43,liquidado:19258543756.52,pago:18957999098.51},
+  {ano:2022,uf:"RJ",nome:"Rio de Janeiro",regiao:"SE",empenhado:79814002972.4,liquidado:72665012254.12,pago:71112174782.42},
+  {ano:2022,uf:"SP",nome:"Sao Paulo",regiao:"SE",empenhado:290771889597.94,liquidado:282076285247.8,pago:266668625714.07},
+  {ano:2022,uf:"PR",nome:"Parana",regiao:"SU",empenhado:55775665143.97,liquidado:49915720098.02,pago:49561279843.73},
+  {ano:2022,uf:"SC",nome:"Santa Catarina",regiao:"SU",empenhado:36756802704.4,liquidado:34192100849.08,pago:33994479073.38},
+  {ano:2022,uf:"RS",nome:"Rio Grande do Sul",regiao:"SU",empenhado:58783316660.78,liquidado:54949989484.87,pago:54379461668.14},
+  {ano:2022,uf:"MS",nome:"Mato Grosso do Sul",regiao:"CO",empenhado:19070917771.16,liquidado:17797854135.69,pago:17464498849.33},
+  {ano:2022,uf:"MT",nome:"Mato Grosso",regiao:"CO",empenhado:27637165629.26,liquidado:25965028192.14,pago:25715429975.27},
+  {ano:2022,uf:"GO",nome:"Goias",regiao:"CO",empenhado:36016155938.88,liquidado:35301174375.62,pago:33283461805.81},
+  {ano:2022,uf:"DF",nome:"Distrito Federal",regiao:"CO",empenhado:30775476453.87,liquidado:29348291754.34,pago:27737577870.13},
+  {ano:2023,uf:"RO",nome:"Rondonia",regiao:"NO",empenhado:13103755414.79,liquidado:11804574764.69,pago:11694103929.02},
+  {ano:2023,uf:"AC",nome:"Acre",regiao:"NO",empenhado:10106508893.76,liquidado:9751291498.22,pago:9612805834.74},
+  {ano:2023,uf:"AM",nome:"Amazonas",regiao:"NO",empenhado:29575730979.05,liquidado:28830858903.48,pago:27853700143.11},
+  {ano:2023,uf:"RR",nome:"Roraima",regiao:"NO",empenhado:7405497068.43,liquidado:6984600989.62,pago:6894017474.56},
+  {ano:2023,uf:"PA",nome:"Para",regiao:"NO",empenhado:41131893636.62,liquidado:40706764427.98,pago:39834327870.47},
+  {ano:2023,uf:"AP",nome:"Amapa",regiao:"NO",empenhado:8101696127.16,liquidado:7590001753.2,pago:7036268610.51},
+  {ano:2023,uf:"TO",nome:"Tocantins",regiao:"NO",empenhado:15038003262.63,liquidado:14479752704.56,pago:13991252012.48},
+  {ano:2023,uf:"MA",nome:"Maranhao",regiao:"NE",empenhado:24989085988.73,liquidado:24260449389.36,pago:23731637696.7},
+  {ano:2023,uf:"PI",nome:"Piaui",regiao:"NE",empenhado:18502155987.43,liquidado:17854103135.64,pago:16843766917.47},
+  {ano:2023,uf:"CE",nome:"Ceara",regiao:"NE",empenhado:35789810193.01,liquidado:34534752553.33,pago:34189455606.4},
+  {ano:2023,uf:"RN",nome:"Rio Grande do Norte",regiao:"NE",empenhado:17777992759.74,liquidado:16756804665.46,pago:15937414447.5},
+  {ano:2023,uf:"PB",nome:"Paraiba",regiao:"NE",empenhado:17270746973.32,liquidado:16649100651.62,pago:16246992987.42},
+  {ano:2023,uf:"PE",nome:"Pernambuco",regiao:"NE",empenhado:44316413024.03,liquidado:41561268826.67,pago:41246965236.87},
+  {ano:2023,uf:"AL",nome:"Alagoas",regiao:"NE",empenhado:13458653100.8,liquidado:12913484023.49,pago:12704389782.02},
+  {ano:2023,uf:"SE",nome:"Sergipe",regiao:"NE",empenhado:12488997411.88,liquidado:12044555997.79,pago:11517143485.91},
+  {ano:2023,uf:"BA",nome:"Bahia",regiao:"NE",empenhado:63625927810.93,liquidado:61069143093.67,pago:60097553095.82},
+  {ano:2023,uf:"MG",nome:"Minas Gerais",regiao:"SE",empenhado:109990430193.66,liquidado:104879853843.29,pago:102843254789.11},
+  {ano:2023,uf:"ES",nome:"Espirito Santo",regiao:"SE",empenhado:21427697032.3,liquidado:20395012556.99,pago:20094753131.39},
+  {ano:2023,uf:"RJ",nome:"Rio de Janeiro",regiao:"SE",empenhado:78785963513.8,liquidado:73261723975.68,pago:72153095024.89},
+  {ano:2023,uf:"SP",nome:"Sao Paulo",regiao:"SE",empenhado:299766610556.62,liquidado:290784805032.56,pago:275508133655.79},
+  {ano:2023,uf:"PR",nome:"Parana",regiao:"SU",empenhado:56903994558.66,liquidado:52107543116.16,pago:51677503011.5},
+  {ano:2023,uf:"SC",nome:"Santa Catarina",regiao:"SU",empenhado:39023316858.51,liquidado:35928003001.78,pago:35616775723.03},
+  {ano:2023,uf:"RS",nome:"Rio Grande do Sul",regiao:"SU",empenhado:60217020133.85,liquidado:56367105753.49,pago:55818576843.41},
+  {ano:2023,uf:"MS",nome:"Mato Grosso do Sul",regiao:"CO",empenhado:19870085100.41,liquidado:18600499478.63,pago:18259050082.84},
+  {ano:2023,uf:"MT",nome:"Mato Grosso",regiao:"CO",empenhado:29197832098.77,liquidado:27381244260.67,pago:27108571068.37},
+  {ano:2023,uf:"GO",nome:"Goias",regiao:"CO",empenhado:37434178685.77,liquidado:36720820853.93,pago:34684476768.98},
+  {ano:2023,uf:"DF",nome:"Distrito Federal",regiao:"CO",empenhado:27981574637.71,liquidado:26636866131.87,pago:24975508905.83},
+  {ano:2024,uf:"RO",nome:"Rondonia",regiao:"NO",empenhado:14665478762.85,liquidado:12941773768.53,pago:12781011619.32},
+  {ano:2024,uf:"AC",nome:"Acre",regiao:"NO",empenhado:11327891429.48,liquidado:10942000082.38,pago:10757637437.83},
+  {ano:2024,uf:"AM",nome:"Amazonas",regiao:"NO",empenhado:34534459478.67,liquidado:33876137764.22,pago:33690779479.8},
+  {ano:2024,uf:"RR",nome:"Roraima",regiao:"NO",empenhado:8601929017.72,liquidado:8200700048.47,pago:8157618803.31},
+  {ano:2024,uf:"PA",nome:"Para",regiao:"NO",empenhado:48737756003.4,liquidado:48449131834.78,pago:47879399505.54},
+  {ano:2024,uf:"AP",nome:"Amapa",regiao:"NO",empenhado:10042279040.12,liquidado:9610741254.75,pago:9437618261.82},
+  {ano:2024,uf:"TO",nome:"Tocantins",regiao:"NO",empenhado:17701266282.53,liquidado:17103741723.56,pago:16696605011.77},
+  {ano:2024,uf:"MA",nome:"Maranhao",regiao:"NE",empenhado:29385927870.31,liquidado:28753068506.64,pago:28592685012.26},
+  {ano:2024,uf:"PI",nome:"Piaui",regiao:"NE",empenhado:22929780174.56,liquidado:22181965044.95,pago:21644629547.93},
+  {ano:2024,uf:"CE",nome:"Ceara",regiao:"NE",empenhado:43266858804.82,liquidado:41691966831.46,pago:41457268279.82},
+  {ano:2024,uf:"RN",nome:"Rio Grande do Norte",regiao:"NE",empenhado:20131427746.24,liquidado:19078855710.19,pago:18406293247.71},
+  {ano:2024,uf:"PB",nome:"Paraiba",regiao:"NE",empenhado:19360523296.68,liquidado:18618361696.68,pago:18260539684.8},
+  {ano:2024,uf:"PE",nome:"Pernambuco",regiao:"NE",empenhado:49853697411.11,liquidado:47015853221.49,pago:46681261027.64},
+  {ano:2024,uf:"AL",nome:"Alagoas",regiao:"NE",empenhado:15259637063.62,liquidado:14639082419.56,pago:14435741505.19},
+  {ano:2024,uf:"SE",nome:"Sergipe",regiao:"NE",empenhado:14012478975.41,liquidado:13432485016.8,pago:12886131289.52},
+  {ano:2024,uf:"BA",nome:"Bahia",regiao:"NE",empenhado:71624558247.51,liquidado:69061735025.84,pago:68192193012.81},
+  {ano:2024,uf:"MG",nome:"Minas Gerais",regiao:"SE",empenhado:123782143001.05,liquidado:117969414854.35,pago:115997917637.5},
+  {ano:2024,uf:"ES",nome:"Espirito Santo",regiao:"SE",empenhado:24005696355.66,liquidado:22839271665.46,pago:22460803296.85},
+  {ano:2024,uf:"RJ",nome:"Rio de Janeiro",regiao:"SE",empenhado:89267704972.41,liquidado:83058757704.51,pago:81974247629.52},
+  {ano:2024,uf:"SP",nome:"Sao Paulo",regiao:"SE",empenhado:328315580393.5,liquidado:319520415597.07,pago:297399280190.92},
+  {ano:2024,uf:"PR",nome:"Parana",regiao:"SU",empenhado:63803483363.16,liquidado:58269003411.28,pago:57824779414.0},
+  {ano:2024,uf:"SC",nome:"Santa Catarina",regiao:"SU",empenhado:43399963759.45,liquidado:40184614291.39,pago:39846282753.66},
+  {ano:2024,uf:"RS",nome:"Rio Grande do Sul",regiao:"SU",empenhado:63619756574.17,liquidado:58821481437.99,pago:58188757137.04},
+  {ano:2024,uf:"MS",nome:"Mato Grosso do Sul",regiao:"CO",empenhado:22065001139.36,liquidado:20502547447.15,pago:20163805625.04},
+  {ano:2024,uf:"MT",nome:"Mato Grosso",regiao:"CO",empenhado:32048165135.38,liquidado:29828932862.18,pago:29547027082.1},
+  {ano:2024,uf:"GO",nome:"Goias",regiao:"CO",empenhado:41756140020.43,liquidado:40926785543.69,pago:39031131484.53},
+  {ano:2024,uf:"DF",nome:"Distrito Federal",regiao:"CO",empenhado:30574285397.47,liquidado:28730447662.95,pago:27061693069.29},
+  {ano:2025,uf:"RO",nome:"Rondonia",regiao:"NO",empenhado:16145965804.09,liquidado:14762889283.93,pago:14468117508.96},
+  {ano:2025,uf:"AC",nome:"Acre",regiao:"NO",empenhado:12625773810.32,liquidado:12285655411.44,pago:12160523458.95},
+  {ano:2025,uf:"AM",nome:"Amazonas",regiao:"NO",empenhado:37741949116.42,liquidado:36950613965.98,pago:36640779685.63},
+  {ano:2025,uf:"RR",nome:"Roraima",regiao:"NO",empenhado:9367556825.15,liquidado:8977993513.46,pago:8931992854.53},
+  {ano:2025,uf:"PA",nome:"Para",regiao:"NO",empenhado:52792637782.08,liquidado:52310693985.55,pago:51720291866.22},
+  {ano:2025,uf:"AP",nome:"Amapa",regiao:"NO",empenhado:11080629720.66,liquidado:10623268879.65,pago:10466780720.81},
+  {ano:2025,uf:"TO",nome:"Tocantins",regiao:"NO",empenhado:18992254746.04,liquidado:18447770556.0,pago:18070032780.78},
+  {ano:2025,uf:"MA",nome:"Maranhao",regiao:"NE",empenhado:31930362843.29,liquidado:31319975361.08,pago:31199547430.88},
+  {ano:2025,uf:"PI",nome:"Piaui",regiao:"NE",empenhado:25255637389.34,liquidado:24529267499.41,pago:24065481785.07},
+  {ano:2025,uf:"CE",nome:"Ceara",regiao:"NE",empenhado:47408076135.53,liquidado:45744455973.5,pago:45423655730.91},
+  {ano:2025,uf:"RN",nome:"Rio Grande do Norte",regiao:"NE",empenhado:22044271375.79,liquidado:20812625270.93,pago:19759100662.7},
+  {ano:2025,uf:"PB",nome:"Paraiba",regiao:"NE",empenhado:21115766568.3,liquidado:20340458437.34,pago:19862455485.46},
+  {ano:2025,uf:"PE",nome:"Pernambuco",regiao:"NE",empenhado:55741389494.13,liquidado:52484735785.0,pago:52045063267.99},
+  {ano:2025,uf:"AL",nome:"Alagoas",regiao:"NE",empenhado:16845651093.98,liquidado:16172757685.7,pago:15891236987.35},
+  {ano:2025,uf:"SE",nome:"Sergipe",regiao:"NE",empenhado:15399766037.23,liquidado:14793694345.72,pago:14149759553.35},
+  {ano:2025,uf:"BA",nome:"Bahia",regiao:"NE",empenhado:79086476862.22,liquidado:76350247825.45,pago:75461929768.11},
+  {ano:2025,uf:"MG",nome:"Minas Gerais",regiao:"SE",empenhado:140261107849.63,liquidado:134203497267.65,pago:131803768792.89},
+  {ano:2025,uf:"ES",nome:"Espirito Santo",regiao:"SE",empenhado:27010963012.67,liquidado:25816629283.33,pago:25393289271.69},
+  {ano:2025,uf:"RJ",nome:"Rio de Janeiro",regiao:"SE",empenhado:98513025181.05,liquidado:91613992024.65,pago:90216982973.24},
+  {ano:2025,uf:"SP",nome:"Sao Paulo",regiao:"SE",empenhado:365505100155.73,liquidado:352854973497.37,pago:338068437891.82},
+  {ano:2025,uf:"PR",nome:"Parana",regiao:"SU",empenhado:69605457428.67,liquidado:64189710247.83,pago:63572975613.04},
+  {ano:2025,uf:"SC",nome:"Santa Catarina",regiao:"SU",empenhado:49015780048.07,liquidado:45193266700.7,pago:44709920618.3},
+  {ano:2025,uf:"RS",nome:"Rio Grande do Sul",regiao:"SU",empenhado:72373855145.32,liquidado:67247556684.55,pago:66548174327.18},
+  {ano:2025,uf:"MS",nome:"Mato Grosso do Sul",regiao:"CO",empenhado:24410040044.09,liquidado:22821771710.32,pago:22371178281.24},
+  {ano:2025,uf:"MT",nome:"Mato Grosso",regiao:"CO",empenhado:36174076413.14,liquidado:33879996780.62,pago:33516025759.26},
+  {ano:2025,uf:"GO",nome:"Goias",regiao:"CO",empenhado:45819432613.57,liquidado:45116547979.87,pago:43253775938.03},
+  {ano:2025,uf:"DF",nome:"Distrito Federal",regiao:"CO",empenhado:33675629076.12,liquidado:31819279973.2,pago:30138247481.5},
+  {ano:2026,uf:"RO",nome:"Rondonia",regiao:"NO",empenhado:11894285587.66,liquidado:10434662803.18,pago:10320866131.28},
+  {ano:2026,uf:"AC",nome:"Acre",regiao:"NO",empenhado:8856987116.69,liquidado:8392484791.89,pago:8253994997.6},
+  {ano:2026,uf:"AM",nome:"Amazonas",regiao:"NO",empenhado:27543802893.12,liquidado:25854218459.22,pago:25393289271.69},
+  {ano:2026,uf:"RR",nome:"Roraima",regiao:"NO",empenhado:7225073597.98,liquidado:6651067543.56,pago:6515958773.03},
+  {ano:2026,uf:"PA",nome:"Para",regiao:"NO",empenhado:39028236775.82,liquidado:37389759989.24,pago:36684627099.12},
+  {ano:2026,uf:"AP",nome:"Amapa",regiao:"NO",empenhado:8476485759.99,liquidado:7777773455.66,pago:7549437498.75},
+  {ano:2026,uf:"TO",nome:"Tocantins",regiao:"NO",empenhado:13756012684.22,liquidado:13055771804.89,pago:12630714649.31},
+  {ano:2026,uf:"MA",nome:"Maranhao",regiao:"NE",empenhado:28068199843.2,liquidado:25779800770.83,pago:25112539736.5},
+  {ano:2026,uf:"PI",nome:"Piaui",regiao:"NE",empenhado:21660779044.56,liquidado:20500424048.88,pago:19608620653.01},
+  {ano:2026,uf:"CE",nome:"Ceara",regiao:"NE",empenhado:34047398024.99,liquidado:32645987625.78,pago:31898508543.37},
+  {ano:2026,uf:"RN",nome:"Rio Grande do Norte",regiao:"NE",empenhado:20439133363.93,liquidado:16018498700.03,pago:15303771143.73},
+  {ano:2026,uf:"PB",nome:"Paraiba",regiao:"NE",empenhado:18185704620.0,liquidado:17312766497.24,pago:16894296143.46},
+  {ano:2026,uf:"PE",nome:"Pernambuco",regiao:"NE",empenhado:52396804100.92,liquidado:38274006221.32,pago:37166665389.75},
+  {ano:2026,uf:"AL",nome:"Alagoas",regiao:"NE",empenhado:16185181783.66,liquidado:14728131889.37,pago:14336963975.87},
+  {ano:2026,uf:"SE",nome:"Sergipe",regiao:"NE",empenhado:12597006668.78,liquidado:11638263193.5,pago:11049605379.89},
+  {ano:2026,uf:"BA",nome:"Bahia",regiao:"NE",empenhado:61556655783.7,liquidado:56766403561.58,pago:53976006752.62},
+  {ano:2026,uf:"MG",nome:"Minas Gerais",regiao:"SE",empenhado:106055629619.63,liquidado:95750159414.0,pago:93283082485.64},
+  {ano:2026,uf:"ES",nome:"Espirito Santo",regiao:"SE",empenhado:20651792637.29,liquidado:18709870449.36,pago:18425105316.55},
+  {ano:2026,uf:"RJ",nome:"Rio de Janeiro",regiao:"SE",empenhado:82223458244.92,liquidado:75064137574.72,pago:72279277780.92},
+  {ano:2026,uf:"SP",nome:"Sao Paulo",regiao:"SE",empenhado:277706685281.66,liquidado:246471261316.13,pago:231284024694.88},
+  {ano:2026,uf:"PR",nome:"Parana",regiao:"SU",empenhado:59331768316.05,liquidado:52860693282.14,pago:52378820605.24},
+  {ano:2026,uf:"SC",nome:"Santa Catarina",regiao:"SU",empenhado:44680756660.8,liquidado:39057017697.74,pago:38064093671.78},
+  {ano:2026,uf:"RS",nome:"Rio Grande do Sul",regiao:"SU",empenhado:58545048614.12,liquidado:53036018289.35,pago:52146555750.23},
+  {ano:2026,uf:"MS",nome:"Mato Grosso do Sul",regiao:"CO",empenhado:22182987445.66,liquidado:19506853558.48,pago:18413308534.75},
+  {ano:2026,uf:"MT",nome:"Mato Grosso",regiao:"CO",empenhado:32897523994.5,liquidado:27112653076.73,pago:26465850693.6},
+  {ano:2026,uf:"GO",nome:"Goias",regiao:"CO",empenhado:41808032153.84,liquidado:33172050499.75,pago:32333802218.15},
+  {ano:2026,uf:"DF",nome:"Distrito Federal",regiao:"CO",empenhado:31170131574.78,liquidado:27622629361.9,pago:25469263988.45}
+];
+const EXEC_CACHE_DATE = '07/10/2026';
+
+const REGIAO_NAMES = { NO: 'Norte', NE: 'Nordeste', SE: 'Sudeste', CO: 'Centro-Oeste', SU: 'Sul' };
+const REGIAO_COLORS = { NO: '#22c55e', NE: '#f59e0b', SE: '#3b82f6', CO: '#a855f7', SU: '#06b6d4' };
+
+let execCharts = {};
+
+function loadExecData() {
+  const ufs = [...new Set(EXEC_CACHE.map(d => d.uf))].sort();
+  const sel = document.getElementById('execUf');
+  sel.innerHTML = '<option value="">Todos</option>' + ufs.map(u => `<option value="${u}">${u}</option>`).join('');
+
+  document.getElementById('execKpis').style.display = '';
+  document.getElementById('execExecBarContainer').style.display = '';
+  document.getElementById('execTableContainer').style.display = '';
+  document.getElementById('execFonte').textContent = `Dados reais do RREO/SICONFI consultados em ${EXEC_CACHE_DATE}`;
+  document.getElementById('execFonte').style.display = '';
+
+  renderExecDashboard();
+}
+
+function getExecFiltered() {
+  const nivel = document.getElementById('execNivel').value;
+  const regSel = document.getElementById('execRegiao');
+  const ufSel = document.getElementById('execUf');
+
+  regSel.style.display = (nivel === 'regiao' || nivel === 'estado') ? '' : 'none';
+  ufSel.style.display = nivel === 'estado' ? '' : 'none';
+
+  let filtered = EXEC_CACHE;
+  const regiao = regSel.value;
+  const uf = ufSel.value;
+
+  if (regiao) filtered = filtered.filter(d => d.regiao === regiao);
+  if (nivel === 'estado' && uf) filtered = filtered.filter(d => d.uf === uf);
+
+  return { filtered, nivel, regiao, uf };
+}
+
+function aggregateByYear(data) {
+  const map = {};
+  data.forEach(d => {
+    if (!map[d.ano]) map[d.ano] = { ano: d.ano, empenhado: 0, liquidado: 0, pago: 0 };
+    map[d.ano].empenhado += d.empenhado;
+    map[d.ano].liquidado += d.liquidado;
+    map[d.ano].pago += d.pago;
+  });
+  return Object.values(map).sort((a, b) => a.ano - b.ano);
+}
+
+function aggregateByGroup(data, key, year) {
+  const yr = data.filter(d => d.ano === year);
+  const map = {};
+  yr.forEach(d => {
+    const k = d[key];
+    if (!map[k]) map[k] = { label: key === 'regiao' ? (REGIAO_NAMES[k] || k) : k, key: k, empenhado: 0, liquidado: 0, pago: 0 };
+    map[k].empenhado += d.empenhado;
+    map[k].liquidado += d.liquidado;
+    map[k].pago += d.pago;
+  });
+  return Object.values(map).sort((a, b) => b.empenhado - a.empenhado);
+}
+
+function renderExecDashboard() {
+  const { filtered, nivel, regiao, uf } = getExecFiltered();
+  const byYear = aggregateByYear(filtered);
+  if (byYear.length === 0) return;
+
+  const latest = byYear[byYear.length - 1];
+  const latestYear = latest.ano;
+
+  // KPIs
+  document.getElementById('execKpiEmpenhado').textContent = formatCurrency(latest.empenhado);
+  document.getElementById('execKpiLiquidado').textContent = formatCurrency(latest.liquidado);
+  document.getElementById('execKpiPago').textContent = formatCurrency(latest.pago);
+  const taxa = latest.empenhado > 0 ? (latest.pago / latest.empenhado * 100) : 0;
+  document.getElementById('execKpiTaxa').textContent = taxa.toFixed(1) + '%';
+
+  let scopeLabel = 'Brasil';
+  if (regiao) scopeLabel = REGIAO_NAMES[regiao] || regiao;
+  if (uf) scopeLabel = uf;
+  document.getElementById('execKpiEmpLabel').textContent = `Empenhado ${latestYear}`;
+  document.getElementById('execKpiLiqLabel').textContent = `Liquidado ${latestYear}`;
+  document.getElementById('execKpiPagLabel').textContent = `Pago ${latestYear}`;
+
+  // Exec bar
+  const total = latest.empenhado || 1;
+  const pctPago = (latest.pago / total * 100);
+  const pctLiqNaoPago = ((latest.liquidado - latest.pago) / total * 100);
+  const pctEmpNaoLiq = ((latest.empenhado - latest.liquidado) / total * 100);
+  document.getElementById('execBarTitle').textContent = `Execucao Orcamentaria ${latestYear} — ${scopeLabel}`;
+  const bar = document.getElementById('execExecBar');
+  bar.innerHTML = `
+    <div class="pdde-exec-seg" style="width:${Math.max(pctPago, 0)}%;background:#22c55e;">${pctPago > 8 ? formatCurrency(latest.pago) : ''}</div>
+    <div class="pdde-exec-seg" style="width:${Math.max(pctLiqNaoPago, 0)}%;background:#3b82f6;">${pctLiqNaoPago > 8 ? formatCurrency(latest.liquidado - latest.pago) : ''}</div>
+    <div class="pdde-exec-seg" style="width:${Math.max(pctEmpNaoLiq, 0)}%;background:#64748b;">${pctEmpNaoLiq > 8 ? formatCurrency(latest.empenhado - latest.liquidado) : ''}</div>
+  `;
+  document.getElementById('execExecLabel1').innerHTML = `<span style="color:#22c55e">●</span> Pago (${pctPago.toFixed(1)}%)`;
+  document.getElementById('execExecLabel2').innerHTML = `<span style="color:#3b82f6">●</span> Liquidado n/ pago (${Math.max(pctLiqNaoPago, 0).toFixed(1)}%)`;
+  document.getElementById('execExecLabel3').innerHTML = `<span style="color:#64748b">●</span> Empenhado n/ liquidado (${Math.max(pctEmpNaoLiq, 0).toFixed(1)}%)`;
+
+  // Thermometer
+  const therm = document.getElementById('execThermometer');
+  if (taxa >= 85) { therm.className = 'thermometer thermo-green'; therm.textContent = `${scopeLabel} ${latestYear}: ${taxa.toFixed(1)}% executado — ${formatCurrency(latest.pago)} pago`; }
+  else if (taxa >= 70) { therm.className = 'thermometer thermo-yellow'; therm.textContent = `${scopeLabel} ${latestYear}: ${taxa.toFixed(1)}% executado`; }
+  else { therm.className = 'thermometer thermo-red'; therm.textContent = `${scopeLabel} ${latestYear}: ${taxa.toFixed(1)}% executado — ${formatCurrency(latest.empenhado - latest.pago)} pendente`; }
+
+  // Charts
+  const anos = byYear.map(d => d.ano);
+  const empenhados = byYear.map(d => d.empenhado);
+  const liquidados = byYear.map(d => d.liquidado);
+  const pagos = byYear.map(d => d.pago);
+  const taxas = byYear.map(d => d.empenhado > 0 ? (d.pago / d.empenhado * 100) : 0);
+  const difs = byYear.map(d => d.empenhado - d.pago);
+  const co = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#64748b', font: { size: 11 } } } } };
+  const gc = 'rgba(255,255,255,.06)';
+
+  if (execCharts.evolucao) execCharts.evolucao.destroy();
+  document.getElementById('execChart1Title').textContent = `Evolucao Anual — ${scopeLabel}`;
+  execCharts.evolucao = new Chart(document.getElementById('chartExecEvolucao'), {
+    type: 'bar', data: { labels: anos, datasets: [
+      { label: 'Empenhado', data: empenhados, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 4, barPercentage: 0.8 },
+      { label: 'Liquidado', data: liquidados, backgroundColor: 'rgba(34,197,94,.7)', borderRadius: 4, barPercentage: 0.8 },
+      { label: 'Pago', data: pagos, backgroundColor: 'rgba(6,182,212,.7)', borderRadius: 4, barPercentage: 0.8 }
+    ] }, options: { ...co, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gc }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } }, plugins: { ...co.plugins, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatCurrency(ctx.raw) } } } }
+  });
+
+  if (execCharts.taxa) execCharts.taxa.destroy();
+  execCharts.taxa = new Chart(document.getElementById('chartExecTaxa'), {
+    type: 'line', data: { labels: anos, datasets: [{ label: 'Taxa (Pago/Empenhado)', data: taxas, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,.15)', fill: true, tension: 0.3, pointRadius: 5, pointBackgroundColor: '#22c55e' }] },
+    options: { ...co, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gc }, ticks: { color: '#64748b', callback: v => v.toFixed(0) + '%' }, min: 0, max: 100 } }, plugins: { ...co.plugins, tooltip: { callbacks: { label: ctx => ctx.raw.toFixed(1) + '%' } } } }
+  });
+
+  // Rankings
+  const rankKey = nivel === 'estado' && !uf ? 'uf' : nivel === 'regiao' ? 'regiao' : null;
+  if (rankKey) {
+    const groups = aggregateByGroup(filtered, rankKey, latestYear);
+    const rankLabels = groups.map(g => g.label);
+    const rankEmp = groups.map(g => g.empenhado);
+    const rankTaxas = groups.map(g => g.empenhado > 0 ? (g.pago / g.empenhado * 100) : 0);
+    const rankColors = rankKey === 'regiao' ? groups.map(g => REGIAO_COLORS[g.key] || '#64748b') : groups.map(() => '#f97316');
+
+    if (execCharts.ranking) execCharts.ranking.destroy();
+    document.getElementById('execChart3Title').textContent = `Ranking Empenhado ${latestYear}`;
+    execCharts.ranking = new Chart(document.getElementById('chartExecRanking'), {
+      type: 'bar', data: { labels: rankLabels, datasets: [{ data: rankEmp, backgroundColor: rankColors, borderRadius: 4, barPercentage: 0.7 }] },
+      options: { ...co, indexAxis: 'y', plugins: { ...co.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { color: gc }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } }, y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { size: 11 } } } } }
+    });
+
+    const taxaSorted = groups.map(g => ({ label: g.label, key: g.key, taxa: g.empenhado > 0 ? (g.pago / g.empenhado * 100) : 0 })).sort((a, b) => b.taxa - a.taxa);
+    const taxaColors2 = taxaSorted.map(t => t.taxa >= 90 ? '#22c55e' : t.taxa >= 80 ? '#f59e0b' : '#ef4444');
+    if (execCharts.rankingTaxa) execCharts.rankingTaxa.destroy();
+    document.getElementById('execChart4Title').textContent = `Ranking Taxa de Execucao ${latestYear}`;
+    execCharts.rankingTaxa = new Chart(document.getElementById('chartExecRankingTaxa'), {
+      type: 'bar', data: { labels: taxaSorted.map(t => t.label), datasets: [{ data: taxaSorted.map(t => t.taxa), backgroundColor: taxaColors2, borderRadius: 4, barPercentage: 0.7 }] },
+      options: { ...co, indexAxis: 'y', plugins: { ...co.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.raw.toFixed(1) + '%' } } }, scales: { x: { grid: { color: gc }, ticks: { color: '#64748b', callback: v => v + '%' }, min: 0, max: 100 }, y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { size: 11 } } } } }
+    });
+  } else {
+    if (execCharts.ranking) { execCharts.ranking.destroy(); execCharts.ranking = null; }
+    if (execCharts.rankingTaxa) { execCharts.rankingTaxa.destroy(); execCharts.rankingTaxa = null; }
+    document.getElementById('execChart3Title').textContent = 'Selecione "Por Regiao" ou "Por Estado" para ver rankings';
+    document.getElementById('execChart4Title').textContent = '';
+  }
+
+  if (execCharts.diferenca) execCharts.diferenca.destroy();
+  execCharts.diferenca = new Chart(document.getElementById('chartExecDiferenca'), {
+    type: 'bar', data: { labels: anos, datasets: [{ label: 'Empenhado - Pago', data: difs, backgroundColor: difs.map(d => d > 100e9 ? '#ef4444' : d > 50e9 ? '#f59e0b' : '#22c55e'), borderRadius: 4, barPercentage: 0.65 }] },
+    options: { ...co, plugins: { ...co.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gc }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } } }
+  });
+
+  // Table
+  document.getElementById('execTableTitle').textContent = `Detalhamento — ${scopeLabel}`;
+  const tbody = document.getElementById('execTableBody');
+  tbody.innerHTML = byYear.map(d => {
+    const t = d.empenhado > 0 ? (d.pago / d.empenhado * 100) : 0;
+    const tc = t >= 90 ? '#22c55e' : t >= 70 ? '#f59e0b' : '#ef4444';
+    return `<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:10px 8px;font-weight:600;">${d.ano}${d.ano === 2026 ? ' *' : ''}</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--accent);">R$ ${d.empenhado.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--green);">R$ ${d.liquidado.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--cyan);">R$ ${d.pago.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+      <td style="padding:10px 8px;text-align:right;font-weight:700;color:${tc};">${t.toFixed(1)}%</td>
+    </tr>`;
+  }).join('') + '<tr><td colspan="5" style="padding:6px 8px;font-size:11px;color:var(--text-muted);">* 2026: dados ate ago/2026 (periodo 4 do RREO)</td></tr>';
 }
 
 // ── Init ─────────────────────────────────────────────────────────
