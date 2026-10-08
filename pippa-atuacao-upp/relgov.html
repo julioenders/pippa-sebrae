@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIPPA | Atuacao UPP/RelGov 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0b1120;--card:#111827;--card-hover:#1a2332;
+  --emerald:#10b981;--emerald-light:#34d399;--emerald-pale:#6ee7b7;
+  --blue:#4f8cff;--purple:#a855f7;--amber:#f59e0b;--cyan:#06b6d4;--pink:#f472b6;--red:#ef4444;--teal:#14b8a6;
+  --text-primary:#e2e8f0;--text-secondary:#94a3b8;--text-muted:#64748b;--text-dim:#475569;
+  --border:rgba(148,163,184,.12);--glass:rgba(17,24,39,.6);
+  --radius:12px;--radius-sm:8px;--radius-xs:6px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-height:1.6;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--emerald);border-radius:3px}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(11,17,32,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-weight:800;font-size:18px;background:linear-gradient(135deg,var(--emerald),var(--emerald-pale));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px}
+.nav-links{display:flex;gap:6px}
+.nav-links a{color:var(--text-secondary);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:var(--radius-xs);transition:.2s}
+.nav-links a:hover,.nav-links a.active{color:var(--emerald-light);background:rgba(16,185,129,.08)}
+
+/* HERO */
+.hero{position:relative;text-align:center;padding:48px 32px 28px;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse 80% 60%,rgba(16,185,129,.12),transparent 70%);pointer-events:none}
+.hero-label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--emerald);background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);padding:6px 16px;border-radius:20px;margin-bottom:20px}
+.hero-title{font-size:clamp(28px,5vw,48px);font-weight:800;color:var(--text-primary);letter-spacing:-1.5px;line-height:1.1;margin-bottom:12px}
+.hero-title span{background:linear-gradient(135deg,var(--emerald),var(--emerald-light),var(--emerald-pale));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:14px;color:var(--text-secondary);max-width:680px;margin:0 auto 8px}
+.hero-period{font-size:12px;color:var(--text-muted);font-weight:500;letter-spacing:1px;text-transform:uppercase}
+
+/* STAT TILES */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:700px;margin:0 auto;padding:0 32px}
+.stat-tile{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 8px;text-align:center;transition:.3s;cursor:default}
+.stat-tile:hover{border-color:rgba(16,185,129,.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.stat-value{font-size:26px;font-weight:700;color:var(--text-primary);line-height:1}
+.stat-value.emerald{color:var(--emerald-light)}
+.stat-value.purple{color:var(--purple)}
+.stat-value.blue{color:var(--blue)}
+.stat-label{font-size:10px;font-weight:500;color:var(--text-secondary);margin-top:4px;letter-spacing:.3px;text-transform:uppercase}
+
+/* SECTION */
+.section{max-width:1100px;margin:0 auto;padding:60px 32px}
+.section-header{margin-bottom:36px}
+.section-eyebrow{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.section-title{font-size:28px;font-weight:700;color:var(--text-primary);letter-spacing:-.5px}
+.section-desc{font-size:14px;color:var(--text-secondary);margin-top:8px;max-width:700px}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0 auto}
+
+/* CARDS GRID */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:.3s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
+.card:hover{border-color:rgba(148,163,184,.2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.card-number{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.card-title{font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
+.card-desc{font-size:13px;color:var(--text-secondary);line-height:1.6}
+.card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.card-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;border:1px solid}
+
+/* EXPAND SECTION */
+.expand-trigger{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;cursor:pointer;transition:.3s;width:100%;text-align:left}
+.expand-trigger:hover{border-color:rgba(16,185,129,.3);background:var(--card-hover)}
+.expand-trigger h3{font-size:15px;font-weight:600;color:var(--text-primary);flex:1}
+.expand-arrow{color:var(--text-muted);transition:.3s;font-size:18px}
+.expand-trigger.open .expand-arrow{transform:rotate(180deg);color:var(--emerald)}
+.expand-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.expand-content.open{max-height:2000px}
+.expand-inner{padding:20px 0}
+.expand-inner ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.expand-inner li{position:relative;padding-left:20px;font-size:14px;color:var(--text-secondary);line-height:1.6}
+.expand-inner li::before{content:'';position:absolute;left:0;top:9px;width:8px;height:8px;border-radius:50%;opacity:.6}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* FOOTER */
+.footer{text-align:center;padding:40px 32px;color:var(--text-dim);font-size:12px;border-top:1px solid var(--border)}
+.footer a{color:var(--emerald);text-decoration:none}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .hero{padding:40px 20px 24px}
+  .section{padding:40px 20px}
+  .stats-row{grid-template-columns:repeat(3,1fr);gap:10px;padding:0 20px}
+  .cards-grid{grid-template-columns:1fr}
+  .nav{padding:0 16px}
+  .nav-links a{font-size:11px;padding:5px 8px}
+  .stat-tile{padding:14px 10px}
+  .stat-value{font-size:24px}
+  .stat-label{font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">PIPPA</div>
+  <div class="nav-links">
+    <a href="#parcerias" class="active">Parcerias</a>
+    <a href="#projetos">Projetos</a>
+    <a href="#leigeral">Lei Geral</a>
+    <a href="#governanca">Governanca</a>
+    <a href="#articulacoes">Articulacoes</a>
+    <a href="index.html">← Nucleos</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">Unidade de Politicas Publicas | RelGov</div>
+  <h1 class="hero-title">Relacionamento <span>Governamental</span></h1>
+  <p class="hero-sub">Coordenacao de Relacionamento Governamental | UPP</p>
+  <p class="hero-period">Abril a Outubro de 2026</p>
+</section>
+
+<!-- STATS -->
+<div class="stats-row" id="stats">
+  <div class="stat-tile reveal">
+    <div class="stat-value emerald" data-target="18">0</div>
+    <div class="stat-label">Entregas</div>
+  </div>
+  <div class="stat-tile reveal">
+    <div class="stat-value blue" data-target="5">0</div>
+    <div class="stat-label">Articulacoes em Andamento</div>
+  </div>
+  <div class="stat-tile reveal">
+    <div class="stat-value purple" data-target="3">0</div>
+    <div class="stat-label">ACTs Formalizados</div>
+  </div>
+</div>
+
+<!-- PARCERIAS E ACORDOS -->
+<div class="divider" style="margin-top:48px"></div>
+<section class="section" id="parcerias">
+  <div class="section-header reveal">
+    <div class="section-eyebrow" style="color:var(--purple)">Grupo 1</div>
+    <div class="section-title">Parcerias e Acordos</div>
+    <div class="section-desc">Formalizacao de parcerias estrategicas, convenios e acordos de cooperacao tecnica com orgaos do Poder Executivo, consorcios regionais e entidades parceiras.</div>
+  </div>
+
+  <div class="cards-grid reveal">
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 1</div>
+      <div class="card-title">ACT com o Consorcio Amazonia Legal</div>
+      <div class="card-desc">Conclusao da formalizacao e assinatura. Acoes conjuntas: desenvolvimento sustentavel, inovacao, melhoria do ambiente de negocios na regiao.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+        <span class="card-tag" style="color:var(--purple);border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.08)">ACT</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 2</div>
+      <div class="card-title">ACT com MGI/Secretaria de Governo Digital</div>
+      <div class="card-desc">Formalizacao da parceria. Entregas: Estrategia Nacional de Governo Digital, com metodologia, guia de aplicacao e conteudos de apoio a estados e municipios.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+        <span class="card-tag" style="color:var(--purple);border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.08)">ACT</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 3</div>
+      <div class="card-title">Chamada Publica Sebrae/MDS</div>
+      <div class="card-desc">Credenciamento de entidades publicas e privadas sem fins lucrativos para projetos de inclusao socioeconomica, empreendedorismo e geracao de renda.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 5</div>
+      <div class="card-title">Contrato com o Instituto AMSUR</div>
+      <div class="card-desc">Estudos, diagnosticos e visitas de campo. Areas de fronteira e integracao de politicas publicas para pequenos negocios.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--amber);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">Em andamento</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 16</div>
+      <div class="card-title">Convenio com a JUCEC</div>
+      <div class="card-desc">Segunda fase do Redesim Conectada. Digitalizacao, simplificacao e evolucao de solucoes tecnologicas.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--amber);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">Em andamento</span>
+        <span class="card-tag" style="color:var(--cyan);border-color:rgba(6,182,212,.3);background:rgba(6,182,212,.08)">Redesim</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROJETOS ESTRATEGICOS -->
+<div class="divider"></div>
+<section class="section" id="projetos">
+  <div class="section-header reveal">
+    <div class="section-eyebrow" style="color:var(--blue)">Grupo 2</div>
+    <div class="section-title">Projetos Estrategicos</div>
+    <div class="section-desc">Projetos de alto impacto em areas como empreendedorismo, economia criativa, clima, capacitacao e atualizacao de marcos regulatorios.</div>
+  </div>
+
+  <div class="cards-grid reveal">
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 4</div>
+      <div class="card-title">Projeto Potencia Empreendedora</div>
+      <div class="card-desc">Em parceria com Sebrae/RJ. Inicio da primeira testagem piloto e acompanhamento de atividades de campo.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--amber);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">Em andamento</span>
+        <span class="card-tag" style="color:var(--blue);border-color:rgba(79,140,255,.3);background:rgba(79,140,255,.08)">Piloto</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 12</div>
+      <div class="card-title">Rede de Cultura e Economia Criativa</div>
+      <div class="card-desc">Forums e seminarios regionais, mobilizacao da rede, articulacao com parceiros.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--amber);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">Em andamento</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 13</div>
+      <div class="card-title">Plataforma Empreender Clima</div>
+      <div class="card-desc">Segunda fase da plataforma. Lancamento da Chamada Publica para Negocios Climaticos. Previsao: selecao de 3 iniciativas para COP 31.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--amber);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">Em andamento</span>
+        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">COP 31</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 17</div>
+      <div class="card-title">Contrata+Brasil</div>
+      <div class="card-desc">Capacitacao, mobilizacao e sensibilizacao da Redesim para ampliar adesao e divulgacao.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--amber);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">Em andamento</span>
+        <span class="card-tag" style="color:var(--cyan);border-color:rgba(6,182,212,.3);background:rgba(6,182,212,.08)">Redesim</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 18</div>
+      <div class="card-title">Atualizacao das CNAEs</div>
+      <div class="card-desc">Participacao no Comite de atualizacao da Classificacao Nacional de Atividades Economicas. Impacto sobre formalizacao e ambiente de negocios.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--amber);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">Em andamento</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- AGENDA LEI GERAL E DEFESA DE CAUSA -->
+<div class="divider"></div>
+<section class="section" id="leigeral">
+  <div class="section-header reveal">
+    <div class="section-eyebrow" style="color:var(--amber)">Grupo 3</div>
+    <div class="section-title">Agenda Lei Geral e Defesa de Causa</div>
+    <div class="section-desc">Acoes relacionadas aos 20 anos da Lei Geral da Micro e Pequena Empresa, disseminacao da metodologia de Defesa de Causa e planejamento estrategico da rede.</div>
+  </div>
+
+  <div class="cards-grid reveal">
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 6</div>
+      <div class="card-title">Agenda dos 20 anos da Lei Geral</div>
+      <div class="card-desc">Metodologia de Defesa de Causa, site exclusivo, ambiente no DataSebrae, documento em Legal Design, conteudos sobre lacunas e oportunidades.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 7</div>
+      <div class="card-title">Oficinas de Defesa de Causa</div>
+      <div class="card-desc">3 oficinas para disseminacao da metodologia, com aplicacao pratica na agenda dos 20 anos.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 14</div>
+      <div class="card-title">2o Encontro de Simplificacao do Sistema Sebrae</div>
+      <div class="card-desc">Belo Horizonte. Integracao Redesim, evolucao de Reforma Tributaria, Novo Simples, planejamento rede 2027.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 15</div>
+      <div class="card-title">Transformar Juntos 2027</div>
+      <div class="card-desc">Inicio das tratativas. Levantamento de temas, consulta as equipes, preparacao de subsidios.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--amber);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">Em andamento</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- GOVERNANCA E COMUNICACAO -->
+<div class="divider"></div>
+<section class="section" id="governanca">
+  <div class="section-header reveal">
+    <div class="section-eyebrow" style="color:var(--cyan)">Grupo 4</div>
+    <div class="section-title">Governanca e Comunicacao</div>
+    <div class="section-desc">Acoes de fortalecimento institucional, posicionamento estrategico e comunicacao da Unidade de Politicas Publicas junto a atores internos e externos.</div>
+  </div>
+
+  <div class="cards-grid reveal">
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cyan);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 8</div>
+      <div class="card-title">Apresentacao institucional do RelGov</div>
+      <div class="card-desc">Material consolidando papel do Nucleo, metodologia, projetos, carteira de parcerias e prioridades.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cyan);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 9</div>
+      <div class="card-title">Estrategia de atuacao do Sebrae em Politicas Publicas</div>
+      <div class="card-desc">Elaboracao em resposta ao Acordao do TCU. Mandalas que sintetizam a atuacao institucional.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+        <span class="card-tag" style="color:var(--red);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08)">TCU</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cyan);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 10</div>
+      <div class="card-title">Posicionamento e comunicacao da UPP</div>
+      <div class="card-desc">Com Unidade de Comunicacao. Novo posicionamento, mensagens-chave, diretrizes planejamento comunicacao 2027.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cyan);border-radius:4px 0 0 4px"></div>
+      <div class="card-number">Entrega 11</div>
+      <div class="card-title">Representacoes institucionais</div>
+      <div class="card-desc">Revisao e atualizacao das designacoes da UPP junto ao Poder Executivo. Redistribuicao de responsabilidades.</div>
+      <div class="card-tags">
+        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ARTICULACOES EM ANDAMENTO -->
+<div class="divider"></div>
+<section class="section" id="articulacoes">
+  <div class="section-header reveal">
+    <div class="section-eyebrow" style="color:var(--emerald)">Grupo 5</div>
+    <div class="section-title">Articulacoes em Andamento</div>
+    <div class="section-desc">Negociacoes, convenios e planos de trabalho em fase de formalizacao ou execucao junto a parceiros estrategicos do Poder Executivo e entidades.</div>
+  </div>
+
+  <div class="reveal">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3>Convenio Sebrae/Fundacao Banco do Brasil</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <ul>
+          <li style="--dot:var(--emerald)">Analise prestacao de contas fase 1, inicio fase 2.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal" style="margin-top:12px">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3>ACT Consorcio Nordeste</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <ul>
+          <li style="--dot:var(--emerald)">Negociacao e aprovacao plano de trabalho (inovacao).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal" style="margin-top:12px">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3>ACTs MGI (SEGES)</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <ul>
+          <li style="--dot:var(--emerald)">Planos de trabalho: Contrata+Brasil, Propen, Rede de Parcerias.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal" style="margin-top:12px">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3>MAPA</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <ul>
+          <li style="--dot:var(--emerald)">Repactuacao do Plano de Trabalho com UCOMP, UAM e UCSF.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal" style="margin-top:12px">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3>COPA FIFA 2027</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <ul>
+          <li style="--dot:var(--emerald)">Mundial feminino. Articulacoes com Ministerio dos Esportes. UPP na sala de integracao Sebrae Nacional.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>PIPPA — Unidade de Politicas Publicas | Sebrae Nacional | 2026</p>
+</footer>
+
+<script>
+// Counter animation
+function animateCounters() {
+  document.querySelectorAll('.stat-value[data-target]').forEach(el => {
+    const target = +el.dataset.target;
+    const suffix = el.dataset.suffix || '';
+    const duration = 1800;
+    const start = performance.now();
+    function update(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(target * eased) + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  });
+}
+
+// Expand toggle
+function toggleExpand(trigger) {
+  const content = trigger.nextElementSibling;
+  trigger.classList.toggle('open');
+  content.classList.toggle('open');
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.closest('.stats-row')) animateCounters();
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Nav active state on scroll
+const sections = document.querySelectorAll('section[id], div[id]');
+const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

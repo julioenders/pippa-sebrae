@@ -2,1236 +2,160 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PIPPA | Atuação UPP/NAL 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PIPPA | Atuacao UPP 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#0b1120;--card:#111827;--card-hover:#1a2332;
-  --emerald:#10b981;--emerald-light:#34d399;--emerald-pale:#6ee7b7;
-  --blue:#4f8cff;--purple:#a855f7;--amber:#f59e0b;--cyan:#06b6d4;--pink:#f472b6;--red:#ef4444;--teal:#14b8a6;
-  --text-primary:#e2e8f0;--text-secondary:#94a3b8;--text-muted:#64748b;--text-dim:#475569;
-  --border:rgba(148,163,184,.12);--glass:rgba(17,24,39,.6);
-  --radius:12px;--radius-sm:8px;--radius-xs:6px;
-}
-html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-height:1.6;overflow-x:hidden}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b1120;--surface:#111827;--border:rgba(148,163,184,.12);--text:#e2e8f0;--muted:#64748b;--secondary:#94a3b8;--emerald:#10b981;--emerald-light:#34d399;--blue:#4f8cff;--purple:#a855f7;--amber:#f59e0b;--cyan:#06b6d4;--red:#ef4444;--teal:#14b8a6;--pink:#f472b6;--radius:12px}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+
+.header{background:linear-gradient(135deg,#0d1b2a 0%,var(--bg) 100%);padding:2rem 2rem 1.8rem;border-bottom:2px solid rgba(16,185,129,.2);position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse 80% 60%,rgba(16,185,129,.08),transparent 70%);pointer-events:none}
+.header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;position:relative;z-index:1}
+.header-brand{display:flex;align-items:center;gap:1rem}
+.header-logo{width:52px;height:52px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:var(--emerald-light)}
+.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-.5px}
+.header h1 span{background:linear-gradient(135deg,var(--emerald),var(--emerald-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header-sub{font-size:.78rem;color:var(--muted);margin-top:.2rem}
+.header-controls{display:flex;gap:.5rem;align-items:center}
+.portal-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:8px;font-size:.75rem;font-weight:600;text-decoration:none;border:1px solid rgba(16,185,129,.3);color:var(--emerald-light);transition:all .2s}
+.portal-btn:hover{background:rgba(16,185,129,.1)}
+.portal-btn svg{width:14px;height:14px}
+
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:1.5rem;position:relative;z-index:1}
+.stat-box{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-align:center}
+.stat-box .val{font-size:1.6rem;font-weight:800;line-height:1}
+.stat-box .lbl{font-size:.65rem;font-weight:500;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+
+.main{flex:1;max-width:1100px;margin:0 auto;padding:2rem 1.5rem;width:100%}
+.intro{background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.1);border-radius:var(--radius);padding:1.3rem 1.5rem;margin-bottom:2rem;font-size:.85rem;color:var(--secondary);line-height:1.8}
+.intro strong{color:var(--text)}
+
+.section-title{font-size:.95rem;font-weight:700;margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1rem;margin-bottom:2.5rem}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 1.5rem 1.5rem 1.8rem;text-decoration:none;color:inherit;transition:all .25s;display:flex;gap:1.2rem;align-items:flex-start;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
+.card:hover{transform:translateY(-3px);border-color:rgba(16,185,129,.3);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.card-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.card-body{flex:1}
+.card-body h3{font-size:.95rem;font-weight:700;margin-bottom:.25rem}
+.card-body .card-sub{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:.5rem}
+.card-body p{font-size:.78rem;color:var(--muted);line-height:1.65}
+.card-stats{display:flex;gap:16px;margin-top:.7rem}
+.card-stat{display:flex;flex-direction:column;align-items:center}
+.card-stat .cs-val{font-size:1.1rem;font-weight:800;line-height:1}
+.card-stat .cs-lbl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+.card-arrow{position:absolute;right:1rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1.2rem;transition:all .2s}
+.card:hover .card-arrow{transform:translateY(-50%) translateX(4px);color:var(--emerald-light)}
+
+.footer{text-align:center;padding:1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.68rem}
+
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--emerald);border-radius:3px}
-
-/* NAV */
-.nav{position:sticky;top:0;z-index:100;background:rgba(11,17,32,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between}
-.nav-brand{font-weight:800;font-size:18px;background:linear-gradient(135deg,var(--emerald),var(--emerald-pale));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px}
-.nav-links{display:flex;gap:6px}
-.nav-links a{color:var(--text-secondary);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:var(--radius-xs);transition:.2s}
-.nav-links a:hover,.nav-links a.active{color:var(--emerald-light);background:rgba(16,185,129,.08)}
-
-/* HERO */
-.hero{position:relative;text-align:center;padding:48px 32px 28px;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse 80% 60%,rgba(16,185,129,.12),transparent 70%);pointer-events:none}
-.hero-label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--emerald);background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);padding:6px 16px;border-radius:20px;margin-bottom:20px}
-.hero-title{font-size:clamp(28px,5vw,48px);font-weight:800;color:var(--text-primary);letter-spacing:-1.5px;line-height:1.1;margin-bottom:12px}
-.hero-title span{background:linear-gradient(135deg,var(--emerald),var(--emerald-light),var(--emerald-pale));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-sub{font-size:14px;color:var(--text-secondary);max-width:680px;margin:0 auto 24px}
-
-/* STAT TILES */
-.stats-row{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;max-width:1100px;margin:0 auto;padding:0 32px}
-.stat-tile{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 8px;text-align:center;transition:.3s;cursor:default}
-.stat-tile:hover{border-color:rgba(16,185,129,.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
-.stat-value{font-size:26px;font-weight:700;color:var(--text-primary);line-height:1}
-.stat-value.emerald{color:var(--emerald-light)}
-.stat-label{font-size:10px;font-weight:500;color:var(--text-secondary);margin-top:4px;letter-spacing:.3px;text-transform:uppercase}
-
-/* SECTION */
-.section{max-width:1100px;margin:0 auto;padding:60px 32px}
-.section-header{margin-bottom:36px}
-.section-eyebrow{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
-.section-title{font-size:28px;font-weight:700;color:var(--text-primary);letter-spacing:-.5px}
-.section-desc{font-size:14px;color:var(--text-secondary);margin-top:8px;max-width:700px}
-.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0 auto}
-
-/* TABS */
-.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:32px;background:rgba(15,23,42,.5);border-radius:var(--radius);padding:4px;border:1px solid var(--border)}
-.tab{padding:10px 20px;font-size:13px;font-weight:500;color:var(--text-secondary);background:transparent;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:.2s;white-space:nowrap}
-.tab:hover{color:var(--text-primary);background:rgba(148,163,184,.06)}
-.tab.active{color:var(--emerald-light);background:rgba(16,185,129,.1);box-shadow:0 0 0 1px rgba(16,185,129,.25)}
-.tab-panel{display:none;animation:fadeUp .4s ease}
-.tab-panel.active{display:block}
-
-/* TIMELINE */
-.timeline{position:relative;padding-left:32px}
-.timeline::before{content:'';position:absolute;left:11px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--emerald),rgba(16,185,129,.2))}
-.tl-item{position:relative;margin-bottom:24px;cursor:pointer}
-.tl-dot{position:absolute;left:-32px;top:6px;width:22px;height:22px;border-radius:50%;background:var(--bg);border:2px solid var(--emerald);display:flex;align-items:center;justify-content:center;transition:.3s;z-index:2}
-.tl-dot::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--emerald);transition:.3s}
-.tl-item.highlight .tl-dot{border-color:var(--amber);box-shadow:0 0 12px rgba(245,158,11,.3)}
-.tl-item.highlight .tl-dot::after{background:var(--amber)}
-.tl-date{font-size:12px;font-weight:600;color:var(--emerald);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
-.tl-item.highlight .tl-date{color:var(--amber)}
-.tl-title{font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:4px;transition:.2s}
-.tl-item:hover .tl-title{color:var(--emerald-light)}
-.tl-location{font-size:12px;color:var(--text-muted);margin-bottom:6px;display:flex;align-items:center;gap:4px}
-.tl-body{font-size:13px;color:var(--text-secondary);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .4s ease}
-.tl-item.open .tl-body{max-height:600px}
-.tl-item.open .tl-dot{background:var(--emerald);border-color:var(--emerald)}
-.tl-item.open .tl-dot::after{background:#fff}
-.tl-tag{display:inline-block;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;background:rgba(16,185,129,.1);color:var(--emerald);border:1px solid rgba(16,185,129,.2);margin-top:8px;margin-right:4px}
-
-/* CARDS GRID */
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:.3s;position:relative;overflow:hidden}
-.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
-.card:hover{border-color:rgba(148,163,184,.2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
-.card-icon{font-size:28px;margin-bottom:12px}
-.card-title{font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
-.card-desc{font-size:13px;color:var(--text-secondary);line-height:1.6}
-.card-metric{font-size:24px;font-weight:700;color:var(--emerald-light);margin-top:12px}
-.card-metric-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
-
-/* PARLAMENTARES */
-.parl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
-.parl-chip{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;transition:.3s;cursor:default}
-.parl-chip:hover{border-color:rgba(16,185,129,.3);background:var(--card-hover)}
-.parl-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
-.parl-info{min-width:0}
-.parl-name{font-size:13px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.parl-role{font-size:11px;color:var(--text-muted)}
-
-/* FRENTES */
-.frentes-wrap{display:flex;flex-wrap:wrap;gap:10px}
-.frente-badge{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;transition:.3s;cursor:default}
-.frente-badge:hover{border-color:rgba(16,185,129,.3);transform:translateY(-1px)}
-.frente-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.frente-name{font-size:13px;font-weight:500;color:var(--text-primary)}
-
-/* STEPPER */
-.stepper{display:flex;align-items:flex-start;gap:0;position:relative;margin:32px 0}
-.step{flex:1;text-align:center;position:relative}
-.step-line{position:absolute;top:18px;left:50%;width:100%;height:2px;background:var(--border)}
-.step:last-child .step-line{display:none}
-.step-circle{width:36px;height:36px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;position:relative;z-index:2;transition:.3s}
-.step-circle.done{background:var(--emerald);color:#fff;box-shadow:0 0 16px rgba(16,185,129,.3)}
-.step-circle.current{background:var(--bg);border:2px solid var(--amber);color:var(--amber);box-shadow:0 0 16px rgba(245,158,11,.2)}
-.step-circle.upcoming{background:var(--bg);border:2px solid var(--border);color:var(--text-muted)}
-.step-title{font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px}
-.step-desc{font-size:11px;color:var(--text-secondary);line-height:1.4}
-.step-date{font-size:11px;color:var(--emerald);font-weight:600;margin-top:6px}
-
-/* MAPA SVG */
-.map-container{position:relative;max-width:600px;margin:0 auto}
-.map-container svg{width:100%;height:auto}
-.map-state{fill:rgba(148,163,184,.08);stroke:rgba(148,163,184,.15);stroke-width:.5;transition:.3s;cursor:pointer}
-.map-state.active{fill:rgba(16,185,129,.15);stroke:var(--emerald);stroke-width:1.5}
-.map-state.active:hover{fill:rgba(16,185,129,.25)}
-.map-tooltip{position:absolute;background:rgba(17,24,39,.95);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;pointer-events:none;opacity:0;transition:.2s;z-index:10;min-width:180px}
-.map-tooltip.visible{opacity:1}
-.map-tooltip h4{font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px}
-.map-tooltip p{font-size:12px;color:var(--text-secondary)}
-
-/* EXPAND SECTION */
-.expand-trigger{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;cursor:pointer;transition:.3s;width:100%;text-align:left}
-.expand-trigger:hover{border-color:rgba(16,185,129,.3);background:var(--card-hover)}
-.expand-trigger h3{font-size:15px;font-weight:600;color:var(--text-primary);flex:1}
-.expand-arrow{color:var(--text-muted);transition:.3s;font-size:18px}
-.expand-trigger.open .expand-arrow{transform:rotate(180deg);color:var(--emerald)}
-.expand-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
-.expand-content.open{max-height:2000px}
-.expand-inner{padding:20px 0}
-.expand-inner ul{list-style:none;display:flex;flex-direction:column;gap:10px}
-.expand-inner li{position:relative;padding-left:20px;font-size:14px;color:var(--text-secondary);line-height:1.6}
-.expand-inner li::before{content:'';position:absolute;left:0;top:9px;width:8px;height:8px;border-radius:50%;background:var(--emerald);opacity:.6}
-
-/* CAPITAL POLITICO METER */
-.meter-wrap{margin:24px 0}
-.meter-label{display:flex;justify-content:space-between;margin-bottom:8px}
-.meter-label span{font-size:12px;font-weight:600}
-.meter-bar{height:8px;background:rgba(148,163,184,.1);border-radius:4px;overflow:hidden}
-.meter-fill{height:100%;border-radius:4px;transition:width 1.5s ease;background:linear-gradient(90deg,var(--emerald),var(--emerald-light))}
-
-/* BADGES ROW */
-.badges-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.badge{font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid;cursor:default;transition:.2s}
-.badge:hover{transform:translateY(-1px)}
-.badge.governo{color:#60a5fa;border-color:rgba(96,165,250,.3);background:rgba(96,165,250,.08)}
-.badge.partido{color:#c084fc;border-color:rgba(192,132,252,.3);background:rgba(192,132,252,.08)}
-
-/* QUOTE */
-.quote-box{background:rgba(16,185,129,.04);border-left:3px solid var(--emerald);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:16px 20px;margin:16px 0}
-.quote-box p{font-size:14px;color:var(--text-secondary);font-style:italic;line-height:1.7}
-.quote-box .author{font-style:normal;font-size:12px;color:var(--text-muted);margin-top:8px;font-weight:600}
-
-/* ANIMATIONS */
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes countUp{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
-.reveal.visible{opacity:1;transform:translateY(0)}
-
-/* EXECUTIVE SUMMARY */
-.exec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:1100px;margin:32px auto 0;padding:0 32px}
-.exec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:.3s;position:relative;overflow:hidden;text-decoration:none;display:block}
-.exec-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
-.exec-card:hover{border-color:rgba(16,185,129,.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
-.exec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.exec-title{font-size:14px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:8px}
-.exec-arrow{font-size:14px;color:var(--text-muted);transition:.2s}
-.exec-card:hover .exec-arrow{color:var(--emerald);transform:translateX(2px)}
-.exec-metrics{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap}
-.exec-num{font-size:22px;font-weight:800;line-height:1}
-.exec-num-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
-.exec-bullets{list-style:none;display:flex;flex-direction:column;gap:4px}
-.exec-bullets li{font-size:11.5px;color:var(--text-secondary);line-height:1.4;display:flex;align-items:flex-start;gap:6px}
-.exec-bullets li::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:4px}
-
-/* FOOTER */
-.footer{text-align:center;padding:40px 32px;color:var(--text-dim);font-size:12px;border-top:1px solid var(--border)}
-.footer a{color:var(--emerald);text-decoration:none}
-
-/* RESPONSIVE */
-@media(max-width:1024px){
-  .exec-grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:768px){
-  .hero{padding:40px 20px 24px}
-  .section{padding:40px 20px}
-  .stats-row{grid-template-columns:repeat(3,1fr);gap:10px;padding:0 20px}
-  .exec-grid{grid-template-columns:1fr;padding:0 20px}
-  .cards-grid{grid-template-columns:1fr}
-  .parl-grid{grid-template-columns:repeat(2,1fr)}
-  .stepper{flex-direction:column;gap:20px}
-  .step-line{display:none!important}
-  .tabs{overflow-x:auto;flex-wrap:nowrap}
-  .nav{padding:0 16px}
-  .nav-links a{font-size:11px;padding:5px 8px}
-  .stat-tile{padding:14px 10px}
-  .stat-value{font-size:24px}
-  .stat-label{font-size:10px}
+::-webkit-scrollbar-thumb{background:rgba(16,185,129,.25);border-radius:3px}
+@media(max-width:700px){
+  .grid{grid-template-columns:1fr}
+  .header{padding:1.2rem 1rem}
+  .main{padding:1rem}
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="nav">
-  <div class="nav-brand">PIPPA</div>
-  <div class="nav-links">
-    <a href="#impacto" class="active">Impacto</a>
-    <a href="#plp108">PLP 108</a>
-    <a href="#parlamento">Parlamento</a>
-    <a href="#agenda2027">Agenda 2027</a>
-    <a href="#capital">Capital Politico</a>
-    <a href="#reforma">Reforma Tributaria</a>
-    <a href="#novosimples">Novo Simples</a>
-    <a href="#projetos">Projetos</a>
-    <a href="../pippa-portal/">Portal</a>
+<div class="header">
+  <div class="header-top">
+    <div class="header-brand">
+      <div class="header-logo">UPP</div>
+      <div>
+        <h1><span>PIPPA</span> Atuacao UPP 2026</h1>
+        <div class="header-sub">Unidade de Politicas Publicas — Entregas Estrategicas | Abril a Outubro de 2026</div>
+      </div>
+    </div>
+    <div class="header-controls">
+      <a href="../pippa-portal/index.html" class="portal-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Portal PIPPA
+      </a>
+    </div>
   </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-label">Unidade de Politicas Publicas | NAL</div>
-  <h1 class="hero-title">Atuacao <span>UPP/NAL</span> 2026</h1>
-  <p class="hero-sub">Historico de atuacao da Unidade de Politicas Publicas e do Nucleo de Assessoria Legislativa do Sebrae Nacional no Congresso Nacional</p>
-</section>
-
-<!-- STATS -->
-<div class="stats-row" id="impacto">
-  <div class="stat-tile reveal">
-    <div class="stat-value emerald" data-target="1000" data-suffix="+">0</div>
-    <div class="stat-label">Proposicoes Monitoradas</div>
-  </div>
-  <div class="stat-tile reveal">
-    <div class="stat-value" data-target="42">0</div>
-    <div class="stat-label">Agendas Institucionais</div>
-  </div>
-  <div class="stat-tile reveal">
-    <div class="stat-value" data-target="56">0</div>
-    <div class="stat-label">Visitas a Gabinetes</div>
-  </div>
-  <div class="stat-tile reveal">
-    <div class="stat-value" data-target="28">0</div>
-    <div class="stat-label">Atores Mobilizados</div>
-  </div>
-  <div class="stat-tile reveal">
-    <div class="stat-value" data-target="12">0</div>
-    <div class="stat-label">Parlamentares c/ Acoes</div>
-  </div>
-  <div class="stat-tile reveal">
-    <div class="stat-value" data-target="7">0</div>
-    <div class="stat-label">Frentes Parlamentares</div>
-  </div>
-  <div class="stat-tile reveal">
-    <div class="stat-value emerald" data-target="30" data-suffix="%">0</div>
-    <div class="stat-label">Capital Politico</div>
+  <div class="stats-bar">
+    <div class="stat-box">
+      <div class="val" style="color:var(--emerald-light)">3</div>
+      <div class="lbl">Nucleos</div>
+    </div>
+    <div class="stat-box">
+      <div class="val" style="color:var(--blue)">48</div>
+      <div class="lbl">Entregas Proj. Especiais</div>
+    </div>
+    <div class="stat-box">
+      <div class="val" style="color:var(--purple)">18</div>
+      <div class="lbl">Entregas RelGov</div>
+    </div>
+    <div class="stat-box">
+      <div class="val" style="color:var(--amber)">27</div>
+      <div class="lbl">UFs Envolvidas</div>
+    </div>
   </div>
 </div>
 
-<!-- RESUMO EXECUTIVO -->
-<div class="exec-grid">
+<div class="main">
+  <div class="intro">
+    <strong>Painel de Entregas Estrategicas da UPP.</strong> Este portal reune, de forma organizada, as principais entregas conduzidas pelos nucleos da Unidade de Politicas Publicas do Sebrae Nacional entre abril e outubro de 2026. Selecione um nucleo para explorar o relatorio detalhado de cada area.
+  </div>
 
-  <a href="#plp108" class="exec-card" style="--accent:var(--amber)">
-    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber);border-radius:4px 0 0 4px"></div>
-    <div class="exec-head">
-      <div class="exec-title">PLP 108/2021 — MEI</div>
-      <span class="exec-arrow">→</span>
-    </div>
-    <div class="exec-metrics">
-      <div><div class="exec-num" style="color:var(--amber)">10</div><div class="exec-num-label">marcos</div></div>
-      <div><div class="exec-num" style="color:var(--amber)">7</div><div class="exec-num-label">estados</div></div>
-    </div>
-    <ul class="exec-bullets">
-      <li style="--dot:var(--amber)"><span style="width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px"></span>Seminarios regionais em 7 UFs (jun-jul/2026)</li>
-      <li style="--dot:var(--amber)"><span style="width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px"></span>Audiencia Publica com Pres. Rodrigo Soares (01/07)</li>
-      <li style="--dot:var(--amber)"><span style="width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px"></span>PLP 186/2026: MEI R$ 110mi (2027) → R$ 140mil (2028)</li>
-    </ul>
-  </a>
+  <div class="section-title">Nucleos da UPP</div>
 
-  <a href="#articulacao" class="exec-card">
-    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);border-radius:4px 0 0 4px"></div>
-    <div class="exec-head">
-      <div class="exec-title">Articulacao Parlamentar</div>
-      <span class="exec-arrow">→</span>
-    </div>
-    <div class="exec-metrics">
-      <div><div class="exec-num" style="color:var(--blue)">56</div><div class="exec-num-label">visitas</div></div>
-      <div><div class="exec-num" style="color:var(--blue)">12</div><div class="exec-num-label">parlamentares</div></div>
-      <div><div class="exec-num" style="color:var(--blue)">7</div><div class="exec-num-label">frentes</div></div>
-    </div>
-    <ul class="exec-bullets">
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px"></span>28 atores estrategicos mobilizados</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px"></span>Notas Tecnicas entregues a gabinetes e liderancas</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px"></span>7 partidos sensibilizados (Gov, MDB, PSD, PT, PL, PP, Rep.)</li>
-    </ul>
-  </a>
+  <div class="grid">
+    <a href="nal.html" class="card" style="--c:var(--emerald)">
+      <div class="card-icon" style="background:rgba(16,185,129,.12);color:var(--emerald-light)">⚖️</div>
+      <div class="card-body">
+        <div class="card-sub" style="color:var(--emerald-light)">NAL</div>
+        <h3>Nucleo de Assessoria Legislativa</h3>
+        <p>Atuacao no Congresso Nacional: PLP 108/2021, articulacao parlamentar, Reforma Tributaria, Novo Simples, Parlamento Empreendedor e Agenda Legislativa 2027.</p>
+        <div class="card-stats">
+          <div class="card-stat"><div class="cs-val" style="color:var(--emerald-light)">1000+</div><div class="cs-lbl">proposicoes</div></div>
+          <div class="card-stat"><div class="cs-val" style="color:var(--emerald-light)">56</div><div class="cs-lbl">visitas</div></div>
+          <div class="card-stat"><div class="cs-val" style="color:var(--emerald-light)">12</div><div class="cs-lbl">parlamentares</div></div>
+        </div>
+      </div>
+      <span class="card-arrow">&rsaquo;</span>
+    </a>
 
-  <a href="#parlamento" class="exec-card">
-    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:4px 0 0 4px"></div>
-    <div class="exec-head">
-      <div class="exec-title">Parlamento Empreendedor</div>
-      <span class="exec-arrow">→</span>
-    </div>
-    <div class="exec-metrics">
-      <div><div class="exec-num" style="color:var(--purple)">24</div><div class="exec-num-label">eventos</div></div>
-      <div><div class="exec-num" style="color:var(--purple)">10</div><div class="exec-num-label">UFs</div></div>
-    </div>
-    <ul class="exec-bullets">
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px"></span>Bancada Federal, Assembleias e Camaras Municipais</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px"></span>8 encontros regionais + 7 Camaras Empreendedoras (PA)</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px"></span>Previstos: PE (nov), SC e RS (dez)</li>
-    </ul>
-  </a>
+    <a href="projetos-especiais.html" class="card" style="--c:var(--blue)">
+      <div class="card-icon" style="background:rgba(79,140,255,.12);color:var(--blue)">🚀</div>
+      <div class="card-body">
+        <div class="card-sub" style="color:var(--blue)">Projetos Especiais</div>
+        <h3>Nucleo de Projetos Especiais</h3>
+        <p>Programa Movimenta, Contrata+Brasil, Pro-Catadores, Compras Publicas Sustentaveis, Oficinas de Transformacao, Metodologia de Defesa de Causa e portfolio de politicas.</p>
+        <div class="card-stats">
+          <div class="card-stat"><div class="cs-val" style="color:var(--blue)">48</div><div class="cs-lbl">entregas</div></div>
+          <div class="card-stat"><div class="cs-val" style="color:var(--blue)">164</div><div class="cs-lbl">acoes</div></div>
+          <div class="card-stat"><div class="cs-val" style="color:var(--blue)">22</div><div class="cs-lbl">estados</div></div>
+        </div>
+      </div>
+      <span class="card-arrow">&rsaquo;</span>
+    </a>
 
-  <a href="#agenda2027" class="exec-card">
-    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cyan);border-radius:4px 0 0 4px"></div>
-    <div class="exec-head">
-      <div class="exec-title">Agenda Legislativa 2027</div>
-      <span class="exec-arrow">→</span>
-    </div>
-    <div class="exec-metrics">
-      <div><div class="exec-num" style="color:var(--cyan)">3</div><div class="exec-num-label">oficinas</div></div>
-      <div><div class="exec-num" style="color:var(--cyan)">22+</div><div class="exec-num-label">estados</div></div>
-    </div>
-    <ul class="exec-bullets">
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;margin-top:4px"></span>1a Oficina: Brasilia, 8 estados (23/09)</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;margin-top:4px"></span>2a Oficina: Sebrae/RN, 14 estados (09/10)</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;margin-top:4px"></span>3a Oficina: formato online (a confirmar)</li>
-    </ul>
-  </a>
-
-  <a href="#monitoramento" class="exec-card">
-    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--emerald);border-radius:4px 0 0 4px"></div>
-    <div class="exec-head">
-      <div class="exec-title">Monitoramento Legislativo</div>
-      <span class="exec-arrow">→</span>
-    </div>
-    <div class="exec-metrics">
-      <div><div class="exec-num" style="color:var(--emerald-light)">1.000+</div><div class="exec-num-label">proposicoes</div></div>
-      <div><div class="exec-num" style="color:var(--emerald-light)">988</div><div class="exec-num-label">em tramitacao</div></div>
-    </div>
-    <ul class="exec-bullets">
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--emerald);flex-shrink:0;margin-top:4px"></span>Proposicoes com impacto para pequenos negocios</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--emerald);flex-shrink:0;margin-top:4px"></span>Destaque: PLP 108/2021 (aumento do limite MEI)</li>
-    </ul>
-  </a>
-
-  <a href="#capital" class="exec-card">
-    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pink);border-radius:4px 0 0 4px"></div>
-    <div class="exec-head">
-      <div class="exec-title">Capital Politico</div>
-      <span class="exec-arrow">→</span>
-    </div>
-    <div class="exec-metrics">
-      <div><div class="exec-num" style="color:var(--pink)">+30%</div><div class="exec-num-label">expansao</div></div>
-    </div>
-    <ul class="exec-bullets">
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--pink);flex-shrink:0;margin-top:4px"></span>Qualidade de relacionamento (metricas ABRIG)</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--pink);flex-shrink:0;margin-top:4px"></span>Desafio 2027: 38% de renovacao na Camara</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--pink);flex-shrink:0;margin-top:4px"></span>~90% dos atores com bom relacionamento perdidos</li>
-    </ul>
-  </a>
-
-  <a href="#reforma" class="exec-card">
-    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--red);border-radius:4px 0 0 4px"></div>
-    <div class="exec-head">
-      <div class="exec-title">Reforma Tributaria</div>
-      <span class="exec-arrow">→</span>
-    </div>
-    <div class="exec-metrics">
-      <div><div class="exec-num" style="color:var(--red)">8</div><div class="exec-num-label">solucoes</div></div>
-    </div>
-    <ul class="exec-bullets">
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px"></span>Sala de Integracao (Portaria 309/2026)</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px"></span>Comite Gestor do Simples + cooperacao Sebrae-RFB</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px"></span>Portal, e-book, simulador IBS/CBS, emissor NF</li>
-    </ul>
-  </a>
-
-  <a href="#novosimples" class="exec-card">
-    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber);border-radius:4px 0 0 4px"></div>
-    <div class="exec-head">
-      <div class="exec-title">Novo Simples</div>
-      <span class="exec-arrow">→</span>
-    </div>
-    <div class="exec-metrics">
-      <div><div class="exec-num" style="color:var(--amber)">9</div><div class="exec-num-label">agendas</div></div>
-      <div><div class="exec-num" style="color:var(--amber)">3</div><div class="exec-num-label">poderes</div></div>
-    </div>
-    <ul class="exec-bullets">
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px"></span>Estudo FGV + estrategia de regulamentacao</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px"></span>Legislativo: Reginaldo Lopes, Teresa Leitao, Casa Civil</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px"></span>Executivo: SECOM, MEMP, MPO, MDIC, RFB</li>
-    </ul>
-  </a>
-
-  <a href="#ambientenegocios" class="exec-card">
-    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--teal);border-radius:4px 0 0 4px"></div>
-    <div class="exec-head">
-      <div class="exec-title">Ambiente de Negocios</div>
-      <span class="exec-arrow">→</span>
-    </div>
-    <ul class="exec-bullets">
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:4px"></span>Previa apresentada para equipe UPP e representantes UDT</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:4px"></span>Proximo passo: material completo + apresentacao Diretoria</li>
-    </ul>
-  </a>
-
-  <a href="#modeloupp" class="exec-card">
-    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cyan);border-radius:4px 0 0 4px"></div>
-    <div class="exec-head">
-      <div class="exec-title">Modelo de Atuacao UPP</div>
-      <span class="exec-arrow">→</span>
-    </div>
-    <ul class="exec-bullets">
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;margin-top:4px"></span>Modelo apresentado para equipe da UPP</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;margin-top:4px"></span>Proximo passo: desdobramento dos macroprocessos por nucleo</li>
-    </ul>
-  </a>
-
-  <a href="#pippapb" class="exec-card">
-    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--emerald);border-radius:4px 0 0 4px"></div>
-    <div class="exec-head">
-      <div class="exec-title">PIPPA Paraiba</div>
-      <span class="exec-arrow">→</span>
-    </div>
-    <ul class="exec-bullets">
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--emerald);flex-shrink:0;margin-top:4px"></span>Observatorio de Politicas Publicas da Paraiba — pronto</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--emerald);flex-shrink:0;margin-top:4px"></span>Lancamento oficial em novembro/2026</li>
-    </ul>
-  </a>
-
-  <a href="#transformalab" class="exec-card">
-    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:4px 0 0 4px"></div>
-    <div class="exec-head">
-      <div class="exec-title">TransformaLab</div>
-      <span class="exec-arrow">→</span>
-    </div>
-    <ul class="exec-bullets">
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px"></span>Laboratorio de Politicas Publicas — prototipado no Maranhao</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px"></span>Contratacao de consultoria + Manual de Aplicacao + Ficha Tecnica</li>
-      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px"></span>Capacitacao de consultores em todo o Brasil</li>
-    </ul>
-  </a>
-
+    <a href="relgov.html" class="card" style="--c:var(--purple)">
+      <div class="card-icon" style="background:rgba(168,85,247,.12);color:var(--purple)">🤝</div>
+      <div class="card-body">
+        <div class="card-sub" style="color:var(--purple)">RelGov</div>
+        <h3>Relacionamento Governamental</h3>
+        <p>Parcerias institucionais, acordos de cooperacao, defesa de causa, economia criativa, governo digital, simplificacao e articulacoes estrategicas com o Poder Executivo.</p>
+        <div class="card-stats">
+          <div class="card-stat"><div class="cs-val" style="color:var(--purple)">18</div><div class="cs-lbl">entregas</div></div>
+          <div class="card-stat"><div class="cs-val" style="color:var(--purple)">5</div><div class="cs-lbl">articulacoes</div></div>
+        </div>
+      </div>
+      <span class="card-arrow">&rsaquo;</span>
+    </a>
+  </div>
 </div>
 
-<!-- PLP 108/2021 TIMELINE -->
-<div class="divider" style="margin-top:48px"></div>
-<section class="section" id="plp108">
-  <div class="section-header reveal">
-    <div class="section-eyebrow" style="color:var(--amber)">Linha do Tempo</div>
-    <div class="section-title">PLP 108/2021 — Atualizacao do MEI</div>
-    <div class="section-desc">Cronologia da atuacao institucional do Sebrae Nacional na tramitacao do PLP 108/2021 na Camara dos Deputados. Periodo: junho a julho de 2026.</div>
-  </div>
+<div class="footer">PIPPA — Unidade de Politicas Publicas | Sebrae Nacional | 2026</div>
 
-  <div class="timeline reveal">
-    <div class="tl-item" onclick="toggleTl(this)">
-      <div class="tl-dot"></div>
-      <div class="tl-date">01 de junho de 2026</div>
-      <div class="tl-title">Articulacao Institucional no Rio Grande do Sul</div>
-      <div class="tl-location"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Porto Alegre/RS</div>
-      <div class="tl-body">
-        <p>O Sebrae Nacional participou das primeiras articulacoes relacionadas aos debates regionais sobre o PLP 108/2021, atuando em conjunto com o Sebrae Rio Grande do Sul e parlamentares envolvidos na materia, contribuindo para ampliar o debate em torno da atualizacao dos limites do MEI e do Simples Nacional.</p>
-        <span class="tl-tag">Articulacao</span><span class="tl-tag">Rede Sebrae</span>
-      </div>
-    </div>
-
-    <div class="tl-item" onclick="toggleTl(this)">
-      <div class="tl-dot"></div>
-      <div class="tl-date">10 de junho de 2026</div>
-      <div class="tl-title">Acompanhamento da Comissao Especial + Articulacao RJ</div>
-      <div class="tl-location"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Brasilia/DF</div>
-      <div class="tl-body">
-        <p>Acompanhamento da reuniao deliberativa da Comissao Especial da Camara dos Deputados. O Sebrae Nacional articulou junto a Deputada Soraya Santos a aprovacao de requerimento para realizacao de seminario regional no Estado do Rio de Janeiro, assegurando a participacao do Sebrae RJ no debate.</p>
-        <span class="tl-tag">CESP</span><span class="tl-tag">Requerimento</span><span class="tl-tag">Soraya Santos</span>
-      </div>
-    </div>
-
-    <div class="tl-item" onclick="toggleTl(this)">
-      <div class="tl-dot"></div>
-      <div class="tl-date">12 de junho de 2026</div>
-      <div class="tl-title">Seminario Regional — Sao Paulo/SP</div>
-      <div class="tl-location"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Sao Paulo/SP</div>
-      <div class="tl-body">
-        <p>Seminario "Camara pelo Brasil debate modernizacao do MEI e do Simples Nacional". Sebrae SP participou com dirigentes, gestores e especialistas. Presenca do relator Dep. Jorge Goetten e representantes do setor produtivo. Destaque para a necessidade de acelerar a apreciacao do PLP 108/2021 antes do recesso parlamentar.</p>
-        <span class="tl-tag">Seminario Regional</span><span class="tl-tag">Jorge Goetten</span><span class="tl-tag">FECOMERCIO SP</span>
-      </div>
-    </div>
-
-    <div class="tl-item" onclick="toggleTl(this)">
-      <div class="tl-dot"></div>
-      <div class="tl-date">15 de junho de 2026</div>
-      <div class="tl-title">Seminario Regional — Florianopolis/SC</div>
-      <div class="tl-location"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Florianopolis/SC</div>
-      <div class="tl-body">
-        <p>Seminario com participacao do Governador do Estado, representantes do setor produtivo e do Ministerio do Empreendedorismo. O Sebrae apresentou dados tecnicos que subsidiaram as discussoes sobre os impactos da atualizacao dos limites do MEI e do Simples Nacional.</p>
-        <span class="tl-tag">Seminario Regional</span><span class="tl-tag">Governador SC</span><span class="tl-tag">Dados Tecnicos</span>
-      </div>
-    </div>
-
-    <div class="tl-item" onclick="toggleTl(this)">
-      <div class="tl-dot"></div>
-      <div class="tl-date">23 de junho de 2026</div>
-      <div class="tl-title">Seminario Regional — Belo Horizonte/MG</div>
-      <div class="tl-location"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Belo Horizonte/MG</div>
-      <div class="tl-body">
-        <p>Reuniao com parlamentares federais, dirigentes empresariais, representantes do comercio, industria e liderancas do Sebrae. O Dep. Domingos Savio reforcou a necessidade de atualizacao dos limites do MEI. Segundo o Relator Jorge Goetten, a atualizacao do teto do MEI ate R$ 140 mil ja esta pacificada com o governo, de forma escalonada em 2027 e 2028.</p>
-        <span class="tl-tag">Seminario Regional</span><span class="tl-tag">Domingos Savio</span><span class="tl-tag">R$ 140 mil</span>
-      </div>
-    </div>
-
-    <div class="tl-item" onclick="toggleTl(this)">
-      <div class="tl-dot"></div>
-      <div class="tl-date">26 de junho de 2026</div>
-      <div class="tl-title">Seminario Regional — Fortaleza/CE</div>
-      <div class="tl-location"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Fortaleza/CE</div>
-      <div class="tl-body">
-        <p>Seminario com representantes da Federacao das Industrias, Federacao do Comercio, Governo Estadual e Sebrae Ceara. Foram reforcados os argumentos favoraveis a ampliacao dos limites do MEI, a simplificacao tributaria e ao fortalecimento dos pequenos negocios.</p>
-        <span class="tl-tag">Seminario Regional</span><span class="tl-tag">FIEC</span><span class="tl-tag">FECOMERCIO CE</span>
-      </div>
-    </div>
-
-    <div class="tl-item" onclick="toggleTl(this)">
-      <div class="tl-dot"></div>
-      <div class="tl-date">29 de junho de 2026</div>
-      <div class="tl-title">Seminario Regional — Rio de Janeiro/RJ + PLP 186/2026</div>
-      <div class="tl-location"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Rio de Janeiro/RJ + Brasilia/DF</div>
-      <div class="tl-body">
-        <p>Seminario regional resultado de articulacao previa junto a Comissao Especial. Sebrae RJ apresentou posicionamentos tecnicos. No mesmo dia, em Brasilia, o Ministro do MEMP apresentou o PLP 186/2026: aumento do limite do MEI para R$ 110 mil em 2027 e R$ 140 mil a partir de 2028.</p>
-        <span class="tl-tag">Seminario Regional</span><span class="tl-tag">PLP 186/2026</span><span class="tl-tag">Governo Federal</span>
-      </div>
-    </div>
-
-    <div class="tl-item highlight" onclick="toggleTl(this)">
-      <div class="tl-dot"></div>
-      <div class="tl-date">01 de julho de 2026</div>
-      <div class="tl-title">Audiencia Publica + Solenidade Dia da MPE</div>
-      <div class="tl-location"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Camara dos Deputados, Brasilia/DF</div>
-      <div class="tl-body">
-        <p><strong>Principal acao institucional do Sebrae Nacional em 2026.</strong> Audiencia Publica sobre o novo enquadramento do MEI, no Plenario VI, Anexo II da Camara. O Presidente Rodrigo Soares defendeu:</p>
-        <ul style="margin:8px 0;padding-left:16px;list-style:disc">
-          <li>Avanco da discussao legislativa</li>
-          <li>Dialogo permanente com o Governo Federal</li>
-          <li>Analise responsavel dos impactos fiscais</li>
-          <li>Modernizacao das regras de enquadramento do MEI</li>
-          <li>Vinculacao com CadUnico, inclusao produtiva e autonomia economica</li>
-        </ul>
-        <p style="margin-top:8px">No mesmo dia, Sessao Solene em homenagem ao Dia da Micro e Pequena Empresa no Plenario da Camara dos Deputados, com apoio de 6 frentes parlamentares.</p>
-        <span class="tl-tag" style="background:rgba(245,158,11,.1);color:var(--amber);border-color:rgba(245,158,11,.2)">Evento Principal</span>
-        <span class="tl-tag">Presidente Rodrigo Soares</span><span class="tl-tag">Ministro MEMP</span><span class="tl-tag">Relator Jorge Goetten</span>
-      </div>
-    </div>
-
-    <div class="tl-item" onclick="toggleTl(this)">
-      <div class="tl-dot"></div>
-      <div class="tl-date">06 de julho de 2026</div>
-      <div class="tl-title">Nova Etapa dos Debates — Sao Paulo/SP</div>
-      <div class="tl-location"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Sao Paulo/SP</div>
-      <div class="tl-body">
-        <p>Nova etapa dos debates promovidos pela Comissao Especial em Sao Paulo, consolidando as discussoes iniciadas nos seminarios anteriores e reforcando a mobilizacao em torno da votacao do PLP 108/2021. Unica reuniao sem participacao presencial do NAL.</p>
-        <span class="tl-tag">Seminario Regional</span><span class="tl-tag">Acompanhamento Remoto</span>
-      </div>
-    </div>
-
-    <div class="tl-item" onclick="toggleTl(this)">
-      <div class="tl-dot"></div>
-      <div class="tl-date">08 de julho de 2026</div>
-      <div class="tl-title">Seminario Regional — Feira de Santana/BA</div>
-      <div class="tl-location"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Feira de Santana/BA</div>
-      <div class="tl-body">
-        <p>Ultimo seminario do ciclo. Participacao do Relator Jorge Goetten, parlamentares, Ministerio do Empreendedorismo, liderancas empresariais e dirigentes do Sebrae. O relator reafirmou os principais pontos do parecer: aumento dos limites do MEI, atualizacao das faixas do Simples, facultatividade do sublimite estadual, mecanismo de atualizacao automatica, contratacao de dois empregados e compensacao previdenciaria.</p>
-        <span class="tl-tag">Encerramento do Ciclo</span><span class="tl-tag">7 Estados</span><span class="tl-tag">Jorge Goetten</span><span class="tl-tag">Ze Neto</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="quote-box reveal" style="margin-top:24px">
-    <p>"A atuacao articulada contribuiu para recolocar o Sebrae como referencia nas pautas do PLP 108/2021, consolidando a posicao institucional como ator estrategico na construcao de politicas publicas voltadas ao empreendedorismo."</p>
-    <div class="author">— Relatorio Executivo, Sebrae Nacional</div>
-  </div>
-</section>
-
-<!-- ARTICULACAO PARLAMENTAR -->
-<div class="divider"></div>
-<section class="section" id="articulacao">
-  <div class="section-header reveal">
-    <div class="section-eyebrow" style="color:var(--blue)">Articulacao Estrategica</div>
-    <div class="section-title">Parlamentares e Frentes Mobilizadas</div>
-    <div class="section-desc">56 visitas a gabinetes com entregas de Notas Tecnicas e argumentacoes junto a assessorias legislativas e parlamentares, resultando em 12 parlamentares com acoes concretas.</div>
-  </div>
-
-  <h3 style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:16px" class="reveal">Parlamentares-chave com acoes concretas</h3>
-  <div class="parl-grid reveal">
-    <div class="parl-chip"><div class="parl-avatar" style="background:#4f8cff">AV</div><div class="parl-info"><div class="parl-name">Adriana Ventura</div><div class="parl-role">Requerente Sessao Solene</div></div></div>
-    <div class="parl-chip"><div class="parl-avatar" style="background:#a855f7">AF</div><div class="parl-info"><div class="parl-name">Andre Figueiredo</div><div class="parl-role">Audiencias Publicas</div></div></div>
-    <div class="parl-chip"><div class="parl-avatar" style="background:#f472b6">AO</div><div class="parl-info"><div class="parl-name">Any Ortiz</div><div class="parl-role">Requerimentos</div></div></div>
-    <div class="parl-chip"><div class="parl-avatar" style="background:#64748b">CA</div><div class="parl-info"><div class="parl-name">Coronel Assis</div><div class="parl-role">Requerimentos</div></div></div>
-    <div class="parl-chip"><div class="parl-avatar" style="background:#f59e0b">DS</div><div class="parl-info"><div class="parl-name">Domingos Savio</div><div class="parl-role">Defesa limites MEI</div></div></div>
-    <div class="parl-chip"><div class="parl-avatar" style="background:#06b6d4">HS</div><div class="parl-info"><div class="parl-name">Heitor Schuch</div><div class="parl-role">Audiencias Publicas</div></div></div>
-    <div class="parl-chip"><div class="parl-avatar" style="background:var(--emerald)">JG</div><div class="parl-info"><div class="parl-name">Jorge Goetten</div><div class="parl-role">Relator PLP 108/2021</div></div></div>
-    <div class="parl-chip"><div class="parl-avatar" style="background:#4f8cff">LG</div><div class="parl-info"><div class="parl-name">Luiz Gastao</div><div class="parl-role">Audiencias e Seminarios</div></div></div>
-    <div class="parl-chip"><div class="parl-avatar" style="background:#ef4444">ZN</div><div class="parl-info"><div class="parl-name">Ze Neto</div><div class="parl-role">Vice-Pres. FCS</div></div></div>
-    <div class="parl-chip"><div class="parl-avatar" style="background:#a855f7">AC</div><div class="parl-info"><div class="parl-name">Augusto Coutinho</div><div class="parl-role">Requerimentos</div></div></div>
-    <div class="parl-chip"><div class="parl-avatar" style="background:#06b6d4">HS</div><div class="parl-info"><div class="parl-name">Helder Salomao</div><div class="parl-role">Audiencias Publicas</div></div></div>
-    <div class="parl-chip"><div class="parl-avatar" style="background:#f472b6">SS</div><div class="parl-info"><div class="parl-name">Soraya Santos</div><div class="parl-role">Requerimento Seminario RJ</div></div></div>
-  </div>
-
-  <h3 style="font-size:14px;font-weight:600;color:var(--text-primary);margin:32px 0 16px" class="reveal">Frentes Parlamentares Mobilizadas</h3>
-  <div class="frentes-wrap reveal">
-    <div class="frente-badge"><div class="frente-dot" style="background:var(--emerald)"></div><div class="frente-name">FPMPE — Micro e Pequenas Empresas</div></div>
-    <div class="frente-badge"><div class="frente-dot" style="background:var(--blue)"></div><div class="frente-name">FCS — Comercio e Servicos</div></div>
-    <div class="frente-badge"><div class="frente-dot" style="background:var(--amber)"></div><div class="frente-name">Brasil Competitivo</div></div>
-    <div class="frente-badge"><div class="frente-dot" style="background:var(--purple)"></div><div class="frente-name">FPE — Empreendedorismo</div></div>
-    <div class="frente-badge"><div class="frente-dot" style="background:var(--cyan)"></div><div class="frente-name">Livre Mercado</div></div>
-    <div class="frente-badge"><div class="frente-dot" style="background:var(--pink)"></div><div class="frente-name">Mulher Empreendedora</div></div>
-  </div>
-
-  <h3 style="font-size:14px;font-weight:600;color:var(--text-primary);margin:32px 0 16px" class="reveal">Liderancas Partidarias Sensibilizadas</h3>
-  <div class="badges-row reveal">
-    <span class="badge governo">Lideranca do Governo</span>
-    <span class="badge partido">Republicanos</span>
-    <span class="badge partido">MDB</span>
-    <span class="badge partido">PSD</span>
-    <span class="badge partido">PT</span>
-    <span class="badge partido">PL</span>
-    <span class="badge partido">PP</span>
-  </div>
-</section>
-
-<!-- ENTREGAS SEBRAES ESTADUAIS -->
-<div class="divider"></div>
-<section class="section">
-  <div class="section-header reveal">
-    <div class="section-eyebrow" style="color:var(--teal)">Rede Sebrae</div>
-    <div class="section-title">Entregas aos Sebraes Estaduais</div>
-    <div class="section-desc">A atuacao contribuiu para viabilizar pelo menos 7 entregas diretas institucionais, contemplando participacao, visibilidade e oitiva na discussao nacional.</div>
-  </div>
-  <div class="cards-grid reveal">
-    <div class="card" style="--accent:var(--emerald)"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--emerald);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">🏛️</div>
-      <div class="card-title">Sao Paulo</div>
-      <div class="card-desc">Participacao expressiva no seminario regional com dirigentes, gestores e especialistas via CESP PLP 108/2021</div>
-      <div class="card-metric-label" style="margin-top:12px">12/06 e 06/07</div>
-    </div>
-    <div class="card"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">🏛️</div>
-      <div class="card-title">Rio de Janeiro</div>
-      <div class="card-desc">Articulacao com Dep. Soraya Santos para requerimento de seminario regional, garantindo espaco ao Sebrae RJ</div>
-      <div class="card-metric-label" style="margin-top:12px">29/06</div>
-    </div>
-    <div class="card"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cyan);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">🏛️</div>
-      <div class="card-title">Santa Catarina</div>
-      <div class="card-desc">Seminario com Governador, setor produtivo e Ministerio do Empreendedorismo. Apresentacao de dados tecnicos pelo Sebrae</div>
-      <div class="card-metric-label" style="margin-top:12px">15/06</div>
-    </div>
-    <div class="card"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--emerald);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">🏛️</div>
-      <div class="card-title">Rio Grande do Sul</div>
-      <div class="card-desc">Primeiras articulacoes institucionais em conjunto com o Sebrae RS e parlamentares envolvidos na materia</div>
-      <div class="card-metric-label" style="margin-top:12px">01/06</div>
-    </div>
-    <div class="card"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">🏛️</div>
-      <div class="card-title">Ceara</div>
-      <div class="card-desc">Interlocucoes previas garantiram participacao ativa do Sebrae local na programacao oficial do seminario</div>
-      <div class="card-metric-label" style="margin-top:12px">26/06</div>
-    </div>
-    <div class="card"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--red);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">🏛️</div>
-      <div class="card-title">Bahia</div>
-      <div class="card-desc">Ultimo seminario do ciclo em Feira de Santana com presenca do Relator, Ministerio e liderancas empresariais</div>
-      <div class="card-metric-label" style="margin-top:12px">08/07</div>
-    </div>
-    <div class="card"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">🏛️</div>
-      <div class="card-title">Minas Gerais</div>
-      <div class="card-desc">Articulacao direta para participacao do Sebrae MG com espaco de manifestacao institucional nos debates</div>
-      <div class="card-metric-label" style="margin-top:12px">23/06</div>
-    </div>
-    <div class="card"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pink);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">🏛️</div>
-      <div class="card-title">Mato Grosso</div>
-      <div class="card-desc">Pendente no ambito da CESP, foi articulado por outra via: CICS — Comissao de Industria, Comercio e Servicos da Camara</div>
-      <div class="card-metric-label" style="margin-top:12px">Via CICS</div>
-    </div>
-  </div>
-</section>
-
-<!-- PARLAMENTO MAIS EMPREENDEDOR -->
-<div class="divider"></div>
-<section class="section" id="parlamento">
-  <div class="section-header reveal">
-    <div class="section-eyebrow" style="color:var(--purple)">Projeto</div>
-    <div class="section-title">Parlamento Mais Empreendedor</div>
-    <div class="section-desc">Realizacoes do projeto em 2026 com encontros de bancadas, assembleias legislativas, legislativos municipais e capacitacoes.</div>
-  </div>
-
-  <div class="cards-grid reveal">
-    <div class="card"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">🏢</div>
-      <div class="card-title">Encontro de Bancada Federal</div>
-      <div class="card-desc">Encontro realizado no Espirito Santo com a bancada federal do estado</div>
-      <div class="card-metric">1</div><div class="card-metric-label">Encontro • ES</div>
-    </div>
-    <div class="card"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">🏛️</div>
-      <div class="card-title">Reunioes em Assembleias Legislativas</div>
-      <div class="card-desc">Reunioes previas nas Assembleias Legislativas de Pernambuco e Rondonia</div>
-      <div class="card-metric">2</div><div class="card-metric-label">Reunioes • PE, RO</div>
-    </div>
-    <div class="card"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--emerald);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">🏘️</div>
-      <div class="card-title">Encontros Estaduais de Legislativos Municipais</div>
-      <div class="card-desc">Encontros estaduais realizados em Pernambuco, Mato Grosso e Rio de Janeiro</div>
-      <div class="card-metric">3</div><div class="card-metric-label">Encontros • PE, MT, RJ</div>
-    </div>
-    <div class="card"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">📜</div>
-      <div class="card-title">Audiencia Publica — 20 Anos da Lei Geral</div>
-      <div class="card-desc">Audiencia publica comemorativa na Assembleia Legislativa de Pernambuco</div>
-      <div class="card-metric">1</div><div class="card-metric-label">Audiencia • PE</div>
-    </div>
-    <div class="card"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cyan);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">🎤</div>
-      <div class="card-title">Painel na Marcha dos Municipios</div>
-      <div class="card-desc">Painel no evento da CNM — Confederacao Nacional de Municipios, realizado em Brasilia</div>
-      <div class="card-metric">1</div><div class="card-metric-label">Painel • Brasilia/DF</div>
-    </div>
-    <div class="card"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pink);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">🤝</div>
-      <div class="card-title">Encontros Regionais com Vereadores(as)</div>
-      <div class="card-desc">Encontros regionais nos estados do Rio Grande do Sul e Pernambuco</div>
-      <div class="card-metric">8</div><div class="card-metric-label">Encontros • RS, PE</div>
-    </div>
-    <div class="card"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--teal);border-radius:4px 0 0 4px"></div>
-      <div class="card-icon">🎓</div>
-      <div class="card-title">Camaras Empreendedoras</div>
-      <div class="card-desc">Capacitacao de camaras municipais do Estado do Para no programa "Camaras Empreendedoras"</div>
-      <div class="card-metric">7</div><div class="card-metric-label">Camaras • PA</div>
-    </div>
-  </div>
-
-  <div style="margin-top:24px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px" class="reveal">
-    <h4 style="font-size:14px;font-weight:600;color:var(--amber);margin-bottom:12px">Previstos para o 2o semestre</h4>
-    <div style="display:flex;flex-wrap:wrap;gap:12px">
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amber);display:inline-block"></span> Encontros regionais em Pernambuco (novembro)</div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amber);display:inline-block"></span> Encontros regionais em Santa Catarina (dezembro)</div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amber);display:inline-block"></span> Encontro estadual no Rio Grande do Sul (dezembro)</div>
-    </div>
-  </div>
-</section>
-
-<!-- AGENDA LEGISLATIVA 2027 -->
-<div class="divider"></div>
-<section class="section" id="agenda2027">
-  <div class="section-header reveal">
-    <div class="section-eyebrow" style="color:var(--cyan)">Construcao Conjunta</div>
-    <div class="section-title">Agenda Legislativa 2027</div>
-    <div class="section-desc">Oficinas junto aos Sebraes/UF para a construcao conjunta da Agenda Legislativa 2027, com participacao progressiva dos estados.</div>
-  </div>
-
-  <div class="stepper reveal">
-    <div class="step">
-      <div class="step-line" style="background:linear-gradient(90deg,var(--emerald),var(--emerald))"></div>
-      <div class="step-circle done">1</div>
-      <div class="step-title">1a Oficina</div>
-      <div class="step-desc">Brasilia/DF — Nacional + 8 estados</div>
-      <div class="step-date">23/09/2026</div>
-    </div>
-    <div class="step">
-      <div class="step-line" style="background:linear-gradient(90deg,var(--amber),var(--border))"></div>
-      <div class="step-circle current">2</div>
-      <div class="step-title">2a Oficina</div>
-      <div class="step-desc">Sebrae/RN — 14 estados inscritos</div>
-      <div class="step-date">09/10/2026</div>
-    </div>
-    <div class="step">
-      <div class="step-line"></div>
-      <div class="step-circle upcoming">3</div>
-      <div class="step-title">3a Oficina</div>
-      <div class="step-desc">Formato online — data a definir</div>
-      <div class="step-date">A confirmar</div>
-    </div>
-  </div>
-</section>
-
-<!-- MONITORAMENTO LEGISLATIVO -->
-<div class="divider"></div>
-<section class="section" id="monitoramento">
-  <div class="section-header reveal">
-    <div class="section-eyebrow" style="color:var(--emerald)">Monitoramento</div>
-    <div class="section-title">Acompanhamento Legislativo</div>
-  </div>
-
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px" class="reveal">
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center">
-      <div style="font-size:48px;font-weight:800;color:var(--emerald-light);line-height:1">1.000+</div>
-      <div style="font-size:13px;color:var(--text-secondary);margin-top:8px">proposicoes monitoradas com algum impacto para os pequenos negocios</div>
-    </div>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center">
-      <div style="font-size:48px;font-weight:800;color:var(--text-primary);line-height:1">988</div>
-      <div style="font-size:13px;color:var(--text-secondary);margin-top:8px">proposicoes em tramitacao ativa no Congresso Nacional</div>
-    </div>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center">
-      <div style="font-size:14px;font-weight:700;color:var(--amber);margin-bottom:4px">DESTAQUE</div>
-      <div style="font-size:28px;font-weight:800;color:var(--text-primary);line-height:1">PLP 108/2021</div>
-      <div style="font-size:13px;color:var(--text-secondary);margin-top:8px">Aumento do limite do MEI — principal pauta de articulacao em 2026</div>
-    </div>
-  </div>
-</section>
-
-<!-- CAPITAL POLITICO -->
-<div class="divider"></div>
-<section class="section" id="capital">
-  <div class="section-header reveal">
-    <div class="section-eyebrow" style="color:var(--pink)">Metrica Qualitativa</div>
-    <div class="section-title">Capital Politico</div>
-    <div class="section-desc">A atuacao estrategica no legislativo exige uma abordagem baseada no dialogo e na construcao de relacionamentos solidos com parlamentares, membros do Executivo e frentes parlamentares.</div>
-  </div>
-
-  <div class="reveal">
-    <div class="meter-wrap">
-      <div class="meter-label"><span style="color:var(--text-secondary)">Expansao de Capital Politico 2026</span><span style="color:var(--emerald)">+30%</span></div>
-      <div class="meter-bar"><div class="meter-fill" style="width:0" data-width="30"></div></div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:24px">
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
-        <h4 style="font-size:14px;font-weight:600;color:var(--emerald-light);margin-bottom:12px">Qualidade > Quantidade</h4>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
-          <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="width:6px;height:6px;border-radius:50%;background:var(--emerald);display:inline-block;margin-top:6px;flex-shrink:0"></span>Indices de escala de relacionamentos com parlamentares de acordo com posicao de poder</li>
-          <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="width:6px;height:6px;border-radius:50%;background:var(--emerald);display:inline-block;margin-top:6px;flex-shrink:0"></span>Relacionamento com atores que detem mais poder de resultado/decisao</li>
-          <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="width:6px;height:6px;border-radius:50%;background:var(--emerald);display:inline-block;margin-top:6px;flex-shrink:0"></span>Metricas da ABRIG para boa atuacao na area de RIG</li>
-        </ul>
-      </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
-        <h4 style="font-size:14px;font-weight:600;color:var(--amber);margin-bottom:12px">Indicadores de Posicao de Poder</h4>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
-          <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amber);display:inline-block;margin-top:6px;flex-shrink:0"></span>Lider de bancada, partido ou federacao</li>
-          <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amber);display:inline-block;margin-top:6px;flex-shrink:0"></span>Presidente de frente ou grupo parlamentar</li>
-          <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amber);display:inline-block;margin-top:6px;flex-shrink:0"></span>Presidente de comissao</li>
-          <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amber);display:inline-block;margin-top:6px;flex-shrink:0"></span>Autor ou relator de proposicao estrategica</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="quote-box" style="margin-top:24px">
-      <p>"Bom relacionamento e o grau de confianca e interacoes responsivas e ate preventivas que recebemos do corpo politico, em metricas de respostas as interacoes, realizacao de acoes concretas e convites preventivos para atuacao em eventos e materias relevantes."</p>
-    </div>
-  </div>
-
-  <!-- DESAFIO 2027 -->
-  <div style="background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);border-radius:var(--radius);padding:24px;margin-top:24px" class="reveal">
-    <h4 style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:12px">Desafio 2027 — Renovacao Parlamentar</h4>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:16px">
-      <div style="text-align:center">
-        <div style="font-size:36px;font-weight:800;color:var(--red)">38%</div>
-        <div style="font-size:12px;color:var(--text-secondary)">dos atores renovados na Camara</div>
-      </div>
-      <div style="text-align:center">
-        <div style="font-size:36px;font-weight:800;color:var(--red)">~90%</div>
-        <div style="font-size:12px;color:var(--text-secondary)">dos atores com bom relacionamento perdidos</div>
-      </div>
-    </div>
-    <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">Sera necessaria medida emergencial de atuacao estrategica para reconstruir o capital politico para os proximos 4 anos. O relacionamento construido ao longo do mandato anterior precisara ser reestabelecido com os novos parlamentares.</p>
-  </div>
-</section>
-
-<!-- REFORMA TRIBUTARIA — IMPLEMENTACAO -->
-<div class="divider"></div>
-<section class="section" id="reforma">
-  <div class="section-header reveal">
-    <div class="section-eyebrow" style="color:var(--red)">1. Reforma Tributaria</div>
-    <div class="section-title">Implementacao</div>
-    <div class="section-desc">Acoes de estruturacao institucional, disponibilizacao de solucoes ao cliente e comunicacao no contexto da implementacao da Reforma Tributaria.</div>
-  </div>
-
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px" class="reveal">
-
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;border-left:4px solid var(--red)">
-      <h4 style="font-size:14px;font-weight:600;color:#fca5a5;margin-bottom:12px">Estrutura Institucional</h4>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--red);flex-shrink:0">✓</span> Criacao da Sala de Integracao de Tributacao e Reforma Tributaria (Portaria 309/2026) — instancia que concentra estudos, pesquisas e diretrizes para regulamentacao do Simples Nacional e reflexos na CIDE Sebrae</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--red);flex-shrink:0">✓</span> Representacao ativa no Comite Gestor do Simples Nacional</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--red);flex-shrink:0">✓</span> Fortalecimento da cooperacao institucional Sebrae-RFB (compartilhamento de dados e capacitacao da rede de atendimento)</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--red);flex-shrink:0">✓</span> Alinhamento com liderancas do Sistema Sebrae com presenca do Secretario Especial da RFB, Robinson Barreirinhas (18/08/26)</li>
-      </ul>
-    </div>
-
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;border-left:4px solid var(--amber)">
-      <h4 style="font-size:14px;font-weight:600;color:var(--amber);margin-bottom:12px">Solucoes para o Cliente</h4>
-      <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Centralizadas na pagina do portal sebrae.com.br/reformatributaria</p>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0">•</span> E-book Reforma Tributaria</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0">•</span> UP Digital Tributacao</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0">•</span> Agendamento de consultoria CNR</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0">•</span> Curso online Reforma Tributaria</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0">•</span> FAQ</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0">•</span> Simulador de regime de IBS/CBS no Simples</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0">•</span> Emissor de NF Sebrae</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0">•</span> Planejadora Sebrae</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0">•</span> Fluxo de Caixa Sebrae</li>
-      </ul>
-    </div>
-
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;border-left:4px solid var(--emerald)">
-      <h4 style="font-size:14px;font-weight:600;color:var(--emerald-light);margin-bottom:12px">Comunicacao</h4>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--emerald);flex-shrink:0">✓</span> Reestruturacao da pagina da Reforma Tributaria (sebrae.com.br/reformatributaria)</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--emerald);flex-shrink:0">✓</span> Campanha de comunicacao com conteudos informativos na ASN e Redes Sociais</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--emerald);flex-shrink:0">✓</span> Todas as solucoes centralizadas na pagina do portal</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- NOVO SIMPLES -->
-<div class="divider"></div>
-<section class="section" id="novosimples">
-  <div class="section-header reveal">
-    <div class="section-eyebrow" style="color:var(--amber)">2. Novo Simples</div>
-    <div class="section-title">Articulacao Estrategica</div>
-    <div class="section-desc">Reunioes com liderancas do Poder Executivo e Legislativo para validar premissas do estudo liderado pela FGV (Novo Simples) e definir a melhor estrategia politica para tramitacao das propostas de regulamentacao do regime.</div>
-  </div>
-
-  <div class="reveal">
-    <div class="expand-trigger" onclick="toggleExpand(this)">
-      <h3 style="color:var(--blue)">Poder Legislativo</h3>
-      <span class="expand-arrow">▼</span>
-    </div>
-    <div class="expand-content">
-      <div class="expand-inner">
-        <ul>
-          <li><strong>05/05/2026</strong> — Deputado Reginaldo Lopes, relator da Reforma Tributaria na Camara dos Deputados</li>
-          <li><strong>14/07/2026</strong> — Lider do Governo no Senado, Senadora Teresa Leitao</li>
-          <li><strong>23/09/2026</strong> — Ministro Chefe da Casa Civil, Deputado Jose Guimaraes</li>
-        </ul>
-        <p style="margin-top:12px;font-size:13px;color:var(--text-muted)">Como encaminhamento, sera definido conjuntamente ao Poder Executivo a melhor estrategia para tramitacao do texto de regulamentacao do regime no Congresso Nacional.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="reveal" style="margin-top:12px">
-    <div class="expand-trigger" onclick="toggleExpand(this)">
-      <h3 style="color:var(--red)">Poder Executivo</h3>
-      <span class="expand-arrow">▼</span>
-    </div>
-    <div class="expand-content">
-      <div class="expand-inner">
-        <ul>
-          <li><strong>12/05/2026 — SECOM:</strong> Apresentacao do Novo Simples ao Sr. Vitor Marchetti, representante da Secretaria de Comunicacao Social da Presidencia da Republica</li>
-          <li><strong>02/06/2026 — MEMP:</strong> Apresentacao ao Ministro Paulo Pereira dos estudos e evidencias produzidos pelo Sebrae sobre os efeitos da Reforma Tributaria e os desafios para a manutencao da competitividade das MPEs no contexto do Novo Simples</li>
-          <li><strong>02/06/2026 — MPO:</strong> Apresentacao dos estudos e analise dos impactos economicos da Reforma Tributaria ao Secretario-Executivo do MPO, Guilherme Mello, e equipe tecnica</li>
-          <li><strong>29/07/2026 — Reuniao Interministerial (MEMP, MPO, MDIC e Sebrae):</strong> Debate tecnico coordenado pelo Sec.-Executivo do MPO, Guilherme Mello. Alinhamento institucional sobre pontos tecnicos sensiveis para a regulamentacao do Novo Simples e adaptacao do regime as diretrizes da Reforma</li>
-          <li><strong>30/07/2026 — RFB:</strong> Retorno sobre os estudos do Novo Simples apresentados em novembro/2025 e das Cartas enviadas pelo Sebrae ao Ministerio da Fazenda e Receita Federal sobre a necessidade de solucao normativa para estoques de 2026 e cesta basica de alimentos</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <div class="reveal" style="margin-top:12px">
-    <div class="expand-trigger" onclick="toggleExpand(this)">
-      <h3 style="color:var(--purple)">Outras Agendas Estrategicas</h3>
-      <span class="expand-arrow">▼</span>
-    </div>
-    <div class="expand-content">
-      <div class="expand-inner">
-        <p style="margin-bottom:12px;font-size:13px;color:var(--text-muted)">O Sebrae tambem participou ativamente, com direito de fala, em agendas estrategicas:</p>
-        <ul>
-          <li><strong>19-21/06/2026</strong> — XXIV Congresso de Direito Tributario em Questao</li>
-          <li><strong>01/07/2026</strong> — Sessao Solene em Homenagem ao Dia das Micro, Pequenas e Medias Empresas (Camara dos Deputados)</li>
-          <li><strong>01/07/2026</strong> — Audiencia Publica na Camara dos Deputados</li>
-          <li><strong>08/07/2026</strong> — TV Camara, Programa Expressao Nacional: Novo enquadramento do MEI e atualizacao do Simples Nacional</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ARGUMENTACAO MEI -->
-<div class="divider"></div>
-<section class="section">
-  <div class="section-header reveal">
-    <div class="section-eyebrow" style="color:var(--emerald)">Posicionamento Institucional</div>
-    <div class="section-title">Argumentacao do Sebrae — PLP 108/2021</div>
-  </div>
-
-  <div class="reveal">
-    <div class="expand-trigger" onclick="toggleExpand(this)">
-      <h3>Pontos defendidos pelo Presidente Rodrigo Soares na Audiencia Publica (01/07)</h3>
-      <span class="expand-arrow">▼</span>
-    </div>
-    <div class="expand-content">
-      <div class="expand-inner">
-        <ul>
-          <li>O teto de R$ 81 mil esta congelado ha anos, sem qualquer correcao</li>
-          <li>A inflacao reduziu significativamente o espaco economico do MEI</li>
-          <li>Muitos empreendedores correm risco de desenquadramento involuntario</li>
-          <li>A elevacao do limite pode estimular a permanencia na formalidade</li>
-          <li>A contratacao de um segundo empregado pode gerar empregos formais</li>
-          <li>A atualizacao deve ser compatibilizada com responsabilidade fiscal</li>
-          <li>Iniciativas do Sebrae voltadas a MEIs inscritos no Cadastro Unico</li>
-          <li>Vinculacao do debate a inclusao produtiva, geracao de renda e autonomia economica</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <div class="reveal" style="margin-top:12px">
-    <div class="expand-trigger" onclick="toggleExpand(this)">
-      <h3>Proposta do Governo Federal — PLP 186/2026 (apresentado em 29/06)</h3>
-      <span class="expand-arrow">▼</span>
-    </div>
-    <div class="expand-content">
-      <div class="expand-inner">
-        <ul>
-          <li>Aumento do limite de faturamento anual do MEI para R$ 110 mil em 2027</li>
-          <li>Novo teto fixo de R$ 140 mil a partir de 2028</li>
-          <li>Possibilidade de contratar ate dois funcionarios</li>
-          <li>Mecanismo de atualizacao automatica dos limites</li>
-          <li>Atualizacao das faixas do Simples Nacional</li>
-          <li>Facultatividade do sublimite estadual</li>
-          <li>Medidas de compensacao relacionadas a contribuicao previdenciaria patronal</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- RESULTADOS INSTITUCIONAIS -->
-<div class="divider"></div>
-<section class="section">
-  <div class="section-header reveal">
-    <div class="section-eyebrow" style="color:var(--emerald)">Resultados</div>
-    <div class="section-title">Resultados Institucionais 2026</div>
-  </div>
-
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px" class="reveal">
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;border-left:4px solid var(--emerald)">
-      <h4 style="font-size:15px;font-weight:600;color:var(--emerald-light);margin-bottom:12px">Fortalecimento da Atuacao</h4>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--emerald);flex-shrink:0">✓</span> Participacao em todos os principais eventos da Comissao Especial</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--emerald);flex-shrink:0">✓</span> Ampliacao do dialogo com parlamentares e setor produtivo</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--emerald);flex-shrink:0">✓</span> Consolidacao como referencia tecnica no debate MEI/Simples</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--emerald);flex-shrink:0">✓</span> Fortalecimento do relacionamento com a relatoria do PLP 108</li>
-      </ul>
-    </div>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;border-left:4px solid var(--blue)">
-      <h4 style="font-size:15px;font-weight:600;color:#93c5fd;margin-bottom:12px">Mobilizacao da Rede Sebrae</h4>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--blue);flex-shrink:0">✓</span> Integracao dos Sebraes Estaduais nas discussoes legislativas</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--blue);flex-shrink:0">✓</span> Compartilhamento continuo de informacoes estrategicas</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--blue);flex-shrink:0">✓</span> Apoio a participacao de dirigentes e especialistas nos seminarios</li>
-      </ul>
-    </div>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;border-left:4px solid var(--amber)">
-      <h4 style="font-size:15px;font-weight:600;color:var(--amber);margin-bottom:12px">Defesa dos Pequenos Negocios</h4>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0">✓</span> Promocao da atualizacao dos limites do MEI e Simples Nacional</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0">✓</span> Defesa da formalizacao e permanencia no ambiente regulado</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0">✓</span> Fortalecimento de pautas de emprego, inclusao produtiva e desenvolvimento</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- PROJETOS E INICIATIVAS -->
-<div class="divider"></div>
-<section class="section" id="projetos">
-  <div class="section-header reveal">
-    <div class="section-eyebrow" style="color:var(--teal)">Projetos e Iniciativas</div>
-    <div class="section-title">Entregas Estrategicas da UPP</div>
-    <div class="section-desc">Projetos em desenvolvimento pela Unidade de Politicas Publicas: diagnosticos, modelos de atuacao, observatorios e laboratorios de politicas publicas.</div>
-  </div>
-
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px" class="reveal">
-
-    <!-- AMBIENTE DE NEGOCIOS -->
-    <div id="ambientenegocios" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;border-top:4px solid var(--teal)">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-        <div style="width:36px;height:36px;border-radius:10px;background:rgba(20,184,166,.12);display:flex;align-items:center;justify-content:center;font-size:18px">📊</div>
-        <h3 style="font-size:16px;font-weight:700;color:var(--text-primary)">Ambiente de Negocios</h3>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
-        <span style="font-size:11px;font-weight:600;color:var(--teal);background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.2);padding:3px 10px;border-radius:12px">Apresentado</span>
-      </div>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:10px">
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--teal);flex-shrink:0;font-weight:700">✓</span> Previa apresentada em reuniao para toda a equipe da UPP e representantes da UDT</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0;font-weight:700">→</span> Conclusao do material completo</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0;font-weight:700">→</span> Apresentacao para a Diretoria</li>
-      </ul>
-    </div>
-
-    <!-- MODELO DE ATUACAO DA UPP -->
-    <div id="modeloupp" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;border-top:4px solid var(--cyan)">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-        <div style="width:36px;height:36px;border-radius:10px;background:rgba(6,182,212,.12);display:flex;align-items:center;justify-content:center;font-size:18px">🏛️</div>
-        <h3 style="font-size:16px;font-weight:700;color:var(--text-primary)">Modelo de Atuacao da UPP</h3>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
-        <span style="font-size:11px;font-weight:600;color:var(--cyan);background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2);padding:3px 10px;border-radius:12px">Apresentado</span>
-      </div>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:10px">
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--cyan);flex-shrink:0;font-weight:700">✓</span> Modelo apresentado para a equipe da Unidade de Politicas Publicas</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0;font-weight:700">→</span> Desdobramento dos macroprocessos de cada nucleo</li>
-      </ul>
-    </div>
-
-    <!-- PIPPA PARAIBA -->
-    <div id="pippapb" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;border-top:4px solid var(--emerald)">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-        <div style="width:36px;height:36px;border-radius:10px;background:rgba(16,185,129,.12);display:flex;align-items:center;justify-content:center;font-size:18px">🔭</div>
-        <h3 style="font-size:16px;font-weight:700;color:var(--text-primary)">PIPPA Paraiba</h3>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
-        <span style="font-size:11px;font-weight:600;color:var(--emerald-light);background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);padding:3px 10px;border-radius:12px">Pronto</span>
-        <span style="font-size:11px;font-weight:600;color:var(--amber);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);padding:3px 10px;border-radius:12px">Ultimos ajustes</span>
-      </div>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:10px">
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--emerald);flex-shrink:0;font-weight:700">✓</span> Observatorio de Politicas Publicas da Paraiba — desenvolvimento concluido</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--emerald);flex-shrink:0;font-weight:700">✓</span> Ultimos ajustes em andamento</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0;font-weight:700">→</span> Lancamento oficial em novembro/2026 na Paraiba</li>
-      </ul>
-    </div>
-
-    <!-- TRANSFORMALAB -->
-    <div id="transformalab" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;border-top:4px solid var(--purple)">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-        <div style="width:36px;height:36px;border-radius:10px;background:rgba(168,85,247,.12);display:flex;align-items:center;justify-content:center;font-size:18px">🧪</div>
-        <h3 style="font-size:16px;font-weight:700;color:var(--text-primary)">TransformaLab</h3>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
-        <span style="font-size:11px;font-weight:600;color:var(--purple);background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2);padding:3px 10px;border-radius:12px">Prototipado</span>
-        <span style="font-size:11px;font-weight:600;color:var(--text-muted);background:rgba(100,116,139,.1);border:1px solid rgba(100,116,139,.2);padding:3px 10px;border-radius:12px">Maranhao</span>
-      </div>
-      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px">Laboratorios de Politicas Publicas — modelo pronto e prototipado no Maranhao</p>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:10px">
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--purple);flex-shrink:0;font-weight:700">✓</span> Modelo desenvolvido e prototipado</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0;font-weight:700">→</span> Contratacao de empresa de consultoria para desenvolver Manual de Aplicacao e Ficha Tecnica</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0;font-weight:700">→</span> Inserir como produto na lista de solucoes da Unidade</li>
-        <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-secondary)"><span style="color:var(--amber);flex-shrink:0;font-weight:700">→</span> Capacitar consultores no Brasil inteiro para aplicar a metodologia</li>
-      </ul>
-    </div>
-
-  </div>
-</section>
-
-<footer class="footer">
-  <p>PIPPA — Plataforma Integrada de Politicas Publicas e Advocacy | Sebrae Nacional</p>
-  <p style="margin-top:4px">Unidade de Politicas Publicas — Nucleo de Assessoria Legislativa | 2026</p>
-</footer>
-
-<script>
-// Counter animation
-function animateCounters() {
-  document.querySelectorAll('.stat-value[data-target]').forEach(el => {
-    const target = +el.dataset.target;
-    const suffix = el.dataset.suffix || '';
-    const duration = 1800;
-    const start = performance.now();
-    function update(now) {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      el.textContent = Math.round(target * eased) + suffix;
-      if (progress < 1) requestAnimationFrame(update);
-    }
-    requestAnimationFrame(update);
-  });
-}
-
-// Meter animation
-function animateMeters() {
-  document.querySelectorAll('.meter-fill[data-width]').forEach(el => {
-    el.style.width = el.dataset.width + '%';
-  });
-}
-
-// Timeline toggle
-function toggleTl(item) {
-  const wasOpen = item.classList.contains('open');
-  document.querySelectorAll('.tl-item.open').forEach(i => i.classList.remove('open'));
-  if (!wasOpen) item.classList.add('open');
-}
-
-// Expand toggle
-function toggleExpand(trigger) {
-  const content = trigger.nextElementSibling;
-  trigger.classList.toggle('open');
-  content.classList.toggle('open');
-}
-
-// Scroll reveal
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      if (entry.target.closest('.stats-row')) animateCounters();
-      if (entry.target.querySelector('.meter-fill')) animateMeters();
-    }
-  });
-}, { threshold: 0.15 });
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-// Nav active state on scroll
-const sections = document.querySelectorAll('section[id], div[id]');
-const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(s => {
-    if (window.scrollY >= s.offsetTop - 100) current = s.id;
-  });
-  navLinks.forEach(a => {
-    a.classList.remove('active');
-    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
-  });
-});
-
-// Open first highlight timeline item by default after a delay
-setTimeout(() => {
-  const highlight = document.querySelector('.tl-item.highlight');
-  if (highlight) highlight.classList.add('open');
-}, 1200);
-</script>
 </body>
 </html>

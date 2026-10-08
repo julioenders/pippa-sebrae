@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIPPA | Projetos Especiais 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0b1120;--card:#111827;--card-hover:#1a2332;
+  --emerald:#10b981;--emerald-light:#34d399;--emerald-pale:#6ee7b7;
+  --blue:#4f8cff;--purple:#a855f7;--amber:#f59e0b;--cyan:#06b6d4;--pink:#f472b6;--red:#ef4444;--teal:#14b8a6;
+  --text-primary:#e2e8f0;--text-secondary:#94a3b8;--text-muted:#64748b;--text-dim:#475569;
+  --border:rgba(148,163,184,.12);--glass:rgba(17,24,39,.6);
+  --radius:12px;--radius-sm:8px;--radius-xs:6px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-height:1.6;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--emerald);border-radius:3px}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(11,17,32,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-weight:800;font-size:18px;background:linear-gradient(135deg,var(--emerald),var(--emerald-pale));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px}
+.nav-links{display:flex;gap:6px}
+.nav-links a{color:var(--text-secondary);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:var(--radius-xs);transition:.2s}
+.nav-links a:hover,.nav-links a.active{color:var(--emerald-light);background:rgba(16,185,129,.08)}
+
+/* HERO */
+.hero{position:relative;text-align:center;padding:48px 32px 28px;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse 80% 60%,rgba(16,185,129,.12),transparent 70%);pointer-events:none}
+.hero-label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--emerald);background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);padding:6px 16px;border-radius:20px;margin-bottom:20px}
+.hero-title{font-size:clamp(28px,5vw,48px);font-weight:800;color:var(--text-primary);letter-spacing:-1.5px;line-height:1.1;margin-bottom:12px}
+.hero-title span{background:linear-gradient(135deg,var(--emerald),var(--emerald-light),var(--emerald-pale));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:14px;color:var(--text-secondary);max-width:680px;margin:0 auto 24px}
+
+/* STAT TILES */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:1100px;margin:0 auto;padding:0 32px}
+.stat-tile{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 8px;text-align:center;transition:.3s;cursor:default}
+.stat-tile:hover{border-color:rgba(16,185,129,.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.stat-value{font-size:26px;font-weight:700;color:var(--text-primary);line-height:1}
+.stat-value.emerald{color:var(--emerald-light)}
+.stat-label{font-size:10px;font-weight:500;color:var(--text-secondary);margin-top:4px;letter-spacing:.3px;text-transform:uppercase}
+
+/* SECTION */
+.section{max-width:1100px;margin:0 auto;padding:60px 32px}
+.section-header{margin-bottom:36px}
+.section-eyebrow{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.section-title{font-size:28px;font-weight:700;color:var(--text-primary);letter-spacing:-.5px}
+.section-desc{font-size:14px;color:var(--text-secondary);margin-top:8px;max-width:700px}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0 auto}
+
+/* CARDS GRID */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:.3s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
+.card:hover{border-color:rgba(148,163,184,.2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.card-icon{font-size:28px;margin-bottom:12px}
+.card-title{font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
+.card-desc{font-size:13px;color:var(--text-secondary);line-height:1.6}
+.card-metric{font-size:24px;font-weight:700;color:var(--emerald-light);margin-top:12px}
+.card-metric-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
+
+/* EXPAND SECTION */
+.expand-trigger{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;cursor:pointer;transition:.3s;width:100%;text-align:left}
+.expand-trigger:hover{border-color:rgba(16,185,129,.3);background:var(--card-hover)}
+.expand-trigger h3{font-size:15px;font-weight:600;color:var(--text-primary);flex:1}
+.expand-arrow{color:var(--text-muted);transition:.3s;font-size:18px}
+.expand-trigger.open .expand-arrow{transform:rotate(180deg);color:var(--emerald)}
+.expand-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.expand-content.open{max-height:5000px}
+.expand-inner{padding:20px 0}
+.expand-inner ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.expand-inner li{position:relative;padding-left:20px;font-size:14px;color:var(--text-secondary);line-height:1.6}
+.expand-inner li::before{content:'';position:absolute;left:0;top:9px;width:8px;height:8px;border-radius:50%;background:var(--emerald);opacity:.6}
+
+/* STATUS TAGS */
+.status-tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;margin-right:6px;margin-bottom:4px}
+.status-tag.concluido{color:var(--emerald-light);background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2)}
+.status-tag.andamento{color:var(--amber);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2)}
+.status-tag.previsto{color:var(--cyan);background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2)}
+.status-tag.destaque{color:var(--pink);background:rgba(244,114,182,.1);border:1px solid rgba(244,114,182,.2)}
+
+/* ITEM LIST */
+.item-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;transition:.3s;position:relative;overflow:hidden;margin-bottom:12px}
+.item-card:hover{border-color:rgba(148,163,184,.2);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.item-card .item-number{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.item-card .item-title{font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:8px}
+.item-card .item-body{font-size:13px;color:var(--text-secondary);line-height:1.7}
+
+/* QUOTE */
+.quote-box{background:rgba(16,185,129,.04);border-left:3px solid var(--emerald);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:16px 20px;margin:16px 0}
+.quote-box p{font-size:14px;color:var(--text-secondary);font-style:italic;line-height:1.7}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* EXECUTIVE SUMMARY */
+.exec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:1100px;margin:32px auto 0;padding:0 32px}
+.exec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:.3s;position:relative;overflow:hidden;text-decoration:none;display:block}
+.exec-card:hover{border-color:rgba(16,185,129,.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.exec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.exec-title{font-size:14px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:8px}
+.exec-arrow{font-size:14px;color:var(--text-muted);transition:.2s}
+.exec-card:hover .exec-arrow{color:var(--emerald);transform:translateX(2px)}
+.exec-metrics{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap}
+.exec-num{font-size:22px;font-weight:800;line-height:1}
+.exec-num-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+.exec-bullets{list-style:none;display:flex;flex-direction:column;gap:4px}
+.exec-bullets li{font-size:11.5px;color:var(--text-secondary);line-height:1.4;display:flex;align-items:flex-start;gap:6px}
+
+/* FOOTER */
+.footer{text-align:center;padding:40px 32px;color:var(--text-dim);font-size:12px;border-top:1px solid var(--border)}
+.footer a{color:var(--emerald);text-decoration:none}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .exec-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .hero{padding:40px 20px 24px}
+  .section{padding:40px 20px}
+  .stats-row{grid-template-columns:repeat(2,1fr);gap:10px;padding:0 20px}
+  .exec-grid{grid-template-columns:1fr;padding:0 20px}
+  .cards-grid{grid-template-columns:1fr}
+  .nav{padding:0 16px}
+  .nav-links a{font-size:11px;padding:5px 8px}
+  .stat-tile{padding:14px 10px}
+  .stat-value{font-size:24px}
+  .stat-label{font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">PIPPA</div>
+  <div class="nav-links">
+    <a href="#movimenta" class="active">Movimenta</a>
+    <a href="#metodologia">Metodologia</a>
+    <a href="#compras">Compras Sust.</a>
+    <a href="#oficinas">Oficinas</a>
+    <a href="#procatadores">Pro-Catadores</a>
+    <a href="#contrata">Contrata+Brasil</a>
+    <a href="./">&#8592; Nucleos</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">Unidade de Politicas Publicas | Projetos Especiais</div>
+  <h1 class="hero-title">Projetos <span>Especiais</span> 2026</h1>
+  <p class="hero-sub">Principais entregas do nucleo de Projetos Especiais da Unidade de Politicas Publicas do Sebrae Nacional. Periodo: 2026.</p>
+</section>
+
+<!-- STATS -->
+<div class="stats-row" id="stats">
+  <div class="stat-tile reveal">
+    <div class="stat-value emerald" data-target="48">0</div>
+    <div class="stat-label">Entregas</div>
+  </div>
+  <div class="stat-tile reveal">
+    <div class="stat-value" data-target="164">0</div>
+    <div class="stat-label">Acoes Movimenta</div>
+  </div>
+  <div class="stat-tile reveal">
+    <div class="stat-value" data-target="22">0</div>
+    <div class="stat-label">Estados Pro-Catadores</div>
+  </div>
+  <div class="stat-tile reveal">
+    <div class="stat-value" data-target="11">0</div>
+    <div class="stat-label">Sebrae Contrata+Brasil</div>
+  </div>
+</div>
+
+<!-- RESUMO EXECUTIVO -->
+<div class="exec-grid">
+
+  <a href="#movimenta" class="exec-card">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--emerald);border-radius:4px 0 0 4px"></div>
+    <div class="exec-head">
+      <div class="exec-title">Programa Movimenta</div>
+      <span class="exec-arrow">&#8594;</span>
+    </div>
+    <div class="exec-metrics">
+      <div><div class="exec-num" style="color:var(--emerald-light)">164</div><div class="exec-num-label">acoes</div></div>
+      <div><div class="exec-num" style="color:var(--emerald-light)">27</div><div class="exec-num-label">UFs</div></div>
+    </div>
+    <ul class="exec-bullets">
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--emerald);flex-shrink:0;margin-top:4px"></span>Consolidacao 2026 + PA 2027 com 100% adesao</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--emerald);flex-shrink:0;margin-top:4px"></span>R$ 29,3 mi despesa total, 8 politicas prioritarias</li>
+    </ul>
+  </a>
+
+  <a href="#metodologia" class="exec-card">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);border-radius:4px 0 0 4px"></div>
+    <div class="exec-head">
+      <div class="exec-title">Metodologia e Referenciais</div>
+      <span class="exec-arrow">&#8594;</span>
+    </div>
+    <div class="exec-metrics">
+      <div><div class="exec-num" style="color:var(--blue)">22</div><div class="exec-num-label">UFs capacitadas</div></div>
+    </div>
+    <ul class="exec-bullets">
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px"></span>Defesa de Causa, Portfolio, Diretrizes, Referenciais</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px"></span>Glossario, Carta de Servicos, Sharepoint da Rede</li>
+    </ul>
+  </a>
+
+  <a href="#compras" class="exec-card">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cyan);border-radius:4px 0 0 4px"></div>
+    <div class="exec-head">
+      <div class="exec-title">Compras Publicas Sustentaveis</div>
+      <span class="exec-arrow">&#8594;</span>
+    </div>
+    <ul class="exec-bullets">
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;margin-top:4px"></span>Projeto ZRO/EcoDesk como caso inicial</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;margin-top:4px"></span>Diagnostico juridico + modelagem completa</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;margin-top:4px"></span>Etapa final consultoria: novembro/2026</li>
+    </ul>
+  </a>
+
+  <a href="#oficinas" class="exec-card">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pink);border-radius:4px 0 0 4px"></div>
+    <div class="exec-head">
+      <div class="exec-title">Oficinas de Transformacao</div>
+      <span class="exec-arrow">&#8594;</span>
+    </div>
+    <div class="exec-metrics">
+      <div><div class="exec-num" style="color:var(--pink)">6</div><div class="exec-num-label">oficinas</div></div>
+      <div><div class="exec-num" style="color:var(--pink)">36</div><div class="exec-num-label">cooperadas</div></div>
+    </div>
+    <ul class="exec-bullets">
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--pink);flex-shrink:0;margin-top:4px"></span>Tecnologia social de reciclagem THP/IPTI</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--pink);flex-shrink:0;margin-top:4px"></span>EcoDesk premiado DFBW Award 2023</li>
+    </ul>
+  </a>
+
+  <a href="#procatadores" class="exec-card">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber);border-radius:4px 0 0 4px"></div>
+    <div class="exec-head">
+      <div class="exec-title">Pro-Catadores</div>
+      <span class="exec-arrow">&#8594;</span>
+    </div>
+    <div class="exec-metrics">
+      <div><div class="exec-num" style="color:var(--amber)">22</div><div class="exec-num-label">estados</div></div>
+      <div><div class="exec-num" style="color:var(--amber)">17</div><div class="exec-num-label">entregas</div></div>
+    </div>
+    <ul class="exec-bullets">
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px"></span>Hubs ANCAT, Coleta Hack, capacitacoes</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px"></span>Metodologia Na Rota da Reciclagem</li>
+    </ul>
+  </a>
+
+  <a href="#contrata" class="exec-card">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:4px 0 0 4px"></div>
+    <div class="exec-head">
+      <div class="exec-title">Contrata+Brasil</div>
+      <span class="exec-arrow">&#8594;</span>
+    </div>
+    <div class="exec-metrics">
+      <div><div class="exec-num" style="color:var(--purple)">23</div><div class="exec-num-label">entregas</div></div>
+      <div><div class="exec-num" style="color:var(--purple)">11</div><div class="exec-num-label">Sebrae UF</div></div>
+    </div>
+    <ul class="exec-bullets">
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px"></span>Painel 360 Hub de Inteligencia lancado</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px"></span>Plano Nacional em fase de assinatura</li>
+    </ul>
+  </a>
+
+</div>
+
+<!-- SECAO 1: PROGRAMA MOVIMENTA -->
+<div class="divider" style="margin-top:48px"></div>
+<section class="section" id="movimenta">
+  <div class="section-header reveal">
+    <div class="section-eyebrow" style="color:var(--emerald)">Secao 1</div>
+    <div class="section-title">Programa Movimenta</div>
+    <div class="section-desc">Gestao nacional do programa de politicas publicas para micro e pequenas empresas, com adesao de todos os estados e Distrito Federal.</div>
+  </div>
+
+  <div class="item-card reveal" style="border-left:4px solid var(--emerald)">
+    <div class="item-number">Entrega 1</div>
+    <div class="item-title">Consolidacao do Programa Movimenta 2026</div>
+    <div style="margin-bottom:10px">
+      <span class="status-tag andamento">Em andamento</span>
+    </div>
+    <div class="item-body">
+      <p>Gestao nacional com 164 acoes cadastradas, 62 com resultados. Agendas: REDESIM, Aldir Blanc, Contrata+Brasil, Parlamento+Empreendedor, PNADEMPE, CadUnico.</p>
+      <p style="margin-top:10px"><strong style="color:var(--text-primary)">Resultados:</strong></p>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:6px">
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--emerald);flex-shrink:0;font-weight:700">&#10003;</span> Decretos REDESIM em 4 municipios do AM</li>
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--emerald);flex-shrink:0;font-weight:700">&#10003;</span> Contrata+Brasil adotado pelo GDF (Decreto 49.335/2026)</li>
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--emerald);flex-shrink:0;font-weight:700">&#10003;</span> Termos com secretarias do PA</li>
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--emerald);flex-shrink:0;font-weight:700">&#10003;</span> RS: 411 vereadores em 9 edicoes Parlamento+Empreendedor (nota 4,91/5)</li>
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--amber);flex-shrink:0;font-weight:700">&#8594;</span> Relatorio final em construcao + BI de monitoramento</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="item-card reveal" style="border-left:4px solid var(--emerald-light)">
+    <div class="item-number">Entrega 2</div>
+    <div class="item-title">PA 2027 | Movimenta com 100% de Adesao</div>
+    <div style="margin-bottom:10px">
+      <span class="status-tag concluido">100% adesao</span>
+    </div>
+    <div class="item-body">
+      <p>26 estados + DF. 34 planos de trabalho, R$ 29,3 mi despesa total, R$ 19,4 mi recursos proprios UFs.</p>
+      <p style="margin-top:10px"><strong style="color:var(--text-primary)">Caderno de Politicas Prioritarias 2027 — 8 politicas:</strong></p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+        <span class="status-tag concluido">PNADEMPE</span>
+        <span class="status-tag concluido">CadUnico</span>
+        <span class="status-tag concluido">MEI</span>
+        <span class="status-tag concluido">REDESIM</span>
+        <span class="status-tag concluido">Aldir Blanc</span>
+        <span class="status-tag concluido">Gov Digital</span>
+        <span class="status-tag concluido">Contrata+Brasil</span>
+        <span class="status-tag concluido">Inspecao Origem Animal</span>
+      </div>
+      <p style="margin-top:10px">Nova metodologia de mensuracao: T0 (linha base), T1, T2... Separacao de indicadores de entrega vs indicadores de evolucao da politica.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECAO 2: METODOLOGIA E REFERENCIAIS -->
+<div class="divider"></div>
+<section class="section" id="metodologia">
+  <div class="section-header reveal">
+    <div class="section-eyebrow" style="color:var(--blue)">Secao 2</div>
+    <div class="section-title">Metodologia e Referenciais</div>
+    <div class="section-desc">Instrumentos metodologicos, referenciais conceituais e diretrizes para atuacao em politicas publicas no Sistema Sebrae.</div>
+  </div>
+
+  <div class="item-card reveal" style="border-left:4px solid var(--blue)">
+    <div class="item-number">Entrega 3</div>
+    <div class="item-title">Metodologia de Defesa de Causa</div>
+    <div style="margin-bottom:10px">
+      <span class="status-tag andamento">Em andamento</span>
+    </div>
+    <div class="item-body">
+      <p>Manual, canvas, cartas e ferramentas. 8 UFs capacitadas, 14 previstas (7-9 outubro), total 22 UFs.</p>
+    </div>
+  </div>
+
+  <div class="item-card reveal" style="border-left:4px solid var(--cyan)">
+    <div class="item-number">Entrega 6</div>
+    <div class="item-title">Estruturacao do Portfolio de Politicas Publicas</div>
+    <div style="margin-bottom:10px">
+      <span class="status-tag previsto">Previsto 2027</span>
+    </div>
+    <div class="item-body">
+      <p>Bases para criacao de portfolio proprio vinculado ao Movimenta, a partir de 2027. Base: Inventario de Solucoes 2025.</p>
+    </div>
+  </div>
+
+  <div class="item-card reveal" style="border-left:4px solid var(--purple)">
+    <div class="item-number">Entrega 7</div>
+    <div class="item-title">Diretrizes UPP + Cidades e Territorios Empreendedores</div>
+    <div style="margin-bottom:10px">
+      <span class="status-tag andamento">Em construcao</span>
+    </div>
+    <div class="item-body">
+      <p>Orientacao conjunta UPP e UDT. Definicao de papeis, interfaces, criterios de lideranca, mecanismos de coordenacao.</p>
+    </div>
+  </div>
+
+  <div class="item-card reveal" style="border-left:4px solid var(--teal)">
+    <div class="item-number">Entrega 8</div>
+    <div class="item-title">Referenciais da UPP</div>
+    <div style="margin-bottom:10px">
+      <span class="status-tag concluido">Entregue</span>
+    </div>
+    <div class="item-body">
+      <p>Glossario de Politicas Publicas, Carta de Servicos, Sharepoint da Rede. Referencia conceitual comum para Sistema Sebrae.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECAO 3: COMPRAS PUBLICAS SUSTENTAVEIS -->
+<div class="divider"></div>
+<section class="section" id="compras">
+  <div class="section-header reveal">
+    <div class="section-eyebrow" style="color:var(--cyan)">Secao 3</div>
+    <div class="section-title">Compras Publicas Sustentaveis</div>
+    <div class="section-desc">Frente para ampliar sustentabilidade, economia circular e inclusao nas compras governamentais.</div>
+  </div>
+
+  <div class="item-card reveal" style="border-left:4px solid var(--cyan)">
+    <div class="item-number">Entrega 4</div>
+    <div class="item-title">Compras Publicas Sustentaveis</div>
+    <div style="margin-bottom:10px">
+      <span class="status-tag andamento">Em andamento</span>
+      <span class="status-tag previsto">Consultoria ate nov/2026</span>
+    </div>
+    <div class="item-body">
+      <p>Projeto ZRO/EcoDesk como caso inicial. Diagnostico juridico concluido.</p>
+      <p style="margin-top:10px"><strong style="color:var(--text-primary)">Arquitetura de implementacao:</strong> pregao eletronico e dispensa por valor como caminhos imediatos.</p>
+      <p style="margin-top:10px"><strong style="color:var(--text-primary)">Modelagem:</strong></p>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:6px">
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--cyan);flex-shrink:0;font-weight:700">&#10003;</span> ETP, especificacao tecnica, matriz de sustentabilidade</li>
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--cyan);flex-shrink:0;font-weight:700">&#10003;</span> TR, edital, checklists</li>
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--cyan);flex-shrink:0;font-weight:700">&#10003;</span> Minutas de politicas locais</li>
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--cyan);flex-shrink:0;font-weight:700">&#10003;</span> Proposta de aperfeicoamento da Lei 14.133/2021</li>
+      </ul>
+      <p style="margin-top:10px">Tecnologia EcoDesk aberta. Etapa final consultoria: novembro/2026.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECAO 4: OFICINAS DE TRANSFORMACAO -->
+<div class="divider"></div>
+<section class="section" id="oficinas">
+  <div class="section-header reveal">
+    <div class="section-eyebrow" style="color:var(--pink)">Secao 4</div>
+    <div class="section-title">Oficinas de Transformacao</div>
+    <div class="section-desc">Tecnologia Social de Reciclagem — parceria THP/IPTI para transformacao de plastico em mobiliario duravel.</div>
+  </div>
+
+  <div class="item-card reveal" style="border-left:4px solid var(--pink)">
+    <div class="item-number">Entrega 5</div>
+    <div class="item-title">Oficinas de Transformacao (THP/IPTI)</div>
+    <div style="margin-bottom:10px">
+      <span class="status-tag andamento">Em andamento</span>
+      <span class="status-tag destaque">Premiado DFBW 2023</span>
+    </div>
+    <div class="item-body">
+      <p><strong style="color:var(--text-primary)">6 Oficinas:</strong> Santa Luzia do Itanhy (SE), Vera Cruz/Itaparica e Trancoso (BA), Fortaleza (CE), Natal (RN), Sao Luis (MA).</p>
+      <p style="margin-top:8px">36 mulheres cooperadas + 6 em formacao. Transformam plastico PP e PS em mobiliario duravel.</p>
+
+      <p style="margin-top:10px"><strong style="color:var(--text-primary)">Entregas:</strong></p>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:6px">
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--pink);flex-shrink:0;font-weight:700">&#10003;</span> Jornadas formativas</li>
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--pink);flex-shrink:0;font-weight:700">&#10003;</span> Manual de Orientacao</li>
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--pink);flex-shrink:0;font-weight:700">&#10003;</span> Relatorios consultoria comercial</li>
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--pink);flex-shrink:0;font-weight:700">&#10003;</span> Material pedagogico educacao ambiental</li>
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--pink);flex-shrink:0;font-weight:700">&#10003;</span> Campanha piloto coleta em SE</li>
+      </ul>
+
+      <p style="margin-top:10px"><strong style="color:var(--text-primary)">Resultados:</strong></p>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:6px">
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--emerald);flex-shrink:0;font-weight:700">&#10003;</span> Escola Santa Luzia recebeu EcoDesk (premiado DFBW Award 2023)</li>
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--emerald);flex-shrink:0;font-weight:700">&#10003;</span> Resort Itaparica pediu 75 mesas (~R$ 63 mil)</li>
+        <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--amber);flex-shrink:0;font-weight:700">&#8594;</span> Aditivo em tramitacao para controle qualidade e atuacao em rede</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SECAO 5: PRO-CATADORES -->
+<div class="divider"></div>
+<section class="section" id="procatadores">
+  <div class="section-header reveal">
+    <div class="section-eyebrow" style="color:var(--amber)">Secao 5</div>
+    <div class="section-title">Pro-Catadores</div>
+    <div class="section-desc">Programa de apoio a catadores de materiais reciclaveis com atuacao em 22 estados e expansao prevista para AC e RR em 2027.</div>
+  </div>
+
+  <!-- Adesao e Monitoramento -->
+  <div class="reveal">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3 style="color:var(--amber)">Adesao, Monitoramento e Metodologia</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entrega 9</div>
+            <div class="item-title">Ampliacao das Adesoes</div>
+            <div class="item-body">
+              <p>22 estados: AM, AP, BA, CE, DF, ES, MA, MG, MS, MT, PA, PE, PB, PI, PR, RJ, RN, RO, RS, SC, SE, SP.</p>
+              <p style="margin-top:6px">Novos 2027: AC e RR.</p>
+            </div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entrega 10</div>
+            <div class="item-title">Painel de Monitoramento 2026</div>
+            <div style="margin-bottom:6px"><span class="status-tag concluido">Entregue</span></div>
+            <div class="item-body">Dashboard Power BI.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entrega 11</div>
+            <div class="item-title">Metodologia Na Rota da Reciclagem</div>
+            <div class="item-body">Apresentada para IPEME Mocambique.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entrega 12</div>
+            <div class="item-title">PromEC</div>
+            <div class="item-body">Oficina de Planejamento Operacional 2026, Economia Circular MDIC e GIZ.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hubs e Eventos -->
+  <div class="reveal" style="margin-top:12px">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3 style="color:var(--amber)">Hubs, Eventos e Encontros</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entregas 13-14</div>
+            <div class="item-title">Hubs com ANCAT</div>
+            <div class="item-body">
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:6px">
+                <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--emerald);flex-shrink:0;font-weight:700">&#10003;</span> Vidro em BH (lancado)</li>
+                <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--amber);flex-shrink:0;font-weight:700">&#8594;</span> Plastico em Mogi das Cruzes (out/2026)</li>
+                <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--amber);flex-shrink:0;font-weight:700">&#8594;</span> Oleo em Mogi das Cruzes (dez/2026)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entrega 15</div>
+            <div class="item-title">Encontro CATAR Nordeste</div>
+            <div class="item-body">Sebrae/PE, Recife. Evento patrocinado MESC.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entrega 16</div>
+            <div class="item-title">Expocatadores 2026</div>
+            <div class="item-body">Evento patrocinado com acao de marketing UCOM.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entrega 19</div>
+            <div class="item-title">Encontro Tecnico</div>
+            <div class="item-body">Imersao "Desafio PIMP" (um dia de Catador Autonomo). Visitas a cooperativas.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Representacao Institucional -->
+  <div class="reveal" style="margin-top:12px">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3 style="color:var(--amber)">Representacao Institucional</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entrega 17</div>
+            <div class="item-title">CIISC</div>
+            <div class="item-body">Comite Interministerial para Inclusao Socioeconomica de Catadores. Representacao institucional.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entrega 18</div>
+            <div class="item-title">FNEC</div>
+            <div class="item-body">Forum Nacional de Economia Circular. Representacao institucional.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Capacitacao e Acoes Regionais -->
+  <div class="reveal" style="margin-top:12px">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3 style="color:var(--amber)">Capacitacao e Acoes Regionais</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entrega 20</div>
+            <div class="item-title">Capacitacao de Consultores</div>
+            <div class="item-body">Metodologia Na Rota da Reciclagem. Turmas em Curitiba, SP, RJ, BH.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entrega 21</div>
+            <div class="item-title">Painel Marcha dos Prefeitos</div>
+            <div class="item-body">Cobranca e sustentabilidade financeira gestao municipal residuos solidos.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entrega 22</div>
+            <div class="item-title">Rodadas de Negocios</div>
+            <div class="item-body">Curitiba/PR, Belem/PA, Tres Lagoas/MS.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entrega 23</div>
+            <div class="item-title">Lancamento Sebrae/CE</div>
+            <div class="item-body">Campanha Educativa com representantes Governo Federal.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+            <div class="item-number">Entrega 24</div>
+            <div class="item-title">Feira do Empreendedor MA</div>
+            <div class="item-body">Painel Residuos Solidos e Economia Circular, Sao Luis.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coleta Hack -->
+  <div class="reveal" style="margin-top:12px">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3 style="color:var(--amber)">Coleta Hack Pro-Catadores</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <div class="item-card" style="border-left:4px solid var(--amber);margin-bottom:0">
+          <div class="item-number">Entrega 25</div>
+          <div class="item-title">Coleta Hack Pro-Catadores</div>
+          <div style="margin-bottom:6px"><span class="status-tag andamento">3a edicao prevista</span></div>
+          <div class="item-body">
+            <p>Maratonas de inovacao para solucoes em reciclagem:</p>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:8px">
+              <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--emerald);flex-shrink:0;font-weight:700">&#10003;</span> Porto Velho: 68 participantes, 12 equipes, vencedora "Causos"</li>
+              <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--emerald);flex-shrink:0;font-weight:700">&#10003;</span> Natal/GO!RN: 150 estudantes UERN, vencedora "Seu Lixo Vale Mais"</li>
+              <li style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--amber);flex-shrink:0;font-weight:700">&#8594;</span> 3a edicao prevista: Recife, nov/2026</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECAO 6: CONTRATA+BRASIL -->
+<div class="divider"></div>
+<section class="section" id="contrata">
+  <div class="section-header reveal">
+    <div class="section-eyebrow" style="color:var(--purple)">Secao 6</div>
+    <div class="section-title">Contrata+Brasil</div>
+    <div class="section-desc">Plataforma de inteligencia, monitoramento e ativacao territorial para compras governamentais (MEI, MPE, agricultura familiar).</div>
+  </div>
+
+  <!-- Plataforma e Inteligencia -->
+  <div class="reveal">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3 style="color:var(--purple)">Plataforma e Inteligencia</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 26</div>
+            <div class="item-title">Sharepoint Contrata+Brasil</div>
+            <div style="margin-bottom:6px"><span class="status-tag concluido">Entregue</span></div>
+            <div class="item-body">Pagina entregue.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 27</div>
+            <div class="item-title">Painel 360 — Hub de Inteligencia</div>
+            <div style="margin-bottom:6px"><span class="status-tag concluido">Lancado</span><span class="status-tag destaque">Destaque</span></div>
+            <div class="item-body">Lancado pelo presidente Rodrigo em 18/09/2026. Plataforma de inteligencia, monitoramento e ativacao territorial para compras governamentais (MEI, MPE, agricultura familiar). Versao beta entregue aos Sebrae UF.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 28</div>
+            <div class="item-title">Diagnostico Aplicado a Rede</div>
+            <div style="margin-bottom:6px"><span class="status-tag concluido">Concluido</span></div>
+            <div class="item-body">Questionarios, escuta estruturada, consolidacao de desafios. Identificou gargalos: adesao MEIs, mobilizacao orgaos publicos, PDDE, agricultura familiar.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Planejamento e Governanca -->
+  <div class="reveal" style="margin-top:12px">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3 style="color:var(--purple)">Planejamento e Governanca</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 29</div>
+            <div class="item-title">Oficina Nacional Solucoes (29/04/2026)</div>
+            <div class="item-body">19 Sebrae UFs. Parceiros: MGI, MEMP, FNDE, MDA.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 30</div>
+            <div class="item-title">Plano Nacional</div>
+            <div style="margin-bottom:6px"><span class="status-tag andamento">Em fase de assinatura</span></div>
+            <div class="item-body">Diretrizes, indicadores, governanca.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 31</div>
+            <div class="item-title">Adesao Sebrae UF</div>
+            <div class="item-body">11 Sebrae com adesao: Nacional, PE, ES, SP, DF, PA, AM, MA, PI, BA e RR.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 33</div>
+            <div class="item-title">Reunioes Semanais</div>
+            <div class="item-body">Com MGI, homologacao, bugs, melhorias.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobilizacao e Capacitacao -->
+  <div class="reveal" style="margin-top:12px">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3 style="color:var(--purple)">Mobilizacao e Capacitacao</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 32</div>
+            <div class="item-title">Acoes com URC/CNR</div>
+            <div class="item-body">Capacitacao Salvador, hotsite portal Sebrae, acoes ativo (WhatsApp, SMS, email), URA.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 34</div>
+            <div class="item-title">Mobilizacao Rede Agro</div>
+            <div class="item-body">PAA e PNAE com Unidade de Competitividade e Instituto Jatai.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 35</div>
+            <div class="item-title">Projeto PDDE</div>
+            <div class="item-body">Reuniao com FNDE e Sebrae/RJ.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 36</div>
+            <div class="item-title">Ativacao em Eventos UEDI</div>
+            <div class="item-body">Ativacoes em eventos da Unidade de Educacao e Inovacao.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 37</div>
+            <div class="item-title">Capacitacao da Rede</div>
+            <div class="item-body">Semana do MEI, rede atendimento, Salas do Empreendedor, parceiros, agentes publicos.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Eventos e Comunicacao -->
+  <div class="reveal" style="margin-top:12px">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3 style="color:var(--purple)">Eventos e Comunicacao</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 38</div>
+            <div class="item-title">Palestras e Lives</div>
+            <div class="item-body">Oficina Nacional, SICX, Cafe com Contrata+Brasil, Semana MEI, Marcha Prefeitos, PARCOM, Transformar Juntos, Feiras Empreendedor.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 39</div>
+            <div class="item-title">Decreto SICX e XI PARCOM</div>
+            <div class="item-body">Oficina para Decreto 13.106/2026. Estande, palestras.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 40</div>
+            <div class="item-title">Articulacao SICX</div>
+            <div class="item-body">Apresentacao MGI para rede Sebrae UF.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Articulacao Governamental e Tecnologia -->
+  <div class="reveal" style="margin-top:12px">
+    <div class="expand-trigger" onclick="toggleExpand(this)">
+      <h3 style="color:var(--purple)">Articulacao Governamental e Tecnologia</h3>
+      <span class="expand-arrow">&#9660;</span>
+    </div>
+    <div class="expand-content">
+      <div class="expand-inner">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entregas 41-42</div>
+            <div class="item-title">Comite Gestor Compras.gov.br</div>
+            <div class="item-body">Representacao institucional CT44. Prorrogacao ACT.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 43</div>
+            <div class="item-title">CT 44 Compras.gov</div>
+            <div class="item-body">Prorrogacao +1 ano.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 44</div>
+            <div class="item-title">Nova Versao PNCP</div>
+            <div class="item-body">Entrega CT044/SERPRO.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 45</div>
+            <div class="item-title">Novo DC (Divulgacao de Compras)</div>
+            <div class="item-body">Entrega CT044/SERPRO.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 46</div>
+            <div class="item-title">Novo SICAF / Fornecedor.gov.br</div>
+            <div class="item-body">Homologacao CT044.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 47</div>
+            <div class="item-title">Pilotos Antecipa.gov</div>
+            <div class="item-body">Com UDT, foco Amapa e Roraima.</div>
+          </div>
+
+          <div class="item-card" style="border-left:4px solid var(--purple);margin-bottom:0">
+            <div class="item-number">Entrega 48</div>
+            <div class="item-title">Ponto de Controle MEMP</div>
+            <div class="item-body">Reunioes com Ministerio, pauta Contrata+Brasil, MEI, CRED+.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>PIPPA — Unidade de Politicas Publicas | Sebrae Nacional | 2026</p>
+</footer>
+
+<script>
+// Counter animation
+function animateCounters() {
+  document.querySelectorAll('.stat-value[data-target]').forEach(el => {
+    const target = +el.dataset.target;
+    const suffix = el.dataset.suffix || '';
+    const duration = 1800;
+    const start = performance.now();
+    function update(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(target * eased) + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  });
+}
+
+// Expand toggle
+function toggleExpand(trigger) {
+  const content = trigger.nextElementSibling;
+  trigger.classList.toggle('open');
+  content.classList.toggle('open');
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.closest('.stats-row')) animateCounters();
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Nav active state on scroll
+const sections = document.querySelectorAll('section[id], div[id]');
+const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
