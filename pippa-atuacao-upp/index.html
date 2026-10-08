@@ -29,20 +29,20 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
 .nav-links a:hover,.nav-links a.active{color:var(--emerald-light);background:rgba(16,185,129,.08)}
 
 /* HERO */
-.hero{position:relative;text-align:center;padding:80px 32px 60px;overflow:hidden}
+.hero{position:relative;text-align:center;padding:48px 32px 28px;overflow:hidden}
 .hero::before{content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse 80% 60%,rgba(16,185,129,.12),transparent 70%);pointer-events:none}
 .hero-label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--emerald);background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);padding:6px 16px;border-radius:20px;margin-bottom:20px}
 .hero-title{font-size:clamp(28px,5vw,48px);font-weight:800;color:var(--text-primary);letter-spacing:-1.5px;line-height:1.1;margin-bottom:12px}
 .hero-title span{background:linear-gradient(135deg,var(--emerald),var(--emerald-light),var(--emerald-pale));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-sub{font-size:16px;color:var(--text-secondary);max-width:680px;margin:0 auto 40px}
+.hero-sub{font-size:14px;color:var(--text-secondary);max-width:680px;margin:0 auto 24px}
 
 /* STAT TILES */
-.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;max-width:1100px;margin:0 auto;padding:0 32px}
-.stat-tile{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px;text-align:center;transition:.3s;cursor:default}
+.stats-row{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;max-width:1100px;margin:0 auto;padding:0 32px}
+.stat-tile{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 8px;text-align:center;transition:.3s;cursor:default}
 .stat-tile:hover{border-color:rgba(16,185,129,.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
-.stat-value{font-size:32px;font-weight:700;color:var(--text-primary);line-height:1}
+.stat-value{font-size:26px;font-weight:700;color:var(--text-primary);line-height:1}
 .stat-value.emerald{color:var(--emerald-light)}
-.stat-label{font-size:11px;font-weight:500;color:var(--text-secondary);margin-top:6px;letter-spacing:.5px;text-transform:uppercase}
+.stat-label{font-size:10px;font-weight:500;color:var(--text-secondary);margin-top:4px;letter-spacing:.3px;text-transform:uppercase}
 
 /* SECTION */
 .section{max-width:1100px;margin:0 auto;padding:60px 32px}
@@ -168,15 +168,35 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
 
+/* EXECUTIVE SUMMARY */
+.exec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:1100px;margin:32px auto 0;padding:0 32px}
+.exec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:.3s;position:relative;overflow:hidden;text-decoration:none;display:block}
+.exec-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
+.exec-card:hover{border-color:rgba(16,185,129,.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.exec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.exec-title{font-size:14px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:8px}
+.exec-arrow{font-size:14px;color:var(--text-muted);transition:.2s}
+.exec-card:hover .exec-arrow{color:var(--emerald);transform:translateX(2px)}
+.exec-metrics{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap}
+.exec-num{font-size:22px;font-weight:800;line-height:1}
+.exec-num-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+.exec-bullets{list-style:none;display:flex;flex-direction:column;gap:4px}
+.exec-bullets li{font-size:11.5px;color:var(--text-secondary);line-height:1.4;display:flex;align-items:flex-start;gap:6px}
+.exec-bullets li::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:4px}
+
 /* FOOTER */
 .footer{text-align:center;padding:40px 32px;color:var(--text-dim);font-size:12px;border-top:1px solid var(--border)}
 .footer a{color:var(--emerald);text-decoration:none}
 
 /* RESPONSIVE */
+@media(max-width:1024px){
+  .exec-grid{grid-template-columns:repeat(2,1fr)}
+}
 @media(max-width:768px){
-  .hero{padding:60px 20px 40px}
+  .hero{padding:40px 20px 24px}
   .section{padding:40px 20px}
-  .stats-row{grid-template-columns:repeat(2,1fr);padding:0 20px}
+  .stats-row{grid-template-columns:repeat(3,1fr);gap:10px;padding:0 20px}
+  .exec-grid{grid-template-columns:1fr;padding:0 20px}
   .cards-grid{grid-template-columns:1fr}
   .parl-grid{grid-template-columns:repeat(2,1fr)}
   .stepper{flex-direction:column;gap:20px}
@@ -184,6 +204,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
   .tabs{overflow-x:auto;flex-wrap:nowrap}
   .nav{padding:0 16px}
   .nav-links a{font-size:11px;padding:5px 8px}
+  .stat-tile{padding:14px 10px}
+  .stat-value{font-size:24px}
+  .stat-label{font-size:10px}
 }
 </style>
 </head>
@@ -241,8 +264,114 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
   </div>
 </div>
 
+<!-- RESUMO EXECUTIVO -->
+<div class="exec-grid">
+
+  <a href="#plp108" class="exec-card" style="--accent:var(--amber)">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber);border-radius:4px 0 0 4px"></div>
+    <div class="exec-head">
+      <div class="exec-title">PLP 108/2021 — MEI</div>
+      <span class="exec-arrow">→</span>
+    </div>
+    <div class="exec-metrics">
+      <div><div class="exec-num" style="color:var(--amber)">10</div><div class="exec-num-label">marcos</div></div>
+      <div><div class="exec-num" style="color:var(--amber)">7</div><div class="exec-num-label">estados</div></div>
+    </div>
+    <ul class="exec-bullets">
+      <li style="--dot:var(--amber)"><span style="width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px"></span>Seminarios regionais em 7 UFs (jun-jul/2026)</li>
+      <li style="--dot:var(--amber)"><span style="width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px"></span>Audiencia Publica com Pres. Rodrigo Soares (01/07)</li>
+      <li style="--dot:var(--amber)"><span style="width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px"></span>PLP 186/2026: MEI R$ 110mi (2027) → R$ 140mil (2028)</li>
+    </ul>
+  </a>
+
+  <a href="#articulacao" class="exec-card">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);border-radius:4px 0 0 4px"></div>
+    <div class="exec-head">
+      <div class="exec-title">Articulacao Parlamentar</div>
+      <span class="exec-arrow">→</span>
+    </div>
+    <div class="exec-metrics">
+      <div><div class="exec-num" style="color:var(--blue)">56</div><div class="exec-num-label">visitas</div></div>
+      <div><div class="exec-num" style="color:var(--blue)">12</div><div class="exec-num-label">parlamentares</div></div>
+      <div><div class="exec-num" style="color:var(--blue)">7</div><div class="exec-num-label">frentes</div></div>
+    </div>
+    <ul class="exec-bullets">
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px"></span>28 atores estrategicos mobilizados</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px"></span>Notas Tecnicas entregues a gabinetes e liderancas</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px"></span>7 partidos sensibilizados (Gov, MDB, PSD, PT, PL, PP, Rep.)</li>
+    </ul>
+  </a>
+
+  <a href="#parlamento" class="exec-card">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:4px 0 0 4px"></div>
+    <div class="exec-head">
+      <div class="exec-title">Parlamento Empreendedor</div>
+      <span class="exec-arrow">→</span>
+    </div>
+    <div class="exec-metrics">
+      <div><div class="exec-num" style="color:var(--purple)">24</div><div class="exec-num-label">eventos</div></div>
+      <div><div class="exec-num" style="color:var(--purple)">10</div><div class="exec-num-label">UFs</div></div>
+    </div>
+    <ul class="exec-bullets">
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px"></span>Bancada Federal, Assembleias e Camaras Municipais</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px"></span>8 encontros regionais + 7 Camaras Empreendedoras (PA)</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px"></span>Previstos: PE (nov), SC e RS (dez)</li>
+    </ul>
+  </a>
+
+  <a href="#agenda2027" class="exec-card">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cyan);border-radius:4px 0 0 4px"></div>
+    <div class="exec-head">
+      <div class="exec-title">Agenda Legislativa 2027</div>
+      <span class="exec-arrow">→</span>
+    </div>
+    <div class="exec-metrics">
+      <div><div class="exec-num" style="color:var(--cyan)">3</div><div class="exec-num-label">oficinas</div></div>
+      <div><div class="exec-num" style="color:var(--cyan)">22+</div><div class="exec-num-label">estados</div></div>
+    </div>
+    <ul class="exec-bullets">
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;margin-top:4px"></span>1a Oficina: Brasilia, 8 estados (23/09)</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;margin-top:4px"></span>2a Oficina: Sebrae/RN, 14 estados (09/10)</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;margin-top:4px"></span>3a Oficina: formato online (a confirmar)</li>
+    </ul>
+  </a>
+
+  <a href="#monitoramento" class="exec-card">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--emerald);border-radius:4px 0 0 4px"></div>
+    <div class="exec-head">
+      <div class="exec-title">Monitoramento Legislativo</div>
+      <span class="exec-arrow">→</span>
+    </div>
+    <div class="exec-metrics">
+      <div><div class="exec-num" style="color:var(--emerald-light)">1.000+</div><div class="exec-num-label">proposicoes</div></div>
+      <div><div class="exec-num" style="color:var(--emerald-light)">988</div><div class="exec-num-label">em tramitacao</div></div>
+    </div>
+    <ul class="exec-bullets">
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--emerald);flex-shrink:0;margin-top:4px"></span>Proposicoes com impacto para pequenos negocios</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--emerald);flex-shrink:0;margin-top:4px"></span>Destaque: PLP 108/2021 (aumento do limite MEI)</li>
+    </ul>
+  </a>
+
+  <a href="#capital" class="exec-card">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pink);border-radius:4px 0 0 4px"></div>
+    <div class="exec-head">
+      <div class="exec-title">Capital Politico</div>
+      <span class="exec-arrow">→</span>
+    </div>
+    <div class="exec-metrics">
+      <div><div class="exec-num" style="color:var(--pink)">+30%</div><div class="exec-num-label">expansao</div></div>
+    </div>
+    <ul class="exec-bullets">
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--pink);flex-shrink:0;margin-top:4px"></span>Qualidade de relacionamento (metricas ABRIG)</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--pink);flex-shrink:0;margin-top:4px"></span>Desafio 2027: 38% de renovacao na Camara</li>
+      <li><span style="width:5px;height:5px;border-radius:50%;background:var(--pink);flex-shrink:0;margin-top:4px"></span>~90% dos atores com bom relacionamento perdidos</li>
+    </ul>
+  </a>
+
+</div>
+
 <!-- PLP 108/2021 TIMELINE -->
-<div class="divider" style="margin-top:60px"></div>
+<div class="divider" style="margin-top:48px"></div>
 <section class="section" id="plp108">
   <div class="section-header reveal">
     <div class="section-eyebrow" style="color:var(--amber)">Linha do Tempo</div>
@@ -379,7 +508,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
 
 <!-- ARTICULACAO PARLAMENTAR -->
 <div class="divider"></div>
-<section class="section">
+<section class="section" id="articulacao">
   <div class="section-header reveal">
     <div class="section-eyebrow" style="color:var(--blue)">Articulacao Estrategica</div>
     <div class="section-title">Parlamentares e Frentes Mobilizadas</div>
@@ -584,7 +713,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
 
 <!-- MONITORAMENTO LEGISLATIVO -->
 <div class="divider"></div>
-<section class="section">
+<section class="section" id="monitoramento">
   <div class="section-header reveal">
     <div class="section-eyebrow" style="color:var(--emerald)">Monitoramento</div>
     <div class="section-title">Acompanhamento Legislativo</div>
