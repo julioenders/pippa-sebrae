@@ -343,14 +343,14 @@ const TOOLS = [
   },
   {
     id: "atuacaoupp",
-    nome: "Atuação UPP/NAL 2026",
-    subtitulo: "Histórico de Atuação Legislativa",
+    nome: "Atuação UPP 2026",
+    subtitulo: "Entregas Estratégicas da Unidade de Políticas Públicas",
     accent: "#14b8a6",
-    icon: "📌",
+    icon: "🏛️",
     url: "../pippa-atuacao-upp/index.html",
-    descricao: "Painel interativo com o histórico de atuação da Unidade de Políticas Públicas e do Núcleo de Assessoria Legislativa (UPP/NAL) em 2026. Inclui linha do tempo do PLP 108/2021, articulação parlamentar com 12 parlamentares-chave e 7 frentes parlamentares, entregas a 8 Sebraes Estaduais, projeto Parlamento Mais Empreendedor, construção da Agenda Legislativa 2027 e métricas de capital político.",
-    features: ["Linha do tempo PLP 108/2021", "42 agendas institucionais", "56 visitas a gabinetes", "12 parlamentares com ações", "7 frentes parlamentares", "Parlamento Mais Empreendedor", "Agenda Legislativa 2027", "Capital político +30%"],
-    destaque: "Acompanhe toda a atuação estratégica do NAL no Congresso Nacional em 2026. Da articulação do PLP 108/2021 com seminários em 7 estados à mobilização de 7 frentes parlamentares e 28 atores estratégicos. Mais de 1.000 proposições monitoradas e capital político expandido em 30%."
+    descricao: "Portal de entregas estratégicas dos 3 núcleos da Unidade de Políticas Públicas (abril a outubro de 2026): NAL — Assessoria Legislativa (PLP 108, articulação parlamentar, Reforma Tributária, Novo Simples); Projetos Especiais — Movimenta (164 ações), Pró-Catadores (22 estados), Contrata+Brasil (Painel 360), Compras Sustentáveis, Oficinas de Transformação; RelGov — Relacionamento Governamental (18 entregas, ACTs, Defesa de Causa, economia criativa).",
+    features: ["3 núcleos: NAL, Projetos Especiais, RelGov", "48 entregas Projetos Especiais", "18 entregas RelGov", "164 ações Movimenta", "22 estados Pró-Catadores", "11 Sebrae no Contrata+Brasil", "PLP 108/2021 e Reforma Tributária", "Agenda Legislativa 2027"],
+    destaque: "Visão consolidada de todas as entregas da UPP em 2026. Do NAL no Congresso Nacional (1.000+ proposições, 56 visitas a gabinetes) ao Programa Movimenta com 100% de adesão dos estados, passando pelo Contrata+Brasil (Painel 360 lançado pelo presidente), Pró-Catadores em 22 estados e 18 entregas de Relacionamento Governamental."
   }
 ];
 
@@ -378,8 +378,8 @@ const QUESTIONS = [
   { texto: "Quero um diagnostico completo de um municipio", ferramentas: ["raioxmunicipal"], tema: "Territorial" },
   { texto: "Quais sao as vocacoes economicas de um municipio?", ferramentas: ["raioxmunicipal", "indicadores"], tema: "Territorial" },
   { texto: "Preciso de um raio-x territorial com dados cruzados", ferramentas: ["raioxmunicipal", "catalogo", "indicadores"], tema: "Territorial" },
-  { texto: "Como foi a atuação do NAL no Congresso em 2026?", ferramentas: ["atuacaoupp"], tema: "Politica" },
-  { texto: "Qual o histórico de articulação do PLP 108/2021?", ferramentas: ["atuacaoupp", "legislativo"], tema: "Legislacao" }
+  { texto: "Quais as entregas estratégicas da UPP em 2026?", ferramentas: ["atuacaoupp"], tema: "Politica" },
+  { texto: "Como está o Programa Movimenta e o Contrata+Brasil?", ferramentas: ["atuacaoupp"], tema: "Politica" }
 ];
 
 let activeQuestion = null;
