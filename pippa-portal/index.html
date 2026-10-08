@@ -151,8 +151,8 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
   <h1 class="hero-title">PIPPA</h1>
   <p class="hero-subtitle">Plataforma de Inteligencia em Politicas Publicas Aplicadas — ferramentas de monitoramento legislativo, orcamentario e territorial.</p>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">13</div><div class="hero-stat-label">Ferramentas</div></div>
-    <div class="hero-stat"><div class="hero-stat-value">13</div><div class="hero-stat-label">Dashboards</div></div>
+    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">14</div><div class="hero-stat-label">Ferramentas</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">14</div><div class="hero-stat-label">Dashboards</div></div>
     <div class="hero-stat"><div class="hero-stat-value">23</div><div class="hero-stat-label">Fontes de Dados</div></div>
     <div class="hero-stat"><div class="hero-stat-value">58</div><div class="hero-stat-label">Cubos Analiticos</div></div>
   </div>
@@ -340,6 +340,17 @@ const TOOLS = [
     descricao: "Relatorio-diagnostico que cruza ~20 cubos OLAP do Observatorio Sebrae com APIs publicas (IBGE, BCB, CAGED, INEP, ANS, ANATEL) para gerar um panorama completo de qualquer municipio brasileiro. Cobre tecido empresarial (RF), complexidade economica (ECI/RCA), emprego formal (CAGED), PIB e VAB, infraestrutura financeira (ESTBAN), educacao (IDEB), saude, conectividade (IBC) e presenca Sebrae — tudo filtrado por codigo IBGE.",
     features: ["~20 cubos OLAP cruzados", "Vocacoes territoriais (RCA)", "Complexidade economica (ECI)", "CAGED mensal", "PIB e composicao VAB", "Cobertura bancaria (ESTBAN)", "IDEB e censo escolar", "IBC conectividade (ANATEL)", "Benchmarking UF vs municipio", "Geracao automatica via Python"],
     destaque: "Panorama completo de Porto de Pedras — AL: 9.520 habitantes, 756 empresas, forte vocacao turistica (RCA Alojamento 2.360), saldo emprego +190, IBC 37.1 e 20 setores especializados. Relatorio gerado automaticamente cruzando dados de 10 fontes oficiais."
+  },
+  {
+    id: "atuacaoupp",
+    nome: "Atuação UPP/NAL 2026",
+    subtitulo: "Histórico de Atuação Legislativa",
+    accent: "#14b8a6",
+    icon: "📌",
+    url: "../pippa-atuacao-upp/index.html",
+    descricao: "Painel interativo com o histórico de atuação da Unidade de Políticas Públicas e do Núcleo de Assessoria Legislativa (UPP/NAL) em 2026. Inclui linha do tempo do PLP 108/2021, articulação parlamentar com 12 parlamentares-chave e 7 frentes parlamentares, entregas a 8 Sebraes Estaduais, projeto Parlamento Mais Empreendedor, construção da Agenda Legislativa 2027 e métricas de capital político.",
+    features: ["Linha do tempo PLP 108/2021", "42 agendas institucionais", "56 visitas a gabinetes", "12 parlamentares com ações", "7 frentes parlamentares", "Parlamento Mais Empreendedor", "Agenda Legislativa 2027", "Capital político +30%"],
+    destaque: "Acompanhe toda a atuação estratégica do NAL no Congresso Nacional em 2026. Da articulação do PLP 108/2021 com seminários em 7 estados à mobilização de 7 frentes parlamentares e 28 atores estratégicos. Mais de 1.000 proposições monitoradas e capital político expandido em 30%."
   }
 ];
 
@@ -366,7 +377,9 @@ const QUESTIONS = [
   { texto: "Quero uma visao completa de indicadores socioeconomicos", ferramentas: ["indicadores", "catalogo", "prototipo"], tema: "Indicadores" },
   { texto: "Quero um diagnostico completo de um municipio", ferramentas: ["raioxmunicipal"], tema: "Territorial" },
   { texto: "Quais sao as vocacoes economicas de um municipio?", ferramentas: ["raioxmunicipal", "indicadores"], tema: "Territorial" },
-  { texto: "Preciso de um raio-x territorial com dados cruzados", ferramentas: ["raioxmunicipal", "catalogo", "indicadores"], tema: "Territorial" }
+  { texto: "Preciso de um raio-x territorial com dados cruzados", ferramentas: ["raioxmunicipal", "catalogo", "indicadores"], tema: "Territorial" },
+  { texto: "Como foi a atuação do NAL no Congresso em 2026?", ferramentas: ["atuacaoupp"], tema: "Politica" },
+  { texto: "Qual o histórico de articulação do PLP 108/2021?", ferramentas: ["atuacaoupp", "legislativo"], tema: "Legislacao" }
 ];
 
 let activeQuestion = null;
