@@ -1523,14 +1523,27 @@
         <option value="RR">RR</option><option value="RS">RS</option><option value="SC">SC</option>
         <option value="SE">SE</option><option value="SP">SP</option><option value="TO">TO</option>
       </select>
-      <select id="fornMes" class="select-input" style="width:140px;">
-        <option value="">Selecione Mes</option>
-        <option value="01">Janeiro</option><option value="02">Fevereiro</option>
-        <option value="03">Marco</option><option value="04">Abril</option>
-        <option value="05">Maio</option><option value="06">Junho</option>
-        <option value="07">Julho</option><option value="08">Agosto</option>
-        <option value="09">Setembro</option><option value="10">Outubro</option>
-      </select>
+      <div id="fornMesContainer" style="position:relative;display:inline-block;">
+        <button type="button" id="fornMesBtn" onclick="toggleFornMesDropdown()" class="select-input" style="width:180px;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;">
+          <span id="fornMesBtnLabel">Selecione Meses</span>
+          <span style="font-size:10px;opacity:.6;">&#9660;</span>
+        </button>
+        <div id="fornMesDropdown" style="display:none;position:absolute;top:100%;left:0;z-index:1000;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:8px;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,.4);margin-top:4px;">
+          <label style="display:flex;align-items:center;gap:6px;padding:4px 6px;font-size:12px;font-weight:700;color:var(--rose);cursor:pointer;border-bottom:1px solid var(--border);margin-bottom:4px;padding-bottom:8px;">
+            <input type="checkbox" id="fornMesAll" onchange="toggleFornMesAll(this.checked)"> Todos os Meses
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;padding:3px 6px;font-size:12px;color:var(--text-primary);cursor:pointer;"><input type="checkbox" class="fornMesCb" value="01" onchange="updateFornMesLabel()"> Janeiro</label>
+          <label style="display:flex;align-items:center;gap:6px;padding:3px 6px;font-size:12px;color:var(--text-primary);cursor:pointer;"><input type="checkbox" class="fornMesCb" value="02" onchange="updateFornMesLabel()"> Fevereiro</label>
+          <label style="display:flex;align-items:center;gap:6px;padding:3px 6px;font-size:12px;color:var(--text-primary);cursor:pointer;"><input type="checkbox" class="fornMesCb" value="03" onchange="updateFornMesLabel()"> Marco</label>
+          <label style="display:flex;align-items:center;gap:6px;padding:3px 6px;font-size:12px;color:var(--text-primary);cursor:pointer;"><input type="checkbox" class="fornMesCb" value="04" onchange="updateFornMesLabel()"> Abril</label>
+          <label style="display:flex;align-items:center;gap:6px;padding:3px 6px;font-size:12px;color:var(--text-primary);cursor:pointer;"><input type="checkbox" class="fornMesCb" value="05" onchange="updateFornMesLabel()"> Maio</label>
+          <label style="display:flex;align-items:center;gap:6px;padding:3px 6px;font-size:12px;color:var(--text-primary);cursor:pointer;"><input type="checkbox" class="fornMesCb" value="06" onchange="updateFornMesLabel()"> Junho</label>
+          <label style="display:flex;align-items:center;gap:6px;padding:3px 6px;font-size:12px;color:var(--text-primary);cursor:pointer;"><input type="checkbox" class="fornMesCb" value="07" onchange="updateFornMesLabel()"> Julho</label>
+          <label style="display:flex;align-items:center;gap:6px;padding:3px 6px;font-size:12px;color:var(--text-primary);cursor:pointer;"><input type="checkbox" class="fornMesCb" value="08" onchange="updateFornMesLabel()"> Agosto</label>
+          <label style="display:flex;align-items:center;gap:6px;padding:3px 6px;font-size:12px;color:var(--text-primary);cursor:pointer;"><input type="checkbox" class="fornMesCb" value="09" onchange="updateFornMesLabel()"> Setembro</label>
+          <label style="display:flex;align-items:center;gap:6px;padding:3px 6px;font-size:12px;color:var(--text-primary);cursor:pointer;"><input type="checkbox" class="fornMesCb" value="10" onchange="updateFornMesLabel()"> Outubro</label>
+        </div>
+      </div>
       <select id="fornMod" class="select-input" style="width:180px;">
         <option value="">Todas Modalidades</option>
         <option value="6">Pregao Eletronico</option>
@@ -1551,10 +1564,11 @@
       o <strong>CNPJ</strong>, <strong>razao social</strong> e <strong>valor homologado</strong>.<br>
       <em>Fonte: API do PNCP em tempo real — Portal Nacional de Contratacoes Publicas (pncp.gov.br).</em>
       <div style="margin-top:10px;padding:10px 14px;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);border-radius:8px;font-size:12px;color:var(--text-muted);">
-        <strong style="color:var(--rose);">Tempo medio de consulta: 2 a 4 minutos.</strong>
+        <strong style="color:var(--rose);">Tempo medio de consulta: 2 a 5 minutos.</strong>
         A ferramenta consulta a API do PNCP em tempo real, buscando ate 50 contratacoes e identificando
         o fornecedor vencedor de cada uma individualmente. O tempo depende da velocidade de resposta da API.
-        Selecionar uma <strong>modalidade especifica</strong> reduz o tempo de consulta.
+        Selecionar uma <strong>modalidade especifica</strong> e <strong>menos meses</strong> reduz o tempo de consulta.
+        Voce pode selecionar <strong>multiplos meses</strong> para uma analise acumulada.
       </div>
     </div>
 
@@ -131694,6 +131708,34 @@ const FORN_DELAY = 600;
 let fornStartTime = 0;
 let fornTimerInterval = null;
 
+function toggleFornMesDropdown() {
+  const dd = document.getElementById('fornMesDropdown');
+  dd.style.display = dd.style.display === 'none' ? '' : 'none';
+}
+function toggleFornMesAll(checked) {
+  document.querySelectorAll('.fornMesCb').forEach(cb => { cb.checked = checked; });
+  updateFornMesLabel();
+}
+function updateFornMesLabel() {
+  const mesesNomes = {'01':'Jan','02':'Fev','03':'Mar','04':'Abr','05':'Mai','06':'Jun','07':'Jul','08':'Ago','09':'Set','10':'Out'};
+  const selected = getSelectedMeses();
+  const allCb = document.getElementById('fornMesAll');
+  allCb.checked = selected.length === 10;
+  if (selected.length === 0) document.getElementById('fornMesBtnLabel').textContent = 'Selecione Meses';
+  else if (selected.length === 10) document.getElementById('fornMesBtnLabel').textContent = 'Todos (Jan-Out)';
+  else if (selected.length <= 3) document.getElementById('fornMesBtnLabel').textContent = selected.map(m => mesesNomes[m]).join(', ');
+  else document.getElementById('fornMesBtnLabel').textContent = `${selected.length} meses selecionados`;
+}
+function getSelectedMeses() {
+  return [...document.querySelectorAll('.fornMesCb:checked')].map(cb => cb.value).sort();
+}
+document.addEventListener('click', function(e) {
+  const container = document.getElementById('fornMesContainer');
+  if (container && !container.contains(e.target)) {
+    document.getElementById('fornMesDropdown').style.display = 'none';
+  }
+});
+
 async function fetchPncpApi(url) {
   for (const proxy of PNCP_PROXIES) {
     try {
@@ -131731,17 +131773,18 @@ function fornUpdateProgress(pct, label, detail) {
 
 async function consultarFornecedores() {
   const uf = document.getElementById('fornUf').value;
-  const mes = document.getElementById('fornMes').value;
+  const mesesSel = getSelectedMeses();
   const mod = document.getElementById('fornMod').value;
 
-  if (!uf || !mes) {
-    showError('Selecione UF e mes para consultar.');
+  if (!uf || mesesSel.length === 0) {
+    showError('Selecione UF e pelo menos um mes para consultar.');
     return;
   }
 
-  const lastDay = new Date(2026, parseInt(mes), 0).getDate();
-  const di = `2026${mes}01`;
-  const df = `2026${mes}${lastDay}`;
+  document.getElementById('fornMesDropdown').style.display = 'none';
+
+  const mesesNomes = {'01':'Janeiro','02':'Fevereiro','03':'Marco','04':'Abril','05':'Maio','06':'Junho','07':'Julho','08':'Agosto','09':'Setembro','10':'Outubro'};
+  const mesLabel = mesesSel.length === 10 ? 'Jan-Out' : mesesSel.length <= 3 ? mesesSel.map(m => mesesNomes[m]).join(', ') : `${mesesSel.length} meses`;
 
   fornStartTime = Date.now();
   if (fornTimerInterval) clearInterval(fornTimerInterval);
@@ -131759,21 +131802,30 @@ async function consultarFornecedores() {
   document.getElementById('fornChartsRow2').style.display = 'none';
   document.getElementById('fornChartsRow3').style.display = 'none';
 
-  fornUpdateProgress(0, 'Buscando contratacoes...', `${uf} — ${mes}/2026`);
+  fornUpdateProgress(0, 'Buscando contratacoes...', `${uf} — ${mesLabel}/2026`);
 
   const mods = mod ? [parseInt(mod)] : [6, 8, 5, 9, 12];
   let allItems = [];
+  const totalListingOps = mesesSel.length * mods.length;
+  let listingDone = 0;
 
-  for (let i = 0; i < mods.length; i++) {
-    const url = `https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=${di}&dataFinal=${df}&uf=${uf}&codigoModalidadeContratacao=${mods[i]}&pagina=1&tamanhoPagina=50`;
-    fornUpdateProgress((i / mods.length) * 20, 'Buscando contratacoes...', `Modalidade ${mods[i]} (${i + 1}/${mods.length})`);
-    const data = await fetchPncpApi(url);
-    if (data) {
-      const items = Array.isArray(data) ? data : (data.data || []);
-      items.forEach(it => { it._modalidade = it.modalidadeNome || ''; });
-      allItems = allItems.concat(items);
+  for (const mes of mesesSel) {
+    const lastDay = new Date(2026, parseInt(mes), 0).getDate();
+    const di = `2026${mes}01`;
+    const df = `2026${mes}${lastDay}`;
+
+    for (let i = 0; i < mods.length; i++) {
+      const url = `https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=${di}&dataFinal=${df}&uf=${uf}&codigoModalidadeContratacao=${mods[i]}&pagina=1&tamanhoPagina=50`;
+      listingDone++;
+      fornUpdateProgress((listingDone / totalListingOps) * 20, 'Buscando contratacoes...', `${mesesNomes[mes]} — Modalidade ${mods[i]} (${listingDone}/${totalListingOps})`);
+      const data = await fetchPncpApi(url);
+      if (data) {
+        const items = Array.isArray(data) ? data : (data.data || []);
+        items.forEach(it => { it._modalidade = it.modalidadeNome || ''; it._mes = mes; });
+        allItems = allItems.concat(items);
+      }
+      await new Promise(r => setTimeout(r, FORN_DELAY));
     }
-    await new Promise(r => setTimeout(r, FORN_DELAY));
   }
 
   if (allItems.length === 0) {
@@ -131841,14 +131893,13 @@ async function consultarFornecedores() {
   clearInterval(fornTimerInterval);
   const elapsed = fornElapsedStr();
   fornUpdateProgress(95, 'Renderizando resultados...', `${resultados.length} fornecedores identificados`);
-  renderFornecedores(resultados, uf, mes);
+  renderFornecedores(resultados, uf, mesLabel);
   fornUpdateProgress(100, `Consulta concluida em ${elapsed}`, `${resultados.length} de ${contratacoes.length} contratacoes com resultado`);
   setTimeout(() => { document.getElementById('fornProgress').style.display = 'none'; }, 5000);
 }
 
-function renderFornecedores(data, uf, mes) {
-  const meses = {'01':'Janeiro','02':'Fevereiro','03':'Marco','04':'Abril','05':'Maio','06':'Junho','07':'Julho','08':'Agosto','09':'Setembro','10':'Outubro'};
-  const scope = `${uf} ${meses[mes]}/2026`;
+function renderFornecedores(data, uf, mesLabel) {
+  const scope = `${uf} — ${mesLabel}/2026`;
   const gc = 'rgba(255,255,255,.06)';
   const co = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#64748b', font: { size: 11 } } } } };
 
