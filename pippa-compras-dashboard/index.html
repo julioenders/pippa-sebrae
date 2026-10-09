@@ -1512,7 +1512,7 @@
       </div>
     </div>
     <div class="header-controls">
-      <select id="fornUf" class="select-input" style="width:120px;">
+      <select id="fornUf" class="select-input" style="width:120px;" onchange="carregarMunicipiosForn(this.value)">
         <option value="">Selecione UF</option>
         <option value="AC">AC</option><option value="AL">AL</option><option value="AM">AM</option>
         <option value="AP">AP</option><option value="BA">BA</option><option value="CE">CE</option>
@@ -1523,6 +1523,9 @@
         <option value="RJ">RJ</option><option value="RN">RN</option><option value="RO">RO</option>
         <option value="RR">RR</option><option value="RS">RS</option><option value="SC">SC</option>
         <option value="SE">SE</option><option value="SP">SP</option><option value="TO">TO</option>
+      </select>
+      <select id="fornMun" class="select-input" style="width:200px;" disabled>
+        <option value="">Todo o Estado</option>
       </select>
       <div id="fornMesContainer" style="position:relative;display:inline-block;">
         <button type="button" id="fornMesBtn" onclick="toggleFornMesDropdown()" class="select-input" style="width:180px;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;">
@@ -1560,15 +1563,13 @@
   <div class="pdde-main">
     <div class="pdde-summary" id="fornSummary">
       <strong>Consulta de Fornecedores em Contratacoes Publicas</strong><br>
-      Selecione UF e mes para consultar os fornecedores vencedores de licitacoes no PNCP.
+      Selecione UF, <strong>municipio</strong> (opcional) e mes para consultar os fornecedores vencedores de licitacoes no PNCP.
       Identifica automaticamente o <strong>porte da empresa</strong> (MPE, MEI, EPP ou Demais),
       o <strong>CNPJ</strong>, <strong>razao social</strong> e <strong>valor homologado</strong>.<br>
       <em>Fonte: API do PNCP em tempo real — Portal Nacional de Contratacoes Publicas (pncp.gov.br).</em>
       <div style="margin-top:10px;padding:10px 14px;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);border-radius:8px;font-size:12px;color:var(--text-muted);">
-        <strong style="color:var(--rose);">Tempo medio de consulta: 1 a 3 minutos.</strong>
-        A ferramenta consulta a API do PNCP em tempo real, buscando ate 50 contratacoes e identificando
-        o fornecedor vencedor de cada uma em lotes paralelos. O tempo depende da velocidade de resposta da API.
-        Selecionar uma <strong>modalidade especifica</strong> e <strong>menos meses</strong> reduz o tempo de consulta.
+        <strong style="color:var(--rose);">Dica: selecionar um municipio acelera muito a consulta</strong> — reduz o volume de dados e permite buscar ate 5 paginas (250 contratacoes) em vez de apenas 1.
+        Consulta estadual busca ate 50 contratacoes. O tempo depende da velocidade de resposta da API.
         Voce pode selecionar <strong>multiplos meses</strong> para uma analise acumulada.
       </div>
     </div>
@@ -131707,8 +131708,36 @@ function renderPncpMonDashboard() {
 let fornCharts = {};
 const FORN_DELAY = 200;
 const FORN_BATCH = 5;
+const FORN_MAX_PAGES = 5;
 let fornStartTime = 0;
 let fornTimerInterval = null;
+
+const UF_IBGE = {AC:12,AL:27,AM:13,AP:16,BA:29,CE:23,DF:53,ES:32,GO:52,MA:21,MG:31,MS:50,MT:51,PA:15,PB:25,PE:26,PI:22,PR:41,RJ:33,RN:24,RO:11,RR:14,RS:43,SC:42,SE:28,SP:35,TO:17};
+let fornMunicipiosCache = {};
+
+async function carregarMunicipiosForn(uf) {
+  const sel = document.getElementById('fornMun');
+  sel.innerHTML = '<option value="">Todo o Estado</option>';
+  if (!uf) { sel.disabled = true; return; }
+  if (uf === 'DF') { sel.disabled = true; return; }
+  if (fornMunicipiosCache[uf]) {
+    fornMunicipiosCache[uf].forEach(m => { const o = document.createElement('option'); o.value = m.id; o.textContent = m.nome; sel.appendChild(o); });
+    sel.disabled = false;
+    return;
+  }
+  sel.innerHTML = '<option value="">Carregando...</option>';
+  try {
+    const r = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${UF_IBGE[uf]}/municipios?orderBy=nome`);
+    const data = await r.json();
+    fornMunicipiosCache[uf] = data.map(m => ({ id: m.id, nome: m.nome }));
+    sel.innerHTML = '<option value="">Todo o Estado</option>';
+    fornMunicipiosCache[uf].forEach(m => { const o = document.createElement('option'); o.value = m.id; o.textContent = m.nome; sel.appendChild(o); });
+    sel.disabled = false;
+  } catch (_) {
+    sel.innerHTML = '<option value="">Todo o Estado</option>';
+    sel.disabled = false;
+  }
+}
 
 function toggleFornMesDropdown() {
   const dd = document.getElementById('fornMesDropdown');
@@ -131777,6 +131806,8 @@ async function consultarFornecedores() {
   const uf = document.getElementById('fornUf').value;
   const mesesSel = getSelectedMeses();
   const mod = document.getElementById('fornMod').value;
+  const munSel = document.getElementById('fornMun').value;
+  const munNome = munSel ? document.getElementById('fornMun').selectedOptions[0].textContent : '';
 
   if (!uf || mesesSel.length === 0) {
     showError('Selecione UF e pelo menos um mes para consultar.');
@@ -131787,6 +131818,7 @@ async function consultarFornecedores() {
 
   const mesesNomes = {'01':'Janeiro','02':'Fevereiro','03':'Marco','04':'Abril','05':'Maio','06':'Junho','07':'Julho','08':'Agosto','09':'Setembro','10':'Outubro'};
   const mesLabel = mesesSel.length === 10 ? 'Jan-Out' : mesesSel.length <= 3 ? mesesSel.map(m => mesesNomes[m]).join(', ') : `${mesesSel.length} meses`;
+  const localLabel = munNome ? `${munNome}/${uf}` : uf;
 
   fornStartTime = Date.now();
   if (fornTimerInterval) clearInterval(fornTimerInterval);
@@ -131804,33 +131836,67 @@ async function consultarFornecedores() {
   document.getElementById('fornChartsRow2').style.display = 'none';
   document.getElementById('fornChartsRow3').style.display = 'none';
 
-  fornUpdateProgress(0, 'Buscando contratacoes...', `${uf} — ${mesLabel}/2026`);
+  fornUpdateProgress(0, 'Buscando contratacoes...', `${localLabel} — ${mesLabel}/2026`);
 
   const mods = mod ? [parseInt(mod)] : [6, 8, 5, 9, 12];
+  const munParam = munSel ? `&codigoMunicipio=${munSel}` : '';
+  const maxPages = munSel ? FORN_MAX_PAGES : 1;
   let allItems = [];
+
   const listingJobs = [];
   for (const mes of mesesSel) {
     const lastDay = new Date(2026, parseInt(mes), 0).getDate();
     const di = `2026${mes}01`;
     const df = `2026${mes}${lastDay}`;
     for (const m of mods) {
-      listingJobs.push({ mes, m, url: `https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=${di}&dataFinal=${df}&uf=${uf}&codigoModalidadeContratacao=${m}&pagina=1&tamanhoPagina=50` });
+      listingJobs.push({ mes, m, di, df });
     }
   }
 
+  let totalFound = 0;
   for (let b = 0; b < listingJobs.length; b += FORN_BATCH) {
     const batch = listingJobs.slice(b, b + FORN_BATCH);
     const done = Math.min(b + FORN_BATCH, listingJobs.length);
-    fornUpdateProgress((done / listingJobs.length) * 20, 'Buscando contratacoes...', `Lote ${Math.floor(b / FORN_BATCH) + 1}/${Math.ceil(listingJobs.length / FORN_BATCH)}`);
-    const results = await Promise.allSettled(batch.map(j => fetchPncpApi(j.url)));
-    results.forEach((r, idx) => {
-      if (r.status === 'fulfilled' && r.value) {
-        const items = Array.isArray(r.value) ? r.value : (r.value.data || []);
-        items.forEach(it => { it._modalidade = it.modalidadeNome || ''; it._mes = batch[idx].mes; });
-        allItems = allItems.concat(items);
+    fornUpdateProgress((done / listingJobs.length) * 15, 'Buscando contratacoes...', `${localLabel} — Lote ${Math.floor(b / FORN_BATCH) + 1}/${Math.ceil(listingJobs.length / FORN_BATCH)}`);
+
+    const page1Results = await Promise.allSettled(batch.map(j => {
+      const url = `https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=${j.di}&dataFinal=${j.df}&uf=${uf}${munParam}&codigoModalidadeContratacao=${j.m}&pagina=1&tamanhoPagina=50`;
+      return fetchPncpApi(url).then(d => ({ data: d, job: j }));
+    }));
+
+    const extraPageJobs = [];
+    page1Results.forEach(r => {
+      if (r.status !== 'fulfilled' || !r.value.data) return;
+      const d = r.value.data;
+      const job = r.value.job;
+      const items = Array.isArray(d) ? d : (d.data || []);
+      items.forEach(it => { it._modalidade = it.modalidadeNome || ''; it._mes = job.mes; });
+      allItems = allItems.concat(items);
+      const total = d.totalRegistros || items.length;
+      totalFound += total;
+      if (maxPages > 1 && total > 50) {
+        const pages = Math.min(Math.ceil(total / 50), maxPages);
+        for (let p = 2; p <= pages; p++) {
+          extraPageJobs.push({ mes: job.mes, m: job.m, url: `https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=${job.di}&dataFinal=${job.df}&uf=${uf}${munParam}&codigoModalidadeContratacao=${job.m}&pagina=${p}&tamanhoPagina=50` });
+        }
       }
     });
     await new Promise(r => setTimeout(r, FORN_DELAY));
+
+    if (extraPageJobs.length > 0) {
+      for (let ep = 0; ep < extraPageJobs.length; ep += FORN_BATCH) {
+        const epBatch = extraPageJobs.slice(ep, ep + FORN_BATCH);
+        fornUpdateProgress(16, 'Buscando paginas adicionais...', `${localLabel} — Pagina extra ${ep + 1}/${extraPageJobs.length}`);
+        const epResults = await Promise.allSettled(epBatch.map(j => fetchPncpApi(j.url).then(d => ({ data: d, mes: j.mes }))));
+        epResults.forEach(r => {
+          if (r.status !== 'fulfilled' || !r.value.data) return;
+          const items = Array.isArray(r.value.data) ? r.value.data : (r.value.data.data || []);
+          items.forEach(it => { it._modalidade = it.modalidadeNome || ''; it._mes = r.value.mes; });
+          allItems = allItems.concat(items);
+        });
+        await new Promise(r => setTimeout(r, FORN_DELAY));
+      }
+    }
   }
 
   if (allItems.length === 0) {
@@ -131846,7 +131912,8 @@ async function consultarFornecedores() {
     const key = it.numeroControlePNCP || `${(it.orgaoEntidade||{}).cnpj}-${it.anoCompra}-${it.sequencialCompra}`;
     if (!seen.has(key)) { seen.add(key); unique.push(it); }
   }
-  const contratacoes = unique.slice(0, 50);
+  const maxContratacoes = munSel ? 200 : 50;
+  const contratacoes = unique.slice(0, maxContratacoes);
 
   fornUpdateProgress(20, `Consultando ${contratacoes.length} fornecedores...`, 'Buscando resultados em lotes paralelos');
 
@@ -131900,13 +131967,13 @@ async function consultarFornecedores() {
   clearInterval(fornTimerInterval);
   const elapsed = fornElapsedStr();
   fornUpdateProgress(95, 'Renderizando resultados...', `${resultados.length} fornecedores identificados`);
-  renderFornecedores(resultados, uf, mesLabel);
+  renderFornecedores(resultados, localLabel, mesLabel);
   fornUpdateProgress(100, `Consulta concluida em ${elapsed}`, `${resultados.length} de ${contratacoes.length} contratacoes com resultado`);
   setTimeout(() => { document.getElementById('fornProgress').style.display = 'none'; }, 5000);
 }
 
-function renderFornecedores(data, uf, mesLabel) {
-  const scope = `${uf} — ${mesLabel}/2026`;
+function renderFornecedores(data, localLabel, mesLabel) {
+  const scope = `${localLabel} — ${mesLabel}/2026`;
   const gc = 'rgba(255,255,255,.06)';
   const co = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#64748b', font: { size: 11 } } } } };
 
