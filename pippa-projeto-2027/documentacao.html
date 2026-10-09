@@ -120,7 +120,7 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
     </div>
   </div>
   <div class="stats-bar">
-    <div class="stat-box"><div class="val" style="color:var(--cyan)">12</div><div class="lbl">Ferramentas</div></div>
+    <div class="stat-box"><div class="val" style="color:var(--cyan)">13</div><div class="lbl">Ferramentas</div></div>
     <div class="stat-box"><div class="val" style="color:var(--blue)">14</div><div class="lbl">APIs Externas</div></div>
     <div class="stat-box"><div class="val" style="color:var(--amber)">6</div><div class="lbl">Pipelines</div></div>
     <div class="stat-box"><div class="val" style="color:var(--emerald-light)">1</div><div class="lbl">Lib (Chart.js)</div></div>
@@ -161,7 +161,92 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
   </div>
 
   <!-- Ferramentas -->
-  <div class="section-title">🔧 Ferramentas Documentadas (12)</div>
+  <div class="section-title">🔧 Ferramentas Documentadas (13)</div>
+
+  <!-- 0. Portal PIPPA -->
+  <div class="tool-card" id="portal">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(16,185,129,.12);color:var(--emerald-light)">🏠</div>
+      <div class="tool-info">
+        <div class="tool-name">Portal PIPPA</div>
+        <div class="tool-desc">Hub central de acesso a todas as ferramentas do observatorio com filtro por perguntas norteadoras</div>
+        <div class="tool-tags">
+          <span class="tag tag-static">100% Estatico</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>pippa-portal/index.html</code> (~589 linhas)</li>
+            <li>100% estatico — sem APIs, sem fetch(), sem build steps</li>
+            <li>Layout: top-nav sticky + hero com stats + search bar + sidebar (320px) com perguntas + grid de cards</li>
+            <li>Responsivo: colapsa para coluna unica em telas < 768px</li>
+            <li>Vanilla HTML/CSS/JS — sem nenhuma biblioteca externa (nem Chart.js)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚙️ Configuracao</div>
+        <div class="doc-content">
+          <p>Tres arrays JS controlam todo o conteudo:</p>
+          <table class="api-table">
+            <thead><tr><th>Array</th><th>Campos</th><th>Funcao</th></tr></thead>
+            <tbody>
+              <tr><td><code>TOOLS</code></td><td><code>id, nome, subtitulo, accent, icon, url, descricao, features[], destaque</code></td><td>Define cada ferramenta e seu card</td></tr>
+              <tr><td><code>QUESTIONS</code></td><td><code>texto, ferramentas[], macro</code></td><td>Perguntas norteadoras que filtram os cards por ID</td></tr>
+              <tr><td><code>MACRO_TEMAS</code></td><td><code>key, nome, icone</code></td><td>6 grupos tematicos que agrupam as perguntas</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔑 Funcionalidades</div>
+        <div class="doc-content">
+          <ul>
+            <li><strong>Busca:</strong> Filtro de texto em tempo real (nome, subtitulo, descricao, features)</li>
+            <li><strong>Filtro por macro-tema:</strong> Clicar no header do grupo filtra todas as ferramentas do tema</li>
+            <li><strong>Filtro por pergunta:</strong> Clicar em uma pergunta especifica filtra as ferramentas mapeadas</li>
+            <li><strong>Cards expandiveis:</strong> Clique revela descricao completa, tags de features, destaque e link de acesso</li>
+            <li><strong>Contadores dinamicos:</strong> "Visiveis" e "Exibindo X de Y" atualizam em tempo real</li>
+            <li><strong>Links externos:</strong> URLs com <code>http</code> abrem em nova aba; URLs relativas navegam no mesmo contexto</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">📚 Dependencias</div>
+        <div class="doc-content">
+          <ul>
+            <li>Google Fonts (Inter) via CDN — unica dependencia externa</li>
+            <li>Sem Chart.js, sem frameworks, sem build tools</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar <code>index.html</code> para o servidor</li>
+            <li>Garantir que as pastas-irmãs das ferramentas existam nos caminhos relativos corretos (ex: <code>../pippa-emendas/</code>, <code>../pippa-legislativo-dashboard/</code>)</li>
+            <li>Para adicionar uma ferramenta: inserir objeto no array <code>TOOLS</code> com <code>id</code>, <code>nome</code>, <code>url</code>, etc.</li>
+            <li>Para adicionar perguntas: inserir no array <code>QUESTIONS</code> com <code>ferramentas[]</code> mapeando IDs de tools</li>
+            <li>Para criar novo macro-tema: inserir no array <code>MACRO_TEMAS</code> com <code>key</code> correspondente</li>
+            <li>Atualizar os stats do hero (Ferramentas, Fontes, Cubos) manualmente no HTML</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">Os stats do hero (Ferramentas, Dashboards, Fontes, Cubos) sao hardcoded no HTML e nao derivam dos arrays JS. Ao adicionar/remover ferramentas, e necessario atualizar manualmente esses valores. Links relativos dependem da estrutura de pastas-irmãs no deploy.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- 1. Emendas -->
   <div class="tool-card" id="emendas">
