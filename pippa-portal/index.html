@@ -48,13 +48,27 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
 .sidebar-label{font-size:11px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
 .sidebar-label svg{width:14px;height:14px;color:#10b981;}
 .sidebar-desc{font-size:12px;color:#64748b;margin-bottom:16px;line-height:1.5;}
-.questions-wrap{display:flex;flex-direction:column;gap:6px;}
-.q-chip{display:flex;align-items:center;gap:8px;background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 14px;font-size:12.5px;color:#94a3b8;cursor:pointer;transition:all .25s;line-height:1.4;text-align:left;font-family:inherit;width:100%;}
+.questions-wrap{display:flex;flex-direction:column;gap:4px;}
+.q-group{border:1px solid rgba(255,255,255,.06);border-radius:10px;overflow:hidden;transition:border-color .2s;}
+.q-group.has-active{border-color:rgba(16,185,129,.25);}
+.q-group-header{display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(15,23,42,.6);cursor:pointer;transition:all .2s;user-select:none;}
+.q-group-header:hover{background:rgba(16,185,129,.06);}
+.q-group-icon{font-size:13px;flex-shrink:0;transition:transform .2s;}
+.q-group.open .q-group-icon{transform:rotate(90deg);}
+.q-group-name{flex:1;font-size:12px;font-weight:600;color:#cbd5e1;letter-spacing:.3px;}
+.q-group-badge{font-size:10px;font-weight:600;background:rgba(255,255,255,.06);color:#64748b;padding:2px 7px;border-radius:6px;flex-shrink:0;}
+.q-group.has-active .q-group-badge{background:rgba(16,185,129,.2);color:#a7f3d0;}
+.q-group-body{display:none;padding:4px 8px 8px;gap:4px;flex-direction:column;}
+.q-group.open .q-group-body{display:flex;}
+.q-group-body.two-col{display:none;flex-direction:row;flex-wrap:wrap;gap:4px;}
+.q-group.open .q-group-body.two-col{display:flex;}
+.q-group-body.two-col .q-chip{width:calc(50% - 2px);}
+.q-chip{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 10px;font-size:11.5px;color:#94a3b8;cursor:pointer;transition:all .25s;line-height:1.35;text-align:left;font-family:inherit;width:100%;}
 .q-chip:hover{border-color:rgba(16,185,129,.3);color:#e2e8f0;background:rgba(16,185,129,.06);}
 .q-chip.active{border-color:#10b981;color:#a7f3d0;background:rgba(16,185,129,.12);box-shadow:0 0 0 2px rgba(16,185,129,.1);}
-.q-chip .q-icon{font-size:11px;opacity:.6;flex-shrink:0;}
+.q-chip .q-icon{font-size:10px;opacity:.6;flex-shrink:0;}
 .q-chip .q-text{flex:1;}
-.q-chip .q-count{font-size:10px;font-weight:600;background:rgba(255,255,255,.06);color:#64748b;padding:2px 6px;border-radius:6px;min-width:18px;text-align:center;flex-shrink:0;}
+.q-chip .q-count{font-size:9px;font-weight:600;background:rgba(255,255,255,.06);color:#64748b;padding:2px 5px;border-radius:5px;min-width:16px;text-align:center;flex-shrink:0;}
 .q-chip.active .q-count{background:rgba(16,185,129,.2);color:#a7f3d0;}
 .clear-filter{display:none;align-items:center;justify-content:center;gap:5px;width:100%;margin-top:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:9px 14px;font-size:12px;color:#fca5a5;cursor:pointer;transition:all .2s;font-family:inherit;}
 .clear-filter:hover{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.35);color:#fecaca;}
@@ -366,47 +380,71 @@ const TOOLS = [
 ];
 
 const QUESTIONS = [
-  { texto: "Como estao sendo executadas as emendas parlamentares?", ferramentas: ["emendas"], tema: "Orcamento" },
-  { texto: "Quais licitacoes estao abertas para MPEs?", ferramentas: ["compras"], tema: "Compras" },
-  { texto: "Quais projetos de lei impactam pequenas empresas?", ferramentas: ["legislativo"], tema: "Legislacao" },
-  { texto: "Qual o cenario eleitoral e seus impactos?", ferramentas: ["pesquisas"], tema: "Eleicoes" },
-  { texto: "Como a reforma tributaria afeta meu negocio?", ferramentas: ["reforma"], tema: "Tributacao" },
-  { texto: "Quais dados tenho disponiveis para analise?", ferramentas: ["catalogo"], tema: "Dados" },
-  { texto: "Quero ver a plataforma em producao", ferramentas: ["prototipo"], tema: "Plataforma" },
-  { texto: "Como esta a execução orçamentária da UPP?", ferramentas: ["orcamento"], tema: "Orcamento" },
-  { texto: "Preciso de inteligencia orcamentaria completa", ferramentas: ["emendas", "compras", "orcamento"], tema: "Orcamento" },
-  { texto: "Quero entender o cenario politico-legislativo", ferramentas: ["legislativo", "pesquisas", "emendas"], tema: "Politica" },
-  { texto: "Preciso de dados territoriais e economicos", ferramentas: ["catalogo", "prototipo"], tema: "Territorial" },
-  { texto: "Como esta organizado o NAL?", ferramentas: ["mindmap"], tema: "Estrutura" },
-  { texto: "Quero uma visao completa das frentes de trabalho", ferramentas: ["mindmap", "catalogo", "prototipo"], tema: "Estrategia" },
-  { texto: "Como funcionam os laboratorios de experimentacao?", ferramentas: ["transformalab"], tema: "Experimentacao" },
-  { texto: "Quero ver evidencias de impacto em politicas publicas", ferramentas: ["transformalab", "catalogo", "prototipo"], tema: "Evidencias" },
-  { texto: "Quais normas do DOU afetam pequenas empresas?", ferramentas: ["regulatorio"], tema: "Regulatorio" },
-  { texto: "Preciso acompanhar o cenario regulatorio completo", ferramentas: ["regulatorio", "legislativo", "reforma"], tema: "Regulatorio" },
-  { texto: "Como esta o ambiente de negocios no Brasil?", ferramentas: ["indicadores"], tema: "Indicadores" },
-  { texto: "Qual o tempo de abertura de empresas por estado?", ferramentas: ["indicadores"], tema: "Indicadores" },
-  { texto: "Quero uma visao completa de indicadores socioeconomicos", ferramentas: ["indicadores", "catalogo", "prototipo"], tema: "Indicadores" },
-  { texto: "Quero um diagnostico completo de um municipio", ferramentas: ["raioxmunicipal"], tema: "Territorial" },
-  { texto: "Quais sao as vocacoes economicas de um municipio?", ferramentas: ["raioxmunicipal", "indicadores"], tema: "Territorial" },
-  { texto: "Preciso de um raio-x territorial com dados cruzados", ferramentas: ["raioxmunicipal", "catalogo", "indicadores"], tema: "Territorial" },
-  { texto: "Quais as entregas estratégicas da UPP em 2026?", ferramentas: ["atuacaoupp"], tema: "Politica" },
-  { texto: "Como está o Programa Movimenta e o Contrata+Brasil?", ferramentas: ["atuacaoupp"], tema: "Politica" },
-  { texto: "Qual o plano de implantação nacional do PIPPA?", ferramentas: ["projeto2027"], tema: "Estrategia" },
-  { texto: "Qual a equipe, orçamento e cronograma para 2027?", ferramentas: ["projeto2027"], tema: "Estrategia" },
-  { texto: "Como será a expansão para os estados?", ferramentas: ["projeto2027", "transformalab"], tema: "Estrategia" }
+  { texto: "Como estao sendo executadas as emendas parlamentares?", ferramentas: ["emendas"], macro: "orcamento" },
+  { texto: "Quais licitacoes estao abertas para MPEs?", ferramentas: ["compras"], macro: "orcamento" },
+  { texto: "Como esta a execução orçamentária da UPP?", ferramentas: ["orcamento"], macro: "orcamento" },
+  { texto: "Preciso de inteligencia orcamentaria completa", ferramentas: ["emendas", "compras", "orcamento"], macro: "orcamento" },
+  { texto: "Quais projetos de lei impactam pequenas empresas?", ferramentas: ["legislativo"], macro: "legislativo" },
+  { texto: "Como a reforma tributaria afeta meu negocio?", ferramentas: ["reforma"], macro: "legislativo" },
+  { texto: "Quais normas do DOU afetam pequenas empresas?", ferramentas: ["regulatorio"], macro: "legislativo" },
+  { texto: "Preciso acompanhar o cenario regulatorio completo", ferramentas: ["regulatorio", "legislativo", "reforma"], macro: "legislativo" },
+  { texto: "Qual o cenario eleitoral e seus impactos?", ferramentas: ["pesquisas"], macro: "politico" },
+  { texto: "Quero entender o cenario politico-legislativo", ferramentas: ["legislativo", "pesquisas", "emendas"], macro: "politico" },
+  { texto: "Quais as entregas estratégicas da UPP em 2026?", ferramentas: ["atuacaoupp"], macro: "politico" },
+  { texto: "Como está o Programa Movimenta e o Contrata+Brasil?", ferramentas: ["atuacaoupp"], macro: "politico" },
+  { texto: "Como esta o ambiente de negocios no Brasil?", ferramentas: ["indicadores"], macro: "territorial" },
+  { texto: "Qual o tempo de abertura de empresas por estado?", ferramentas: ["indicadores"], macro: "territorial" },
+  { texto: "Preciso de dados territoriais e economicos", ferramentas: ["catalogo", "prototipo"], macro: "territorial" },
+  { texto: "Quero um diagnostico completo de um municipio", ferramentas: ["raioxmunicipal"], macro: "territorial" },
+  { texto: "Quais sao as vocacoes economicas de um municipio?", ferramentas: ["raioxmunicipal", "indicadores"], macro: "territorial" },
+  { texto: "Preciso de um raio-x territorial com dados cruzados", ferramentas: ["raioxmunicipal", "catalogo", "indicadores"], macro: "territorial" },
+  { texto: "Quero uma visao completa de indicadores socioeconomicos", ferramentas: ["indicadores", "catalogo", "prototipo"], macro: "territorial" },
+  { texto: "Como esta organizado o NAL?", ferramentas: ["mindmap"], macro: "estrategia" },
+  { texto: "Quero uma visao completa das frentes de trabalho", ferramentas: ["mindmap", "catalogo", "prototipo"], macro: "estrategia" },
+  { texto: "Qual o plano de implantação nacional do PIPPA?", ferramentas: ["projeto2027"], macro: "estrategia" },
+  { texto: "Qual a equipe, orçamento e cronograma para 2027?", ferramentas: ["projeto2027"], macro: "estrategia" },
+  { texto: "Como será a expansão para os estados?", ferramentas: ["projeto2027", "transformalab"], macro: "estrategia" },
+  { texto: "Como funcionam os laboratorios de experimentacao?", ferramentas: ["transformalab"], macro: "experimentacao" },
+  { texto: "Quero ver evidencias de impacto em politicas publicas", ferramentas: ["transformalab", "catalogo", "prototipo"], macro: "experimentacao" },
+  { texto: "Quais dados tenho disponiveis para analise?", ferramentas: ["catalogo"], macro: "experimentacao" },
+  { texto: "Quero ver a plataforma em producao", ferramentas: ["prototipo"], macro: "experimentacao" }
+];
+
+const MACRO_TEMAS = [
+  { key: "orcamento", nome: "Orçamento e Compras", icone: "💰" },
+  { key: "legislativo", nome: "Legislativo e Regulatório", icone: "⚖️" },
+  { key: "politico", nome: "Político e Institucional", icone: "🏛️" },
+  { key: "territorial", nome: "Territorial e Indicadores", icone: "🗺️" },
+  { key: "estrategia", nome: "Estratégia e Governança", icone: "🎯" },
+  { key: "experimentacao", nome: "Experimentação e Dados", icone: "🔬" }
 ];
 
 let activeQuestion = null;
 
 function renderQuestions() {
   const wrap = document.getElementById("questionsWrap");
-  QUESTIONS.forEach((q, i) => {
-    const chip = document.createElement("button");
-    chip.className = "q-chip";
-    chip.dataset.index = i;
-    chip.innerHTML = `<span class="q-icon">?</span><span class="q-text">${q.texto}</span><span class="q-count">${q.ferramentas.length}</span>`;
-    chip.onclick = () => toggleQuestion(i);
-    wrap.appendChild(chip);
+  MACRO_TEMAS.forEach(macro => {
+    const groupQuestions = QUESTIONS.map((q, i) => ({...q, globalIndex: i})).filter(q => q.macro === macro.key);
+    const group = document.createElement("div");
+    group.className = "q-group";
+    group.dataset.macro = macro.key;
+    const header = document.createElement("div");
+    header.className = "q-group-header";
+    header.innerHTML = `<span class="q-group-icon">▸</span><span class="q-group-name">${macro.icone} ${macro.nome}</span><span class="q-group-badge">${groupQuestions.length}</span>`;
+    header.onclick = () => group.classList.toggle("open");
+    group.appendChild(header);
+    const body = document.createElement("div");
+    body.className = "q-group-body" + (groupQuestions.length >= 5 ? " two-col" : "");
+    groupQuestions.forEach(q => {
+      const chip = document.createElement("button");
+      chip.className = "q-chip";
+      chip.dataset.index = q.globalIndex;
+      chip.innerHTML = `<span class="q-icon">?</span><span class="q-text">${q.texto}</span><span class="q-count">${q.ferramentas.length}</span>`;
+      chip.onclick = (e) => { e.stopPropagation(); toggleQuestion(q.globalIndex); };
+      body.appendChild(chip);
+    });
+    group.appendChild(body);
+    wrap.appendChild(group);
   });
   const clearBtn = document.createElement("button");
   clearBtn.className = "clear-filter";
@@ -417,11 +455,14 @@ function renderQuestions() {
 }
 
 function toggleQuestion(index) {
-  const chips = document.querySelectorAll(".q-chip");
   if (activeQuestion === index) { clearFilter(); return; }
   activeQuestion = index;
-  chips.forEach(c => c.classList.remove("active"));
-  chips[index].classList.add("active");
+  document.querySelectorAll(".q-chip").forEach(c => c.classList.remove("active"));
+  const activeChip = document.querySelector(`.q-chip[data-index="${index}"]`);
+  if (activeChip) activeChip.classList.add("active");
+  document.querySelectorAll(".q-group").forEach(g => g.classList.remove("has-active"));
+  const parentGroup = activeChip?.closest(".q-group");
+  if (parentGroup) { parentGroup.classList.add("open", "has-active"); }
   document.getElementById("clearBtn").style.display = "inline-flex";
   document.getElementById("searchBox").value = "";
   applyQuestionFilter(QUESTIONS[index].ferramentas);
@@ -441,6 +482,7 @@ function applyQuestionFilter(visibleIds) {
 function clearFilter() {
   activeQuestion = null;
   document.querySelectorAll(".q-chip").forEach(c => c.classList.remove("active"));
+  document.querySelectorAll(".q-group").forEach(g => g.classList.remove("has-active"));
   document.getElementById("clearBtn").style.display = "none";
   document.getElementById("searchBox").value = "";
   TOOLS.forEach(t => document.getElementById(`card-${t.id}`).classList.remove("hidden"));
@@ -500,6 +542,7 @@ function filterCards() {
   if (q) {
     activeQuestion = null;
     document.querySelectorAll(".q-chip").forEach(c => c.classList.remove("active"));
+    document.querySelectorAll(".q-group").forEach(g => g.classList.remove("has-active"));
     document.getElementById("clearBtn").style.display = "inline-flex";
   } else if (activeQuestion === null) {
     document.getElementById("clearBtn").style.display = "none";
