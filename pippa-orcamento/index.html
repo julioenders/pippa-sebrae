@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PIPPA Orçamento — Inteligência Orçamentária UPP 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
 :root {
@@ -14,7 +17,7 @@
   --radius: 12px; --shadow: 0 4px 24px rgba(0,0,0,.4);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; }
+body { background:var(--bg); color:var(--text); font-family:'Inter','Segoe UI',system-ui,sans-serif; min-height:100vh; }
 a { color:var(--accent); text-decoration:none; }
 
 .header {
@@ -565,7 +568,7 @@ function applyFilters() {
 
   filteredOrc = DATA.orcamento.filter(o => (!nucleo || o.nucleo===nucleo) && (!activeProjeto || o.projeto===activeProjeto));
   filteredExec = DATA.execucao.filter(e => (!nucleo || e.nucleo===nucleo) && (!activeProjeto || e.projeto===activeProjeto));
-  filteredMetas = DATA.metas.filter(m => (!nucleo || m.nucleo===nucleo));
+  filteredMetas = DATA.metas.filter(m => (!nucleo || m.nucleo===nucleo) && (!activeProjeto || m.projeto===activeProjeto));
 
   renderAll();
 }
