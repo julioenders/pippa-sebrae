@@ -753,15 +753,15 @@
         <div class="mpe-note-title" style="color:#06b6d4">Oportunidades para MEI</div>
         <div class="mpe-level">
           <span class="mpe-dot" style="background:#06b6d4"></span>
-          <div><span class="mpe-label">Portal MEI</span> — Contratacoes via Contrata+Brasil, portal federal desenhado para MEIs participarem diretamente.</div>
+          <div><span class="mpe-label">Portal MEI</span> — Contratacoes via <strong>Contrata+Brasil</strong> (contratamaisbrasil.sistema.gov.br), portal federal exclusivo para MEIs. Oportunidades limitadas a <strong>prestacao de servicos</strong> e <strong>fornecimento de alimentos</strong> para a administracao publica.</div>
         </div>
         <div class="mpe-level">
           <span class="mpe-dot" style="background:#22d3ee"></span>
-          <div><span class="mpe-label">Dispensa MEI</span> — Dispensas ate R$ 50.000 (Art. 75, II, Lei 14.133/2021), compativeis com faturamento anual MEI (R$ 81.000).</div>
+          <div><span class="mpe-label">Dispensa MEI</span> — Dispensas ate R$ 50.000 (Art. 75, II, Lei 14.133/2021), compativeis com faturamento anual MEI (R$ 81.000). Restrito a servicos e alimentos.</div>
         </div>
         <div class="mpe-level">
           <span class="mpe-dot" style="background:#67e8f9"></span>
-          <div><span class="mpe-label">Setor MEI</span> — Licitacoes em atividades tipicas de MEI (alimentacao, limpeza, textil, grafica, construcao, eletrico, agro).</div>
+          <div><span class="mpe-label">Setor MEI</span> — Licitacoes em setores compativeis: <strong>servicos</strong> (limpeza, construcao, eletrico, grafica) e <strong>alimentos</strong> (alimentacao, agro). Conforme Contrata+Brasil.</div>
         </div>
       </div>
 
@@ -799,9 +799,9 @@
           <div class="kpi-value kpi-exclusiva" id="kpiExclusiva">—</div>
           <div class="kpi-label">Exclusivas MPE</div>
         </div>
-        <div class="kpi-card">
+        <div class="kpi-card" title="MEI: oportunidades restritas a servicos e alimentos (Contrata+Brasil)">
           <div class="kpi-value" style="color:#06b6d4" id="kpiMEIPrimary">—</div>
-          <div class="kpi-label">Oportunidades MEI</div>
+          <div class="kpi-label">Oportunidades MEI <span style="font-size:0.65em;opacity:0.7">(Servicos/Alimentos)</span></div>
         </div>
         <div class="kpi-card">
           <div class="kpi-value kpi-pregao" id="kpiPregao">—</div>
@@ -1476,10 +1476,11 @@
     </ul>
 
     <h3>Classificacao MEI (Microempreendedor Individual)</h3>
+    <p>Conforme o portal <strong>Contrata+Brasil</strong> (contratamaisbrasil.sistema.gov.br), as oportunidades para MEI sao exclusivamente nas categorias de <strong>prestacao de servicos</strong> e <strong>fornecimento de alimentos</strong> para a administracao publica.</p>
     <ul>
-      <li><strong>Portal MEI:</strong> Contratacoes publicadas via Contrata+Brasil — identificado pelo campo Portal de Contratacao no PNCP.</li>
-      <li><strong>Dispensa MEI:</strong> Dispensas ate R$ 50.000 (Art. 75, II da Lei 14.133/2021).</li>
-      <li><strong>Setor MEI:</strong> Licitacoes em setores compativeis com atividades tipicas de MEI.</li>
+      <li><strong>Portal MEI:</strong> Contratacoes publicadas via Contrata+Brasil (contratamaisbrasil.sistema.gov.br) — portal federal exclusivo para MEIs, com oportunidades em servicos e alimentos.</li>
+      <li><strong>Dispensa MEI:</strong> Dispensas ate R$ 50.000 (Art. 75, II da Lei 14.133/2021). Restrito a servicos e alimentos.</li>
+      <li><strong>Setor MEI:</strong> Licitacoes em setores compativeis: servicos (limpeza, construcao, eletrico, grafica) e alimentos (alimentacao, agro).</li>
     </ul>
 
     <h3>Base Legal — Vantagens para MPE</h3>
@@ -1592,9 +1593,9 @@
         <div class="kpi-value" style="color:var(--green)" id="fornKpiMpe">—</div>
         <div class="kpi-label">MPE (ME + EPP)</div>
       </div>
-      <div class="kpi-card">
+      <div class="kpi-card" title="MEI: oportunidades restritas a servicos e alimentos (Contrata+Brasil)">
         <div class="kpi-value" style="color:var(--orange)" id="fornKpiMei">—</div>
-        <div class="kpi-label">MEI</div>
+        <div class="kpi-label">MEI <span style="font-size:0.65em;opacity:0.7">(Servicos/Alimentos)</span></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-value" style="color:var(--accent)" id="fornKpiDemais">—</div>
@@ -1855,7 +1856,7 @@ function detectSetores(item) {
   return found.length > 0 ? found : ['outros'];
 }
 
-const SETORES_MEI = ['alimentacao','limpeza','textil','grafica','construcao','eletrico','agro','combustivel','mobiliario'];
+const SETORES_MEI = ['alimentacao','limpeza','grafica','construcao','eletrico','agro'];
 
 function classifyMEI(item) {
   const usuario = (item.usuarioNome || '').toLowerCase();
