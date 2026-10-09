@@ -151,8 +151,8 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
   <h1 class="hero-title">PIPPA</h1>
   <p class="hero-subtitle">Plataforma de Inteligencia em Politicas Publicas Aplicadas — ferramentas de monitoramento legislativo, orcamentario e territorial.</p>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">14</div><div class="hero-stat-label">Ferramentas</div></div>
-    <div class="hero-stat"><div class="hero-stat-value">14</div><div class="hero-stat-label">Dashboards</div></div>
+    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">15</div><div class="hero-stat-label">Ferramentas</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">15</div><div class="hero-stat-label">Dashboards</div></div>
     <div class="hero-stat"><div class="hero-stat-value">23</div><div class="hero-stat-label">Fontes de Dados</div></div>
     <div class="hero-stat"><div class="hero-stat-value">58</div><div class="hero-stat-label">Cubos Analiticos</div></div>
   </div>
@@ -351,6 +351,17 @@ const TOOLS = [
     descricao: "Portal de entregas estratégicas dos 3 núcleos da Unidade de Políticas Públicas (abril a outubro de 2026): NAL — Assessoria Legislativa (PLP 108, articulação parlamentar, Reforma Tributária, Novo Simples); Projetos Especiais — Movimenta (164 ações), Pró-Catadores (22 estados), Contrata+Brasil (Painel 360), Compras Sustentáveis, Oficinas de Transformação; RelGov — Relacionamento Governamental (18 entregas, ACTs, Defesa de Causa, economia criativa).",
     features: ["3 núcleos: NAL, Projetos Especiais, RelGov", "48 entregas Projetos Especiais", "18 entregas RelGov", "164 ações Movimenta", "22 estados Pró-Catadores", "11 Sebrae no Contrata+Brasil", "PLP 108/2021 e Reforma Tributária", "Agenda Legislativa 2027"],
     destaque: "Visão consolidada de todas as entregas da UPP em 2026. Do NAL no Congresso Nacional (1.000+ proposições, 56 visitas a gabinetes) ao Programa Movimenta com 100% de adesão dos estados, passando pelo Contrata+Brasil (Painel 360 lançado pelo presidente), Pró-Catadores em 22 estados e 18 entregas de Relacionamento Governamental."
+  },
+  {
+    id: "projeto2027",
+    nome: "Projeto de Implantação Nacional 2027",
+    subtitulo: "Escopo, Roadmap e Governança Ágil",
+    accent: "#06b6d4",
+    icon: "🚀",
+    url: "../pippa-projeto-2027/index.html",
+    descricao: "Documento de escopo completo para a implantação nacional da PIPPA em 2027. Estruturado em gestão ágil (Scrum), cobre os 3 eixos da plataforma (Nacional, Estadual e Aplicada) com 15 epics, 69 features, 17 sprints, 4 releases trimestrais e orçamento de R$ 2.015.000. Inclui radar de maturidade do observatório com 6 dimensões, OKRs, matriz RACI, gestão de riscos, glossário interativo e linha do tempo de marcos críticos.",
+    features: ["3 eixos: Nacional, Estadual, Aplicada", "15 epics e 69 features (MoSCoW)", "4 releases trimestrais com gates", "Radar de Maturidade — 6 dimensões de OI", "Equipe ARP: Eng. Dados Sr + BI + UX", "Orçamento R$ 2.015.000", "OKRs, RACI e gestão de riscos", "Governança Scrum + Kanban", "Glossário interativo com busca", "Metodologia do livro integrada"],
+    destaque: "Planejamento completo da implantação nacional. 3 eixos, 15 epics, 17 sprints ao longo de 2027 — do data lake com 36 cubos OLAP à replicação em 5+ estados e ao TransformaLab. Inclui radar de maturidade do observatório em 6 dimensões com evolução projetada por release."
   }
 ];
 
@@ -379,7 +390,10 @@ const QUESTIONS = [
   { texto: "Quais sao as vocacoes economicas de um municipio?", ferramentas: ["raioxmunicipal", "indicadores"], tema: "Territorial" },
   { texto: "Preciso de um raio-x territorial com dados cruzados", ferramentas: ["raioxmunicipal", "catalogo", "indicadores"], tema: "Territorial" },
   { texto: "Quais as entregas estratégicas da UPP em 2026?", ferramentas: ["atuacaoupp"], tema: "Politica" },
-  { texto: "Como está o Programa Movimenta e o Contrata+Brasil?", ferramentas: ["atuacaoupp"], tema: "Politica" }
+  { texto: "Como está o Programa Movimenta e o Contrata+Brasil?", ferramentas: ["atuacaoupp"], tema: "Politica" },
+  { texto: "Qual o plano de implantação nacional do PIPPA?", ferramentas: ["projeto2027"], tema: "Estrategia" },
+  { texto: "Qual a equipe, orçamento e cronograma para 2027?", ferramentas: ["projeto2027"], tema: "Estrategia" },
+  { texto: "Como será a expansão para os estados?", ferramentas: ["projeto2027", "transformalab"], tema: "Estrategia" }
 ];
 
 let activeQuestion = null;
