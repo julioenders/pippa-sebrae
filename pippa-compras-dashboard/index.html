@@ -912,7 +912,7 @@
     </div>
     <div class="header-controls">
       <div id="pddeThermometer" class="thermometer thermo-green">Aguardando dados...</div>
-      <button class="btn btn-green" onclick="pddeLoaded=false;loadPddeData()">Consultar APIs</button>
+      <button class="btn btn-green" onclick="pddeLoaded=false;loadPddeData()">Carregar Dados</button>
       <select id="pddeAno" class="select-input" onchange="renderPddeDashboard()" style="width:100px;">
         <option value="">Todos os Anos</option>
       </select>
@@ -1047,7 +1047,7 @@
     </div>
     <div class="header-controls">
       <div id="pnaeThermometer" class="thermometer thermo-green">Aguardando dados...</div>
-      <button class="btn btn-green" onclick="pnaeLoaded=false;loadPnaeData()">Consultar APIs</button>
+      <button class="btn btn-green" onclick="pnaeLoaded=false;loadPnaeData()">Carregar Dados</button>
       <select id="pnaeAno" class="select-input" onchange="renderPnaeDashboard()" style="width:100px;">
         <option value="">Todos os Anos</option>
       </select>
@@ -1291,6 +1291,10 @@
 </div>
 
 <div class="toast" id="toast">Copiado!</div>
+<div id="errorToast" style="display:none;position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:10001;background:#1e1215;border:1px solid rgba(239,68,68,.4);color:#fca5a5;padding:12px 20px;border-radius:10px;font-size:13px;max-width:500px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.5);">
+  <span id="errorToastMsg"></span>
+  <button onclick="document.getElementById('errorToast').style.display='none'" style="background:none;border:none;color:#ef4444;margin-left:12px;cursor:pointer;font-size:16px;vertical-align:middle;">&times;</button>
+</div>
 
 <div class="info-modal-backdrop" id="exportModal" onclick="if(event.target===this)closeExportModal()">
   <div class="info-modal">
@@ -1371,7 +1375,11 @@ function showView(view) {
 // =====================================================
 
 const PNCP_BASE = 'https://pncp.gov.br/api/consulta/v1';
-const PNCP_PROXY = 'https://api.allorigins.win/raw?url=';
+const PNCP_PROXIES = [
+  'https://api.allorigins.win/raw?url=',
+  'https://corsproxy.io/?url=',
+  'https://api.codetabs.com/v1/proxy?quest='
+];
 
 const CAPITAIS = {
   'AC': {'Rio Branco': '1200401'}, 'AL': {'Maceió': '2704302'}, 'AM': {'Manaus': '1302603'},
@@ -1425,12 +1433,24 @@ const SETOR_KEYWORDS = {
   'agro': ['agropecuar','agricol','agricola','agrícola','semente','adubo','fertilizant','inseticida','herbicida','irrigacao','irrigação','trator','implemento','pecuari','racao','ração','veterinar']
 };
 let charts = {};
+const CARDS_PER_PAGE = 50;
+let maxCardsVisible = CARDS_PER_PAGE;
+
+function showError(msg) {
+  const el = document.getElementById('errorToast');
+  document.getElementById('errorToastMsg').textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 8000);
+}
 
 // ── Classification Engine ────────────────────────────────────────
 
 function classifyMPE(item) {
+  const obj = (item.objetoCompra || '').toLowerCase();
   const valor = item._valor || item.valorTotalEstimado || 0;
+  if (obj.includes('exclusiv') && (obj.includes('me/epp') || obj.includes('mpe') || obj.includes('micro') || obj.includes('pequen'))) return 'Exclusiva MPE';
   if (valor > 0 && valor <= 80000) return 'Exclusiva MPE';
+  if (obj.includes('cota') && (obj.includes('me/epp') || obj.includes('mpe') || obj.includes('micro') || obj.includes('pequen'))) return 'Cota MPE';
   if (item.srp) return 'Cota MPE';
   return 'Ampla';
 }
@@ -1541,11 +1561,27 @@ function resolveCodigoMunicipio() {
   return document.getElementById('munInput').value || '';
 }
 
-function onUfChange() {
+async function onUfChange() {
   const uf = document.getElementById('ufInput').value;
   const sel = document.getElementById('munInput');
   sel.innerHTML = '<option value="">Municipio</option>';
   if (!uf) return;
+  sel.innerHTML = '<option value="">Carregando...</option>';
+  try {
+    const resp = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderBy=nome`);
+    if (resp.ok) {
+      const municipios = await resp.json();
+      sel.innerHTML = '<option value="">Municipio</option>';
+      municipios.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.id;
+        opt.textContent = m.nome;
+        sel.appendChild(opt);
+      });
+      return;
+    }
+  } catch (_) {}
+  sel.innerHTML = '<option value="">Municipio</option>';
   const prefix = UF_PREFIXES[uf] || '';
   const caps = CAPITAIS[uf] || {};
   const added = new Set();
@@ -1560,6 +1596,10 @@ function onUfChange() {
   });
 }
 
+function parseResponse(data) {
+  return Array.isArray(data) ? data : (data.data || data.content || []);
+}
+
 async function fetchPNCP(modalidadeId, pagina = 1) {
   const fromEl = document.getElementById('dateFrom');
   const toEl = document.getElementById('dateTo');
@@ -1572,28 +1612,20 @@ async function fetchPNCP(modalidadeId, pagina = 1) {
   if (uf) url += `&uf=${uf}`;
   if (mun) url += `&codigoMunicipioIbge=${mun}`;
 
-  try {
-    const proxyUrl = PNCP_PROXY + encodeURIComponent(url);
-    const resp = await fetch(proxyUrl);
-    if (!resp.ok) {
-      const direct = await fetch(url);
-      if (!direct.ok) return [];
-      const data = await direct.json();
-      return Array.isArray(data) ? data : (data.data || data.content || []);
-    }
-    const data = await resp.json();
-    return Array.isArray(data) ? data : (data.data || data.content || []);
-  } catch (e) {
+  for (const proxy of PNCP_PROXIES) {
     try {
-      const resp = await fetch(url);
-      if (!resp.ok) return [];
-      const data = await resp.json();
-      return Array.isArray(data) ? data : (data.data || data.content || []);
-    } catch (e2) {
-      console.warn(`Falha modalidade ${modalidadeId}:`, e2);
-      return [];
-    }
+      const resp = await fetch(proxy + encodeURIComponent(url));
+      if (resp.ok) return parseResponse(await resp.json());
+    } catch (_) {}
   }
+  try {
+    const resp = await fetch(url);
+    if (resp.ok) return parseResponse(await resp.json());
+  } catch (e) {
+    console.warn(`Falha modalidade ${modalidadeId}:`, e);
+    showError(`Falha ao buscar modalidade ${modalidadeId}. Verifique sua conexao.`);
+  }
+  return [];
 }
 
 async function fetchData() {
@@ -1601,6 +1633,10 @@ async function fetchData() {
   const overlay = document.getElementById('loadingOverlay');
   const loadText = document.getElementById('loadingText');
   const loadProg = document.getElementById('loadingProgress');
+  const fromVal = document.getElementById('dateFrom').value;
+  const toVal = document.getElementById('dateTo').value;
+  if (!fromVal || !toVal) { showError('Preencha as datas inicial e final.'); return; }
+  if (fromVal > toVal) { showError('Data inicial nao pode ser maior que data final.'); return; }
 
   btn.disabled = true;
   overlay.classList.add('active');
@@ -1870,7 +1906,8 @@ function getModalidadeBadgeClass(mod) {
   return 'badge-pregao';
 }
 
-function renderCards() {
+function renderCards(keepPage) {
+  if (!keepPage) maxCardsVisible = CARDS_PER_PAGE;
   const container = document.getElementById('newsContainer');
   if (filteredItems.length === 0 && allItems.length === 0) {
     container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">&#127963;</div><div class="empty-state-title">Clique em "Buscar Licitacoes" para carregar</div><p>O painel buscara licitacoes abertas no Portal Nacional de Contratacoes Publicas (PNCP).</p></div>`;
@@ -1889,13 +1926,17 @@ function renderCards() {
 
   const order = ['Oportunidades MPEs', 'Exclusiva MPE', 'Cota MPE', 'Ampla'];
   let html = '';
+  let rendered = 0;
+  let truncated = false;
 
   order.forEach(group => {
+    if (truncated) return;
     const items = groups[group];
     if (!items || items.length === 0) return;
     html += `<div class="section-header"><span class="section-title">${group}</span><span class="section-count">${items.length} licitacoes</span></div><div class="news-list">`;
 
     items.forEach((item, idx) => {
+      if (rendered >= maxCardsVisible) { truncated = true; return; }
       const cardClass = item._acessivelMEI ? 'mei-card' : item._oportunidadeMPE === 'Exclusiva MPE' ? 'exclusiva-mpe' : item._urgencia === 'Urgente' ? 'urgente' : '';
       const urgTag = item._urgencia === 'Urgente' ? `<span class="news-tag tag-urgente">${item._diasRestantes}d restantes</span>` : item._urgencia === 'Atencao' ? `<span class="news-tag tag-urgente" style="background:rgba(245,158,11,0.15);color:#f59e0b">${item._diasRestantes}d restantes</span>` : item._diasRestantes ? `<span class="news-tag" style="background:rgba(34,197,94,0.1);color:#22c55e">${item._diasRestantes}d restantes</span>` : '';
       const valorTag = item._valor > 0 ? `<span class="news-tag tag-valor">${formatCurrency(item._valor)}</span>` : '';
@@ -1935,9 +1976,14 @@ function renderCards() {
           <div class="detail-item"><div class="detail-label">Links</div><div class="detail-value">${linkPNCP} ${item.linkSistemaOrigem ? ' | ' + linkOrigem : ''}</div></div>
         </div></div>
       </div>`;
+      rendered++;
     });
     html += '</div>';
   });
+  if (truncated) {
+    const remaining = filteredItems.length - rendered;
+    html += `<div style="text-align:center;padding:1.5rem"><button class="btn" onclick="maxCardsVisible+=${CARDS_PER_PAGE};renderCards(true)" style="background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.3);padding:10px 24px;border-radius:8px;font-size:13px;cursor:pointer">Ver mais ${Math.min(CARDS_PER_PAGE, remaining)} de ${remaining} restantes</button></div>`;
+  }
   container.innerHTML = html;
 }
 
@@ -131068,10 +131114,10 @@ function renderExecDashboard() {
 
 (function initDates() {
   const hoje = new Date();
-  const fim = new Date(hoje);
-  fim.setDate(fim.getDate() + 15);
-  document.getElementById('dateFrom').valueAsDate = hoje;
-  document.getElementById('dateTo').valueAsDate = fim;
+  const inicio = new Date(hoje);
+  inicio.setDate(inicio.getDate() - 15);
+  document.getElementById('dateFrom').valueAsDate = inicio;
+  document.getElementById('dateTo').valueAsDate = hoje;
 })();
 
 </script>
