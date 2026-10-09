@@ -1550,6 +1550,12 @@
       Identifica automaticamente o <strong>porte da empresa</strong> (MPE, MEI, EPP ou Demais),
       o <strong>CNPJ</strong>, <strong>razao social</strong> e <strong>valor homologado</strong>.<br>
       <em>Fonte: API do PNCP em tempo real — Portal Nacional de Contratacoes Publicas (pncp.gov.br).</em>
+      <div style="margin-top:10px;padding:10px 14px;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);border-radius:8px;font-size:12px;color:var(--text-muted);">
+        <strong style="color:var(--rose);">Tempo medio de consulta: 2 a 4 minutos.</strong>
+        A ferramenta consulta a API do PNCP em tempo real, buscando ate 50 contratacoes e identificando
+        o fornecedor vencedor de cada uma individualmente. O tempo depende da velocidade de resposta da API.
+        Selecionar uma <strong>modalidade especifica</strong> reduz o tempo de consulta.
+      </div>
     </div>
 
     <div id="fornProgress" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;">
@@ -1580,6 +1586,14 @@
         <div class="kpi-value" style="color:var(--accent)" id="fornKpiDemais">—</div>
         <div class="kpi-label">Demais (Medio/Grande)</div>
       </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--cyan)" id="fornKpiValorTotal">—</div>
+        <div class="kpi-label">Total Homologado</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--purple)" id="fornKpiEconomia">—</div>
+        <div class="kpi-label">Economia Media</div>
+      </div>
     </div>
 
     <div id="fornExecBarContainer" style="display:none">
@@ -1592,7 +1606,7 @@
       </div>
     </div>
 
-    <div class="charts-row-half" style="margin-top:24px" id="fornChartsRow" style="display:none">
+    <div class="charts-row-half" style="margin-top:24px" id="fornChartsRow">
       <div class="chart-card">
         <div class="chart-title" id="fornChart1Title">Distribuicao por Porte do Fornecedor</div>
         <div class="chart-wrapper" style="height:300px"><canvas id="chartFornPorte"></canvas></div>
@@ -1600,6 +1614,28 @@
       <div class="chart-card">
         <div class="chart-title" id="fornChart2Title">Valor Homologado por Porte</div>
         <div class="chart-wrapper" style="height:300px"><canvas id="chartFornValor"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-row-half" style="margin-top:16px" id="fornChartsRow2">
+      <div class="chart-card">
+        <div class="chart-title" id="fornChart3Title">Top 10 Fornecedores por Valor Homologado</div>
+        <div class="chart-wrapper" style="height:350px"><canvas id="chartFornTop10"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" id="fornChart4Title">Economia por Porte (Estimado vs Homologado)</div>
+        <div class="chart-wrapper" style="height:350px"><canvas id="chartFornEconomia"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-row-half" style="margin-top:16px" id="fornChartsRow3">
+      <div class="chart-card">
+        <div class="chart-title" id="fornChart5Title">Natureza Juridica dos Fornecedores</div>
+        <div class="chart-wrapper" style="height:300px"><canvas id="chartFornNatureza"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" id="fornChart6Title">Modalidade de Contratacao</div>
+        <div class="chart-wrapper" style="height:300px"><canvas id="chartFornModalidade"></canvas></div>
       </div>
     </div>
 
@@ -131655,6 +131691,8 @@ function renderPncpMonDashboard() {
 
 let fornCharts = {};
 const FORN_DELAY = 600;
+let fornStartTime = 0;
+let fornTimerInterval = null;
 
 async function fetchPncpApi(url) {
   for (const proxy of PNCP_PROXIES) {
@@ -131678,9 +131716,15 @@ function formatCnpj(ni) {
   return ni;
 }
 
+function fornElapsedStr() {
+  const s = Math.floor((Date.now() - fornStartTime) / 1000);
+  const m = Math.floor(s / 60);
+  return m > 0 ? `${m}min ${s % 60}s` : `${s}s`;
+}
+
 function fornUpdateProgress(pct, label, detail) {
   document.getElementById('fornProgressBar').style.width = pct + '%';
-  document.getElementById('fornProgressPct').textContent = Math.round(pct) + '%';
+  document.getElementById('fornProgressPct').textContent = Math.round(pct) + '% — ' + fornElapsedStr();
   if (label) document.getElementById('fornProgressLabel').textContent = label;
   if (detail) document.getElementById('fornProgressDetail').textContent = detail;
 }
@@ -131699,11 +131743,21 @@ async function consultarFornecedores() {
   const di = `2026${mes}01`;
   const df = `2026${mes}${lastDay}`;
 
+  fornStartTime = Date.now();
+  if (fornTimerInterval) clearInterval(fornTimerInterval);
+  fornTimerInterval = setInterval(() => {
+    const el = document.getElementById('fornProgressPct');
+    if (el) el.textContent = el.textContent.split('—')[0].trim() + ' — ' + fornElapsedStr();
+  }, 1000);
+
   document.getElementById('fornProgress').style.display = '';
   document.getElementById('fornKpis').style.display = 'none';
   document.getElementById('fornExecBarContainer').style.display = 'none';
   document.getElementById('fornTableContainer').style.display = 'none';
   document.getElementById('fornTableBody').innerHTML = '';
+  document.getElementById('fornChartsRow').style.display = 'none';
+  document.getElementById('fornChartsRow2').style.display = 'none';
+  document.getElementById('fornChartsRow3').style.display = 'none';
 
   fornUpdateProgress(0, 'Buscando contratacoes...', `${uf} — ${mes}/2026`);
 
@@ -131716,6 +131770,7 @@ async function consultarFornecedores() {
     const data = await fetchPncpApi(url);
     if (data) {
       const items = Array.isArray(data) ? data : (data.data || []);
+      items.forEach(it => { it._modalidade = it.modalidadeNome || ''; });
       allItems = allItems.concat(items);
     }
     await new Promise(r => setTimeout(r, FORN_DELAY));
@@ -131724,6 +131779,7 @@ async function consultarFornecedores() {
   if (allItems.length === 0) {
     showError('Nenhuma contratacao encontrada para este filtro.');
     document.getElementById('fornProgress').style.display = 'none';
+    clearInterval(fornTimerInterval);
     return;
   }
 
@@ -131777,74 +131833,172 @@ async function consultarFornecedores() {
       objeto: (c.objetoCompra || '').substring(0, 120),
       orgao: (c.orgaoEntidade || {}).razaoSocial || '',
       link: c.linkSistemaOrigem || '',
-      modalidade: c.modalidadeNome || '',
+      modalidade: c._modalidade || c.modalidadeNome || '',
       beneficioMeEpp: res.aplicacaoBeneficioMeEpp || false
     });
   }
 
+  clearInterval(fornTimerInterval);
+  const elapsed = fornElapsedStr();
   fornUpdateProgress(95, 'Renderizando resultados...', `${resultados.length} fornecedores identificados`);
   renderFornecedores(resultados, uf, mes);
-  fornUpdateProgress(100, 'Consulta concluida!', `${resultados.length} de ${contratacoes.length} contratacoes com resultado`);
-  setTimeout(() => { document.getElementById('fornProgress').style.display = 'none'; }, 3000);
+  fornUpdateProgress(100, `Consulta concluida em ${elapsed}`, `${resultados.length} de ${contratacoes.length} contratacoes com resultado`);
+  setTimeout(() => { document.getElementById('fornProgress').style.display = 'none'; }, 5000);
 }
 
 function renderFornecedores(data, uf, mes) {
   const meses = {'01':'Janeiro','02':'Fevereiro','03':'Marco','04':'Abril','05':'Maio','06':'Junho','07':'Julho','08':'Agosto','09':'Setembro','10':'Outubro'};
+  const scope = `${uf} ${meses[mes]}/2026`;
+  const gc = 'rgba(255,255,255,.06)';
+  const co = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#64748b', font: { size: 11 } } } } };
 
   const porteCount = {};
   const porteValor = {};
+  const porteEst = {};
+  const natCount = {};
+  const modCount = {};
+  const modValor = {};
+  let benefCount = 0;
+  let totalHom = 0;
+  let totalEst = 0;
+
   data.forEach(d => {
     const p = normalizePorte(d.porte, d.porteId);
     porteCount[p] = (porteCount[p] || 0) + 1;
     porteValor[p] = (porteValor[p] || 0) + d.valorHom;
+    porteEst[p] = (porteEst[p] || 0) + d.valorEst;
+    totalHom += d.valorHom;
+    totalEst += d.valorEst;
+
+    const nat = d.natureza || 'Nao informada';
+    natCount[nat] = (natCount[nat] || 0) + 1;
+
+    const mod = d.modalidade.replace(/[^a-zA-Z\s]/g, '').trim() || 'Nao informada';
+    modCount[mod] = (modCount[mod] || 0) + 1;
+    modValor[mod] = (modValor[mod] || 0) + d.valorHom;
+
+    if (d.beneficioMeEpp) benefCount++;
   });
 
   const total = data.length;
   const mpeCount = (porteCount['ME'] || 0) + (porteCount['EPP'] || 0);
   const meiCount = porteCount['MEI'] || 0;
   const demaisCount = porteCount['Demais'] || 0;
+  const economiaMedia = totalEst > 0 ? ((totalEst - totalHom) / totalEst * 100) : 0;
 
   document.getElementById('fornKpiTotal').textContent = total.toLocaleString('pt-BR');
   document.getElementById('fornKpiMpe').textContent = total > 0 ? `${((mpeCount / total) * 100).toFixed(1)}%` : '—';
   document.getElementById('fornKpiMei').textContent = total > 0 ? `${((meiCount / total) * 100).toFixed(1)}%` : '—';
   document.getElementById('fornKpiDemais').textContent = total > 0 ? `${((demaisCount / total) * 100).toFixed(1)}%` : '—';
+  document.getElementById('fornKpiValorTotal').textContent = formatCurrency(totalHom);
+  document.getElementById('fornKpiEconomia').textContent = economiaMedia.toFixed(1) + '%';
   document.getElementById('fornKpis').style.display = '';
 
   const pctMpe = total > 0 ? (mpeCount / total * 100) : 0;
   const pctMei = total > 0 ? (meiCount / total * 100) : 0;
   const pctDem = total > 0 ? (demaisCount / total * 100) : 0;
-  document.getElementById('fornBarTitle').textContent = `Distribuicao por Porte — ${uf} ${meses[mes]}/2026`;
+  document.getElementById('fornBarTitle').textContent = `Distribuicao por Porte — ${scope}`;
   document.getElementById('fornExecBar').innerHTML = `
     <div class="pdde-exec-seg" style="width:${pctMpe}%;background:#22c55e;">${pctMpe > 8 ? mpeCount : ''}</div>
     <div class="pdde-exec-seg" style="width:${pctMei}%;background:#f97316;">${pctMei > 8 ? meiCount : ''}</div>
     <div class="pdde-exec-seg" style="width:${pctDem}%;background:#3b82f6;">${pctDem > 8 ? demaisCount : ''}</div>
   `;
-  document.getElementById('fornExecLabel1').innerHTML = `<span style="color:#22c55e">●</span> MPE (${pctMpe.toFixed(1)}%)`;
+  document.getElementById('fornExecLabel1').innerHTML = `<span style="color:#22c55e">●</span> MPE — ME+EPP (${pctMpe.toFixed(1)}%)`;
   document.getElementById('fornExecLabel2').innerHTML = `<span style="color:#f97316">●</span> MEI (${pctMei.toFixed(1)}%)`;
   document.getElementById('fornExecLabel3').innerHTML = `<span style="color:#3b82f6">●</span> Demais (${pctDem.toFixed(1)}%)`;
   document.getElementById('fornExecBarContainer').style.display = '';
 
+  // Chart 1: Doughnut por porte
   const porteLabels = Object.keys(porteCount).sort();
   const porteColors = porteLabels.map(p => p === 'ME' ? '#22c55e' : p === 'EPP' ? '#10b981' : p === 'MEI' ? '#f97316' : p === 'Demais' ? '#3b82f6' : '#64748b');
-  const co = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#64748b', font: { size: 11 } } } } };
 
   if (fornCharts.porte) fornCharts.porte.destroy();
-  document.getElementById('fornChart1Title').textContent = `Contratacoes por Porte — ${uf} ${meses[mes]}/2026`;
+  document.getElementById('fornChart1Title').textContent = `Contratacoes por Porte — ${scope}`;
   fornCharts.porte = new Chart(document.getElementById('chartFornPorte'), {
     type: 'doughnut',
     data: { labels: porteLabels, datasets: [{ data: porteLabels.map(p => porteCount[p]), backgroundColor: porteColors, borderWidth: 2, borderColor: '#0f172a' }] },
     options: { ...co, plugins: { ...co.plugins, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw} (${(ctx.raw / total * 100).toFixed(1)}%)` } } } }
   });
 
+  // Chart 2: Valor homologado por porte
   if (fornCharts.valor) fornCharts.valor.destroy();
-  document.getElementById('fornChart2Title').textContent = `Valor Homologado por Porte — ${uf} ${meses[mes]}/2026`;
+  document.getElementById('fornChart2Title').textContent = `Valor Homologado por Porte — ${scope}`;
   fornCharts.valor = new Chart(document.getElementById('chartFornValor'), {
     type: 'bar',
     data: { labels: porteLabels, datasets: [{ data: porteLabels.map(p => porteValor[p] || 0), backgroundColor: porteColors, borderRadius: 4, barPercentage: 0.6 }] },
-    options: { ...co, plugins: { ...co.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: 'rgba(255,255,255,.06)' }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } } }
+    options: { ...co, plugins: { ...co.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gc }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } } }
+  });
+  document.getElementById('fornChartsRow').style.display = '';
+
+  // Chart 3: Top 10 fornecedores por valor
+  const top10 = [...data].sort((a, b) => b.valorHom - a.valorHom).slice(0, 10);
+  if (fornCharts.top10) fornCharts.top10.destroy();
+  document.getElementById('fornChart3Title').textContent = `Top 10 Fornecedores por Valor — ${scope}`;
+  fornCharts.top10 = new Chart(document.getElementById('chartFornTop10'), {
+    type: 'bar',
+    data: {
+      labels: top10.map(d => d.fornecedor.length > 30 ? d.fornecedor.substring(0, 28) + '...' : d.fornecedor),
+      datasets: [{
+        data: top10.map(d => d.valorHom),
+        backgroundColor: top10.map(d => { const p = normalizePorte(d.porte, d.porteId); return p === 'ME' ? '#22c55e' : p === 'EPP' ? '#10b981' : p === 'MEI' ? '#f97316' : '#3b82f6'; }),
+        borderRadius: 4, barPercentage: 0.7
+      }]
+    },
+    options: { ...co, indexAxis: 'y', plugins: { ...co.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { color: gc }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } }, y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { size: 10 } } } } }
   });
 
-  document.getElementById('fornTableTitle').textContent = `Fornecedores Vencedores — ${uf} ${meses[mes]}/2026 (${data.length} resultados)`;
+  // Chart 4: Economia por porte (estimado vs homologado)
+  if (fornCharts.economia) fornCharts.economia.destroy();
+  document.getElementById('fornChart4Title').textContent = `Estimado vs Homologado por Porte — ${scope}`;
+  fornCharts.economia = new Chart(document.getElementById('chartFornEconomia'), {
+    type: 'bar',
+    data: {
+      labels: porteLabels,
+      datasets: [
+        { label: 'Estimado', data: porteLabels.map(p => porteEst[p] || 0), backgroundColor: 'rgba(59,130,246,.6)', borderRadius: 4, barPercentage: 0.8 },
+        { label: 'Homologado', data: porteLabels.map(p => porteValor[p] || 0), backgroundColor: 'rgba(34,197,94,.6)', borderRadius: 4, barPercentage: 0.8 }
+      ]
+    },
+    options: { ...co, plugins: { ...co.plugins, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatCurrency(ctx.raw) } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gc }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } } }
+  });
+  document.getElementById('fornChartsRow2').style.display = '';
+
+  // Chart 5: Natureza juridica (top 6)
+  const natSorted = Object.entries(natCount).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const natColors = ['#a855f7', '#8b5cf6', '#7c3aed', '#6d28d9', '#5b21b6', '#4c1d95'];
+  if (fornCharts.natureza) fornCharts.natureza.destroy();
+  document.getElementById('fornChart5Title').textContent = `Natureza Juridica — ${scope}`;
+  fornCharts.natureza = new Chart(document.getElementById('chartFornNatureza'), {
+    type: 'doughnut',
+    data: {
+      labels: natSorted.map(([k]) => k.length > 25 ? k.substring(0, 23) + '...' : k),
+      datasets: [{ data: natSorted.map(([, v]) => v), backgroundColor: natColors.slice(0, natSorted.length), borderWidth: 2, borderColor: '#0f172a' }]
+    },
+    options: { ...co, plugins: { ...co.plugins, tooltip: { callbacks: { label: ctx => `${natSorted[ctx.dataIndex][0]}: ${ctx.raw} (${(ctx.raw / total * 100).toFixed(1)}%)` } } } }
+  });
+
+  // Chart 6: Modalidade
+  const modSorted = Object.entries(modCount).sort((a, b) => b[1] - a[1]);
+  const modColors = ['#f43f5e', '#ec4899', '#d946ef', '#c026d3', '#a21caf'];
+  if (fornCharts.modalidade) fornCharts.modalidade.destroy();
+  document.getElementById('fornChart6Title').textContent = `Modalidade de Contratacao — ${scope}`;
+  fornCharts.modalidade = new Chart(document.getElementById('chartFornModalidade'), {
+    type: 'bar',
+    data: {
+      labels: modSorted.map(([k]) => k.length > 20 ? k.substring(0, 18) + '...' : k),
+      datasets: [{
+        label: 'Contratacoes',
+        data: modSorted.map(([, v]) => v),
+        backgroundColor: modColors.slice(0, modSorted.length),
+        borderRadius: 4, barPercentage: 0.65
+      }]
+    },
+    options: { ...co, plugins: { ...co.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => `${modSorted[ctx.dataIndex][0]}: ${ctx.raw} contratacoes (${formatCurrency(modValor[modSorted[ctx.dataIndex][0]] || 0)})` } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { size: 10 } } }, y: { grid: { color: gc }, ticks: { color: '#64748b' } } } }
+  });
+  document.getElementById('fornChartsRow3').style.display = '';
+
+  // Tabela
+  document.getElementById('fornTableTitle').textContent = `Fornecedores Vencedores — ${scope} (${data.length} resultados)`;
   const tbody = document.getElementById('fornTableBody');
   tbody.innerHTML = data.sort((a, b) => b.valorHom - a.valorHom).map(d => {
     const porteNorm = normalizePorte(d.porte, d.porteId);
