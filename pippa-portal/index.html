@@ -57,6 +57,8 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
 .q-group.open .q-group-icon{transform:rotate(90deg);}
 .q-group-name{flex:1;font-size:12px;font-weight:600;color:#cbd5e1;letter-spacing:.3px;}
 .q-group-badge{font-size:10px;font-weight:600;background:rgba(255,255,255,.06);color:#64748b;padding:2px 7px;border-radius:6px;flex-shrink:0;}
+.q-group.has-active .q-group-header{background:rgba(16,185,129,.08);}
+.q-group.has-active .q-group-name{color:#a7f3d0;}
 .q-group.has-active .q-group-badge{background:rgba(16,185,129,.2);color:#a7f3d0;}
 .q-group-body{display:none;padding:4px 8px 8px;gap:4px;flex-direction:column;}
 .q-group.open .q-group-body{display:flex;}
@@ -421,17 +423,20 @@ const MACRO_TEMAS = [
 
 let activeQuestion = null;
 
+let activeMacro = null;
+
 function renderQuestions() {
   const wrap = document.getElementById("questionsWrap");
   MACRO_TEMAS.forEach(macro => {
     const groupQuestions = QUESTIONS.map((q, i) => ({...q, globalIndex: i})).filter(q => q.macro === macro.key);
+    const allFerramentas = [...new Set(groupQuestions.flatMap(q => q.ferramentas))];
     const group = document.createElement("div");
     group.className = "q-group";
     group.dataset.macro = macro.key;
     const header = document.createElement("div");
     header.className = "q-group-header";
-    header.innerHTML = `<span class="q-group-icon">▸</span><span class="q-group-name">${macro.icone} ${macro.nome}</span><span class="q-group-badge">${groupQuestions.length}</span>`;
-    header.onclick = () => group.classList.toggle("open");
+    header.innerHTML = `<span class="q-group-icon">▸</span><span class="q-group-name">${macro.icone} ${macro.nome}</span><span class="q-group-badge">${allFerramentas.length}</span>`;
+    header.onclick = () => toggleMacro(macro.key, allFerramentas);
     group.appendChild(header);
     const body = document.createElement("div");
     body.className = "q-group-body" + (groupQuestions.length >= 5 ? " two-col" : "");
@@ -454,9 +459,25 @@ function renderQuestions() {
   wrap.appendChild(clearBtn);
 }
 
+function toggleMacro(key, ferramentas) {
+  if (activeMacro === key && activeQuestion === null) { clearFilter(); return; }
+  activeMacro = key;
+  activeQuestion = null;
+  document.querySelectorAll(".q-chip").forEach(c => c.classList.remove("active"));
+  document.querySelectorAll(".q-group").forEach(g => {
+    g.classList.remove("has-active", "open");
+  });
+  const group = document.querySelector(`.q-group[data-macro="${key}"]`);
+  if (group) group.classList.add("open", "has-active");
+  document.getElementById("clearBtn").style.display = "inline-flex";
+  document.getElementById("searchBox").value = "";
+  applyQuestionFilter(ferramentas);
+}
+
 function toggleQuestion(index) {
   if (activeQuestion === index) { clearFilter(); return; }
   activeQuestion = index;
+  activeMacro = QUESTIONS[index].macro;
   document.querySelectorAll(".q-chip").forEach(c => c.classList.remove("active"));
   const activeChip = document.querySelector(`.q-chip[data-index="${index}"]`);
   if (activeChip) activeChip.classList.add("active");
@@ -481,8 +502,9 @@ function applyQuestionFilter(visibleIds) {
 
 function clearFilter() {
   activeQuestion = null;
+  activeMacro = null;
   document.querySelectorAll(".q-chip").forEach(c => c.classList.remove("active"));
-  document.querySelectorAll(".q-group").forEach(g => g.classList.remove("has-active"));
+  document.querySelectorAll(".q-group").forEach(g => g.classList.remove("has-active", "open"));
   document.getElementById("clearBtn").style.display = "none";
   document.getElementById("searchBox").value = "";
   TOOLS.forEach(t => document.getElementById(`card-${t.id}`).classList.remove("hidden"));
@@ -541,6 +563,7 @@ function filterCards() {
   const q = document.getElementById("searchBox").value.toLowerCase().trim();
   if (q) {
     activeQuestion = null;
+    activeMacro = null;
     document.querySelectorAll(".q-chip").forEach(c => c.classList.remove("active"));
     document.querySelectorAll(".q-group").forEach(g => g.classList.remove("has-active"));
     document.getElementById("clearBtn").style.display = "inline-flex";
