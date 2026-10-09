@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PIPPA | Documentacao Tecnica de Replicacao</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b1120;--surface:#111827;--surface2:#1e293b;--border:rgba(148,163,184,.12);--border-accent:rgba(16,185,129,.25);--text:#e2e8f0;--muted:#64748b;--secondary:#94a3b8;--emerald:#10b981;--emerald-light:#34d399;--blue:#4f8cff;--purple:#a855f7;--amber:#f59e0b;--cyan:#06b6d4;--red:#ef4444;--teal:#14b8a6;--pink:#f472b6;--radius:12px}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+
+.header{background:linear-gradient(135deg,#0d1b2a 0%,var(--bg) 100%);padding:2rem 2rem 1.8rem;border-bottom:2px solid rgba(6,182,212,.2);position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(6,182,212,.08),transparent 70%);pointer-events:none}
+.header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;position:relative;z-index:1}
+.header-brand{display:flex;align-items:center;gap:1rem}
+.header-logo{width:52px;height:52px;background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.25);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-.5px}
+.header h1 span{background:linear-gradient(135deg,var(--cyan),#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header-sub{font-size:.78rem;color:var(--muted);margin-top:.2rem}
+.nav-btns{display:flex;gap:.5rem;align-items:center}
+.nav-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:8px;font-size:.75rem;font-weight:600;text-decoration:none;border:1px solid rgba(16,185,129,.3);color:var(--emerald-light);transition:all .2s}
+.nav-btn:hover{background:rgba(16,185,129,.1)}
+.nav-btn svg{width:14px;height:14px}
+
+.stats-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:1.5rem;position:relative;z-index:1}
+.stat-box{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-align:center}
+.stat-box .val{font-size:1.5rem;font-weight:800;line-height:1}
+.stat-box .lbl{font-size:.6rem;font-weight:500;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+
+.main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+.intro{background:rgba(6,182,212,.04);border:1px solid rgba(6,182,212,.1);border-radius:var(--radius);padding:1.3rem 1.5rem;margin-bottom:2rem;font-size:.85rem;color:var(--secondary);line-height:1.8}
+.intro strong{color:var(--text)}
+
+.section-title{font-size:.95rem;font-weight:700;margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+
+.prereq{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:2rem}
+.prereq h3{font-size:.85rem;font-weight:700;margin-bottom:.8rem;color:var(--amber)}
+.prereq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem}
+.prereq-item{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;font-size:.78rem}
+.prereq-item strong{color:var(--text);display:block;margin-bottom:2px}
+.prereq-item span{color:var(--muted)}
+
+.tool-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;overflow:hidden;transition:border-color .2s}
+.tool-card.open{border-color:var(--border-accent)}
+.tool-header{display:flex;align-items:center;gap:1rem;padding:1.2rem 1.5rem;cursor:pointer;transition:background .2s;user-select:none}
+.tool-header:hover{background:rgba(16,185,129,.03)}
+.tool-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.tool-info{flex:1}
+.tool-name{font-size:.9rem;font-weight:700}
+.tool-desc{font-size:.72rem;color:var(--muted);margin-top:2px}
+.tool-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.tag{font-size:.6rem;font-weight:600;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
+.tag-api{background:rgba(79,140,255,.15);color:var(--blue)}
+.tag-static{background:rgba(168,85,247,.15);color:var(--purple)}
+.tag-pipeline{background:rgba(245,158,11,.15);color:var(--amber)}
+.tag-chartjs{background:rgba(16,185,129,.15);color:var(--emerald)}
+.tag-single{background:rgba(6,182,212,.15);color:var(--cyan)}
+.tag-multi{background:rgba(244,114,182,.15);color:var(--pink)}
+.tool-arrow{color:var(--muted);font-size:1.1rem;transition:transform .2s;flex-shrink:0}
+.tool-card.open .tool-arrow{transform:rotate(90deg)}
+
+.tool-body{display:none;border-top:1px solid var(--border);padding:1.5rem}
+.tool-card.open .tool-body{display:block}
+
+.doc-section{margin-bottom:1.5rem}
+.doc-section:last-child{margin-bottom:0}
+.doc-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--cyan);margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
+.doc-content{font-size:.8rem;color:var(--secondary);line-height:1.7}
+.doc-content ul{margin:.4rem 0 0 1.2rem}
+.doc-content li{margin-bottom:.3rem}
+.doc-content code{background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-size:.75rem;font-family:'Consolas','Monaco',monospace;color:var(--emerald-light)}
+.doc-content a{color:var(--cyan);text-decoration:none}
+.doc-content a:hover{text-decoration:underline}
+
+.step-list{counter-reset:steps}
+.step-list li{counter-increment:steps;list-style:none;position:relative;padding-left:2rem;margin-bottom:.6rem}
+.step-list li::before{content:counter(steps);position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:rgba(6,182,212,.15);color:var(--cyan);font-size:.65rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+.warn-box{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:8px;padding:.7rem 1rem;font-size:.75rem;color:var(--amber);margin-top:.6rem;line-height:1.5}
+
+.api-table{width:100%;border-collapse:collapse;margin-top:.5rem;font-size:.75rem}
+.api-table th{text-align:left;padding:6px 10px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--text);font-weight:600;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px}
+.api-table td{padding:6px 10px;border:1px solid var(--border);color:var(--secondary);vertical-align:top}
+.api-table td code{background:rgba(255,255,255,.06);padding:1px 4px;border-radius:3px;font-size:.7rem;color:var(--emerald-light)}
+
+.footer{text-align:center;padding:1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.68rem;margin-top:2rem}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(6,182,212,.25);border-radius:3px}
+@media(max-width:700px){
+  .header{padding:1.2rem 1rem}
+  .main{padding:1rem}
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .prereq-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="header-brand">
+      <div class="header-logo">📋</div>
+      <div>
+        <h1><span>PIPPA</span> Documentacao Tecnica de Replicacao</h1>
+        <div class="header-sub">Guia completo para implantacao e espelhamento das ferramentas do observatorio</div>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <a href="index.html" class="nav-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Projeto 2027
+      </a>
+      <a href="../pippa-portal/index.html" class="nav-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Portal
+      </a>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-box"><div class="val" style="color:var(--cyan)">12</div><div class="lbl">Ferramentas</div></div>
+    <div class="stat-box"><div class="val" style="color:var(--blue)">14</div><div class="lbl">APIs Externas</div></div>
+    <div class="stat-box"><div class="val" style="color:var(--amber)">6</div><div class="lbl">Pipelines</div></div>
+    <div class="stat-box"><div class="val" style="color:var(--emerald-light)">1</div><div class="lbl">Lib (Chart.js)</div></div>
+    <div class="stat-box"><div class="val" style="color:var(--purple)">100%</div><div class="lbl">HTML Standalone</div></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="intro">
+    <strong>Este documento reune toda a informacao necessaria para que qualquer tecnico replique as ferramentas PIPPA.</strong> Cada ferramenta esta documentada com sua arquitetura, fontes de dados, dependencias, pipeline de dados e passo a passo de implantacao. O padrao PIPPA e de dashboards HTML standalone (arquivo unico, sem backend), com dados embarcados ou consumidos via APIs publicas.
+  </div>
+
+  <!-- Pre-requisitos -->
+  <div class="section-title">⚙️ Pre-requisitos Comuns</div>
+  <div class="prereq">
+    <h3>Stack Base para Todas as Ferramentas</h3>
+    <div class="prereq-grid">
+      <div class="prereq-item"><strong>Servidor Web</strong><span>Qualquer servidor HTTP estatico (GitHub Pages, GitLab Pages, Nginx, Apache, ou <code>python -m http.server</code>)</span></div>
+      <div class="prereq-item"><strong>Chart.js 4.4.4</strong><span>Biblioteca de graficos via CDN (<code>cdn.jsdelivr.net</code>). Usada em 10 das 12 ferramentas</span></div>
+      <div class="prereq-item"><strong>Google Fonts (Inter)</strong><span>Fonte padrao PIPPA. Carregada via CDN. Fallback: system-ui, Segoe UI</span></div>
+      <div class="prereq-item"><strong>Python 3.10+</strong><span>Necessario apenas para ferramentas com pipeline de dados (Emendas, Legislativo, Indicadores). Libs: <code>pandas, requests</code></span></div>
+      <div class="prereq-item"><strong>Navegador Moderno</strong><span>Chrome 90+, Firefox 88+, Edge 90+. Suporte a ES2020, fetch(), CSS Grid, backdrop-filter</span></div>
+      <div class="prereq-item"><strong>Git</strong><span>Para clonar repositorios e deploy via GitHub/GitLab Pages. Repositorio principal: <code>github.com/julioenders/pippa-sebrae</code></span></div>
+    </div>
+  </div>
+
+  <div class="section-title">📦 Design System PIPPA</div>
+  <div class="prereq">
+    <h3>Padrao Visual Aplicado em Todas as Ferramentas</h3>
+    <div class="prereq-grid">
+      <div class="prereq-item"><strong>Background</strong><span><code>#0b1120</code> (fundo) / <code>#111827</code> (cards)</span></div>
+      <div class="prereq-item"><strong>Cor Primaria</strong><span><code>#10b981</code> (emerald) com variantes <code>#34d399</code> e <code>#6ee7b7</code></span></div>
+      <div class="prereq-item"><strong>Tipografia</strong><span>Inter 400/500/600/700/800 via Google Fonts CDN</span></div>
+      <div class="prereq-item"><strong>Textos</strong><span>Primario <code>#e2e8f0</code> / Secundario <code>#94a3b8</code> / Mudo <code>#64748b</code></span></div>
+      <div class="prereq-item"><strong>Bordas</strong><span><code>rgba(148,163,184,.12)</code> / Radius: 12px (cards), 8-10px (botoes)</span></div>
+      <div class="prereq-item"><strong>Arquitetura</strong><span>Arquivo HTML unico, self-contained (CSS + JS inline), sem build tools</span></div>
+    </div>
+  </div>
+
+  <!-- Ferramentas -->
+  <div class="section-title">🔧 Ferramentas Documentadas (12)</div>
+
+  <!-- 1. Emendas -->
+  <div class="tool-card" id="emendas">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(16,185,129,.12);color:var(--emerald-light)">💰</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Emendas Parlamentares</div>
+        <div class="tool-desc">Painel de inteligencia sobre execucao de emendas parlamentares federais</div>
+        <div class="tool-tags">
+          <span class="tag tag-api">4 APIs</span>
+          <span class="tag tag-pipeline">Pipeline Python</span>
+          <span class="tag tag-chartjs">Chart.js</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo principal: <code>pippa-emendas/output/pippa_emendas_completo.html</code> (~1.46 MB)</li>
+            <li>HTML self-contained com dados JSON embarcados inline (~694K de dados)</li>
+            <li>Gerado por pipeline Python (<code>scripts/gerar_dashboard.py</code> → <code>html_renderer.py</code>)</li>
+            <li>Backend opcional: <code>api.py</code> (FastAPI, porta 8050) para atualizacao em tempo real</li>
+            <li>7 abas: Estados, Municipios, Autores, Partidos, Serie Temporal, Setores, Qualidade</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔗 Fontes de Dados</div>
+        <div class="doc-content">
+          <table class="api-table">
+            <thead><tr><th>Fonte</th><th>URL Base</th><th>Autenticacao</th><th>Dados</th></tr></thead>
+            <tbody>
+              <tr><td>Portal da Transparencia (CGU)</td><td><code>portaldatransparencia.gov.br</code></td><td>Nenhuma</td><td>CSV ZIP com todas as emendas (~94K registros)</td></tr>
+              <tr><td>Tesouro Transparente</td><td><code>apidatalake.tesouro.gov.br</code></td><td>Nenhuma</td><td>CSV de transferencias (validacao cruzada)</td></tr>
+              <tr><td>Camara dos Deputados</td><td><code>dadosabertos.camara.leg.br/api/v2</code></td><td>Nenhuma</td><td>Deputados por legislatura (partido/UF)</td></tr>
+              <tr><td>Senado Federal</td><td><code>legis.senado.leg.br/dadosabertos</code></td><td>Nenhuma</td><td>Senadores por legislatura (partido/UF)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">📚 Dependencias</div>
+        <div class="doc-content">
+          <ul>
+            <li><strong>Frontend:</strong> Chart.js 4.4.4 + chartjs-chart-treemap 2.3.1 (CDN jsDelivr)</li>
+            <li><strong>Python:</strong> <code>pandas</code>, <code>requests</code>, <code>fastapi</code>, <code>uvicorn</code>, <code>python-multipart</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚡ Pipeline de Dados</div>
+        <div class="doc-content">
+          <p>Pipeline de 5 fases em <code>scripts/pipeline.py</code>:</p>
+          <ul class="step-list">
+            <li><strong>Collect</strong> — Download dos CSVs do Portal da Transparencia e Tesouro + chamadas REST para Camara e Senado</li>
+            <li><strong>Enrich</strong> — Fuzzy-match de autores com deputados/senadores para enriquecimento de partido e UF</li>
+            <li><strong>Filter</strong> — Filtragem opcional por ano</li>
+            <li><strong>Cross-validate</strong> — Comparacao Portal vs Tesouro, flags de divergencia > 5%/15%</li>
+            <li><strong>Persist</strong> — Gera arquivos Parquet com agregacoes + JSON de qualidade</li>
+          </ul>
+          <p style="margin-top:.5rem">O gerador de dashboard (<code>gerar_dashboard.py</code>) le os Parquets e embarca tudo em um unico HTML.</p>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Clonar o repositorio <code>pippa-sebrae</code></li>
+            <li>Instalar dependencias: <code>pip install pandas requests fastapi uvicorn python-multipart</code></li>
+            <li>Executar pipeline: <code>python scripts/gerar_dashboard.py</code> (baixa ~100 MB de dados, leva alguns minutos)</li>
+            <li>O dashboard sera gerado em <code>output/pippa_emendas_completo.html</code></li>
+            <li>Abrir o HTML diretamente no navegador (funciona offline com dados embarcados)</li>
+            <li><strong>Opcional:</strong> Para modo live-refresh, executar <code>python api.py</code> e acessar <code>http://localhost:8050</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">O UUID do recurso do Tesouro Transparente no CKAN e hardcoded e pode mudar quando o dataset for republicado. Verificar periodicamente se o endpoint continua ativo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Compras -->
+  <div class="tool-card" id="compras">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(79,140,255,.12);color:var(--blue)">🏛️</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Compras Publicas</div>
+        <div class="tool-desc">Radar de oportunidades de licitacoes para micro e pequenas empresas</div>
+        <div class="tool-tags">
+          <span class="tag tag-api">1 API</span>
+          <span class="tag tag-static">Caches Embarcados</span>
+          <span class="tag tag-chartjs">Chart.js</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>pippa-compras-dashboard/index.html</code> (~6.8 MB, 131K linhas)</li>
+            <li>5 views: Landing, Compras (PNCP live), PDDE, PNAE, Execucao Orcamentaria</li>
+            <li>Dados de PDDE/PNAE/Execucao embarcados como caches JSON inline (responsaveis pelo tamanho do arquivo)</li>
+            <li>Aba Compras faz consulta live a API do PNCP</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔗 Fontes de Dados</div>
+        <div class="doc-content">
+          <table class="api-table">
+            <thead><tr><th>Fonte</th><th>URL Base</th><th>Autenticacao</th><th>Dados</th></tr></thead>
+            <tbody>
+              <tr><td>PNCP (Portal Nacional de Contratacoes)</td><td><code>pncp.gov.br/api/consulta/v1/contratacoes/publicacao</code></td><td>Nenhuma</td><td>Licitacoes publicadas (5 pags x 5 modalidades)</td></tr>
+            </tbody>
+          </table>
+          <div class="warn-box" style="margin-top:.5rem">A API do PNCP e acessada via proxy CORS <code>api.allorigins.win</code> (gratuito, sem garantia de disponibilidade). Em ambiente corporativo, substituir por proxy proprio (Nginx, Cloud Functions).</div>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">📚 Dependencias</div>
+        <div class="doc-content">
+          <ul>
+            <li>Chart.js 4.4.4 (CDN jsDelivr)</li>
+            <li>Google Fonts (Inter)</li>
+            <li>Sem dependencias Python — dashboard puramente client-side</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚡ Pipeline de Dados</div>
+        <div class="doc-content">
+          <p>Nao ha pipeline automatizado. Os caches de PDDE, PNAE e Execucao sao arrays JSON inseridos manualmente no HTML. Para atualizar:</p>
+          <ul>
+            <li>Consultar as APIs de PDDE/PNAE/Execucao Orcamentaria</li>
+            <li>Formatar como arrays JavaScript</li>
+            <li>Substituir as constantes <code>PDDE_CACHE</code>, <code>PNAE_CACHE</code>, <code>EXEC_CACHE</code> no arquivo</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar <code>index.html</code> para o servidor de destino</li>
+            <li>As abas PDDE/PNAE/Execucao funcionam imediatamente (dados embarcados)</li>
+            <li>A aba Compras requer internet (API PNCP + proxy CORS)</li>
+            <li>Para ambiente corporativo: configurar proxy CORS proprio no lugar do allOrigins</li>
+            <li>Classificador de setores usa 14 grupos de palavras-chave — ajustar conforme necessidade local</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">O arquivo tem 6.8 MB devido aos caches embarcados. Considerar externalizar os caches em arquivos JSON separados para melhor performance. A paginacao da API PNCP e limitada a 5 paginas (250 resultados por modalidade).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Legislativo -->
+  <div class="tool-card" id="legislativo">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(168,85,247,.12);color:var(--purple)">⚖️</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Legislativo</div>
+        <div class="tool-desc">Monitor de proposicoes legislativas com impacto em pequenas empresas</div>
+        <div class="tool-tags">
+          <span class="tag tag-api">3 APIs</span>
+          <span class="tag tag-pipeline">Pipeline Python</span>
+          <span class="tag tag-chartjs">Chart.js</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo principal: <code>pippa-legislativo-dashboard/index.html</code> (~137 KB, 3.689 linhas)</li>
+            <li>Dados estaticos: <code>data/rf_empresas.json</code> (21 KB, dados RF por setor/UF)</li>
+            <li>Pipeline Python: <code>scripts/gerar_dados_rf.py</code> (consulta OLAP Tesseract)</li>
+            <li>CI/CD: GitHub Actions (semanal) + GitLab CI (deploy Pages)</li>
+            <li>Sidebar com 8 filtros, motor de classificacao por keywords, modais de tramitacao</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔗 Fontes de Dados</div>
+        <div class="doc-content">
+          <table class="api-table">
+            <thead><tr><th>Fonte</th><th>URL Base</th><th>Autenticacao</th><th>Dados</th></tr></thead>
+            <tbody>
+              <tr><td>Camara dos Deputados</td><td><code>dadosabertos.camara.leg.br/api/v2</code></td><td>Nenhuma</td><td>Proposicoes, orgaos, deputados, autores, tramitacoes</td></tr>
+              <tr><td>Senado Federal</td><td><code>legis.senado.leg.br/dadosabertos</code></td><td>Nenhuma</td><td>Materias atualizadas, pesquisa, movimentacoes</td></tr>
+              <tr><td>Observatorio OLAP (Tesseract)</td><td><code>apiv2-observatorio.sebrae.com.br/tesseract</code></td><td>Token API</td><td>Cubo RF: empresas ativas por setor/UF/porte</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">📚 Dependencias</div>
+        <div class="doc-content">
+          <ul>
+            <li><strong>Frontend:</strong> Chart.js 4.4.4 (CDN jsDelivr)</li>
+            <li><strong>Python:</strong> <code>requests</code> (para o script de dados RF)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚡ Pipeline de Dados</div>
+        <div class="doc-content">
+          <p><code>scripts/gerar_dados_rf.py</code> consulta a API OLAP do Observatorio Sebrae (cubo RF) e gera <code>data/rf_empresas.json</code> com dados de empresas ativas por setor e estado.</p>
+          <p style="margin-top:.4rem">GitHub Actions executa semanalmente (segunda-feira 06:00 UTC) e faz auto-commit dos dados atualizados.</p>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Clonar o repositorio <code>pippa-sebrae</code></li>
+            <li>Configurar variavel de ambiente <code>OBSERVATORIO_TOKEN</code> com token da API OLAP</li>
+            <li>Executar <code>pip install requests && python scripts/gerar_dados_rf.py</code></li>
+            <li>Servir o diretorio via servidor HTTP (<code>python -m http.server</code>) — necessario para o <code>fetch()</code> do JSON</li>
+            <li>Clicar em "Consultar APIs" no dashboard para buscar dados legislativos em tempo real</li>
+            <li>Configurar GitHub Actions para atualizacao semanal automatica do JSON de RF</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">O Senado limita consultas a 60 dias (parametro <code>numdias</code>). Consultas com intervalos maiores sao silenciosamente truncadas. O script Python tem um token de fallback hardcoded — substituir por variavel de ambiente em producao.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Pesquisas Eleitorais -->
+  <div class="tool-card" id="pesquisas">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(244,114,182,.12);color:var(--pink)">📊</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Pesquisas Eleitorais</div>
+        <div class="tool-desc">Agregador de pesquisas eleitorais com medias ponderadas e cenarios</div>
+        <div class="tool-tags">
+          <span class="tag tag-api">1 API</span>
+          <span class="tag tag-static">Dados Embarcados</span>
+          <span class="tag tag-chartjs">Chart.js</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>pippa-pesquisas-eleitorais/index.html</code> (~385 KB)</li>
+            <li>Dados baseline embarcados: <code>RAW_POLLS</code>, <code>PRES_AVGS</code>, <code>SECOND_ROUND</code> (~300 KB de JSON inline)</li>
+            <li>Abas por cargo: Presidente, Governador, Senador</li>
+            <li>Metodologia: medias ponderadas (peso metodologico + meia-vida temporal)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔗 Fontes de Dados</div>
+        <div class="doc-content">
+          <table class="api-table">
+            <thead><tr><th>Fonte</th><th>URL Base</th><th>Autenticacao</th><th>Dados</th></tr></thead>
+            <tbody>
+              <tr><td>ElectioLab</td><td><code>electiolab.com/api/v1</code></td><td>Nenhuma</td><td>Eleicoes e pesquisas com paginacao</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar <code>index.html</code> para o servidor</li>
+            <li>Funciona imediatamente com dados embarcados (offline)</li>
+            <li>Clicar em "Consultar APIs" para buscar dados atualizados do ElectioLab</li>
+            <li>Para atualizar baseline: editar os arrays <code>RAW_POLLS</code>, <code>PRES_AVGS</code>, <code>SECOND_ROUND</code> no HTML</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">O arquivo e grande (~385 KB) devido aos dados embarcados. A API ElectioLab e publica mas sem garantia de SLA. Dados historicos precisam ser atualizados manualmente no HTML.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Reforma Tributaria -->
+  <div class="tool-card" id="reforma">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(245,158,11,.12);color:var(--amber)">📰</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Reforma Tributaria</div>
+        <div class="tool-desc">Monitor de noticias com classificacao NLP sobre a reforma tributaria</div>
+        <div class="tool-tags">
+          <span class="tag tag-api">1 API</span>
+          <span class="tag tag-chartjs">Chart.js</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>pippa-reforma-dashboard/index.html</code> (~66 KB, 1.914 linhas)</li>
+            <li>100% client-side — sem dados embarcados, tudo buscado em tempo real</li>
+            <li>Motor de classificacao NLP em JavaScript: status (Fato/Proposta/Expectativa), tema (11 categorias), impacto MPE</li>
+            <li>Detector de fake news: sinais de clickbait, ratio de maiusculas, padroes de exclamacao</li>
+            <li>Base de credibilidade: 70+ fontes jornalisticas + 60+ fontes institucionais</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔗 Fontes de Dados</div>
+        <div class="doc-content">
+          <table class="api-table">
+            <thead><tr><th>Fonte</th><th>URL Base</th><th>Autenticacao</th><th>Dados</th></tr></thead>
+            <tbody>
+              <tr><td>Google News RSS (via proxy)</td><td><code>api.rss2json.com/v1/api.json</code></td><td>Nenhuma (free tier)</td><td>4 queries de busca sobre reforma tributaria</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar <code>index.html</code> para o servidor</li>
+            <li>Requer internet para buscar noticias via rss2json</li>
+            <li>Para adaptar tematica: editar os 4 termos de busca e as 11 categorias de classificacao no JS</li>
+            <li>Para maior throughput: registrar chave API no rss2json (free tier tem rate limit)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">O free tier do rss2json tem rate limit nao documentado. As 4 chamadas sequenciais podem ser throttled. Considerar proxy proprio ou batch com delay em ambiente de producao.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Catalogo de Fontes -->
+  <div class="tool-card" id="catalogo">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(6,182,212,.12);color:var(--cyan)">📚</div>
+      <div class="tool-info">
+        <div class="tool-name">Catalogo de Fontes de Dados</div>
+        <div class="tool-desc">Catalogo interativo das fontes e cubos analiticos do observatorio</div>
+        <div class="tool-tags">
+          <span class="tag tag-static">100% Estatico</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>catalogo-fontes/output/catalogo_fontes_observatorio.html</code> (~31 KB)</li>
+            <li>100% estatico — todos os dados hardcoded em dois arrays JS: <code>SOURCES</code> (17 fontes) e <code>QUESTIONS</code> (15 perguntas)</li>
+            <li>Sem APIs, sem fetch(), sem build steps</li>
+            <li>Layout: sidebar com perguntas norteadoras + grid de cards expandiveis</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar o arquivo HTML unico para o servidor</li>
+            <li>Funciona imediatamente — nenhuma dependencia externa alem do Google Fonts</li>
+            <li>Para adicionar fontes: editar o array <code>SOURCES</code> com nome, instituicao, cubos e usos</li>
+            <li>Para adaptar perguntas: editar o array <code>QUESTIONS</code> mapeando fontes relevantes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Orcamento -->
+  <div class="tool-card" id="orcamento">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(20,184,166,.12);color:var(--teal)">📈</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Orcamento</div>
+        <div class="tool-desc">Inteligencia orcamentaria com 4 abas analiticas (Descritiva a Prescritiva)</div>
+        <div class="tool-tags">
+          <span class="tag tag-static">Dados Embarcados</span>
+          <span class="tag tag-chartjs">Chart.js</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>pippa-orcamento/index.html</code> (~85 KB)</li>
+            <li>4 abas analiticas: Descritiva, Diagnostica, Preditiva, Prescritiva</li>
+            <li>Dados embarcados como JSON inline (<code>const DATA</code>): orcamento (15 acoes, R$ 68.75M LOA), execucao (45 series mensais), metas (12 alvos fisicos)</li>
+            <li>Pipeline referenciado mas ausente: <code>orcamento_upp_2027.xlsx</code> + <code>atualizar_dashboard.py</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar <code>index.html</code> para o servidor</li>
+            <li>Para alimentar com dados reais: criar planilha Excel no formato esperado pelo <code>const DATA</code></li>
+            <li>Estrutura dos dados: <code>orcamento[]</code> (acao, nucleo, LOA, credito, remanejamento), <code>execucao[]</code> (acao, tipo, meses M01-M12), <code>metas[]</code> (meta, nucleo, planejado, realizado, unidade)</li>
+            <li>Substituir o objeto <code>DATA</code> no HTML com os dados reais</li>
+            <li>Recomendacao: criar script Python para ler o Excel e gerar o JSON automaticamente</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">Os dados atuais sao simulados (declarado no modal info). O pipeline de atualizacao (<code>atualizar_dashboard.py</code>) esta referenciado mas nao existe no repositorio. Necessario criar o script para conectar com dados reais do SIOP/SIAFI.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Regulatorio -->
+  <div class="tool-card" id="regulatorio">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(239,68,68,.12);color:var(--red)">📜</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Regulatorio (DOU)</div>
+        <div class="tool-desc">Monitor de normas do Diario Oficial com classificacao de impacto para MPEs</div>
+        <div class="tool-tags">
+          <span class="tag tag-api">1 API</span>
+          <span class="tag tag-chartjs">Chart.js</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>pippa-regulatorio/output/regulatorio_dou_20260928.html</code> (~1.622 linhas)</li>
+            <li>100% client-side — busca dados em tempo real da API do DOU</li>
+            <li>Motor de classificacao em 3 eixos: relevancia direta MPE (0-0.5), alcance setorial (0-0.3), potencia normativa (multiplicador)</li>
+            <li>5 queries de busca x 2 secoes (DO1, DO3) com rate limiting de 800ms</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔗 Fontes de Dados</div>
+        <div class="doc-content">
+          <table class="api-table">
+            <thead><tr><th>Fonte</th><th>URL Base</th><th>Autenticacao</th><th>Dados</th></tr></thead>
+            <tbody>
+              <tr><td>Imprensa Nacional (DOU)</td><td><code>www.in.gov.br/consulta/-/buscar/dou</code></td><td>Nenhuma</td><td>Normas publicadas no DO1 e DO3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar o HTML para o servidor</li>
+            <li>A API do DOU (<code>in.gov.br</code>) nao serve headers CORS — necessario configurar proxy CORS</li>
+            <li>Opcoes de proxy: Nginx com <code>add_header Access-Control-Allow-Origin</code>, Cloud Functions, ou allOrigins</li>
+            <li>Ajustar os 5 termos de busca no JS conforme a tematica desejada</li>
+            <li>O classificador de impacto usa keywords — revisar e adaptar para o contexto local</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">A API do DOU bloqueia requisicoes cross-origin (sem CORS). E necessario um proxy para que o fetch() funcione no navegador. O rodape da sidebar mostra uma data fixa ("22-26/09/2026") independente do periodo consultado.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. TransformaLab -->
+  <div class="tool-card" id="transformalab">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(168,85,247,.12);color:var(--purple)">🔬</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA TransformaLab</div>
+        <div class="tool-desc">Plataforma de laboratorios de experimentacao em politicas publicas</div>
+        <div class="tool-tags">
+          <span class="tag tag-static">100% Estatico</span>
+          <span class="tag tag-chartjs">Chart.js</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>pippa-transformalab/index.html</code> (~2.416 linhas)</li>
+            <li>6 abas: Visao Geral, Experimentos, Chamadas, Territorios, Resultados, Hub</li>
+            <li>Dados atuais sao sinteticos (declarado no dashboard) — modelo de estrutura para dados reais</li>
+            <li>Jornada de experimentacao em 6 gates (pipeline visual)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar <code>index.html</code> para o servidor</li>
+            <li>Substituir os arrays sinteticos (<code>EXPERIMENTOS</code>, <code>CHAMADAS</code>, <code>ETAPAS</code>) por dados reais</li>
+            <li>Estrutura de um experimento: titulo, descricao, laboratorio, tema, UF, etapa, metricas antes/depois</li>
+            <li>Para producao: implementar endpoint API para carregar experimentos dinamicamente via <code>fetch()</code></li>
+            <li>O Hub (forum) esta desabilitado — necessita backend para mensagens em tempo real</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">Todos os dados sao sinteticos. Nao existe mecanismo de carga de dados reais (sem fetch, sem API). Necessario implementar integracao com backend para uso em producao.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. Indicadores -->
+  <div class="tool-card" id="indicadores">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(16,185,129,.12);color:var(--emerald-light)">🌐</div>
+      <div class="tool-info">
+        <div class="tool-name">Indicadores Ambiente de Negocios</div>
+        <div class="tool-desc">5 dashboards tematicos com dados de APIs publicas sobre ambiente de negocios</div>
+        <div class="tool-tags">
+          <span class="tag tag-api">5 APIs</span>
+          <span class="tag tag-pipeline">14 Scripts Python</span>
+          <span class="tag tag-chartjs">Chart.js</span>
+          <span class="tag tag-multi">Multi-arquivo</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Portal hub: <code>dashboard/index.html</code> (11 KB) linkando 5 dashboards tematicos</li>
+            <li>Repositorio separado: <code>github.com/julioenders/indicadores-ambiente-negocios</code></li>
+            <li>14 scripts Python para coleta e validacao de dados</li>
+            <li>Build script: <code>build_index.py</code> gera os HTMLs dos dashboards</li>
+            <li>App Streamlit opcional: <code>app.py</code> (35 KB)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔗 Fontes de Dados</div>
+        <div class="doc-content">
+          <table class="api-table">
+            <thead><tr><th>Fonte</th><th>URL Base</th><th>Autenticacao</th><th>Dados</th></tr></thead>
+            <tbody>
+              <tr><td>REDESIM Gov</td><td><code>estatistica.redesim.gov.br</code></td><td>Nenhuma</td><td>Tempos de abertura, integracao, estabelecimentos</td></tr>
+              <tr><td>PNCP</td><td><code>pncp.gov.br/api</code></td><td>Nenhuma</td><td>Compras publicas para MPEs</td></tr>
+              <tr><td>BCB SGS</td><td><code>api.bcb.gov.br/dados/serie/bcdata.sgs</code></td><td>Nenhuma</td><td>Series de credito, inflacao, juros</td></tr>
+              <tr><td>IBGE SIDRA</td><td><code>apisidra.ibge.gov.br</code></td><td>Nenhuma</td><td>PIB, emprego, demografia</td></tr>
+              <tr><td>Receita Federal (via OLAP)</td><td><code>apiv2-observatorio.sebrae.com.br</code></td><td>Token API</td><td>CNPJ, sobrevivencia, formalizacao</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚡ Pipeline de Dados</div>
+        <div class="doc-content">
+          <p>14 scripts Python em <code>scripts/</code>, executados em ordem:</p>
+          <ul>
+            <li><code>01_validar_redesim.py</code> a <code>14_coletar_credito_bcb.py</code></li>
+            <li>Cobrem: REDESIM, Receita Federal, PNCP, CAGED/RAIS, IBGE PIB, BCB Credito</li>
+            <li>Apos coleta: <code>build_index.py</code> gera os 5 dashboards HTML</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Clonar <code>github.com/julioenders/indicadores-ambiente-negocios</code></li>
+            <li>Instalar: <code>pip install requests pandas</code></li>
+            <li>Executar scripts 01 a 14 em ordem: <code>python scripts/01_validar_redesim.py</code> etc.</li>
+            <li>Executar <code>python build_index.py</code> para gerar os dashboards</li>
+            <li>Servir <code>dashboard/</code> via servidor HTTP</li>
+            <li>Os dashboards tambem consultam APIs em tempo real via botao "Consultar APIs"</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11. Raio-X -->
+  <div class="tool-card" id="raiox">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(245,158,11,.12);color:var(--amber)">🗺️</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Raio-X Territorial</div>
+        <div class="tool-desc">Diagnostico territorial dinamico com drill-down Brasil > Regiao > Estado > Municipio</div>
+        <div class="tool-tags">
+          <span class="tag tag-api">3 APIs</span>
+          <span class="tag tag-chartjs">Chart.js</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>index.html</code> (~61 KB)</li>
+            <li>Repositorio separado: <code>github.com/julioenders/pippa-raio-x</code></li>
+            <li>100% client-side — todos os dados buscados em tempo real via APIs publicas</li>
+            <li>4 niveis de drill-down: Brasil → Regiao → Estado → Municipio</li>
+            <li>5 abas: Quem Somos, Empresas, Emprego, Economia, Cenario Nacional</li>
+            <li>Geracao automatica de narrativas textuais a partir dos dados</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔗 Fontes de Dados</div>
+        <div class="doc-content">
+          <table class="api-table">
+            <thead><tr><th>Fonte</th><th>URL Base</th><th>Autenticacao</th><th>Dados</th></tr></thead>
+            <tbody>
+              <tr><td>IBGE Agregados v3</td><td><code>servicodados.ibge.gov.br/api/v3/agregados</code></td><td>Nenhuma</td><td>Populacao (6579), PIB (5938), CEMPRE (6450)</td></tr>
+              <tr><td>BCB SGS</td><td><code>api.bcb.gov.br/dados/serie/bcdata.sgs</code></td><td>Nenhuma</td><td>Series 432, 433, 20631, 21112, 28763</td></tr>
+              <tr><td>Observatorio OLAP (Tesseract)</td><td><code>apiv2-observatorio.sebrae.com.br/tesseract</code></td><td>Token API</td><td>Cubo RF: empresas por CNAE/UF/porte</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Clonar <code>github.com/julioenders/pippa-raio-x</code></li>
+            <li>Servir via servidor HTTP (necessario para fetch() das APIs)</li>
+            <li>APIs do IBGE e BCB sao publicas e sem autenticacao</li>
+            <li>A API OLAP requer token — configurar <code>OLAP_TOKEN</code> no JS</li>
+            <li>O drill-down territorial funciona automaticamente com os codigos IBGE</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">O token OLAP esta hardcoded no JavaScript client-side. Em producao, mover para backend proxy para proteger a chave. Sem fallback offline — se as APIs estiverem indisponiveis, o dashboard nao carrega dados.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12. Atuacao UPP -->
+  <div class="tool-card" id="atuacao">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(244,114,182,.12);color:var(--pink)">🏢</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Atuacao UPP</div>
+        <div class="tool-desc">Painel de entregas estrategicas dos nucleos da Unidade de Politicas Publicas</div>
+        <div class="tool-tags">
+          <span class="tag tag-static">100% Estatico</span>
+          <span class="tag tag-multi">Multi-arquivo</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Portal hub: <code>pippa-atuacao-upp/index.html</code> (9 KB) com 3 cards de navegacao</li>
+            <li>3 sub-paginas: <code>nal.html</code> (101 KB), <code>projetos-especiais.html</code> (50 KB), <code>relgov.html</code> (27 KB)</li>
+            <li>100% editorial — sem APIs, sem dados dinamicos</li>
+            <li>Conteudo: relatorios de entregas por nucleo (NAL, Projetos Especiais, RelGov)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar os 4 arquivos HTML para o servidor (<code>index.html</code> + 3 sub-paginas)</li>
+            <li>Nao requer internet, dependencias externas ou build steps</li>
+            <li>Para adaptar: editar o conteudo editorial de cada sub-pagina</li>
+            <li>Modelo util como template para relatorios de entregas de outros nucleos/unidades</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sumario de APIs -->
+  <div class="section-title" style="margin-top:2rem">🔗 Sumario de APIs Utilizadas</div>
+  <div class="prereq">
+    <h3>Todas as APIs Externas do Ecossistema PIPPA</h3>
+    <div class="doc-content">
+      <table class="api-table">
+        <thead><tr><th>API</th><th>Autenticacao</th><th>Ferramentas que Usam</th><th>Tipo</th></tr></thead>
+        <tbody>
+          <tr><td>Camara dos Deputados</td><td>Nenhuma</td><td>Emendas, Legislativo</td><td>REST JSON</td></tr>
+          <tr><td>Senado Federal</td><td>Nenhuma</td><td>Emendas, Legislativo</td><td>REST XML/JSON</td></tr>
+          <tr><td>Portal da Transparencia (CGU)</td><td>Nenhuma</td><td>Emendas</td><td>CSV Download</td></tr>
+          <tr><td>Tesouro Transparente</td><td>Nenhuma</td><td>Emendas</td><td>CKAN CSV</td></tr>
+          <tr><td>PNCP</td><td>Nenhuma</td><td>Compras, Indicadores</td><td>REST JSON</td></tr>
+          <tr><td>Imprensa Nacional (DOU)</td><td>Nenhuma</td><td>Regulatorio</td><td>HTML/JSON</td></tr>
+          <tr><td>ElectioLab</td><td>Nenhuma</td><td>Pesquisas Eleitorais</td><td>REST JSON</td></tr>
+          <tr><td>Google News RSS</td><td>Nenhuma (proxy)</td><td>Reforma Tributaria</td><td>RSS via rss2json</td></tr>
+          <tr><td>IBGE Agregados v3</td><td>Nenhuma</td><td>Raio-X, Indicadores</td><td>REST JSON</td></tr>
+          <tr><td>IBGE Localidades v1</td><td>Nenhuma</td><td>Raio-X</td><td>REST JSON</td></tr>
+          <tr><td>BCB SGS</td><td>Nenhuma</td><td>Raio-X, Indicadores</td><td>REST JSON</td></tr>
+          <tr><td>REDESIM Gov</td><td>Nenhuma</td><td>Indicadores</td><td>REST JSON</td></tr>
+          <tr><td>Observatorio OLAP (Tesseract)</td><td>Token API</td><td>Legislativo, Raio-X, Indicadores</td><td>REST JSON</td></tr>
+          <tr><td>rss2json (proxy)</td><td>Nenhuma (free tier)</td><td>Reforma Tributaria</td><td>REST JSON</td></tr>
+        </tbody>
+      </table>
+      <div class="warn-box" style="margin-top:.8rem"><strong>Nota:</strong> Apenas a API OLAP do Observatorio Sebrae requer autenticacao (token). Todas as demais sao APIs publicas abertas. Para replicacao em outro ambiente, solicitar token ao administrador da API Tesseract.</div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="section-title" style="margin-top:2rem">✅ Checklist de Implantacao</div>
+  <div class="prereq">
+    <h3>Verificacao para Cada Ferramenta</h3>
+    <div class="doc-content">
+      <ul>
+        <li>☐ Repositorio clonado e arquivos acessiveis</li>
+        <li>☐ Servidor HTTP configurado (GitHub Pages, GitLab Pages, Nginx, etc.)</li>
+        <li>☐ CDN Chart.js acessivel (testar <code>cdn.jsdelivr.net</code> na rede corporativa)</li>
+        <li>☐ Google Fonts acessivel (testar <code>fonts.googleapis.com</code>)</li>
+        <li>☐ APIs externas acessiveis (sem bloqueio de firewall corporativo)</li>
+        <li>☐ Token OLAP configurado (se ferramenta usa Observatorio Tesseract)</li>
+        <li>☐ Proxy CORS configurado (se ferramenta usa DOU ou PNCP cross-origin)</li>
+        <li>☐ Python + dependencias instalados (se ferramenta tem pipeline)</li>
+        <li>☐ Pipeline executado e dados gerados com sucesso</li>
+        <li>☐ Dashboard aberto no navegador e funcionalidades testadas</li>
+        <li>☐ Filtros operando corretamente</li>
+        <li>☐ Links de navegacao (Portal, Quem Somos) apontando para URLs corretas</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="footer">PIPPA — Documentacao Tecnica de Replicacao | Unidade de Politicas Publicas | Sebrae Nacional | 2027</div>
+
+</body>
+</html>
