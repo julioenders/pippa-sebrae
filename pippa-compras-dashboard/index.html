@@ -1565,9 +1565,9 @@
       o <strong>CNPJ</strong>, <strong>razao social</strong> e <strong>valor homologado</strong>.<br>
       <em>Fonte: API do PNCP em tempo real — Portal Nacional de Contratacoes Publicas (pncp.gov.br).</em>
       <div style="margin-top:10px;padding:10px 14px;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);border-radius:8px;font-size:12px;color:var(--text-muted);">
-        <strong style="color:var(--rose);">Tempo medio de consulta: 2 a 5 minutos.</strong>
+        <strong style="color:var(--rose);">Tempo medio de consulta: 1 a 3 minutos.</strong>
         A ferramenta consulta a API do PNCP em tempo real, buscando ate 50 contratacoes e identificando
-        o fornecedor vencedor de cada uma individualmente. O tempo depende da velocidade de resposta da API.
+        o fornecedor vencedor de cada uma em lotes paralelos. O tempo depende da velocidade de resposta da API.
         Selecionar uma <strong>modalidade especifica</strong> e <strong>menos meses</strong> reduz o tempo de consulta.
         Voce pode selecionar <strong>multiplos meses</strong> para uma analise acumulada.
       </div>
@@ -131705,7 +131705,8 @@ function renderPncpMonDashboard() {
 // =====================================================
 
 let fornCharts = {};
-const FORN_DELAY = 600;
+const FORN_DELAY = 200;
+const FORN_BATCH = 5;
 let fornStartTime = 0;
 let fornTimerInterval = null;
 
@@ -131807,26 +131808,29 @@ async function consultarFornecedores() {
 
   const mods = mod ? [parseInt(mod)] : [6, 8, 5, 9, 12];
   let allItems = [];
-  const totalListingOps = mesesSel.length * mods.length;
-  let listingDone = 0;
-
+  const listingJobs = [];
   for (const mes of mesesSel) {
     const lastDay = new Date(2026, parseInt(mes), 0).getDate();
     const di = `2026${mes}01`;
     const df = `2026${mes}${lastDay}`;
+    for (const m of mods) {
+      listingJobs.push({ mes, m, url: `https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=${di}&dataFinal=${df}&uf=${uf}&codigoModalidadeContratacao=${m}&pagina=1&tamanhoPagina=50` });
+    }
+  }
 
-    for (let i = 0; i < mods.length; i++) {
-      const url = `https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=${di}&dataFinal=${df}&uf=${uf}&codigoModalidadeContratacao=${mods[i]}&pagina=1&tamanhoPagina=50`;
-      listingDone++;
-      fornUpdateProgress((listingDone / totalListingOps) * 20, 'Buscando contratacoes...', `${mesesNomes[mes]} — Modalidade ${mods[i]} (${listingDone}/${totalListingOps})`);
-      const data = await fetchPncpApi(url);
-      if (data) {
-        const items = Array.isArray(data) ? data : (data.data || []);
-        items.forEach(it => { it._modalidade = it.modalidadeNome || ''; it._mes = mes; });
+  for (let b = 0; b < listingJobs.length; b += FORN_BATCH) {
+    const batch = listingJobs.slice(b, b + FORN_BATCH);
+    const done = Math.min(b + FORN_BATCH, listingJobs.length);
+    fornUpdateProgress((done / listingJobs.length) * 20, 'Buscando contratacoes...', `Lote ${Math.floor(b / FORN_BATCH) + 1}/${Math.ceil(listingJobs.length / FORN_BATCH)}`);
+    const results = await Promise.allSettled(batch.map(j => fetchPncpApi(j.url)));
+    results.forEach((r, idx) => {
+      if (r.status === 'fulfilled' && r.value) {
+        const items = Array.isArray(r.value) ? r.value : (r.value.data || []);
+        items.forEach(it => { it._modalidade = it.modalidadeNome || ''; it._mes = batch[idx].mes; });
         allItems = allItems.concat(items);
       }
-      await new Promise(r => setTimeout(r, FORN_DELAY));
-    }
+    });
+    await new Promise(r => setTimeout(r, FORN_DELAY));
   }
 
   if (allItems.length === 0) {
@@ -131844,51 +131848,53 @@ async function consultarFornecedores() {
   }
   const contratacoes = unique.slice(0, 50);
 
-  fornUpdateProgress(20, `Consultando ${contratacoes.length} fornecedores...`, 'Buscando resultados de cada contratacao');
+  fornUpdateProgress(20, `Consultando ${contratacoes.length} fornecedores...`, 'Buscando resultados em lotes paralelos');
 
   const resultados = [];
-  for (let i = 0; i < contratacoes.length; i++) {
-    const c = contratacoes[i];
-    const cnpjOrg = (c.orgaoEntidade || {}).cnpj;
-    const ano = c.anoCompra;
-    const seq = c.sequencialCompra;
+  for (let b = 0; b < contratacoes.length; b += FORN_BATCH) {
+    const batch = contratacoes.slice(b, b + FORN_BATCH);
+    const promises = batch.map(async (c) => {
+      const cnpjOrg = (c.orgaoEntidade || {}).cnpj;
+      const ano = c.anoCompra;
+      const seq = c.sequencialCompra;
+      if (!cnpjOrg || !ano || !seq) return null;
 
-    if (!cnpjOrg || !ano || !seq) continue;
+      const itensUrl = `https://pncp.gov.br/api/pncp/v1/orgaos/${cnpjOrg}/compras/${ano}/${seq}/itens`;
+      const itensData = await fetchPncpApi(itensUrl);
+      if (!itensData) return null;
+      const itens = Array.isArray(itensData) ? itensData : [itensData];
+      const itemComResultado = itens.find(it => it.temResultado);
+      if (!itemComResultado) return null;
 
-    const pct = 20 + ((i / contratacoes.length) * 75);
-    fornUpdateProgress(pct, `Consultando fornecedores... (${i + 1}/${contratacoes.length})`, c.objetoCompra ? c.objetoCompra.substring(0, 80) + '...' : '');
+      const numItem = itemComResultado.numeroItem || 1;
+      const resUrl = `https://pncp.gov.br/api/pncp/v1/orgaos/${cnpjOrg}/compras/${ano}/${seq}/itens/${numItem}/resultados`;
+      const resData = await fetchPncpApi(resUrl);
+      if (!resData) return null;
+      const res = Array.isArray(resData) ? resData[0] : resData;
 
-    const itensUrl = `https://pncp.gov.br/api/pncp/v1/orgaos/${cnpjOrg}/compras/${ano}/${seq}/itens`;
-    const itensData = await fetchPncpApi(itensUrl);
-    await new Promise(r => setTimeout(r, FORN_DELAY));
-
-    if (!itensData) continue;
-    const itens = Array.isArray(itensData) ? itensData : [itensData];
-    const itemComResultado = itens.find(it => it.temResultado);
-    if (!itemComResultado) continue;
-
-    const numItem = itemComResultado.numeroItem || 1;
-    const resUrl = `https://pncp.gov.br/api/pncp/v1/orgaos/${cnpjOrg}/compras/${ano}/${seq}/itens/${numItem}/resultados`;
-    const resData = await fetchPncpApi(resUrl);
-    await new Promise(r => setTimeout(r, FORN_DELAY));
-
-    if (!resData) continue;
-    const res = Array.isArray(resData) ? resData[0] : resData;
-
-    resultados.push({
-      fornecedor: res.nomeRazaoSocialFornecedor || '—',
-      cnpj: res.niFornecedor || '',
-      porte: res.porteFornecedorNome || '—',
-      porteId: res.porteFornecedorId || 0,
-      natureza: res.naturezaJuridicaNome || '',
-      valorHom: res.valorTotalHomologado || 0,
-      valorEst: c.valorTotalEstimado || 0,
-      objeto: (c.objetoCompra || '').substring(0, 120),
-      orgao: (c.orgaoEntidade || {}).razaoSocial || '',
-      link: c.linkSistemaOrigem || '',
-      modalidade: c._modalidade || c.modalidadeNome || '',
-      beneficioMeEpp: res.aplicacaoBeneficioMeEpp || false
+      return {
+        fornecedor: res.nomeRazaoSocialFornecedor || '—',
+        cnpj: res.niFornecedor || '',
+        porte: res.porteFornecedorNome || '—',
+        porteId: res.porteFornecedorId || 0,
+        natureza: res.naturezaJuridicaNome || '',
+        valorHom: res.valorTotalHomologado || 0,
+        valorEst: c.valorTotalEstimado || 0,
+        objeto: (c.objetoCompra || '').substring(0, 120),
+        orgao: (c.orgaoEntidade || {}).razaoSocial || '',
+        link: c.linkSistemaOrigem || '',
+        modalidade: c._modalidade || c.modalidadeNome || '',
+        beneficioMeEpp: res.aplicacaoBeneficioMeEpp || false
+      };
     });
+
+    const results = await Promise.allSettled(promises);
+    results.forEach(r => { if (r.status === 'fulfilled' && r.value) resultados.push(r.value); });
+
+    const done = Math.min(b + FORN_BATCH, contratacoes.length);
+    const pct = 20 + ((done / contratacoes.length) * 75);
+    fornUpdateProgress(pct, `Consultando fornecedores... (${done}/${contratacoes.length})`, `Lote ${Math.floor(b / FORN_BATCH) + 1}/${Math.ceil(contratacoes.length / FORN_BATCH)}`);
+    await new Promise(r => setTimeout(r, FORN_DELAY));
   }
 
   clearInterval(fornTimerInterval);
