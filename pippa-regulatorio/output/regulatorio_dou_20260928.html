@@ -574,7 +574,7 @@
     <div class="sidebar-footer">
       PIPPA Regulat&#243;rio v1.0<br>
       Fonte: DOU &#8212; Imprensa Nacional<br>
-      Dados: 22&#8211;26/09/2026
+      <span id="sidebarDateRange">Dados: 22&#8211;26/09/2026</span>
     </div>
   </div>
 
@@ -1326,6 +1326,22 @@ function parseDOUDate(isoDate) {
   return d + '-' + m + '-' + y;
 }
 
+function updateSidebarDateRange(isoStart, isoEnd) {
+  // Format: "Dados: DD–DD/MM/YYYY" when same month/year, or "Dados: DD/MM–DD/MM/YYYY" when different months
+  const [y1, m1, d1] = isoStart.split('-');
+  const [y2, m2, d2] = isoEnd.split('-');
+  let label;
+  if (y1 === y2 && m1 === m2) {
+    label = 'Dados: ' + parseInt(d1) + '–' + parseInt(d2) + '/' + m1 + '/' + y1;
+  } else if (y1 === y2) {
+    label = 'Dados: ' + parseInt(d1) + '/' + m1 + '–' + parseInt(d2) + '/' + m2 + '/' + y1;
+  } else {
+    label = 'Dados: ' + parseInt(d1) + '/' + m1 + '/' + y1 + '–' + parseInt(d2) + '/' + m2 + '/' + y2;
+  }
+  const el = document.getElementById('sidebarDateRange');
+  if (el) el.textContent = label;
+}
+
 async function fetchDOUPage(query, secao, dateFrom, dateTo) {
   const params = new URLSearchParams({
     q: query, s: secao, sortType: '0', delta: '75', start: '0',
@@ -1505,6 +1521,9 @@ async function fetchDOU() {
       document.getElementById('kpiBar').style.opacity = '1';
       rebuildDynamicFilters();
       applyFilters();
+
+      // Update sidebar footer with the queried date range
+      updateSidebarDateRange(dateStart, dateEnd);
     } else {
       alert('Nenhuma norma encontrada no período selecionado.');
     }
