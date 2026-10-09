@@ -26,7 +26,9 @@ except ImportError:
     import requests
 
 BASE_URL = "https://apiv2-observatorio.sebrae.com.br/tesseract/data.jsonrecords"
-TOKEN = os.getenv("OBSERVATORIO_TOKEN", "f38eaf2bd57685d925db8db0a91979db")
+TOKEN = os.getenv("OBSERVATORIO_TOKEN")
+if not TOKEN:
+    raise EnvironmentError("Variavel OBSERVATORIO_TOKEN nao definida. Configure com: export OBSERVATORIO_TOKEN=seu_token")
 
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
 
