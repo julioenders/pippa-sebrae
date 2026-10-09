@@ -134,6 +134,7 @@
     .landing-card:nth-child(2)::before { background: var(--green); }
     .landing-card:nth-child(3)::before { background: var(--orange); }
     .landing-card:nth-child(4)::before { background: var(--cyan); }
+    .landing-card:nth-child(5)::before { background: var(--purple); }
     .landing-card:hover {
       transform: translateY(-3px);
       border-color: rgba(59,130,246,.3);
@@ -154,6 +155,7 @@
     .landing-card:nth-child(2) .card-num { background: rgba(34,197,94,.12); color: var(--green); }
     .landing-card:nth-child(3) .card-num { background: rgba(249,115,22,.12); color: var(--orange); }
     .landing-card:nth-child(4) .card-num { background: rgba(6,182,212,.12); color: var(--cyan); }
+    .landing-card:nth-child(5) .card-num { background: rgba(168,85,247,.12); color: var(--purple); }
     .card-body h3 { font-size: .92rem; font-weight: 700; margin-bottom: .35rem; }
     .card-body p { font-size: .78rem; color: var(--text-muted); line-height: 1.65; }
     .card-arrow {
@@ -523,7 +525,7 @@
   <div class="landing-container">
     <div class="landing-title">
       <h1>Compras Publicas e Orcamento Educacional</h1>
-      <p>Monitore oportunidades de venda ao governo para micro e pequenas empresas, acompanhe os repasses do PDDE por escola e UF, e analise a execucao orcamentaria dos estados brasileiros.</p>
+      <p>Monitore oportunidades de venda ao governo para micro e pequenas empresas, acompanhe os repasses do PDDE e PNAE, analise a execucao orcamentaria dos estados e o historico de contratacoes do PNCP.</p>
     </div>
     <div class="landing-grid">
       <div class="landing-card" onclick="showView('compras')">
@@ -558,11 +560,19 @@
         </div>
         <span class="card-arrow">&rsaquo;</span>
       </div>
+      <div class="landing-card" onclick="showView('pncpMonitor')">
+        <div class="card-num">5</div>
+        <div class="card-body">
+          <h3>Monitor PNCP — 5 Anos</h3>
+          <p>Monitoramento historico de contratacoes publicas do PNCP — valores estimados, homologados e economia por regiao, estado e municipio. Dados reais do Portal Nacional de Contratacoes Publicas.</p>
+        </div>
+        <span class="card-arrow">&rsaquo;</span>
+      </div>
     </div>
     <div class="landing-footer">
       PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas<br>
       Sebrae Nacional — Observatorio Setorial Territorial<br>
-      Fontes: PNCP (pncp.gov.br) | FNDE/Antonieta de Barros (fnde.gov.br) | SICONFI/Tesouro Nacional
+      Fontes: PNCP (pncp.gov.br) | FNDE/Antonieta de Barros (fnde.gov.br) | SICONFI/Tesouro Nacional | IBGE
     </div>
   </div>
 </div>
@@ -1283,6 +1293,140 @@
   </div>
 </div>
 
+<!-- ╔══════════════════════════════════════════════════════════════╗ -->
+<!-- ║  MONITOR PNCP — 5 ANOS                                      ║ -->
+<!-- ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="viewPncpMonitor" class="view">
+
+  <header class="header">
+    <div class="header-left">
+      <button class="back-btn" onclick="showView('landing')">&larr; Voltar</button>
+      <div>
+        <div class="logo">Monitor PNCP — Contratacoes Publicas</div>
+        <div class="logo-sub">Valores Estimados, Homologados e Economia — Historico de 5 Anos (PNCP)</div>
+      </div>
+    </div>
+    <div class="header-controls">
+      <div id="pncpMonThermometer" class="thermometer thermo-green">Aguardando dados...</div>
+      <select id="pncpMonAno" class="select-input" onchange="renderPncpMonDashboard()" style="width:100px;">
+        <option value="">Todos os Anos</option>
+      </select>
+      <select id="pncpMonNivel" class="select-input" onchange="onPncpMonNivelChange()" style="width:160px;">
+        <option value="brasil">Brasil</option>
+        <option value="regiao">Por Regiao</option>
+        <option value="estado">Por Estado</option>
+        <option value="municipio">Por Municipio</option>
+      </select>
+      <select id="pncpMonRegiao" class="select-input" onchange="renderPncpMonDashboard()" style="width:160px;display:none;">
+        <option value="">Todas as Regioes</option>
+        <option value="NO">Norte</option>
+        <option value="NE">Nordeste</option>
+        <option value="SE">Sudeste</option>
+        <option value="CO">Centro-Oeste</option>
+        <option value="SU">Sul</option>
+      </select>
+      <select id="pncpMonUf" class="select-input" onchange="onPncpMonUfChange()" style="width:120px;display:none;">
+        <option value="">Todos</option>
+      </select>
+      <select id="pncpMonMun" class="select-input" onchange="renderPncpMonDashboard()" style="width:180px;display:none;">
+        <option value="">Todos os Municipios</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="pdde-main">
+    <div class="pdde-summary" id="pncpMonSummary">
+      <strong>Monitoramento Historico de Contratacoes Publicas</strong><br>
+      Dados do Portal Nacional de Contratacoes Publicas (PNCP) agregados por ano, UF e municipio.
+      Mostra os valores <strong>Estimados</strong> (planejado), <strong>Homologados</strong> (adjudicado) e a <strong>Economia</strong> gerada pelo processo competitivo.<br>
+      <em>Fonte: PNCP — Portal Nacional de Contratacoes Publicas (pncp.gov.br).</em>
+    </div>
+
+    <div id="pncpMonFonte" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;margin-bottom:16px;font-size:12px;color:var(--text-muted);text-align:center;"></div>
+
+    <div class="kpi-bar" id="pncpMonKpis" style="display:none">
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--accent)" id="pncpMonKpiEstimado">—</div>
+        <div class="kpi-label" id="pncpMonKpiEstLabel">Estimado</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--green)" id="pncpMonKpiHomologado">—</div>
+        <div class="kpi-label" id="pncpMonKpiHomLabel">Homologado</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--cyan)" id="pncpMonKpiEconomia">—</div>
+        <div class="kpi-label" id="pncpMonKpiEcoLabel">Economia</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--purple)" id="pncpMonKpiQtd">—</div>
+        <div class="kpi-label">Contratacoes</div>
+      </div>
+    </div>
+
+    <div id="pncpMonExecBarContainer" style="display:none">
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:6px;font-weight:600;" id="pncpMonBarTitle">Composicao do Valor</div>
+      <div class="pdde-exec-bar" id="pncpMonExecBar"></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:4px;">
+        <span id="pncpMonExecLabel1"></span>
+        <span id="pncpMonExecLabel2"></span>
+      </div>
+    </div>
+
+    <div class="charts-row-half" style="margin-top:24px">
+      <div class="chart-card">
+        <div class="chart-title" id="pncpMonChart1Title">Evolucao Anual — Estimado vs Homologado</div>
+        <div class="chart-wrapper" style="height:300px"><canvas id="chartPncpMonEvolucao"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Taxa de Economia por Ano (%)</div>
+        <div class="chart-wrapper" style="height:300px"><canvas id="chartPncpMonTaxa"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-row-half">
+      <div class="chart-card">
+        <div class="chart-title" id="pncpMonChart3Title">Ranking — Estimado (ano mais recente)</div>
+        <div class="chart-wrapper" style="height:350px"><canvas id="chartPncpMonRanking"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" id="pncpMonChart4Title">Ranking — Taxa de Economia (ano mais recente)</div>
+        <div class="chart-wrapper" style="height:350px"><canvas id="chartPncpMonRankingTaxa"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-row-half">
+      <div class="chart-card">
+        <div class="chart-title">Quantidade de Contratacoes por Ano</div>
+        <div class="chart-wrapper" style="height:260px"><canvas id="chartPncpMonQtd"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Economia Absoluta por Ano (Estimado - Homologado)</div>
+        <div class="chart-wrapper" style="height:260px"><canvas id="chartPncpMonEconomia"></canvas></div>
+      </div>
+    </div>
+
+    <div id="pncpMonTableContainer" style="display:none">
+      <div class="chart-card" style="overflow-x:auto">
+        <div class="chart-title" id="pncpMonTableTitle">Detalhamento</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;" id="pncpMonTable">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border);" id="pncpMonTableHead">
+              <th style="padding:10px 8px;text-align:left;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Ano</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Estimado</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Homologado</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Economia</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Taxa Eco.</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-size:11px;text-transform:uppercase;">Contratacoes</th>
+            </tr>
+          </thead>
+          <tbody id="pncpMonTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- ── Modals & Overlays ─────────────────────────────────── -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
@@ -1351,9 +1495,10 @@
 let pddeLoaded = false;
 let execLoaded = false;
 let pnaeLoaded = false;
+let pncpMonLoaded = false;
 function showView(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  const viewMap = { landing: 'viewLanding', compras: 'viewCompras', pdde: 'viewPdde', pnae: 'viewPnae', execucao: 'viewExecucao' };
+  const viewMap = { landing: 'viewLanding', compras: 'viewCompras', pdde: 'viewPdde', pnae: 'viewPnae', execucao: 'viewExecucao', pncpMonitor: 'viewPncpMonitor' };
   document.getElementById(viewMap[view] || 'viewLanding').classList.add('active');
   window.scrollTo(0, 0);
   if (view === 'pdde' && !pddeLoaded) {
@@ -1367,6 +1512,10 @@ function showView(view) {
   if (view === 'execucao' && !execLoaded) {
     execLoaded = true;
     setTimeout(() => loadExecData(), 200);
+  }
+  if (view === 'pncpMonitor' && !pncpMonLoaded) {
+    pncpMonLoaded = true;
+    setTimeout(() => loadPncpMonitorData(), 200);
   }
 }
 
@@ -131108,6 +131257,257 @@ function renderExecDashboard() {
       <td style="padding:10px 8px;text-align:right;font-weight:700;color:${tc};">${t.toFixed(1)}%</td>
     </tr>`;
   }).join('') + '<tr><td colspan="5" style="padding:6px 8px;font-size:11px;color:var(--text-muted);">* 2026: dados ate ago/2026 (periodo 4 do RREO)</td></tr>';
+}
+
+// =====================================================
+// MONITOR PNCP — 5 ANOS
+// =====================================================
+
+const PNCP_MONITOR_CACHE = [];
+const PNCP_MONITOR_CACHE_DATE = '';
+const PNCP_MONITOR_MUN_CACHE = [];
+
+const PNCP_MON_REGIAO_NAMES = { NO: 'Norte', NE: 'Nordeste', SE: 'Sudeste', CO: 'Centro-Oeste', SU: 'Sul' };
+const PNCP_MON_REGIAO_COLORS = { NO: '#22c55e', NE: '#f59e0b', SE: '#3b82f6', CO: '#a855f7', SU: '#06b6d4' };
+
+let pncpMonCharts = {};
+
+function loadPncpMonitorData() {
+  if (PNCP_MONITOR_CACHE.length === 0) {
+    document.getElementById('pncpMonSummary').innerHTML = '<strong>Dados nao disponiveis</strong><br>Execute o script <code>scripts/coletar_pncp_monitor.py</code> para coletar dados do PNCP e cole o resultado no index.html.';
+    document.getElementById('pncpMonThermometer').textContent = 'Sem dados — execute o script de coleta';
+    document.getElementById('pncpMonThermometer').className = 'thermometer thermo-red';
+    return;
+  }
+
+  const ufs = [...new Set(PNCP_MONITOR_CACHE.map(d => d.uf))].sort();
+  const sel = document.getElementById('pncpMonUf');
+  sel.innerHTML = '<option value="">Todos</option>' + ufs.map(u => `<option value="${u}">${u}</option>`).join('');
+
+  const anoSel = document.getElementById('pncpMonAno');
+  if (anoSel.options.length <= 1) {
+    const anos = [...new Set(PNCP_MONITOR_CACHE.map(d => d.ano))].sort();
+    anos.forEach(a => { const o = document.createElement('option'); o.value = a; o.textContent = a; anoSel.appendChild(o); });
+  }
+
+  document.getElementById('pncpMonKpis').style.display = '';
+  document.getElementById('pncpMonExecBarContainer').style.display = '';
+  document.getElementById('pncpMonTableContainer').style.display = '';
+  if (PNCP_MONITOR_CACHE_DATE) {
+    document.getElementById('pncpMonFonte').textContent = `Dados reais do PNCP coletados em ${PNCP_MONITOR_CACHE_DATE}`;
+    document.getElementById('pncpMonFonte').style.display = '';
+  }
+
+  renderPncpMonDashboard();
+}
+
+function onPncpMonNivelChange() {
+  const nivel = document.getElementById('pncpMonNivel').value;
+  document.getElementById('pncpMonRegiao').style.display = (nivel === 'regiao' || nivel === 'estado' || nivel === 'municipio') ? '' : 'none';
+  document.getElementById('pncpMonUf').style.display = (nivel === 'estado' || nivel === 'municipio') ? '' : 'none';
+  document.getElementById('pncpMonMun').style.display = nivel === 'municipio' ? '' : 'none';
+  renderPncpMonDashboard();
+}
+
+async function onPncpMonUfChange() {
+  const uf = document.getElementById('pncpMonUf').value;
+  const munSel = document.getElementById('pncpMonMun');
+  munSel.innerHTML = '<option value="">Todos os Municipios</option>';
+  if (uf && PNCP_MONITOR_MUN_CACHE.length > 0) {
+    const muns = [...new Set(PNCP_MONITOR_MUN_CACHE.filter(m => m.uf === uf).map(m => JSON.stringify({cod: m.cod, nome: m.nome})))].map(s => JSON.parse(s)).sort((a, b) => a.nome.localeCompare(b.nome));
+    muns.forEach(m => { munSel.innerHTML += `<option value="${m.cod}">${m.nome}</option>`; });
+  } else if (uf) {
+    munSel.innerHTML = '<option value="">Carregando...</option>';
+    try {
+      const resp = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderBy=nome`);
+      if (resp.ok) {
+        const municipios = await resp.json();
+        munSel.innerHTML = '<option value="">Todos os Municipios</option>';
+        municipios.forEach(m => { const o = document.createElement('option'); o.value = m.id; o.textContent = m.nome; munSel.appendChild(o); });
+      }
+    } catch (_) { munSel.innerHTML = '<option value="">Todos os Municipios</option>'; }
+  }
+  renderPncpMonDashboard();
+}
+
+function getPncpMonFiltered() {
+  const nivel = document.getElementById('pncpMonNivel').value;
+  const regSel = document.getElementById('pncpMonRegiao');
+  const ufSel = document.getElementById('pncpMonUf');
+  const munSel = document.getElementById('pncpMonMun');
+  const anoSel = document.getElementById('pncpMonAno').value;
+
+  const regiao = regSel.value;
+  const uf = ufSel.value;
+  const mun = munSel.value;
+
+  let filtered, useMun = false;
+
+  if (nivel === 'municipio' && mun && PNCP_MONITOR_MUN_CACHE.length > 0) {
+    filtered = PNCP_MONITOR_MUN_CACHE.filter(d => d.cod === mun);
+    useMun = true;
+  } else if (nivel === 'municipio' && uf && PNCP_MONITOR_MUN_CACHE.length > 0) {
+    filtered = PNCP_MONITOR_MUN_CACHE.filter(d => d.uf === uf);
+    useMun = true;
+  } else {
+    filtered = PNCP_MONITOR_CACHE;
+  }
+
+  if (!useMun) {
+    if (regiao) filtered = filtered.filter(d => d.regiao === regiao);
+    if ((nivel === 'estado' || nivel === 'municipio') && uf) filtered = filtered.filter(d => d.uf === uf);
+  }
+  if (anoSel) filtered = filtered.filter(d => d.ano === parseInt(anoSel));
+
+  return { filtered, nivel, regiao, uf, mun, useMun };
+}
+
+function pncpMonAggByYear(data) {
+  const map = {};
+  data.forEach(d => {
+    if (!map[d.ano]) map[d.ano] = { ano: d.ano, estimado: 0, homologado: 0, qtd: 0 };
+    map[d.ano].estimado += d.estimado;
+    map[d.ano].homologado += d.homologado;
+    map[d.ano].qtd += d.qtd;
+  });
+  return Object.values(map).sort((a, b) => a.ano - b.ano);
+}
+
+function pncpMonAggByGroup(data, key, year) {
+  const yr = data.filter(d => d.ano === year);
+  const map = {};
+  yr.forEach(d => {
+    const k = key === 'nome' ? d.nome : d[key];
+    if (!map[k]) map[k] = { label: key === 'regiao' ? (PNCP_MON_REGIAO_NAMES[k] || k) : k, key: k, estimado: 0, homologado: 0, qtd: 0 };
+    map[k].estimado += d.estimado;
+    map[k].homologado += d.homologado;
+    map[k].qtd += d.qtd;
+  });
+  return Object.values(map).sort((a, b) => b.estimado - a.estimado);
+}
+
+function renderPncpMonDashboard() {
+  if (PNCP_MONITOR_CACHE.length === 0) return;
+  const { filtered, nivel, regiao, uf, mun, useMun } = getPncpMonFiltered();
+  const byYear = pncpMonAggByYear(filtered);
+  if (byYear.length === 0) return;
+
+  const latest = byYear[byYear.length - 1];
+  const latestYear = latest.ano;
+  const economia = latest.estimado - latest.homologado;
+  const taxaEco = latest.estimado > 0 ? (economia / latest.estimado * 100) : 0;
+
+  document.getElementById('pncpMonKpiEstimado').textContent = formatCurrency(latest.estimado);
+  document.getElementById('pncpMonKpiHomologado').textContent = formatCurrency(latest.homologado);
+  document.getElementById('pncpMonKpiEconomia').textContent = formatCurrency(economia);
+  document.getElementById('pncpMonKpiQtd').textContent = latest.qtd.toLocaleString('pt-BR');
+
+  let scopeLabel = 'Brasil';
+  if (regiao) scopeLabel = PNCP_MON_REGIAO_NAMES[regiao] || regiao;
+  if (uf) scopeLabel = uf;
+  if (mun && useMun) { const m = filtered.find(d => d.cod === mun); if (m) scopeLabel = m.nome; }
+  document.getElementById('pncpMonKpiEstLabel').textContent = `Estimado ${latestYear}`;
+  document.getElementById('pncpMonKpiHomLabel').textContent = `Homologado ${latestYear}`;
+  document.getElementById('pncpMonKpiEcoLabel').textContent = `Economia ${latestYear}`;
+
+  const total = latest.estimado || 1;
+  const pctHom = (latest.homologado / total * 100);
+  const pctEco = (economia / total * 100);
+  document.getElementById('pncpMonBarTitle').textContent = `Composicao do Valor ${latestYear} — ${scopeLabel}`;
+  const bar = document.getElementById('pncpMonExecBar');
+  bar.innerHTML = `
+    <div class="pdde-exec-seg" style="width:${Math.max(pctHom, 0)}%;background:#22c55e;">${pctHom > 8 ? formatCurrency(latest.homologado) : ''}</div>
+    <div class="pdde-exec-seg" style="width:${Math.max(pctEco, 0)}%;background:#a855f7;">${pctEco > 8 ? formatCurrency(economia) : ''}</div>
+  `;
+  document.getElementById('pncpMonExecLabel1').innerHTML = `<span style="color:#22c55e">●</span> Homologado (${pctHom.toFixed(1)}%)`;
+  document.getElementById('pncpMonExecLabel2').innerHTML = `<span style="color:#a855f7">●</span> Economia (${Math.max(pctEco, 0).toFixed(1)}%)`;
+
+  const therm = document.getElementById('pncpMonThermometer');
+  if (taxaEco >= 15) { therm.className = 'thermometer thermo-green'; therm.textContent = `${scopeLabel} ${latestYear}: ${taxaEco.toFixed(1)}% economia — ${latest.qtd.toLocaleString('pt-BR')} contratacoes`; }
+  else if (taxaEco >= 5) { therm.className = 'thermometer thermo-yellow'; therm.textContent = `${scopeLabel} ${latestYear}: ${taxaEco.toFixed(1)}% economia`; }
+  else { therm.className = 'thermometer thermo-red'; therm.textContent = `${scopeLabel} ${latestYear}: ${taxaEco.toFixed(1)}% economia — verificar dados`; }
+
+  const anos = byYear.map(d => d.ano);
+  const estimados = byYear.map(d => d.estimado);
+  const homologados = byYear.map(d => d.homologado);
+  const taxas = byYear.map(d => d.estimado > 0 ? ((d.estimado - d.homologado) / d.estimado * 100) : 0);
+  const qtds = byYear.map(d => d.qtd);
+  const ecos = byYear.map(d => d.estimado - d.homologado);
+  const co = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#64748b', font: { size: 11 } } } } };
+  const gc = 'rgba(255,255,255,.06)';
+
+  if (pncpMonCharts.evolucao) pncpMonCharts.evolucao.destroy();
+  document.getElementById('pncpMonChart1Title').textContent = `Evolucao Anual — ${scopeLabel}`;
+  pncpMonCharts.evolucao = new Chart(document.getElementById('chartPncpMonEvolucao'), {
+    type: 'bar', data: { labels: anos, datasets: [
+      { label: 'Estimado', data: estimados, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 4, barPercentage: 0.8 },
+      { label: 'Homologado', data: homologados, backgroundColor: 'rgba(34,197,94,.7)', borderRadius: 4, barPercentage: 0.8 }
+    ] }, options: { ...co, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gc }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } }, plugins: { ...co.plugins, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatCurrency(ctx.raw) } } } }
+  });
+
+  if (pncpMonCharts.taxa) pncpMonCharts.taxa.destroy();
+  pncpMonCharts.taxa = new Chart(document.getElementById('chartPncpMonTaxa'), {
+    type: 'line', data: { labels: anos, datasets: [{ label: 'Economia (%)', data: taxas, borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,.15)', fill: true, tension: 0.3, pointRadius: 5, pointBackgroundColor: '#a855f7' }] },
+    options: { ...co, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gc }, ticks: { color: '#64748b', callback: v => v.toFixed(0) + '%' }, min: 0 } }, plugins: { ...co.plugins, tooltip: { callbacks: { label: ctx => ctx.raw.toFixed(1) + '%' } } } }
+  });
+
+  const rankKey = useMun ? 'nome' : nivel === 'estado' && !uf ? 'uf' : nivel === 'regiao' ? 'regiao' : nivel === 'municipio' && uf ? 'nome' : null;
+  if (rankKey) {
+    const groups = pncpMonAggByGroup(filtered, rankKey, latestYear);
+    const rankLabels = groups.slice(0, 20).map(g => g.label);
+    const rankEst = groups.slice(0, 20).map(g => g.estimado);
+    const rankTaxas = groups.slice(0, 20).map(g => g.estimado > 0 ? ((g.estimado - g.homologado) / g.estimado * 100) : 0);
+    const rankColors = rankKey === 'regiao' ? groups.slice(0, 20).map(g => PNCP_MON_REGIAO_COLORS[g.key] || '#64748b') : groups.slice(0, 20).map(() => '#a855f7');
+
+    if (pncpMonCharts.ranking) pncpMonCharts.ranking.destroy();
+    document.getElementById('pncpMonChart3Title').textContent = `Ranking Estimado ${latestYear}`;
+    pncpMonCharts.ranking = new Chart(document.getElementById('chartPncpMonRanking'), {
+      type: 'bar', data: { labels: rankLabels, datasets: [{ data: rankEst, backgroundColor: rankColors, borderRadius: 4, barPercentage: 0.7 }] },
+      options: { ...co, indexAxis: 'y', plugins: { ...co.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { color: gc }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } }, y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { size: 11 } } } } }
+    });
+
+    const taxaSorted = groups.slice(0, 20).map(g => ({ label: g.label, key: g.key, taxa: g.estimado > 0 ? ((g.estimado - g.homologado) / g.estimado * 100) : 0 })).sort((a, b) => b.taxa - a.taxa);
+    const taxaColors2 = taxaSorted.map(t => t.taxa >= 20 ? '#22c55e' : t.taxa >= 10 ? '#f59e0b' : '#ef4444');
+    if (pncpMonCharts.rankingTaxa) pncpMonCharts.rankingTaxa.destroy();
+    document.getElementById('pncpMonChart4Title').textContent = `Ranking Taxa de Economia ${latestYear}`;
+    pncpMonCharts.rankingTaxa = new Chart(document.getElementById('chartPncpMonRankingTaxa'), {
+      type: 'bar', data: { labels: taxaSorted.map(t => t.label), datasets: [{ data: taxaSorted.map(t => t.taxa), backgroundColor: taxaColors2, borderRadius: 4, barPercentage: 0.7 }] },
+      options: { ...co, indexAxis: 'y', plugins: { ...co.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.raw.toFixed(1) + '%' } } }, scales: { x: { grid: { color: gc }, ticks: { color: '#64748b', callback: v => v + '%' }, min: 0 }, y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { size: 11 } } } } }
+    });
+  } else {
+    if (pncpMonCharts.ranking) { pncpMonCharts.ranking.destroy(); pncpMonCharts.ranking = null; }
+    if (pncpMonCharts.rankingTaxa) { pncpMonCharts.rankingTaxa.destroy(); pncpMonCharts.rankingTaxa = null; }
+    document.getElementById('pncpMonChart3Title').textContent = 'Selecione "Por Regiao" ou "Por Estado" para ver rankings';
+    document.getElementById('pncpMonChart4Title').textContent = '';
+  }
+
+  if (pncpMonCharts.qtd) pncpMonCharts.qtd.destroy();
+  pncpMonCharts.qtd = new Chart(document.getElementById('chartPncpMonQtd'), {
+    type: 'bar', data: { labels: anos, datasets: [{ label: 'Contratacoes', data: qtds, backgroundColor: 'rgba(168,85,247,.7)', borderRadius: 4, barPercentage: 0.65 }] },
+    options: { ...co, plugins: { ...co.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.raw.toLocaleString('pt-BR') + ' contratacoes' } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gc }, ticks: { color: '#64748b' } } } }
+  });
+
+  if (pncpMonCharts.economia) pncpMonCharts.economia.destroy();
+  pncpMonCharts.economia = new Chart(document.getElementById('chartPncpMonEconomia'), {
+    type: 'bar', data: { labels: anos, datasets: [{ label: 'Economia', data: ecos, backgroundColor: ecos.map(d => d > 0 ? '#22c55e' : '#ef4444'), borderRadius: 4, barPercentage: 0.65 }] },
+    options: { ...co, plugins: { ...co.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: gc }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } } }
+  });
+
+  document.getElementById('pncpMonTableTitle').textContent = `Detalhamento — ${scopeLabel}`;
+  const tbody = document.getElementById('pncpMonTableBody');
+  tbody.innerHTML = byYear.map(d => {
+    const eco = d.estimado - d.homologado;
+    const t = d.estimado > 0 ? (eco / d.estimado * 100) : 0;
+    const tc = t >= 15 ? '#22c55e' : t >= 5 ? '#f59e0b' : '#ef4444';
+    return `<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:10px 8px;font-weight:600;">${d.ano}</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--accent);">R$ ${d.estimado.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--green);">R$ ${d.homologado.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--cyan);">R$ ${eco.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+      <td style="padding:10px 8px;text-align:right;font-weight:700;color:${tc};">${t.toFixed(1)}%</td>
+      <td style="padding:10px 8px;text-align:right;color:var(--purple);">${d.qtd.toLocaleString('pt-BR')}</td>
+    </tr>`;
+  }).join('');
 }
 
 // ── Init ─────────────────────────────────────────────────────────
