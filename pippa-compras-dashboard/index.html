@@ -19,6 +19,7 @@
       --orange: #f97316;
       --purple: #a855f7;
       --cyan: #06b6d4;
+      --rose: #f43f5e;
       --pregao: #4f8cff;
       --dispensa: #f59e0b;
       --concorrencia: #a855f7;
@@ -135,6 +136,7 @@
     .landing-card:nth-child(3)::before { background: var(--orange); }
     .landing-card:nth-child(4)::before { background: var(--cyan); }
     .landing-card:nth-child(5)::before { background: var(--purple); }
+    .landing-card:nth-child(6)::before { background: var(--rose); }
     .landing-card:hover {
       transform: translateY(-3px);
       border-color: rgba(59,130,246,.3);
@@ -156,6 +158,7 @@
     .landing-card:nth-child(3) .card-num { background: rgba(249,115,22,.12); color: var(--orange); }
     .landing-card:nth-child(4) .card-num { background: rgba(6,182,212,.12); color: var(--cyan); }
     .landing-card:nth-child(5) .card-num { background: rgba(168,85,247,.12); color: var(--purple); }
+    .landing-card:nth-child(6) .card-num { background: rgba(244,63,94,.12); color: var(--rose); }
     .card-body h3 { font-size: .92rem; font-weight: 700; margin-bottom: .35rem; }
     .card-body p { font-size: .78rem; color: var(--text-muted); line-height: 1.65; }
     .card-arrow {
@@ -565,6 +568,14 @@
         <div class="card-body">
           <h3>Monitor PNCP — 5 Anos</h3>
           <p>Monitoramento historico de contratacoes publicas do PNCP — valores estimados, homologados e economia por regiao, estado e municipio. Dados reais do Portal Nacional de Contratacoes Publicas.</p>
+        </div>
+        <span class="card-arrow">&rsaquo;</span>
+      </div>
+      <div class="landing-card" onclick="showView('fornecedores')">
+        <div class="card-num">6</div>
+        <div class="card-body">
+          <h3>Fornecedores PNCP</h3>
+          <p>Consulta sob demanda dos fornecedores vencedores de contratacoes publicas — identifica empresa, CNPJ, porte (MPE, MEI, EPP) e valores adjudicados. Dados em tempo real da API do PNCP.</p>
         </div>
         <span class="card-arrow">&rsaquo;</span>
       </div>
@@ -1487,6 +1498,134 @@
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- VIEW 6 — FORNECEDORES PNCP                            -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="viewFornecedores" class="view">
+  <header class="header">
+    <div class="header-left">
+      <button class="back-btn" onclick="showView('landing')">&larr; Voltar</button>
+      <div>
+        <div class="logo">Fornecedores PNCP — Consulta sob Demanda</div>
+        <div class="logo-sub">Identifica fornecedores vencedores, porte (MPE/MEI/EPP) e valores adjudicados — 2026</div>
+      </div>
+    </div>
+    <div class="header-controls">
+      <select id="fornUf" class="select-input" style="width:120px;">
+        <option value="">Selecione UF</option>
+        <option value="AC">AC</option><option value="AL">AL</option><option value="AM">AM</option>
+        <option value="AP">AP</option><option value="BA">BA</option><option value="CE">CE</option>
+        <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+        <option value="MA">MA</option><option value="MG">MG</option><option value="MS">MS</option>
+        <option value="MT">MT</option><option value="PA">PA</option><option value="PB">PB</option>
+        <option value="PE">PE</option><option value="PI">PI</option><option value="PR">PR</option>
+        <option value="RJ">RJ</option><option value="RN">RN</option><option value="RO">RO</option>
+        <option value="RR">RR</option><option value="RS">RS</option><option value="SC">SC</option>
+        <option value="SE">SE</option><option value="SP">SP</option><option value="TO">TO</option>
+      </select>
+      <select id="fornMes" class="select-input" style="width:140px;">
+        <option value="">Selecione Mes</option>
+        <option value="01">Janeiro</option><option value="02">Fevereiro</option>
+        <option value="03">Marco</option><option value="04">Abril</option>
+        <option value="05">Maio</option><option value="06">Junho</option>
+        <option value="07">Julho</option><option value="08">Agosto</option>
+        <option value="09">Setembro</option><option value="10">Outubro</option>
+      </select>
+      <select id="fornMod" class="select-input" style="width:180px;">
+        <option value="">Todas Modalidades</option>
+        <option value="6">Pregao Eletronico</option>
+        <option value="8">Dispensa</option>
+        <option value="5">Concorrencia Eletronica</option>
+        <option value="9">Inexigibilidade</option>
+        <option value="12">Credenciamento</option>
+      </select>
+      <button class="action-btn" onclick="consultarFornecedores()" style="background:var(--rose);color:#fff;border:none;padding:8px 18px;border-radius:var(--radius);cursor:pointer;font-weight:700;font-size:13px;">Consultar Fornecedores</button>
+    </div>
+  </header>
+
+  <div class="pdde-main">
+    <div class="pdde-summary" id="fornSummary">
+      <strong>Consulta de Fornecedores em Contratacoes Publicas</strong><br>
+      Selecione UF e mes para consultar os fornecedores vencedores de licitacoes no PNCP.
+      Identifica automaticamente o <strong>porte da empresa</strong> (MPE, MEI, EPP ou Demais),
+      o <strong>CNPJ</strong>, <strong>razao social</strong> e <strong>valor homologado</strong>.<br>
+      <em>Fonte: API do PNCP em tempo real — Portal Nacional de Contratacoes Publicas (pncp.gov.br).</em>
+    </div>
+
+    <div id="fornProgress" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:13px;font-weight:600;color:var(--text-primary);" id="fornProgressLabel">Consultando API do PNCP...</span>
+        <span style="font-size:13px;color:var(--text-muted);" id="fornProgressPct">0%</span>
+      </div>
+      <div style="width:100%;height:8px;background:var(--border);border-radius:4px;overflow:hidden;">
+        <div id="fornProgressBar" style="width:0%;height:100%;background:var(--rose);border-radius:4px;transition:width .3s;"></div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:6px;" id="fornProgressDetail"></div>
+    </div>
+
+    <div class="kpi-bar" id="fornKpis" style="display:none">
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--rose)" id="fornKpiTotal">—</div>
+        <div class="kpi-label">Contratacoes Consultadas</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--green)" id="fornKpiMpe">—</div>
+        <div class="kpi-label">MPE (ME + EPP)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--orange)" id="fornKpiMei">—</div>
+        <div class="kpi-label">MEI</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--accent)" id="fornKpiDemais">—</div>
+        <div class="kpi-label">Demais (Medio/Grande)</div>
+      </div>
+    </div>
+
+    <div id="fornExecBarContainer" style="display:none">
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:6px;font-weight:600;" id="fornBarTitle">Distribuicao por Porte</div>
+      <div class="pdde-exec-bar" id="fornExecBar"></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:4px;flex-wrap:wrap;gap:8px;">
+        <span id="fornExecLabel1"></span>
+        <span id="fornExecLabel2"></span>
+        <span id="fornExecLabel3"></span>
+      </div>
+    </div>
+
+    <div class="charts-row-half" style="margin-top:24px" id="fornChartsRow" style="display:none">
+      <div class="chart-card">
+        <div class="chart-title" id="fornChart1Title">Distribuicao por Porte do Fornecedor</div>
+        <div class="chart-wrapper" style="height:300px"><canvas id="chartFornPorte"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" id="fornChart2Title">Valor Homologado por Porte</div>
+        <div class="chart-wrapper" style="height:300px"><canvas id="chartFornValor"></canvas></div>
+      </div>
+    </div>
+
+    <div id="fornTableContainer" style="display:none;margin-top:24px;">
+      <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:12px;" id="fornTableTitle">Fornecedores Vencedores</div>
+      <div style="overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:var(--surface);border-bottom:2px solid var(--border);">
+              <th style="padding:10px 8px;text-align:left;color:var(--text-muted);font-weight:600;">FORNECEDOR</th>
+              <th style="padding:10px 8px;text-align:left;color:var(--text-muted);font-weight:600;">CNPJ/CPF</th>
+              <th style="padding:10px 8px;text-align:center;color:var(--text-muted);font-weight:600;">PORTE</th>
+              <th style="padding:10px 8px;text-align:left;color:var(--text-muted);font-weight:600;">OBJETO</th>
+              <th style="padding:10px 8px;text-align:left;color:var(--text-muted);font-weight:600;">ORGAO</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-weight:600;">VAL. ESTIMADO</th>
+              <th style="padding:10px 8px;text-align:right;color:var(--text-muted);font-weight:600;">VAL. HOMOLOGADO</th>
+              <th style="padding:10px 8px;text-align:center;color:var(--text-muted);font-weight:600;">LINK</th>
+            </tr>
+          </thead>
+          <tbody id="fornTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // =====================================================
 // VIEW NAVIGATION
@@ -1498,7 +1637,7 @@ let pnaeLoaded = false;
 let pncpMonLoaded = false;
 function showView(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  const viewMap = { landing: 'viewLanding', compras: 'viewCompras', pdde: 'viewPdde', pnae: 'viewPnae', execucao: 'viewExecucao', pncpMonitor: 'viewPncpMonitor' };
+  const viewMap = { landing: 'viewLanding', compras: 'viewCompras', pdde: 'viewPdde', pnae: 'viewPnae', execucao: 'viewExecucao', pncpMonitor: 'viewPncpMonitor', fornecedores: 'viewFornecedores' };
   document.getElementById(viewMap[view] || 'viewLanding').classList.add('active');
   window.scrollTo(0, 0);
   if (view === 'pdde' && !pddeLoaded) {
@@ -131508,6 +131647,232 @@ function renderPncpMonDashboard() {
       <td style="padding:10px 8px;text-align:right;color:var(--purple);">${d.qtd.toLocaleString('pt-BR')}</td>
     </tr>`;
   }).join('');
+}
+
+// =====================================================
+// FORNECEDORES PNCP — CONSULTA SOB DEMANDA
+// =====================================================
+
+let fornCharts = {};
+const FORN_DELAY = 600;
+
+async function fetchPncpApi(url) {
+  for (const proxy of PNCP_PROXIES) {
+    try {
+      const r = await fetch(proxy + encodeURIComponent(url));
+      if (r.ok) return await r.json();
+    } catch (_) {}
+  }
+  try {
+    const r = await fetch(url);
+    if (r.ok) return await r.json();
+  } catch (_) {}
+  return null;
+}
+
+function formatCnpj(ni) {
+  if (!ni) return '—';
+  ni = ni.replace(/\D/g, '');
+  if (ni.length === 14) return ni.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+  if (ni.length === 11) return ni.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+  return ni;
+}
+
+function fornUpdateProgress(pct, label, detail) {
+  document.getElementById('fornProgressBar').style.width = pct + '%';
+  document.getElementById('fornProgressPct').textContent = Math.round(pct) + '%';
+  if (label) document.getElementById('fornProgressLabel').textContent = label;
+  if (detail) document.getElementById('fornProgressDetail').textContent = detail;
+}
+
+async function consultarFornecedores() {
+  const uf = document.getElementById('fornUf').value;
+  const mes = document.getElementById('fornMes').value;
+  const mod = document.getElementById('fornMod').value;
+
+  if (!uf || !mes) {
+    showError('Selecione UF e mes para consultar.');
+    return;
+  }
+
+  const lastDay = new Date(2026, parseInt(mes), 0).getDate();
+  const di = `2026${mes}01`;
+  const df = `2026${mes}${lastDay}`;
+
+  document.getElementById('fornProgress').style.display = '';
+  document.getElementById('fornKpis').style.display = 'none';
+  document.getElementById('fornExecBarContainer').style.display = 'none';
+  document.getElementById('fornTableContainer').style.display = 'none';
+  document.getElementById('fornTableBody').innerHTML = '';
+
+  fornUpdateProgress(0, 'Buscando contratacoes...', `${uf} — ${mes}/2026`);
+
+  const mods = mod ? [parseInt(mod)] : [6, 8, 5, 9, 12];
+  let allItems = [];
+
+  for (let i = 0; i < mods.length; i++) {
+    const url = `https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=${di}&dataFinal=${df}&uf=${uf}&codigoModalidadeContratacao=${mods[i]}&pagina=1&tamanhoPagina=50`;
+    fornUpdateProgress((i / mods.length) * 20, 'Buscando contratacoes...', `Modalidade ${mods[i]} (${i + 1}/${mods.length})`);
+    const data = await fetchPncpApi(url);
+    if (data) {
+      const items = Array.isArray(data) ? data : (data.data || []);
+      allItems = allItems.concat(items);
+    }
+    await new Promise(r => setTimeout(r, FORN_DELAY));
+  }
+
+  if (allItems.length === 0) {
+    showError('Nenhuma contratacao encontrada para este filtro.');
+    document.getElementById('fornProgress').style.display = 'none';
+    return;
+  }
+
+  const unique = [];
+  const seen = new Set();
+  for (const it of allItems) {
+    const key = it.numeroControlePNCP || `${(it.orgaoEntidade||{}).cnpj}-${it.anoCompra}-${it.sequencialCompra}`;
+    if (!seen.has(key)) { seen.add(key); unique.push(it); }
+  }
+  const contratacoes = unique.slice(0, 50);
+
+  fornUpdateProgress(20, `Consultando ${contratacoes.length} fornecedores...`, 'Buscando resultados de cada contratacao');
+
+  const resultados = [];
+  for (let i = 0; i < contratacoes.length; i++) {
+    const c = contratacoes[i];
+    const cnpjOrg = (c.orgaoEntidade || {}).cnpj;
+    const ano = c.anoCompra;
+    const seq = c.sequencialCompra;
+
+    if (!cnpjOrg || !ano || !seq) continue;
+
+    const pct = 20 + ((i / contratacoes.length) * 75);
+    fornUpdateProgress(pct, `Consultando fornecedores... (${i + 1}/${contratacoes.length})`, c.objetoCompra ? c.objetoCompra.substring(0, 80) + '...' : '');
+
+    const itensUrl = `https://pncp.gov.br/api/pncp/v1/orgaos/${cnpjOrg}/compras/${ano}/${seq}/itens`;
+    const itensData = await fetchPncpApi(itensUrl);
+    await new Promise(r => setTimeout(r, FORN_DELAY));
+
+    if (!itensData) continue;
+    const itens = Array.isArray(itensData) ? itensData : [itensData];
+    const itemComResultado = itens.find(it => it.temResultado);
+    if (!itemComResultado) continue;
+
+    const numItem = itemComResultado.numeroItem || 1;
+    const resUrl = `https://pncp.gov.br/api/pncp/v1/orgaos/${cnpjOrg}/compras/${ano}/${seq}/itens/${numItem}/resultados`;
+    const resData = await fetchPncpApi(resUrl);
+    await new Promise(r => setTimeout(r, FORN_DELAY));
+
+    if (!resData) continue;
+    const res = Array.isArray(resData) ? resData[0] : resData;
+
+    resultados.push({
+      fornecedor: res.nomeRazaoSocialFornecedor || '—',
+      cnpj: res.niFornecedor || '',
+      porte: res.porteFornecedorNome || '—',
+      porteId: res.porteFornecedorId || 0,
+      natureza: res.naturezaJuridicaNome || '',
+      valorHom: res.valorTotalHomologado || 0,
+      valorEst: c.valorTotalEstimado || 0,
+      objeto: (c.objetoCompra || '').substring(0, 120),
+      orgao: (c.orgaoEntidade || {}).razaoSocial || '',
+      link: c.linkSistemaOrigem || '',
+      modalidade: c.modalidadeNome || '',
+      beneficioMeEpp: res.aplicacaoBeneficioMeEpp || false
+    });
+  }
+
+  fornUpdateProgress(95, 'Renderizando resultados...', `${resultados.length} fornecedores identificados`);
+  renderFornecedores(resultados, uf, mes);
+  fornUpdateProgress(100, 'Consulta concluida!', `${resultados.length} de ${contratacoes.length} contratacoes com resultado`);
+  setTimeout(() => { document.getElementById('fornProgress').style.display = 'none'; }, 3000);
+}
+
+function renderFornecedores(data, uf, mes) {
+  const meses = {'01':'Janeiro','02':'Fevereiro','03':'Marco','04':'Abril','05':'Maio','06':'Junho','07':'Julho','08':'Agosto','09':'Setembro','10':'Outubro'};
+
+  const porteCount = {};
+  const porteValor = {};
+  data.forEach(d => {
+    const p = normalizePorte(d.porte, d.porteId);
+    porteCount[p] = (porteCount[p] || 0) + 1;
+    porteValor[p] = (porteValor[p] || 0) + d.valorHom;
+  });
+
+  const total = data.length;
+  const mpeCount = (porteCount['ME'] || 0) + (porteCount['EPP'] || 0);
+  const meiCount = porteCount['MEI'] || 0;
+  const demaisCount = porteCount['Demais'] || 0;
+
+  document.getElementById('fornKpiTotal').textContent = total.toLocaleString('pt-BR');
+  document.getElementById('fornKpiMpe').textContent = total > 0 ? `${((mpeCount / total) * 100).toFixed(1)}%` : '—';
+  document.getElementById('fornKpiMei').textContent = total > 0 ? `${((meiCount / total) * 100).toFixed(1)}%` : '—';
+  document.getElementById('fornKpiDemais').textContent = total > 0 ? `${((demaisCount / total) * 100).toFixed(1)}%` : '—';
+  document.getElementById('fornKpis').style.display = '';
+
+  const pctMpe = total > 0 ? (mpeCount / total * 100) : 0;
+  const pctMei = total > 0 ? (meiCount / total * 100) : 0;
+  const pctDem = total > 0 ? (demaisCount / total * 100) : 0;
+  document.getElementById('fornBarTitle').textContent = `Distribuicao por Porte — ${uf} ${meses[mes]}/2026`;
+  document.getElementById('fornExecBar').innerHTML = `
+    <div class="pdde-exec-seg" style="width:${pctMpe}%;background:#22c55e;">${pctMpe > 8 ? mpeCount : ''}</div>
+    <div class="pdde-exec-seg" style="width:${pctMei}%;background:#f97316;">${pctMei > 8 ? meiCount : ''}</div>
+    <div class="pdde-exec-seg" style="width:${pctDem}%;background:#3b82f6;">${pctDem > 8 ? demaisCount : ''}</div>
+  `;
+  document.getElementById('fornExecLabel1').innerHTML = `<span style="color:#22c55e">●</span> MPE (${pctMpe.toFixed(1)}%)`;
+  document.getElementById('fornExecLabel2').innerHTML = `<span style="color:#f97316">●</span> MEI (${pctMei.toFixed(1)}%)`;
+  document.getElementById('fornExecLabel3').innerHTML = `<span style="color:#3b82f6">●</span> Demais (${pctDem.toFixed(1)}%)`;
+  document.getElementById('fornExecBarContainer').style.display = '';
+
+  const porteLabels = Object.keys(porteCount).sort();
+  const porteColors = porteLabels.map(p => p === 'ME' ? '#22c55e' : p === 'EPP' ? '#10b981' : p === 'MEI' ? '#f97316' : p === 'Demais' ? '#3b82f6' : '#64748b');
+  const co = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#64748b', font: { size: 11 } } } } };
+
+  if (fornCharts.porte) fornCharts.porte.destroy();
+  document.getElementById('fornChart1Title').textContent = `Contratacoes por Porte — ${uf} ${meses[mes]}/2026`;
+  fornCharts.porte = new Chart(document.getElementById('chartFornPorte'), {
+    type: 'doughnut',
+    data: { labels: porteLabels, datasets: [{ data: porteLabels.map(p => porteCount[p]), backgroundColor: porteColors, borderWidth: 2, borderColor: '#0f172a' }] },
+    options: { ...co, plugins: { ...co.plugins, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw} (${(ctx.raw / total * 100).toFixed(1)}%)` } } } }
+  });
+
+  if (fornCharts.valor) fornCharts.valor.destroy();
+  document.getElementById('fornChart2Title').textContent = `Valor Homologado por Porte — ${uf} ${meses[mes]}/2026`;
+  fornCharts.valor = new Chart(document.getElementById('chartFornValor'), {
+    type: 'bar',
+    data: { labels: porteLabels, datasets: [{ data: porteLabels.map(p => porteValor[p] || 0), backgroundColor: porteColors, borderRadius: 4, barPercentage: 0.6 }] },
+    options: { ...co, plugins: { ...co.plugins, legend: { display: false }, tooltip: { callbacks: { label: ctx => formatCurrency(ctx.raw) } } }, scales: { x: { grid: { display: false }, ticks: { color: '#e2e8f0' } }, y: { grid: { color: 'rgba(255,255,255,.06)' }, ticks: { color: '#64748b', callback: v => formatCurrency(v) } } } }
+  });
+
+  document.getElementById('fornTableTitle').textContent = `Fornecedores Vencedores — ${uf} ${meses[mes]}/2026 (${data.length} resultados)`;
+  const tbody = document.getElementById('fornTableBody');
+  tbody.innerHTML = data.sort((a, b) => b.valorHom - a.valorHom).map(d => {
+    const porteNorm = normalizePorte(d.porte, d.porteId);
+    const porteColor = porteNorm === 'ME' ? '#22c55e' : porteNorm === 'EPP' ? '#10b981' : porteNorm === 'MEI' ? '#f97316' : '#3b82f6';
+    return `<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:8px;font-weight:600;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${d.fornecedor}">${d.fornecedor}</td>
+      <td style="padding:8px;font-family:monospace;font-size:11px;">${formatCnpj(d.cnpj)}</td>
+      <td style="padding:8px;text-align:center;"><span style="background:${porteColor};color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">${porteNorm}</span></td>
+      <td style="padding:8px;max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:var(--text-muted);" title="${d.objeto}">${d.objeto}</td>
+      <td style="padding:8px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;" title="${d.orgao}">${d.orgao}</td>
+      <td style="padding:8px;text-align:right;color:var(--accent);">R$ ${d.valorEst.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+      <td style="padding:8px;text-align:right;color:var(--green);font-weight:600;">R$ ${d.valorHom.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+      <td style="padding:8px;text-align:center;">${d.link ? `<a href="${d.link}" target="_blank" style="color:var(--rose);text-decoration:none;font-weight:700;">Ver</a>` : '—'}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('fornTableContainer').style.display = '';
+}
+
+function normalizePorte(nome, id) {
+  if (!nome && !id) return 'Demais';
+  const n = (nome || '').toLowerCase();
+  if (n.includes('micro empresa') || n.includes('microempresa') || n === 'me') return 'ME';
+  if (n.includes('pequeno porte') || n === 'epp') return 'EPP';
+  if (n.includes('microempreendedor') || n === 'mei') return 'MEI';
+  if (id === 1) return 'ME';
+  if (id === 2) return 'EPP';
+  if (id === 4) return 'MEI';
+  return 'Demais';
 }
 
 // ── Init ─────────────────────────────────────────────────────────
