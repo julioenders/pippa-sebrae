@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PIPPA Eleicoes 2026 — Agregador de Pesquisas Eleitorais</title>
+  <title>PIPPA Eleicoes 2026 — Pesquisas e Resultados Eleitorais</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <style>
 
@@ -149,12 +149,296 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
     .pippa-home-btn{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
     .pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff;}
     .pippa-home-btn svg{width:13px;height:13px;}
+
+/* -- View Switching -------------------------------------------------- */
+.view { display: none; }
+.view.active { display: block; }
+
+/* -- Landing Page ---------------------------------------------------- */
+.landing-header {
+  background: linear-gradient(135deg, #1a1d27, #242836);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.landing-header .logo {
+  font-size: 22px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+.landing-header .logo-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+.landing-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.landing-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+.landing-title {
+  text-align: center;
+  margin-bottom: 12px;
+}
+.landing-title h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.landing-title p {
+  font-size: .88rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+.landing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1rem;
+  margin-top: 36px;
+}
+.landing-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.5rem 1.5rem 1.8rem;
+  text-decoration: none;
+  color: inherit;
+  transition: all .25s;
+  display: flex;
+  gap: 1.2rem;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.landing-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+}
+.landing-card:nth-child(1)::before { background: var(--accent); }
+.landing-card:nth-child(2)::before { background: var(--success); }
+.landing-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(79,140,255,.3);
+  box-shadow: 0 8px 32px rgba(0,0,0,.3);
+}
+.card-num {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; font-weight: 800; flex-shrink: 0;
+}
+.landing-card:nth-child(1) .card-num { background: rgba(79,140,255,.12); color: var(--accent); }
+.landing-card:nth-child(2) .card-num { background: rgba(34,197,94,.12); color: var(--success); }
+.card-body h3 { font-size: .92rem; font-weight: 700; margin-bottom: .35rem; }
+.card-body p { font-size: .78rem; color: var(--text-muted); line-height: 1.65; }
+.card-arrow {
+  position: absolute; right: 1rem; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted); font-size: 1.2rem; transition: all .2s;
+}
+.landing-card:hover .card-arrow {
+  transform: translateY(-50%) translateX(4px); color: var(--accent);
+}
+.landing-footer {
+  text-align: center; margin-top: 48px;
+  font-size: 11px; color: var(--text-muted); line-height: 1.6;
+}
+
+/* -- Back Button ----------------------------------------------------- */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(15,17,23,.85);
+  border: 1px solid rgba(79,140,255,.3);
+  color: #93c5fd;
+  padding: 7px 14px; border-radius: 8px;
+  font-size: 11.5px; font-weight: 600; font-family: inherit;
+  cursor: pointer; text-decoration: none; transition: all .2s;
+}
+.back-btn:hover { background: rgba(79,140,255,.15); border-color: var(--accent); color: #fff; }
+
+/* -- Resultados TSE -------------------------------------------------- */
+.res-header {
+  background: linear-gradient(135deg, #1a1d27, #242836);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.res-header-left { display: flex; align-items: center; gap: 16px; }
+.res-tabs {
+  display: flex; gap: 2px;
+  background: var(--surface); border-radius: var(--radius); padding: 4px;
+  margin-bottom: 20px;
+}
+.res-tab {
+  padding: 10px 24px; font-size: 14px; font-weight: 600;
+  color: var(--text-muted); cursor: pointer;
+  border-radius: 8px; transition: all .2s;
+}
+.res-tab:hover { color: var(--text); }
+.res-tab.active { background: var(--accent); color: #fff; }
+.res-content { display: none; }
+.res-content.active { display: block; }
+.res-main { padding: 20px 24px; max-width: 1100px; margin: 0 auto; }
+.res-totalization {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px; margin-bottom: 20px;
+}
+.res-total-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px; text-align: center;
+}
+.res-total-value { font-size: 24px; font-weight: 700; color: var(--accent); }
+.res-total-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.res-candidate-list { display: flex; flex-direction: column; gap: 10px; }
+.res-candidate {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+  display: flex; align-items: center; gap: 16px;
+}
+.res-cand-pos {
+  font-size: 20px; font-weight: 700; color: var(--text-muted);
+  width: 32px; text-align: center; flex-shrink: 0;
+}
+.res-cand-info { flex: 1; min-width: 0; }
+.res-cand-name { font-size: 15px; font-weight: 700; }
+.res-cand-party { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.res-cand-bar-wrap { flex: 1; min-width: 100px; }
+.res-cand-bar {
+  height: 10px; border-radius: 5px;
+  background: var(--accent); transition: width .5s;
+}
+.res-cand-votes { text-align: right; min-width: 120px; }
+.res-cand-pct { font-size: 20px; font-weight: 700; color: var(--accent); }
+.res-cand-vcount { font-size: 12px; color: var(--text-muted); }
+.res-status-badge {
+  padding: 3px 10px; border-radius: 10px;
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .3px; flex-shrink: 0;
+}
+.res-badge-eleito { background: rgba(34,197,94,.15); color: #22c55e; }
+.res-badge-2turno { background: rgba(255,197,66,.15); color: #ffc542; }
+.res-badge-naoeleito { background: rgba(100,116,139,.15); color: #64748b; }
+.res-badge-suplente { background: rgba(79,140,255,.15); color: #4f8cff; }
+.res-cargo-tabs {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px;
+}
+.res-cargo-tab {
+  padding: 6px 16px; font-size: 13px; font-weight: 500;
+  border: 1px solid var(--border); border-radius: 20px;
+  background: var(--surface2); color: var(--text-muted);
+  cursor: pointer; transition: all .2s;
+}
+.res-cargo-tab:hover { border-color: var(--accent); color: var(--text); }
+.res-cargo-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.res-uf-select {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); padding: 8px 14px; border-radius: var(--radius);
+  font-size: 14px; outline: none; cursor: pointer; font-family: inherit;
+  margin-bottom: 16px;
+}
+.res-uf-select:focus { border-color: var(--accent); }
+.res-loading {
+  text-align: center; padding: 40px;
+  color: var(--text-muted); font-size: 14px;
+}
+.res-loading .spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin .8s linear infinite;
+  margin: 0 auto 12px;
+}
+.res-error {
+  text-align: center; padding: 40px;
+  color: var(--text-muted);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.res-timestamp {
+  font-size: 11px; color: var(--text-muted);
+  text-align: right; margin-bottom: 12px;
+}
+@media (max-width: 768px) {
+  .landing-grid { grid-template-columns: 1fr; }
+  .res-candidate { flex-wrap: wrap; }
+  .res-cand-bar-wrap { width: 100%; }
+}
   </style>
 </head>
 <body>
 
+<!-- ================================================================== -->
+<!-- LANDING PAGE                                                       -->
+<!-- ================================================================== -->
+<div id="viewLanding" class="view active">
+  <header class="landing-header">
+    <div>
+      <div class="logo">PIPPA Eleicoes 2026</div>
+      <div class="logo-sub">Inteligencia Eleitoral — Pesquisas e Resultados</div>
+    </div>
+    <div class="landing-header-right">
+      <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
+    </div>
+  </header>
+  <div class="landing-container">
+    <div class="landing-title">
+      <h1>Eleicoes Gerais 2026</h1>
+      <p>Agregador de pesquisas eleitorais e resultados oficiais do TSE para presidente, governadores, senadores e deputados.</p>
+    </div>
+    <div class="landing-grid">
+      <div class="landing-card" onclick="showView('pesquisas')">
+        <div class="card-num">1</div>
+        <div class="card-body">
+          <h3>Agregador de Pesquisas Eleitorais</h3>
+          <p>Pesquisas registradas no TSE de todos os institutos — Datafolha, Quaest, Atlas Intel, Real Time Big Data e mais. Filtros por cargo, estado, instituto e candidato. Dados da ElectioLab API.</p>
+        </div>
+        <span class="card-arrow">&rsaquo;</span>
+      </div>
+      <div class="landing-card" onclick="showView('resultados')">
+        <div class="card-num">2</div>
+        <div class="card-body">
+          <h3>Resultados Oficiais do TSE</h3>
+          <p>Resultado do 1o e 2o turno das eleicoes 2026 — presidente, governadores, senadores, deputados federais e estaduais. Candidatos eleitos, votos e percentuais. Dados em tempo real da API do TSE.</p>
+        </div>
+        <span class="card-arrow">&rsaquo;</span>
+      </div>
+    </div>
+    <div class="landing-footer">
+      PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas<br>
+      Sebrae Nacional — Observatorio Setorial Territorial<br>
+      Fontes: ElectioLab API | TSE (resultados.tse.jus.br) | IBGE
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- PESQUISAS ELEITORAIS VIEW                                          -->
+<!-- ================================================================== -->
+<div id="viewPesquisas" class="view">
+
   <div class="header">
     <div class="header-left">
+      <button class="back-btn" onclick="showView('landing')">&larr; Voltar</button>
       <div>
         <div class="logo">PIPPA Eleicoes</div>
         <div class="logo-sub">Plataforma de Inteligencia em Politicas Publicas Aplicadas — Pesquisas Eleitorais 2026</div>
@@ -438,6 +722,104 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
     </div>
   </div>
 
+
+</div> <!-- /viewPesquisas -->
+
+<!-- ================================================================== -->
+<!-- RESULTADOS ELEITORAIS VIEW (TSE)                                   -->
+<!-- ================================================================== -->
+<div id="viewResultados" class="view">
+
+  <header class="res-header">
+    <div class="res-header-left">
+      <button class="back-btn" onclick="showView('landing')">&larr; Voltar</button>
+      <div>
+        <div class="logo">Resultados Oficiais — TSE</div>
+        <div class="logo-sub">Eleicoes Gerais 2026 — Dados oficiais do Tribunal Superior Eleitoral</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
+      <button class="btn" id="btnFetchTSE" onclick="loadTSEData()">&#128269; Consultar TSE</button>
+    </div>
+  </header>
+
+  <div class="res-main">
+    <div class="res-tabs">
+      <div class="res-tab active" onclick="switchResTab('brasil',this)">Brasil</div>
+      <div class="res-tab" onclick="switchResTab('estado',this)">Por Estado</div>
+    </div>
+
+    <!-- Brasil Tab -->
+    <div class="res-content active" id="res-brasil">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:16px">Presidente da Republica</h2>
+      <div class="res-totalization" id="resTotalBrasil"></div>
+      <div class="res-timestamp" id="resTimeBrasil"></div>
+      <div class="res-candidate-list" id="resCandBrasil">
+        <div class="res-loading" id="resLoadBrasil">
+          <p>Clique em "Consultar TSE" para carregar os resultados oficiais.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado Tab -->
+    <div class="res-content" id="res-estado">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap">
+        <select class="res-uf-select" id="resUfSelect" onchange="onResUfChange()">
+          <option value="">Selecione o estado...</option>
+          <option value="AC">AC — Acre</option>
+          <option value="AL">AL — Alagoas</option>
+          <option value="AM">AM — Amazonas</option>
+          <option value="AP">AP — Amapa</option>
+          <option value="BA">BA — Bahia</option>
+          <option value="CE">CE — Ceara</option>
+          <option value="DF">DF — Distrito Federal</option>
+          <option value="ES">ES — Espirito Santo</option>
+          <option value="GO">GO — Goias</option>
+          <option value="MA">MA — Maranhao</option>
+          <option value="MG">MG — Minas Gerais</option>
+          <option value="MS">MS — Mato Grosso do Sul</option>
+          <option value="MT">MT — Mato Grosso</option>
+          <option value="PA">PA — Para</option>
+          <option value="PB">PB — Paraiba</option>
+          <option value="PE">PE — Pernambuco</option>
+          <option value="PI">PI — Piaui</option>
+          <option value="PR">PR — Parana</option>
+          <option value="RJ">RJ — Rio de Janeiro</option>
+          <option value="RN">RN — Rio Grande do Norte</option>
+          <option value="RO">RO — Rondonia</option>
+          <option value="RR">RR — Roraima</option>
+          <option value="RS">RS — Rio Grande do Sul</option>
+          <option value="SC">SC — Santa Catarina</option>
+          <option value="SE">SE — Sergipe</option>
+          <option value="SP">SP — Sao Paulo</option>
+          <option value="TO">TO — Tocantins</option>
+        </select>
+      </div>
+      <div class="res-cargo-tabs" id="resCargoTabs">
+        <div class="res-cargo-tab active" data-cargo-res="1" onclick="switchResCargo(this)">Presidente</div>
+        <div class="res-cargo-tab" data-cargo-res="3" onclick="switchResCargo(this)">Governador</div>
+        <div class="res-cargo-tab" data-cargo-res="5" onclick="switchResCargo(this)">Senador</div>
+        <div class="res-cargo-tab" data-cargo-res="6" onclick="switchResCargo(this)">Dep. Federal</div>
+        <div class="res-cargo-tab" data-cargo-res="7" onclick="switchResCargo(this)">Dep. Estadual</div>
+      </div>
+      <div class="res-totalization" id="resTotalEstado"></div>
+      <div class="res-timestamp" id="resTimeEstado"></div>
+      <div class="res-candidate-list" id="resCandEstado">
+        <div class="res-loading" id="resLoadEstado">
+          <p>Selecione um estado para visualizar os resultados.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer" style="text-align:center;">
+    <strong>Fonte oficial:</strong> Tribunal Superior Eleitoral — resultados.tse.jus.br<br>
+    Os dados sao carregados em tempo real da API publica do TSE.
+  </div>
+
+</div> <!-- /viewResultados -->
+
   <div class="toast" id="toast">Copiado!</div>
 
 <script>
@@ -494,6 +876,313 @@ window.addEventListener('DOMContentLoaded', () => {
   renderCurrentView();
   updateCountdown();
 });
+
+
+// =====================================================
+// VIEW NAVIGATION
+// =====================================================
+
+function showView(view) {
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+  var viewMap = {
+    landing: 'viewLanding',
+    pesquisas: 'viewPesquisas',
+    resultados: 'viewResultados'
+  };
+  document.getElementById(viewMap[view] || 'viewLanding').classList.add('active');
+  window.scrollTo(0, 0);
+  if (view === 'pesquisas') {
+    renderCurrentView();
+  }
+}
+
+// =====================================================
+// TSE RESULTADOS
+// =====================================================
+
+var tseCache = {};
+var currentResTab = 'brasil';
+var currentResUf = '';
+var currentResCargo = '1';
+var tseDataLoaded = false;
+
+var TSE_CARGO_LABELS = {
+  '1': 'Presidente',
+  '3': 'Governador',
+  '5': 'Senador',
+  '6': 'Deputado Federal',
+  '7': 'Deputado Estadual',
+  '8': 'Deputado Distrital'
+};
+
+async function fetchTSE(eleicao, uf, cargo) {
+  var cargoPad = String(cargo).padStart(4, '0');
+  var elePad = String(eleicao).padStart(6, '0');
+  var ufLower = uf.toLowerCase();
+  var url = 'https://resultados.tse.jus.br/oficial/ele2026/' + eleicao + '/dados/' + ufLower + '/' + ufLower + '-c' + cargoPad + '-e' + elePad + '-u.json';
+  var cacheKey = eleicao + '|' + uf + '|' + cargo;
+  if (tseCache[cacheKey]) return tseCache[cacheKey];
+  var resp = await fetch(url);
+  if (!resp.ok) throw new Error('TSE ' + resp.status);
+  var data = await resp.json();
+  tseCache[cacheKey] = data;
+  return data;
+}
+
+function parseTSECandidates(data) {
+  var candidates = [];
+  if (!data || !data.carg) return candidates;
+  data.carg.forEach(function(carg) {
+    if (!carg.agr) return;
+    carg.agr.forEach(function(agr) {
+      if (!agr.par) return;
+      agr.par.forEach(function(par) {
+        if (!par.cand) return;
+        par.cand.forEach(function(cand) {
+          candidates.push({
+            numero: cand.n || '',
+            nome: cand.nmu || cand.nm || '',
+            nomeCompleto: cand.nm || '',
+            partido: par.sg || '',
+            votos: cand.vap || '0',
+            percentual: cand.pvap || '0',
+            status: cand.st || '',
+            eleito: cand.e || 'n',
+            seq: parseInt(cand.seq || '999')
+          });
+        });
+      });
+    });
+  });
+  candidates.sort(function(a, b) { return a.seq - b.seq; });
+  return candidates;
+}
+
+function parseTSETotalization(data) {
+  var result = {
+    secoes: '0', secoesTot: '0', secoesPct: '0',
+    eleitorado: '0', comparecimento: '0', comparecimentoPct: '0',
+    abstencao: '0', abstencaoPct: '0',
+    dataGeracao: '', horaGeracao: '', turno: ''
+  };
+  if (!data) return result;
+  if (data.s) {
+    result.secoes = data.s.ts || '0';
+    result.secoesTot = data.s.st || '0';
+    result.secoesPct = data.s.pst || '0';
+  }
+  if (data.e) {
+    result.eleitorado = data.e.te || '0';
+    result.comparecimento = data.e.c || '0';
+    result.comparecimentoPct = data.e.pc || '0';
+    var teStr = String(data.e.te || '0').replace(/\./g, '');
+    var cStr = String(data.e.c || '0').replace(/\./g, '');
+    var abst = parseInt(teStr) - parseInt(cStr);
+    if (!isNaN(abst) && abst >= 0) {
+      result.abstencao = abst.toLocaleString('pt-BR');
+      var total = parseInt(teStr);
+      result.abstencaoPct = total > 0 ? (abst / total * 100).toFixed(2).replace('.', ',') : '0';
+    }
+  }
+  result.dataGeracao = data.dg || '';
+  result.horaGeracao = data.hg || '';
+  result.turno = data.t || '1';
+  return result;
+}
+
+function tseFormatVotes(v) {
+  if (!v) return '0';
+  var num = parseInt(String(v).replace(/\./g, ''));
+  if (isNaN(num)) return v;
+  return num.toLocaleString('pt-BR');
+}
+
+function getStatusBadge(cand) {
+  var st = (cand.status || '').toLowerCase();
+  if (st.indexOf('eleito') >= 0 && st.indexOf('nao') < 0 && st.indexOf('ão') < 0) {
+    return '<span class="res-status-badge res-badge-eleito">Eleito</span>';
+  }
+  if (st.indexOf('2') >= 0 && st.indexOf('turno') >= 0) {
+    return '<span class="res-status-badge res-badge-2turno">2o turno</span>';
+  }
+  if (st.indexOf('suplente') >= 0) {
+    return '<span class="res-status-badge res-badge-suplente">Suplente</span>';
+  }
+  if (st.indexOf('nao') >= 0 || st.indexOf('ão') >= 0) {
+    return '<span class="res-status-badge res-badge-naoeleito">Nao eleito</span>';
+  }
+  if (st) {
+    return '<span class="res-status-badge res-badge-naoeleito">' + cand.status + '</span>';
+  }
+  return '';
+}
+
+function renderTotalization(containerId, tot) {
+  var el = document.getElementById(containerId);
+  el.innerHTML =
+    '<div class="res-total-card">' +
+      '<div class="res-total-value">' + tot.secoesPct + '%</div>' +
+      '<div class="res-total-label">Secoes totalizadas (' + tseFormatVotes(tot.secoesTot) + ' de ' + tseFormatVotes(tot.secoes) + ')</div>' +
+    '</div>' +
+    '<div class="res-total-card">' +
+      '<div class="res-total-value">' + tseFormatVotes(tot.comparecimento) + '</div>' +
+      '<div class="res-total-label">Comparecimento (' + tot.comparecimentoPct + '%)</div>' +
+    '</div>' +
+    '<div class="res-total-card">' +
+      '<div class="res-total-value">' + tseFormatVotes(tot.abstencao) + '</div>' +
+      '<div class="res-total-label">Abstencao (' + tot.abstencaoPct + '%)</div>' +
+    '</div>' +
+    '<div class="res-total-card">' +
+      '<div class="res-total-value">' + (tot.turno === '2' ? '2o' : '1o') + '</div>' +
+      '<div class="res-total-label">Turno</div>' +
+    '</div>';
+}
+
+function renderCandidateList(containerId, candidates) {
+  var el = document.getElementById(containerId);
+  if (!candidates.length) {
+    el.innerHTML = '<div class="res-error">Nenhum candidato encontrado.</div>';
+    return;
+  }
+  var maxPct = Math.max.apply(null, candidates.map(function(c) {
+    return parseFloat(String(c.percentual).replace(',', '.')) || 0;
+  }));
+  if (maxPct === 0) maxPct = 1;
+  el.innerHTML = candidates.map(function(c, i) {
+    var pct = parseFloat(String(c.percentual).replace(',', '.')) || 0;
+    var barW = (pct / maxPct * 100).toFixed(1);
+    var color = '#4f8cff';
+    var stLow = (c.status || '').toLowerCase();
+    if (stLow.indexOf('eleito') >= 0 && stLow.indexOf('nao') < 0 && stLow.indexOf('ão') < 0) color = '#22c55e';
+    else if (stLow.indexOf('2') >= 0 && stLow.indexOf('turno') >= 0) color = '#ffc542';
+    else if (stLow.indexOf('suplente') >= 0) color = '#4f8cff';
+    else if (i >= 3) color = '#64748b';
+    return '<div class="res-candidate">' +
+      '<div class="res-cand-pos">' + (i + 1) + '</div>' +
+      '<div class="res-cand-info">' +
+        '<div class="res-cand-name">' + c.nome + ' <span style="font-size:12px;color:var(--text-muted);font-weight:400">(' + c.numero + ')</span></div>' +
+        '<div class="res-cand-party">' + c.partido + '</div>' +
+      '</div>' +
+      '<div class="res-cand-bar-wrap">' +
+        '<div class="res-cand-bar" style="width:' + barW + '%;background:' + color + '"></div>' +
+      '</div>' +
+      '<div class="res-cand-votes">' +
+        '<div class="res-cand-pct" style="color:' + color + '">' + c.percentual + '%</div>' +
+        '<div class="res-cand-vcount">' + tseFormatVotes(c.votos) + ' votos</div>' +
+      '</div>' +
+      getStatusBadge(c) +
+    '</div>';
+  }).join('');
+}
+
+function switchResTab(tab, el) {
+  currentResTab = tab;
+  document.querySelectorAll('.res-tab').forEach(function(t) { t.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.res-content').forEach(function(c) { c.classList.remove('active'); });
+  document.getElementById('res-' + tab).classList.add('active');
+}
+
+function switchResCargo(el) {
+  currentResCargo = el.dataset.cargoRes;
+  document.querySelectorAll('.res-cargo-tab').forEach(function(t) { t.classList.remove('active'); });
+  el.classList.add('active');
+  loadEstadoResults();
+}
+
+function onResUfChange() {
+  currentResUf = document.getElementById('resUfSelect').value;
+  var tabs = document.getElementById('resCargoTabs');
+  var depEstTab = tabs.querySelector('[data-cargo-res="7"]');
+  var depDistTab = tabs.querySelector('[data-cargo-res="8"]');
+  if (currentResUf === 'DF') {
+    if (depEstTab) depEstTab.style.display = 'none';
+    if (!depDistTab) {
+      var newTab = document.createElement('div');
+      newTab.className = 'res-cargo-tab';
+      newTab.dataset.cargoRes = '8';
+      newTab.textContent = 'Dep. Distrital';
+      newTab.onclick = function() { switchResCargo(newTab); };
+      tabs.appendChild(newTab);
+    } else {
+      depDistTab.style.display = '';
+    }
+    if (currentResCargo === '7') {
+      currentResCargo = '8';
+      document.querySelectorAll('.res-cargo-tab').forEach(function(t) { t.classList.remove('active'); });
+      var dt = tabs.querySelector('[data-cargo-res="8"]');
+      if (dt) dt.classList.add('active');
+    }
+  } else {
+    if (depEstTab) depEstTab.style.display = '';
+    if (depDistTab) depDistTab.style.display = 'none';
+    if (currentResCargo === '8') {
+      currentResCargo = '7';
+      document.querySelectorAll('.res-cargo-tab').forEach(function(t) { t.classList.remove('active'); });
+      if (depEstTab) depEstTab.classList.add('active');
+    }
+  }
+  loadEstadoResults();
+}
+
+async function loadTSEData() {
+  var btn = document.getElementById('btnFetchTSE');
+  btn.disabled = true;
+  btn.textContent = 'Consultando...';
+  tseDataLoaded = true;
+  try {
+    await loadBrasilResults();
+    if (currentResUf) {
+      await loadEstadoResults();
+    }
+    btn.textContent = 'Atualizar TSE';
+  } catch (e) {
+    btn.textContent = 'Consultar TSE';
+  }
+  btn.disabled = false;
+}
+
+async function loadBrasilResults() {
+  var listEl = document.getElementById('resCandBrasil');
+  listEl.innerHTML = '<div class="res-loading"><div class="spinner"></div><p>Carregando resultados do TSE...</p></div>';
+  try {
+    var data = await fetchTSE(6257, 'br', 1);
+    var tot = parseTSETotalization(data);
+    renderTotalization('resTotalBrasil', tot);
+    document.getElementById('resTimeBrasil').textContent = 'Atualizado em ' + tot.dataGeracao + ' as ' + tot.horaGeracao;
+    var candidates = parseTSECandidates(data);
+    renderCandidateList('resCandBrasil', candidates);
+  } catch (e) {
+    document.getElementById('resTotalBrasil').innerHTML = '';
+    document.getElementById('resTimeBrasil').textContent = '';
+    listEl.innerHTML = '<div class="res-error"><p style="font-size:18px;margin-bottom:8px">&#128466;</p><p>Dados ainda nao disponiveis para Presidente.</p><p style="font-size:12px;margin-top:8px">A API do TSE so disponibiliza resultados a partir do dia da eleicao.</p></div>';
+  }
+}
+
+async function loadEstadoResults() {
+  if (!currentResUf) return;
+  var listEl = document.getElementById('resCandEstado');
+  listEl.innerHTML = '<div class="res-loading"><div class="spinner"></div><p>Carregando resultados para ' + currentResUf + '...</p></div>';
+  var cargo = parseInt(currentResCargo);
+  var eleicao = (cargo === 1) ? 6257 : 6259;
+  try {
+    var data = await fetchTSE(eleicao, currentResUf, cargo);
+    var tot = parseTSETotalization(data);
+    renderTotalization('resTotalEstado', tot);
+    document.getElementById('resTimeEstado').textContent = 'Atualizado em ' + tot.dataGeracao + ' as ' + tot.horaGeracao;
+    var candidates = parseTSECandidates(data);
+    renderCandidateList('resCandEstado', candidates);
+  } catch (e) {
+    document.getElementById('resTotalEstado').innerHTML = '';
+    document.getElementById('resTimeEstado').textContent = '';
+    var cargoLabel = TSE_CARGO_LABELS[String(cargo)] || 'este cargo';
+    listEl.innerHTML = '<div class="res-error"><p style="font-size:18px;margin-bottom:8px">&#128466;</p><p>Dados ainda nao disponiveis para ' + cargoLabel + ' em ' + currentResUf + '.</p><p style="font-size:12px;margin-top:8px">A API do TSE so disponibiliza resultados a partir do dia da eleicao.</p></div>';
+  }
+}
+
+// =====================================================
+// PESQUISAS FUNCTIONS (existing)
+// =====================================================
 
 function updateCargoCounts() {
   const cargos = ['presidente','governador','senador'];
@@ -1375,6 +2064,7 @@ function selectScenario(key) {
   currentScenario = key;
   renderSegundoTurno();
 }
+
 
 </script>
 </body>
