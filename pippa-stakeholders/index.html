@@ -21,6 +21,15 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
 .btn-back{background:transparent;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:6px 12px;text-decoration:none;border-radius:var(--radius);display:inline-flex;align-items:center;gap:4px}
 .btn-back:hover{border-color:var(--accent);color:var(--accent)}
+.info-btn{background:transparent;border:1px solid var(--border);color:var(--text3);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.info-btn:hover{border-color:var(--accent);color:var(--accent)}
+.methodology-backdrop{display:none;position:fixed;inset:0;background:rgba(15,17,23,.85);z-index:300;align-items:flex-start;justify-content:center;padding-top:40px;overflow-y:auto}
+.methodology-backdrop.active{display:flex}
+.methodology-modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;max-width:820px;width:92%;margin-bottom:40px}
+.methodology-modal h2{font-size:20px;margin-bottom:20px;color:var(--accent)}
+.methodology-modal h3{font-size:15px;margin:20px 0 8px;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:6px}
+.methodology-modal p,.methodology-modal li{font-size:13px;line-height:1.7;color:var(--text3)}
+.methodology-modal ul{padding-left:20px;margin-bottom:12px}
 
 .layout{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 60px)}
 
@@ -113,6 +122,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <div class="logo">PIPPA Stakeholders</div>
       <div class="logo-sub">Mapa Parlamentar — CRM Legislativo</div>
     </div>
+    <button class="info-btn" onclick="showMethodology()" title="Sobre este painel">&#8505;</button>
   </div>
   <div class="header-controls">
     <select id="selLegislatura" class="btn btn-outline" style="padding:6px 12px;font-size:12px;background:var(--surface)">
@@ -171,6 +181,40 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
         <p>Clique em <strong>Consultar APIs</strong> para buscar deputados, senadores, frentes parlamentares e comissoes relevantes para o SEBRAE.</p>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="methodology-backdrop" id="methodologyModal" onclick="if(event.target===this)closeMethodology()">
+  <div class="methodology-modal">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <h2>Sobre o PIPPA Stakeholders</h2>
+      <button class="btn btn-outline" onclick="closeMethodology()" style="flex-shrink:0">Fechar</button>
+    </div>
+    <h3>O que e o Mapa Parlamentar?</h3>
+    <p>CRM visual de parlamentares relevantes para MPEs. Mapeia deputados e senadores com perfil de atuacao, frentes parlamentares, composicao de comissoes-chave e dados de gabinete — tudo via APIs publicas da Camara e do Senado.</p>
+    <h3>Fontes de Dados</h3>
+    <ul>
+      <li><strong>Deputados:</strong> API Dados Abertos da Camara — /deputados (paginado)</li>
+      <li><strong>Senadores:</strong> API Dados Abertos do Senado — /senador/lista/atual</li>
+      <li><strong>Frentes Parlamentares:</strong> API Camara — /frentes e /frentes/{id}/membros</li>
+      <li><strong>Comissoes:</strong> API Camara — /orgaos e /orgaos/{id}/membros</li>
+      <li><strong>Detalhes individuais:</strong> API Camara — /deputados/{id} (gabinete, escolaridade, naturalidade)</li>
+    </ul>
+    <h3>Frentes Parlamentares Relevantes</h3>
+    <p>O filtro de relevancia identifica frentes cujo titulo menciona termos ligados ao ecossistema MPE: empreendedorismo, micro/pequena empresa, Simples, desburocratizacao, inovacao, cooperativismo, credito, turismo, agronegocio, entre outros.</p>
+    <h3>Comissoes-Chave Monitoradas</h3>
+    <ul>
+      <li><strong>Camara:</strong> CDEICS (Desenvolvimento Economico), CFT (Financas e Tributacao), CFFC (Fiscalizacao), CTASP (Trabalho), CCTCI (Ciencia e Tecnologia), CDU (Desenvolvimento Urbano), CE (Educacao), CME (Minas e Energia)</li>
+      <li><strong>Senado:</strong> CAE (Assuntos Economicos), CI (Infraestrutura), CDR (Desenvolvimento Regional), CCT (Ciencia e Tecnologia)</li>
+    </ul>
+    <h3>Ordenacao</h3>
+    <p>Parlamentares sao ordenados por relevancia: quem participa de mais frentes e comissoes-chave aparece primeiro. O score e calculado como (frentes × 2) + comissoes.</p>
+    <h3>Limitacoes</h3>
+    <ul>
+      <li>A API do Senado nao expoe frentes parlamentares — apenas deputados sao cruzados com frentes.</li>
+      <li>APIs publicas sem SLA — sujeitas a instabilidade.</li>
+      <li>A composicao de comissoes pode mudar ao longo da legislatura.</li>
+    </ul>
   </div>
 </div>
 
@@ -573,6 +617,12 @@ async function loadDeputadoExtra(id, uid) {
   } catch(e) {
     container.innerHTML = '<div style="font-size:11px;color:var(--text3)">Detalhes nao disponiveis</div>';
   }
+}
+function showMethodology() {
+  document.getElementById('methodologyModal').classList.add('active');
+}
+function closeMethodology() {
+  document.getElementById('methodologyModal').classList.remove('active');
 }
 </script>
 </body>

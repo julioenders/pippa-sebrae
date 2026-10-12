@@ -20,6 +20,15 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
 .btn-back{background:transparent;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:6px 12px;text-decoration:none;border-radius:var(--radius);display:inline-flex;align-items:center;gap:4px}
 .btn-back:hover{border-color:var(--accent);color:var(--accent)}
+.info-btn{background:transparent;border:1px solid var(--border);color:var(--text3);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.info-btn:hover{border-color:var(--accent);color:var(--accent)}
+.methodology-backdrop{display:none;position:fixed;inset:0;background:rgba(15,17,23,.85);z-index:300;align-items:flex-start;justify-content:center;padding-top:40px;overflow-y:auto}
+.methodology-backdrop.active{display:flex}
+.methodology-modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;max-width:820px;width:92%;margin-bottom:40px}
+.methodology-modal h2{font-size:20px;margin-bottom:20px;color:var(--accent)}
+.methodology-modal h3{font-size:15px;margin:20px 0 8px;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:6px}
+.methodology-modal p,.methodology-modal li{font-size:13px;line-height:1.7;color:var(--text3)}
+.methodology-modal ul{padding-left:20px;margin-bottom:12px}
 
 .layout{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 60px)}
 .sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px;overflow-y:auto}
@@ -101,6 +110,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <div class="logo">PIPPA Consultas Publicas</div>
       <div class="logo-sub">Monitor de Participacao Social — Incidencia Pre-Normativa</div>
     </div>
+    <button class="info-btn" onclick="showMethodology()" title="Sobre este painel">&#8505;</button>
   </div>
   <div class="header-controls">
     <button class="btn btn-primary" onclick="fetchData()">&#128269; Consultar APIs</button>
@@ -148,6 +158,45 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
         <p>Clique em <strong>Consultar APIs</strong> para buscar audiencias e consultas publicas das comissoes da Camara e do Senado onde o SEBRAE pode incidir.</p>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="methodology-backdrop" id="methodologyModal" onclick="if(event.target===this)closeMethodology()">
+  <div class="methodology-modal">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <h2>Sobre o PIPPA Consultas Publicas</h2>
+      <button class="btn btn-outline" onclick="closeMethodology()" style="flex-shrink:0">Fechar</button>
+    </div>
+    <h3>O que e o Monitor de Consultas Publicas?</h3>
+    <p>Ferramenta de incidencia pre-normativa que monitora audiencias publicas, seminarios e reunioes deliberativas na Camara e no Senado. O objetivo e identificar oportunidades para o SEBRAE se posicionar ANTES que as normas sejam publicadas — complementando o PIPPA Regulatorio, que monitora normas ja publicadas no DOU.</p>
+    <h3>Fontes de Dados</h3>
+    <ul>
+      <li><strong>Camara dos Deputados:</strong> API Dados Abertos v2 — /eventos (filtrado por tipo: audiencia publica, seminario, reuniao deliberativa). Periodo: 3 meses para tras e 2 meses para frente.</li>
+      <li><strong>Senado Federal:</strong> API Dados Abertos — /plenario/agenda/mes/{YYYYMM} (filtrado por tipo: audiencia, debate, sabatina). Periodo: 4 meses.</li>
+    </ul>
+    <h3>Classificacao de Relevancia SEBRAE</h3>
+    <p>Cada audiencia/consulta e verificada contra uma lista de palavras-chave relevantes para MPEs. O titulo e o orgao sao analisados automaticamente:</p>
+    <ul>
+      <li><strong>Nucleo MPE:</strong> micro, pequena, MEI, Simples, empreendedor</li>
+      <li><strong>Regulatorio:</strong> regulamentacao, tributario, desburocratizacao, simplificacao</li>
+      <li><strong>Economico:</strong> credito, fomento, inovacao, startup, licitacao, compras publicas</li>
+      <li><strong>Institucional:</strong> Sebrae, Sistema S, SENAI, SESC</li>
+      <li><strong>Setorial:</strong> turismo, agronegocio, exportacao, importacao</li>
+    </ul>
+    <h3>Status das Consultas</h3>
+    <ul>
+      <li><strong>Aberta:</strong> Em andamento ou com data entre inicio e fim no periodo atual</li>
+      <li><strong>Futura:</strong> Data de inicio ainda nao chegou</li>
+      <li><strong>Encerrada:</strong> Data fim ja passou</li>
+    </ul>
+    <h3>Ordenacao</h3>
+    <p>Consultas abertas aparecem primeiro, seguidas das futuras e encerradas. Dentro de cada grupo, as relevantes para o SEBRAE tem prioridade.</p>
+    <h3>Limitacoes</h3>
+    <ul>
+      <li>Nem todas as audiencias publicas sao registradas nas APIs — algumas comissoes publicam apenas no site.</li>
+      <li>Consultas publicas de agencias reguladoras (ANVISA, ANATEL, ANP) nao estao contempladas nesta versao — exigem integracao com a API do Participa+ Mais Brasil.</li>
+      <li>APIs publicas sem SLA — sujeitas a instabilidade.</li>
+    </ul>
   </div>
 </div>
 
@@ -524,6 +573,13 @@ function renderConsultas() {
 function toggleCons(uid) {
   var card = document.getElementById('cc-' + uid);
   if (card) card.classList.toggle('expanded');
+}
+
+function showMethodology() {
+  document.getElementById('methodologyModal').classList.add('active');
+}
+function closeMethodology() {
+  document.getElementById('methodologyModal').classList.remove('active');
 }
 </script>
 </body>

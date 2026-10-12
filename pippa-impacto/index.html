@@ -20,6 +20,16 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .btn-back{background:transparent;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:6px 12px;text-decoration:none;border-radius:var(--radius);display:inline-flex;align-items:center;gap:4px}
 .btn-back:hover{border-color:var(--accent);color:var(--accent)}
 
+.info-btn{width:32px;height:32px;border-radius:50%;background:rgba(244,114,182,.12);border:1px solid rgba(244,114,182,.25);color:var(--accent);font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.info-btn:hover{background:rgba(244,114,182,.25);transform:scale(1.1)}
+.methodology-backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:9998;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.methodology-backdrop.active{opacity:1;pointer-events:all}
+.methodology-modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:2rem;max-width:650px;width:90%;max-height:80vh;overflow-y:auto;position:relative}
+.methodology-modal h2{font-size:18px;font-weight:800;margin-bottom:16px;color:var(--accent)}
+.methodology-modal h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 8px;color:var(--text)}
+.methodology-modal p,.methodology-modal li{font-size:12px;color:var(--text2);line-height:1.7}
+.methodology-modal ul{padding-left:18px;margin:4px 0 12px}
+
 .content{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
 
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
@@ -84,6 +94,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
     </div>
   </div>
   <div class="header-controls">
+    <button class="info-btn" onclick="showMethodology()">&#8505;</button>
     <button class="btn btn-primary" onclick="loadPortfolio()">&#128202; Consolidar Portfolio</button>
   </div>
 </div>
@@ -120,6 +131,40 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <p>Clique em <strong>Consolidar Portfolio</strong> para mapear o ecossistema de ferramentas PIPPA e gerar o panorama de cobertura.</p>
     </div>
   </div>
+</div>
+
+<div class="methodology-backdrop" onclick="closeMethodology()">
+<div class="methodology-modal" onclick="event.stopPropagation()">
+<h2>&#8505; Sobre este Painel</h2>
+<p>O PIPPA Impacto consolida o portfolio de evidencias da Unidade de Politicas Publicas do Sebrae Nacional, reunindo todas as ferramentas PIPPA em uma visao unificada de cobertura e capacidade analitica.</p>
+
+<h3>O que este painel mostra</h3>
+<ul>
+<li><strong>Ferramentas Ativas</strong> — total de dashboards PIPPA operacionais, cada um cobrindo um aspecto especifico de monitoramento.</li>
+<li><strong>Eixos Cobertos</strong> — dimensoes estrategicas de atuacao da UPP (Incidencia Legislativa, Inteligencia Orcamentaria, Articulacao Institucional, Inteligencia Territorial, Ambiente de Negocios, Cenario Politico).</li>
+<li><strong>APIs Integradas</strong> — fontes de dados publicas consumidas em tempo real pelas ferramentas (Camara, Senado, BCB, IBGE, TSE, PNCP, DOU, REDESIM).</li>
+<li><strong>Indicadores Monitorados</strong> — total de metricas acompanhadas pelo ecossistema de ferramentas.</li>
+</ul>
+
+<h3>Graficos</h3>
+<ul>
+<li><strong>Cobertura por Eixo</strong> — distribuicao proporcional de ferramentas por eixo estrategico de atuacao.</li>
+<li><strong>Ferramentas por Macro-Tema</strong> — agrupamento por grandes areas tematicas (Legislativo, Orcamento, Territorial, Politico).</li>
+</ul>
+
+<h3>Cards de Eixos</h3>
+<p>Cada eixo e expansivel e detalha as ferramentas vinculadas, suas APIs e indicadores. Os links abrem diretamente cada dashboard.</p>
+
+<h3>Metodologia</h3>
+<p>O portfolio utiliza exclusivamente o catalogo interno de ferramentas PIPPA. Nenhuma API externa e consultada neste painel — os dados refletem o mapeamento estatico do ecossistema. Para dados em tempo real, acesse cada ferramenta individualmente.</p>
+
+<h3>Limitacoes</h3>
+<ul>
+<li>O painel nao verifica se as ferramentas listadas estao operacionais no momento.</li>
+<li>A contagem de indicadores e APIs reflete o design de cada ferramenta, nao necessariamente dados disponiveis em tempo real.</li>
+<li>Novas ferramentas precisam ser adicionadas manualmente ao catalogo interno.</li>
+</ul>
+</div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -381,6 +426,13 @@ function renderPortfolio(eixos) {
 function toggleEixo(uid) {
   var card = document.getElementById('ec-' + uid);
   if (card) card.classList.toggle('expanded');
+}
+
+function showMethodology() {
+  document.querySelector('.methodology-backdrop').classList.add('active');
+}
+function closeMethodology() {
+  document.querySelector('.methodology-backdrop').classList.remove('active');
 }
 </script>
 </body>

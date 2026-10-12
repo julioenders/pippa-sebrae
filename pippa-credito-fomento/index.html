@@ -21,6 +21,15 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
 .btn-back{background:transparent;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:6px 12px;text-decoration:none;border-radius:var(--radius);display:inline-flex;align-items:center;gap:4px}
 .btn-back:hover{border-color:var(--accent);color:var(--accent)}
+.info-btn{background:transparent;border:1px solid var(--border);color:var(--text3);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.info-btn:hover{border-color:var(--accent);color:var(--accent)}
+.methodology-backdrop{display:none;position:fixed;inset:0;background:rgba(15,17,23,.85);z-index:300;align-items:flex-start;justify-content:center;padding-top:40px;overflow-y:auto}
+.methodology-backdrop.active{display:flex}
+.methodology-modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;max-width:820px;width:92%;margin-bottom:40px}
+.methodology-modal h2{font-size:20px;margin-bottom:20px;color:var(--accent)}
+.methodology-modal h3{font-size:15px;margin:20px 0 8px;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:6px}
+.methodology-modal p,.methodology-modal li{font-size:13px;line-height:1.7;color:var(--text3)}
+.methodology-modal ul{padding-left:20px;margin-bottom:12px}
 
 .layout{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 60px)}
 .sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px;overflow-y:auto}
@@ -106,6 +115,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <div class="logo">PIPPA Credito e Fomento</div>
       <div class="logo-sub">Radar de Oportunidades para MPEs</div>
     </div>
+    <button class="info-btn" onclick="showMethodology()" title="Sobre este painel">&#8505;</button>
   </div>
   <div class="header-controls">
     <button class="btn btn-primary" onclick="fetchData()">&#128269; Consultar APIs</button>
@@ -160,6 +170,46 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
         <p>Clique em <strong>Consultar APIs</strong> para buscar indicadores de credito, taxas de juros e dados do mercado de credito para MPEs via BCB SGS.</p>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="methodology-backdrop" id="methodologyModal" onclick="if(event.target===this)closeMethodology()">
+  <div class="methodology-modal">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <h2>Sobre o PIPPA Credito e Fomento</h2>
+      <button class="btn btn-outline" onclick="closeMethodology()" style="flex-shrink:0">Fechar</button>
+    </div>
+    <h3>O que e o Radar de Credito?</h3>
+    <p>Dashboard de indicadores do mercado de credito para MPEs, consolidando series temporais do Banco Central do Brasil (BCB SGS). Monitora taxas, saldos, concessoes, inadimplencia e spread — oferecendo ao SEBRAE uma visao atualizada do cenario de financiamento para pequenas empresas.</p>
+    <h3>Fonte de Dados</h3>
+    <ul>
+      <li><strong>BCB SGS (Sistema Gerenciador de Series Temporais):</strong> API publica do Banco Central — api.bcb.gov.br/dados/serie</li>
+      <li>Cada serie e identificada por um codigo numerico unico</li>
+      <li>Dados atualizados conforme periodicidade da serie (diaria, mensal, trimestral)</li>
+    </ul>
+    <h3>Series Monitoradas (14 indicadores)</h3>
+    <ul>
+      <li><strong>Taxas basicas:</strong> Selic Meta (432), Selic Over (433), CDI Over (4390)</li>
+      <li><strong>Inflacao:</strong> IPCA Acumulado 12 meses (13522)</li>
+      <li><strong>Saldo Credito PJ:</strong> Total (20542), Recursos Livres (20543), Recursos Direcionados (20544)</li>
+      <li><strong>Inadimplencia PJ:</strong> Total (21082), Recursos Livres (21083)</li>
+      <li><strong>Taxas medias PJ:</strong> Total (20714), Recursos Livres (20715)</li>
+      <li><strong>Concessoes PJ:</strong> Total (25433), Recursos Livres (25434)</li>
+      <li><strong>Spread PJ:</strong> Total (20631)</li>
+    </ul>
+    <h3>KPIs Principais</h3>
+    <ul>
+      <li><strong>Selic Meta:</strong> Taxa basica de juros — referencia para o custo do credito</li>
+      <li><strong>IPCA 12m:</strong> Inflacao acumulada — impacta poder de compra das MPEs</li>
+      <li><strong>Credito PJ:</strong> Saldo total em bilhoes — dimensao do mercado de credito corporativo</li>
+      <li><strong>Inadimplencia PJ:</strong> Percentual de operacoes em atraso — saude financeira do segmento</li>
+    </ul>
+    <h3>Limitacoes</h3>
+    <ul>
+      <li>Dados PJ incluem todas as empresas, nao apenas MPEs — segmentacao por porte nao esta disponivel em todas as series.</li>
+      <li>APIs publicas sem SLA — sujeitas a instabilidade.</li>
+      <li>Historico limitado a 24 meses por consulta.</li>
+    </ul>
   </div>
 </div>
 
@@ -414,6 +464,13 @@ function renderIndicadores() {
 function toggleInd(uid) {
   var card = document.getElementById(uid);
   if (card) card.classList.toggle('expanded');
+}
+
+function showMethodology() {
+  document.getElementById('methodologyModal').classList.add('active');
+}
+function closeMethodology() {
+  document.getElementById('methodologyModal').classList.remove('active');
 }
 </script>
 </body>
