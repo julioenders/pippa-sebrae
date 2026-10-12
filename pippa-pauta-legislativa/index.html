@@ -132,15 +132,39 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .pauta-kw{font-size:10px;background:rgba(34,197,94,.12);color:var(--success);padding:1px 6px;border-radius:8px}
 .no-pauta{font-size:13px;color:var(--text-muted);font-style:italic;padding:8px 0}
 
-.pauta-item-card{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px;overflow:hidden;transition:border-color .2s;list-style:none}
-.pauta-item-card:hover{border-color:var(--accent)}
-.pauta-item-card.pauta-sebrae-match{border-left:3px solid var(--success)}
-.pauta-item-header{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;cursor:pointer}
-.pauta-item-arrow{font-size:18px;color:var(--text-muted);transition:transform .2s;flex-shrink:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:4px}
-.pauta-item-arrow:hover{background:var(--surface2)}
-.pauta-item-card.open .pauta-item-arrow{transform:rotate(90deg)}
-.pauta-item-detail{display:none;border-top:1px solid var(--border);padding:14px}
-.pauta-item-card.open .pauta-item-detail{display:block}
+.prop-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .2s;margin-bottom:10px}
+.prop-card:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+.prop-header{padding:16px;display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+.prop-priority{min-width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;text-transform:uppercase;letter-spacing:.3px}
+.priority-alta{background:rgba(255,77,106,.2);color:#ff4d6a}
+.priority-media{background:rgba(255,140,66,.2);color:#ff8c42}
+.priority-baixa{background:rgba(255,197,66,.2);color:#ffc542}
+.priority-none{background:rgba(139,143,168,.2);color:#8b8fa8}
+.prop-info{flex:1;min-width:0}
+.prop-title{font-size:14px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.prop-casa{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.casa-camara{background:rgba(79,140,255,.2);color:var(--camara)}
+.casa-senado{background:rgba(168,85,247,.2);color:var(--senado)}
+.prop-autor{font-size:12px;color:var(--text-muted);margin-bottom:4px}
+.prop-ementa{font-size:13px;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.situacao-line{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.situacao-badge{font-size:10px;padding:2px 8px;border-radius:6px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.situacao-badge.local{background:rgba(79,140,255,.15);color:var(--camara)}
+.situacao-badge.status{background:rgba(34,197,94,.15);color:var(--success)}
+.prop-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.prop-tag{font-size:11px;padding:2px 8px;border-radius:10px;background:var(--surface2);color:var(--text-muted)}
+.prop-tag-relevancia-alta{background:rgba(255,77,106,.15);color:#ff4d6a}
+.prop-tag-relevancia-media{background:rgba(255,197,66,.15);color:#ffc542}
+.prop-tag-relevancia-baixa{background:rgba(78,205,196,.15);color:var(--teal)}
+.prop-tag-eixo{background:rgba(79,140,255,.15);color:var(--blue)}
+.prop-expand{color:var(--text-muted);font-size:18px;transition:transform .2s;flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.prop-expand:hover{background:var(--surface2)}
+.prop-card.expanded .prop-expand{transform:rotate(180deg)}
+.prop-details{display:none;padding:0 16px 16px;border-top:1px solid var(--border)}
+.prop-card.expanded .prop-details{display:block}
+.priority-group{margin-bottom:24px}
+.priority-group-header{font-size:15px;font-weight:700;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.priority-group-count{font-size:12px;color:var(--text-muted);background:var(--surface2);padding:2px 10px;border-radius:10px;font-weight:500}
 
 .detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:12px}
 .detail-item{display:flex;flex-direction:column;gap:2px}
@@ -814,10 +838,23 @@ function classifySebrae(event) {
   event.pauta.forEach(function(item) {
     var itemText = (item.sigla + ' ' + item.ementa).toLowerCase();
     var itemKw = [];
-    KW_ALTA.forEach(function(kw){ if (itemText.indexOf(kw.toLowerCase()) >= 0) itemKw.push(kw); });
-    KW_MEDIA.forEach(function(kw){ if (itemText.indexOf(kw.toLowerCase()) >= 0) itemKw.push(kw); });
-    KW_INSTITUCIONAL.forEach(function(kw){ if (itemText.indexOf(kw.toLowerCase()) >= 0) itemKw.push(kw); });
+    var itemScore = 0;
+    KW_ALTA.forEach(function(kw){ if (itemText.indexOf(kw.toLowerCase()) >= 0) { itemKw.push(kw); itemScore += 3; } });
+    KW_MEDIA.forEach(function(kw){ if (itemText.indexOf(kw.toLowerCase()) >= 0) { itemKw.push(kw); itemScore += 1; } });
+    KW_INSTITUCIONAL.forEach(function(kw){ if (itemText.indexOf(kw.toLowerCase()) >= 0) { itemKw.push(kw); itemScore += 4; } });
     item.matchedKeywords = itemKw;
+    if (itemScore >= 3) item.relevancia = 'Alta';
+    else if (itemScore >= 1) item.relevancia = 'Media';
+    else if (itemKw.length > 0) item.relevancia = 'Baixa';
+    else item.relevancia = null;
+
+    var itemEixos = [];
+    Object.keys(EIXO_KW).forEach(function(eixo) {
+      EIXO_KW[eixo].forEach(function(kw) {
+        if (itemText.indexOf(kw.toLowerCase()) >= 0 && itemEixos.indexOf(eixo) < 0) itemEixos.push(eixo);
+      });
+    });
+    item.eixos = itemEixos;
   });
 }
 
@@ -1093,147 +1130,200 @@ function updateCharts() {
 }
 
 // =====================================================
-// RENDER EVENTS
+// RENDER PROPOSITIONS (Legislativo-style cards)
 // =====================================================
 function renderEvents() {
   var container = document.getElementById('eventsContainer');
 
-  if (filteredEvents.length === 0) {
-    container.innerHTML = '<div class="empty-state"><div class="icon">&#128203;</div><h3>' +
-      (allEvents.length > 0 ? 'Nenhum evento com os filtros atuais' : 'Painel de Monitoramento — Pauta Legislativa') +
-      '</h3><p>' +
-      (allEvents.length > 0 ? 'Tente limpar os filtros ou selecionar outro periodo.' : 'Selecione o periodo e clique em <strong>Consultar APIs</strong> para buscar a pauta.') +
-      '</p></div>';
+  // Flatten all pauta items into propositions
+  var propositions = [];
+  filteredEvents.forEach(function(ev) {
+    ev.pauta.forEach(function(p, pIdx) {
+      propositions.push({
+        sigla: p.sigla,
+        ementa: p.ementa,
+        relator: p.relator,
+        regime: p.regime,
+        url: p.url,
+        propId: p.id,
+        matchedKeywords: p.matchedKeywords || [],
+        relevancia: p.relevancia,
+        eixos: p.eixos || [],
+        eventId: ev.id,
+        pIdx: pIdx,
+        casa: ev.casa,
+        tipo: ev.tipo,
+        orgao: ev.orgao,
+        titulo: ev.titulo,
+        dataHora: ev.dataHora,
+        local: ev.local,
+        situacao: ev.situacao,
+        situacaoNorm: ev.situacaoNorm
+      });
+    });
+  });
+
+  if (propositions.length === 0 && filteredEvents.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">&#128203;</div><h3>Painel de Monitoramento — Pauta Legislativa</h3><p>Selecione o periodo e clique em <strong>Consultar APIs</strong> para buscar a pauta.</p></div>';
     return;
   }
 
-  var byDay = {};
-  filteredEvents.forEach(function(ev) {
-    var day = (ev.dataHora || '').substring(0, 10) || 'sem-data';
-    if (!byDay[day]) byDay[day] = [];
-    byDay[day].push(ev);
+  if (propositions.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">&#128203;</div><h3>Nenhuma proposicao com os filtros atuais</h3><p>Tente limpar os filtros ou selecionar outro periodo. Foram encontrados ' + filteredEvents.length + ' eventos, mas nenhum com itens de pauta registrados.</p></div>';
+    return;
+  }
+
+  // Group by relevancia (like Legislativo groups by priority)
+  var groups = {
+    'Alta': { label: 'Relevancia Alta', color: '#ff4d6a', items: [] },
+    'Media': { label: 'Monitoramento (Media)', color: '#ff8c42', items: [] },
+    'Baixa': { label: 'Acompanhamento (Baixa)', color: '#ffc542', items: [] },
+    'none': { label: 'Sem classificacao', color: '#8b8fa8', items: [] }
+  };
+
+  propositions.forEach(function(p) {
+    var key = p.relevancia || 'none';
+    groups[key].items.push(p);
   });
 
-  var days = Object.keys(byDay).sort();
-  var html = '<div class="section-header"><div class="section-title">Eventos Agendados</div><div class="section-count">' + filteredEvents.length + ' evento' + (filteredEvents.length>1?'s':'') + '</div></div>';
+  // Sort within each group by date
+  Object.keys(groups).forEach(function(k) {
+    groups[k].items.sort(function(a,b){ return (a.dataHora||'').localeCompare(b.dataHora||''); });
+  });
 
-  days.forEach(function(day) {
-    var dayLabel = day === 'sem-data' ? 'Data nao informada' : getDayName(day) + ', ' + formatDateBR(day);
-    var evts = byDay[day];
+  var html = '<div class="section-header"><div class="section-title">Proposicoes na Pauta</div><div class="section-count">' + propositions.length + ' proposicoes</div></div>';
 
-    html += '<div class="day-group">';
-    html += '<div class="day-header">' + dayLabel + ' <span class="day-count">' + evts.length + ' evento' + (evts.length>1?'s':'') + '</span></div>';
+  ['Alta','Media','Baixa','none'].forEach(function(key) {
+    var group = groups[key];
+    if (group.items.length === 0) return;
 
-    evts.forEach(function(ev) {
-      var casaTag = ev.casa === 'camara' ? '<span class="tag tag-camara">Camara</span>' : '<span class="tag tag-senado">Senado</span>';
-      var tipoTag = '';
-      if (ev.tipo === 'Plenario') tipoTag = '<span class="tag tag-plenario">Plenario</span>';
-      else if (ev.tipo === 'Comissao') tipoTag = '<span class="tag tag-comissao">Comissao</span>';
-      else if (ev.tipo === 'Audiencia') tipoTag = '<span class="tag tag-audiencia">Audiencia Publica</span>';
+    html += '<div class="priority-group">';
+    html += '<div class="priority-group-header" style="color:' + group.color + ';border-bottom-color:' + group.color + '">';
+    html += group.label;
+    html += '<span class="priority-group-count">' + group.items.length + ' proposicoes</span>';
+    html += '</div>';
 
-      var sebraeTag = '';
-      if (ev.relevanciaSebrae === 'Alta') sebraeTag = '<span class="tag tag-sebrae">SEBRAE Alta</span>';
-      else if (ev.relevanciaSebrae === 'Media') sebraeTag = '<span class="tag tag-sebrae" style="opacity:.7">SEBRAE Media</span>';
-      else if (ev.relevanciaSebrae === 'Baixa') sebraeTag = '<span class="tag tag-sebrae" style="opacity:.5">SEBRAE Baixa</span>';
+    group.items.forEach(function(p) {
+      var uid = p.eventId + '-' + p.pIdx;
+      var casaClass = p.casa === 'camara' ? 'casa-camara' : 'casa-senado';
+      var casaLabel = p.casa === 'camara' ? 'CAMARA' : 'SENADO';
+      var priClass = p.relevancia === 'Alta' ? 'priority-alta' : p.relevancia === 'Media' ? 'priority-media' : p.relevancia === 'Baixa' ? 'priority-baixa' : 'priority-none';
+      var priLabel = p.relevancia || '—';
 
-      var pautaCount = ev.pauta.length > 0 ? '<span class="tag tag-count">' + ev.pauta.length + ' item' + (ev.pauta.length>1?'ns':'') + '</span>' : '';
+      html += '<div class="prop-card" id="pc-' + uid + '">';
+      html += '<div class="prop-header" onclick="toggleProp(\'' + uid + '\')">';
 
-      html += '<div class="event-card" id="ev-'+ev.id+'">';
-      html += '<div class="event-header" onclick="toggleEvent(\''+ev.id+'\')">';
-      html += '<div class="event-time">' + formatTime(ev.dataHora) + '</div>';
-      html += '<div class="event-body">';
-      html += '<div class="event-title">' + escapeHtml(ev.titulo) + '</div>';
-      html += '<div class="event-orgao">' + escapeHtml(ev.orgao) + '</div>';
-      if (ev.local) html += '<div class="event-local">' + escapeHtml(ev.local) + '</div>';
-      html += '<div class="event-tags">' + casaTag + tipoTag + sebraeTag + pautaCount + '</div>';
-      html += '</div>';
-      html += '<span class="event-arrow">&#8250;</span>';
-      html += '</div>';
+      // Priority badge
+      html += '<div class="prop-priority ' + priClass + '">' + escapeHtml(priLabel.substring(0,5)) + '</div>';
 
-      html += '<div class="event-details">';
-      if (ev.situacao) html += '<div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Situacao: <strong>' + escapeHtml(ev.situacao) + '</strong></div>';
-      if (ev.descricao) html += '<div style="font-size:13px;color:var(--text-muted);margin-bottom:10px">' + escapeHtml(ev.descricao) + '</div>';
+      // Info
+      html += '<div class="prop-info">';
+      html += '<div class="prop-title">' + escapeHtml(p.sigla) + ' <span class="prop-casa ' + casaClass + '">' + casaLabel + '</span></div>';
 
-      if (ev.pauta.length > 0) {
-        html += '<div style="font-size:13px;font-weight:600;margin-bottom:8px">Itens na Pauta (' + ev.pauta.length + ')</div>';
-        html += '<ul class="pauta-list" style="list-style:none">';
-        ev.pauta.forEach(function(p, pIdx) {
-          var isMatch = p.matchedKeywords && p.matchedKeywords.length > 0;
-          var itemId = ev.id + '-' + pIdx;
-          var casaLabel = ev.casa === 'camara' ? 'Camara dos Deputados' : 'Senado Federal';
+      // Orgao line
+      html += '<div class="prop-autor">' + escapeHtml(p.orgao) + ' — ' + formatTime(p.dataHora) + '</div>';
 
-          html += '<li class="pauta-item-card' + (isMatch ? ' pauta-sebrae-match' : '') + '" id="pi-' + itemId + '">';
+      // Ementa
+      html += '<div class="prop-ementa">' + escapeHtml(p.ementa || 'Ementa nao disponivel') + '</div>';
 
-          html += '<div class="pauta-item-header" onclick="togglePautaItem(\'' + itemId + '\')">';
-          html += '<div class="pauta-sigla">' + escapeHtml(p.sigla) + '</div>';
-          html += '<div style="flex:1;min-width:0">';
-          var shortEmenta = (p.ementa || 'Ementa nao disponivel');
-          if (shortEmenta.length > 150) shortEmenta = shortEmenta.substring(0,147) + '...';
-          html += '<div class="pauta-ementa">' + escapeHtml(shortEmenta) + '</div>';
-          if (isMatch) {
-            html += '<div class="pauta-keywords" style="margin-top:4px">';
-            var unique = p.matchedKeywords.filter(function(v,i,a){return a.indexOf(v)===i});
-            unique.slice(0,3).forEach(function(kw){ html += '<span class="pauta-kw">' + escapeHtml(kw) + '</span>'; });
-            if (unique.length > 3) html += '<span class="pauta-kw">+' + (unique.length-3) + '</span>';
-            html += '</div>';
-          }
-          html += '</div>';
-          html += '<span class="pauta-item-arrow">&#8250;</span>';
-          html += '</div>';
-
-          html += '<div class="pauta-item-detail">';
-          html += '<div class="detail-grid">';
-          html += '<div class="detail-item"><span class="detail-label">Proposicao</span><span class="detail-value">' + escapeHtml(p.sigla) + '</span></div>';
-          html += '<div class="detail-item"><span class="detail-label">Casa</span><span class="detail-value">' + casaLabel + '</span></div>';
-          if (p.relator) html += '<div class="detail-item"><span class="detail-label">Relator</span><span class="detail-value">' + escapeHtml(p.relator) + '</span></div>';
-          if (p.regime) html += '<div class="detail-item"><span class="detail-label">Regime / Objetivo</span><span class="detail-value">' + escapeHtml(p.regime) + '</span></div>';
-          html += '<div class="detail-item"><span class="detail-label">Evento</span><span class="detail-value">' + escapeHtml(ev.titulo) + ' — ' + escapeHtml(ev.orgao) + '</span></div>';
-          html += '<div class="detail-item"><span class="detail-label">Data / Hora</span><span class="detail-value">' + formatDateBR((ev.dataHora||'').substring(0,10)) + ' ' + formatTime(ev.dataHora) + '</span></div>';
-          html += '<div class="detail-item" style="grid-column:1/-1"><span class="detail-label">Ementa Completa</span><span class="detail-value">' + escapeHtml(p.ementa || 'Nao disponivel') + '</span></div>';
-          if (isMatch) {
-            html += '<div class="detail-item" style="grid-column:1/-1"><span class="detail-label">Relevancia SEBRAE</span><span class="detail-value"><div class="pauta-keywords">';
-            var uniqueAll = p.matchedKeywords.filter(function(v,i,a){return a.indexOf(v)===i});
-            uniqueAll.forEach(function(kw){ html += '<span class="pauta-kw">' + escapeHtml(kw) + '</span>'; });
-            html += '</div></span></div>';
-          }
-          html += '</div>';
-
-          html += '<div class="action-buttons">';
-          if (p.id) {
-            html += '<button class="btn-action" onclick="event.stopPropagation();openTramitacoes(\'' + p.id + '\',\'' + ev.casa + '\',\'' + escapeHtml(p.sigla).replace(/'/g,"\\'") + '\')">&#128195; Tramitacao</button>';
-          }
-          html += '<button class="btn-action" onclick="event.stopPropagation();generateAlerta(\'' + ev.id + '\',' + pIdx + ')">&#128221; Nota de Alerta</button>';
-          if (p.url) {
-            html += '<a href="' + p.url + '" target="_blank" rel="noopener" class="btn-action" onclick="event.stopPropagation()" style="text-decoration:none">&#128279; Acessar Materia</a>';
-          }
-          html += '</div>';
-
-          if (p.id && ev.casa === 'camara') {
-            html += '<div id="extra-' + itemId + '" style="margin-top:10px"></div>';
-          }
-
-          html += '</div>';
-          html += '</li>';
-        });
-        html += '</ul>';
-      } else {
-        html += '<div class="no-pauta">Pauta nao disponivel na API para este evento.</div>';
+      // Situacao badges
+      var hasSituacao = p.tipo || p.situacao;
+      if (hasSituacao) {
+        html += '<div class="situacao-line">';
+        if (p.tipo) {
+          var tipoStyle = p.tipo === 'Plenario' ? 'background:rgba(255,197,66,.12);color:#ffc542' : p.tipo === 'Comissao' ? 'background:rgba(78,205,196,.12);color:#4ecdc4' : 'background:rgba(139,143,168,.12);color:#8b8fa8';
+          html += '<span class="situacao-badge" style="' + tipoStyle + '">' + escapeHtml(p.tipo) + '</span>';
+        }
+        if (p.situacao) {
+          html += '<span class="situacao-badge status">' + escapeHtml(p.situacao) + '</span>';
+        }
+        html += '</div>';
       }
 
-      if (ev.url) html += '<a href="'+ev.url+'" target="_blank" class="event-link">&#8599; Ver no site oficial</a>';
+      // Tags
+      html += '<div class="prop-tags">';
+      if (p.relevancia) {
+        var relTagClass = p.relevancia === 'Alta' ? 'prop-tag-relevancia-alta' : p.relevancia === 'Media' ? 'prop-tag-relevancia-media' : 'prop-tag-relevancia-baixa';
+        html += '<span class="prop-tag ' + relTagClass + '">' + p.relevancia + '</span>';
+      }
+      if (p.eixos.length > 0) {
+        p.eixos.forEach(function(e){ html += '<span class="prop-tag prop-tag-eixo">' + escapeHtml(e) + '</span>'; });
+      }
+      if (p.matchedKeywords.length > 0) {
+        var unique = p.matchedKeywords.filter(function(v,i,a){return a.indexOf(v)===i});
+        unique.slice(0,3).forEach(function(kw){ html += '<span class="prop-tag">' + escapeHtml(kw) + '</span>'; });
+      }
       html += '</div>';
+
+      html += '</div>'; // prop-info
+      html += '<div class="prop-expand">&#9660;</div>';
+      html += '</div>'; // prop-header
+
+      // Expandable details
+      html += '<div class="prop-details">';
+      html += '<div class="detail-grid">';
+      html += '<div class="detail-item"><span class="detail-label">Proposicao</span><span class="detail-value">' + escapeHtml(p.sigla) + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Casa</span><span class="detail-value">' + (p.casa === 'camara' ? 'Camara dos Deputados' : 'Senado Federal') + '</span></div>';
+      if (p.relator) html += '<div class="detail-item"><span class="detail-label">Relator</span><span class="detail-value">' + escapeHtml(p.relator) + '</span></div>';
+      if (p.regime) html += '<div class="detail-item"><span class="detail-label">Regime / Objetivo</span><span class="detail-value">' + escapeHtml(p.regime) + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Evento</span><span class="detail-value">' + escapeHtml(p.titulo) + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Orgao</span><span class="detail-value">' + escapeHtml(p.orgao) + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Data / Hora</span><span class="detail-value">' + formatDateBR((p.dataHora||'').substring(0,10)) + ' ' + formatTime(p.dataHora) + '</span></div>';
+      if (p.local) html += '<div class="detail-item"><span class="detail-label">Local</span><span class="detail-value">' + escapeHtml(p.local) + '</span></div>';
+      html += '<div class="detail-item" style="grid-column:1/-1"><span class="detail-label">Ementa Completa</span><span class="detail-value">' + escapeHtml(p.ementa || 'Nao disponivel') + '</span></div>';
+      if (p.matchedKeywords.length > 0) {
+        html += '<div class="detail-item" style="grid-column:1/-1"><span class="detail-label">Palavras-chave SEBRAE</span><span class="detail-value"><div class="pauta-keywords">';
+        var allKw = p.matchedKeywords.filter(function(v,i,a){return a.indexOf(v)===i});
+        allKw.forEach(function(kw){ html += '<span class="pauta-kw">' + escapeHtml(kw) + '</span>'; });
+        html += '</div></span></div>';
+      }
+      if (p.url) {
+        html += '<div class="detail-item"><span class="detail-label">Link Oficial</span><span class="detail-value"><a href="' + p.url + '" target="_blank" style="color:var(--accent)">' + (p.url.length > 60 ? p.url.substring(0,58) + '...' : p.url) + ' &#8599;</a></span></div>';
+      }
       html += '</div>';
+
+      // Action buttons
+      html += '<div class="action-buttons">';
+      if (p.propId) {
+        html += '<button class="btn-action" onclick="event.stopPropagation();openTramitacoes(\'' + p.propId + '\',\'' + p.casa + '\',\'' + escapeHtml(p.sigla).replace(/'/g,"\\'") + '\')">&#128195; Historico de Tramitacao</button>';
+      }
+      html += '<button class="btn-action" onclick="event.stopPropagation();generateAlerta(\'' + p.eventId + '\',' + p.pIdx + ')">&#128221; Nota de Alerta</button>';
+      if (p.url) {
+        html += '<a href="' + p.url + '" target="_blank" rel="noopener" class="btn-action" onclick="event.stopPropagation()" style="text-decoration:none">&#128279; Acessar Materia</a>';
+      }
+      html += '</div>';
+
+      // Extra details from API (Camara only)
+      if (p.propId && p.casa === 'camara') {
+        html += '<div id="extra-' + uid + '" style="margin-top:10px"></div>';
+      }
+
+      html += '</div>'; // prop-details
+      html += '</div>'; // prop-card
     });
 
-    html += '</div>';
+    html += '</div>'; // priority-group
   });
 
   container.innerHTML = html;
 }
 
-function toggleEvent(id) {
-  var card = document.getElementById('ev-'+id);
-  if (card) card.classList.toggle('open');
+function toggleProp(uid) {
+  var card = document.getElementById('pc-'+uid);
+  if (!card) return;
+  var wasExpanded = card.classList.contains('expanded');
+  card.classList.toggle('expanded');
+
+  if (!wasExpanded && !card.dataset.loaded) {
+    var parts = uid.split('-');
+    var evId = parts.slice(0,2).join('-');
+    var pIdx = parseInt(parts[2]);
+    var ev = allEvents.find(function(e){return e.id===evId});
+    if (ev && ev.casa === 'camara' && ev.pauta[pIdx] && ev.pauta[pIdx].id) {
+      fetchProposicaoDetails(ev.pauta[pIdx].id, uid);
+    }
+    card.dataset.loaded = '1';
+  }
 }
 
 // =====================================================
@@ -1312,23 +1402,7 @@ function escapeHtml(s) {
 // =====================================================
 // PAUTA ITEM DETAILS
 // =====================================================
-function togglePautaItem(itemId) {
-  var card = document.getElementById('pi-'+itemId);
-  if (!card) return;
-  var wasOpen = card.classList.contains('open');
-  card.classList.toggle('open');
-
-  if (!wasOpen && !card.dataset.loaded) {
-    var parts = itemId.split('-');
-    var evId = parts.slice(0,2).join('-');
-    var pIdx = parseInt(parts[2]);
-    var ev = allEvents.find(function(e){return e.id===evId});
-    if (ev && ev.casa === 'camara' && ev.pauta[pIdx] && ev.pauta[pIdx].id) {
-      fetchProposicaoDetails(ev.pauta[pIdx].id, itemId);
-    }
-    card.dataset.loaded = '1';
-  }
-}
+// togglePautaItem removed — replaced by toggleProp in RENDER section
 
 async function fetchProposicaoDetails(propId, itemId) {
   var container = document.getElementById('extra-'+itemId);
