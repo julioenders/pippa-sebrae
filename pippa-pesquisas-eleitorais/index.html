@@ -383,6 +383,31 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
   .res-candidate { flex-wrap: wrap; }
   .res-cand-bar-wrap { width: 100%; }
 }
+
+.kpi-card-election{position:relative;cursor:default}
+.kpi-card-election .election-tooltip{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;font-size:12px;color:var(--text);line-height:1.5;white-space:normal;width:280px;z-index:50;box-shadow:var(--shadow);transition:opacity .2s,visibility .2s}
+.kpi-card-election .election-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--border)}
+.kpi-card-election:hover .election-tooltip{visibility:visible;opacity:1}
+.election-tooltip a{color:var(--accent);text-decoration:none;font-weight:600}
+.election-tooltip a:hover{text-decoration:underline}
+.kpi-badge-done{display:inline-block;background:rgba(34,197,94,.15);color:#22c55e;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;margin-top:4px}
+.kpi-badge-soon{display:inline-block;background:rgba(255,197,66,.15);color:#ffc542;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;margin-top:4px}
+
+.landing-election-banner{background:linear-gradient(135deg,rgba(79,140,255,.08),rgba(168,85,247,.08));border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;display:flex;gap:20px;flex-wrap:wrap;align-items:center;justify-content:center}
+.landing-election-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 24px;text-align:center;min-width:200px;position:relative;transition:border-color .2s}
+.landing-election-card .le-label{font-size:12px;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.landing-election-card .le-value{font-size:22px;font-weight:700}
+.landing-election-card .le-sub{font-size:11px;color:var(--text-muted);margin-top:4px}
+.landing-election-card .le-badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;margin-top:6px}
+.le-badge-done{background:rgba(34,197,94,.15);color:#22c55e}
+.le-badge-soon{background:rgba(255,197,66,.15);color:#ffc542}
+.landing-election-card .le-tooltip{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;font-size:12px;color:var(--text);line-height:1.5;width:280px;z-index:50;box-shadow:var(--shadow);transition:opacity .2s,visibility .2s}
+.landing-election-card .le-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--border)}
+.landing-election-card:hover .le-tooltip{visibility:visible;opacity:1}
+.landing-election-card:hover{border-color:var(--accent);cursor:pointer}
+.le-tooltip a{color:var(--accent);text-decoration:none;font-weight:600}
+.le-tooltip a:hover{text-decoration:underline}
+@media(max-width:600px){.landing-election-banner{flex-direction:column}.landing-election-card .le-tooltip,.kpi-card-election .election-tooltip{width:220px}}
   </style>
 </head>
 <body>
@@ -390,7 +415,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 <!-- ================================================================== -->
 <!-- LANDING PAGE                                                       -->
 <!-- ================================================================== -->
-<div id="viewLanding" class="view active">
+<div id="viewLanding" class="view">
   <header class="landing-header">
     <div>
       <div class="logo">PIPPA Eleicoes 2026</div>
@@ -405,6 +430,23 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <h1>Eleicoes Gerais 2026</h1>
       <p>Agregador de pesquisas eleitorais e resultados oficiais do TSE para presidente, governadores, senadores e deputados.</p>
     </div>
+    <div class="landing-election-banner" id="landingElectionBanner">
+      <div class="landing-election-card" onclick="showView('resultados')">
+        <div class="le-label">1&ordm; Turno</div>
+        <div class="le-value" style="color:var(--success)">Encerrado</div>
+        <div class="le-sub">04/10/2026</div>
+        <span class="le-badge le-badge-done">Realizado</span>
+        <div class="le-tooltip">Acesse a aba <a href="#" onclick="event.preventDefault();showView('resultados')">Resultados Oficiais do TSE</a> para ver os eleitos no 1&ordm; turno e os candidatos que disputam o 2&ordm; turno.</div>
+      </div>
+      <div class="landing-election-card" onclick="showView('resultados')">
+        <div class="le-label">2&ordm; Turno</div>
+        <div class="le-value accent" id="landingDias2t">-</div>
+        <div class="le-sub">25/10/2026</div>
+        <span class="le-badge le-badge-soon" id="landingBadge2t">Em breve</span>
+        <div class="le-tooltip">Acesse a aba <a href="#" onclick="event.preventDefault();showView('resultados')">Resultados Oficiais do TSE</a> para acompanhar os candidatos ao 2&ordm; turno e resultados em tempo real.</div>
+      </div>
+    </div>
+
     <div class="landing-grid">
       <div class="landing-card" onclick="showView('pesquisas')">
         <div class="card-num">1</div>
@@ -434,7 +476,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 <!-- ================================================================== -->
 <!-- PESQUISAS ELEITORAIS VIEW                                          -->
 <!-- ================================================================== -->
-<div id="viewPesquisas" class="view">
+<div id="viewPesquisas" class="view active">
 
   <div class="header">
     <div class="header-left">
@@ -520,7 +562,20 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
           <div class="kpi-card"><div class="kpi-label">Institutos</div><div class="kpi-value" id="kpiInstitutos">0</div></div>
           <div class="kpi-card"><div class="kpi-label">Candidatos</div><div class="kpi-value" id="kpiCandidatos">0</div></div>
           <div class="kpi-card"><div class="kpi-label">Ultima Pesquisa</div><div class="kpi-value" id="kpiUltima" style="font-size:18px">-</div></div>
-          <div class="kpi-card"><div class="kpi-label">Dias para Eleicao</div><div class="kpi-value accent" id="kpiDias">-</div><div class="kpi-sub">04/10/2026</div></div>
+          <div class="kpi-card kpi-card-election">
+            <div class="kpi-label">1&ordm; Turno</div>
+            <div class="kpi-value" style="color:var(--success);font-size:20px">Encerrado</div>
+            <div class="kpi-sub">04/10/2026</div>
+            <span class="kpi-badge-done">Realizado</span>
+            <div class="election-tooltip">O 1&ordm; turno das eleicoes 2026 ja foi realizado. Acesse a aba <a href="#" onclick="event.preventDefault();showView('resultados')">Resultados do TSE</a> para ver os eleitos e candidatos ao 2&ordm; turno.</div>
+          </div>
+          <div class="kpi-card kpi-card-election">
+            <div class="kpi-label">2&ordm; Turno</div>
+            <div class="kpi-value accent" id="kpiDias">-</div>
+            <div class="kpi-sub">25/10/2026</div>
+            <span id="kpiBadge2t" class="kpi-badge-soon">Em breve</span>
+            <div class="election-tooltip">Acesse a aba <a href="#" onclick="event.preventDefault();showView('resultados')">Resultados do TSE</a> para acompanhar os candidatos ao 2&ordm; turno e os resultados em tempo real.</div>
+          </div>
         </div>
 
         <div class="charts-grid">
@@ -873,8 +928,8 @@ let currentScenario = null;
 
 window.addEventListener('DOMContentLoaded', () => {
   updateCargoCounts();
-  renderCurrentView();
   updateCountdown();
+  showView('pesquisas');
 });
 
 
@@ -1194,10 +1249,38 @@ function updateCargoCounts() {
 }
 
 function updateCountdown() {
-  const election = new Date('2026-10-04');
+  const turno2 = new Date('2026-10-25');
   const now = new Date();
-  const days = Math.ceil((election - now) / 86400000);
-  document.getElementById('kpiDias').textContent = days > 0 ? days : 'Hoje!';
+  const days2 = Math.ceil((turno2 - now) / 86400000);
+
+  var kpiDias = document.getElementById('kpiDias');
+  var kpiBadge = document.getElementById('kpiBadge2t');
+  var landingDias = document.getElementById('landingDias2t');
+  var landingBadge = document.getElementById('landingBadge2t');
+
+  var label, badge;
+  if (days2 > 0) {
+    label = days2 + (days2 === 1 ? ' dia' : ' dias');
+    badge = 'Em breve';
+  } else if (days2 === 0) {
+    label = 'Hoje!';
+    badge = 'Dia da eleicao';
+  } else {
+    label = 'Encerrado';
+    badge = 'Realizado';
+  }
+
+  if (kpiDias) kpiDias.textContent = label;
+  if (kpiBadge) kpiBadge.textContent = badge;
+  if (landingDias) landingDias.textContent = label;
+  if (landingBadge) landingBadge.textContent = badge;
+
+  if (days2 <= 0) {
+    if (kpiDias) kpiDias.style.color = 'var(--success)';
+    if (kpiBadge) { kpiBadge.className = 'kpi-badge-done'; }
+    if (landingDias) landingDias.style.color = 'var(--success)';
+    if (landingBadge) { landingBadge.className = 'le-badge le-badge-done'; }
+  }
 }
 
 function buildFilterChips() {
