@@ -523,16 +523,6 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
   </div>
 </div>
 
-<div class="modal-backdrop" id="minutaModal" onclick="if(event.target===this)closeModal(this.id)">
-  <div class="modal">
-    <div class="modal-title">Minuta Tecnica — Pauta Legislativa</div>
-    <pre class="modal-content" id="minutaContent" style="white-space:pre-wrap;font-family:inherit"></pre>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('minutaModal')">Fechar</button>
-      <button class="btn" onclick="copyMinuta()">&#128203; Copiar</button>
-    </div>
-  </div>
-</div>
 
 <div class="toast" id="toast"></div>
 
@@ -1282,7 +1272,7 @@ function renderEvents() {
           if (p.id && ev.casa === 'camara') {
             html += '<button class="btn-action" style="font-size:11px;padding:4px 10px" onclick="event.stopPropagation();openTramitacoes(\'' + p.id + '\',\'' + ev.casa + '\',\'' + escapeHtml(p.sigla).replace(/'/g,"\\'") + '\')">&#128195; Tramitacao</button>';
           }
-          html += '<button class="btn-action" style="font-size:11px;padding:4px 10px" onclick="event.stopPropagation();generateMinuta(\'' + ev.id + '\',' + pIdx + ')">&#128221; Minuta Tecnica</button>';
+
           if (p.url) {
             html += '<a href="' + p.url + '" target="_blank" rel="noopener" class="btn-action" onclick="event.stopPropagation()" style="text-decoration:none;font-size:11px;padding:4px 10px">&#128279; Acessar</a>';
           }
@@ -1294,10 +1284,6 @@ function renderEvents() {
         html += '</div>'; // propositions container
       }
 
-      // Action buttons for the event
-      html += '<div class="action-buttons" style="margin-top:12px">';
-      html += '<button class="btn-action" onclick="event.stopPropagation();generateMinuta(\'' + ev.id + '\',0)">&#128221; Gerar Minuta Tecnica</button>';
-      html += '</div>';
 
       html += '</div>'; // prop-details
       html += '</div>'; // prop-card
@@ -1608,109 +1594,6 @@ async function openTramitacoes(id, casa, sigla) {
   } catch(e) {
     content.innerHTML = '<div style="text-align:center;padding:20px;color:var(--danger)">Erro ao carregar tramitacoes: ' + escapeHtml(e.message) + '</div>';
   }
-}
-
-// =====================================================
-// NOTA DE ALERTA
-// =====================================================
-function generateMinuta(evId, pIdx) {
-  var ev = allEvents.find(function(e){return e.id===evId});
-  if (!ev || !ev.pauta[pIdx]) return;
-  var p = ev.pauta[pIdx];
-  var date = new Date().toLocaleDateString('pt-BR');
-  var range = getDateRange();
-  var score = (p.matchedKeywords||[]).length;
-
-  var text = 'MINUTA TECNICA — PAUTA LEGISLATIVA\n';
-  text += 'Sebrae Nacional — Observatorio Setorial Territorial\n';
-  text += 'Data de emissao: ' + date + '\n';
-  text += '='.repeat(60) + '\n\n';
-
-  text += '1. IDENTIFICACAO\n';
-  text += '-'.repeat(40) + '\n';
-  text += 'Proposicao: ' + p.sigla + '\n';
-  text += 'Casa: ' + (ev.casa === 'camara' ? 'Camara dos Deputados' : 'Senado Federal') + '\n';
-  text += 'Evento: ' + ev.titulo + '\n';
-  text += 'Orgao: ' + ev.orgao + '\n';
-  text += 'Data prevista: ' + formatDateBR((ev.dataHora||'').substring(0,10)) + ' ' + formatTime(ev.dataHora) + '\n';
-  if (ev.local) text += 'Local: ' + ev.local + '\n';
-  if (p.relator) text += 'Relator: ' + p.relator + '\n';
-  if (p.regime) text += 'Regime: ' + p.regime + '\n';
-  if (p.url) text += 'Link: ' + p.url + '\n';
-  text += '\n';
-
-  text += '2. EMENTA\n';
-  text += '-'.repeat(40) + '\n';
-  text += (p.ementa || 'Nao disponivel') + '\n\n';
-
-  text += '3. CLASSIFICACAO SEBRAE (10 Criterios)\n';
-  text += '-'.repeat(40) + '\n';
-
-  var uid = evId + '-' + pIdx;
-  var getVal = function(id) {
-    var el = document.getElementById(id);
-    return el ? el.value : '—';
-  };
-
-  text += '  1. Papel do Sebrae:        ' + getVal('cls-papel-' + uid) + '\n';
-  text += '  2. Relevancia:             ' + getVal('cls-relevancia-' + uid) + '\n';
-  text += '  3. Aderencia PE 2024-2027: ' + getVal('cls-aderencia-' + uid) + '\n';
-  text += '  4. Eixo Estrategico:       ' + getVal('cls-eixo-' + uid) + '\n';
-  text += '  5. Tipo de Impacto:        ' + getVal('cls-impacto-' + uid) + '\n';
-  text += '  5A. Grau Impacto:          ' + getVal('cls-grau-' + uid) + '\n';
-  text += '  5B. Posicionamento Sebrae: ' + getVal('cls-posicionamento-' + uid) + '\n';
-  text += '  6. Abrangencia:            ' + getVal('cls-abrangencia-' + uid) + '\n';
-  text += '  7. Situacao Tramitacao:     ' + getVal('cls-tramitacao-' + uid) + '\n';
-  text += '  8. Prioridade:             ' + getVal('cls-prioridade-' + uid) + '\n';
-  text += '  9. Acao Recomendada:       ' + getVal('cls-acao-' + uid) + '\n';
-  text += '  10. Filtro Institucional:  ' + getVal('cls-institucional-' + uid) + '\n';
-  text += '\n';
-
-  text += '4. ANALISE DE RELEVANCIA\n';
-  text += '-'.repeat(40) + '\n';
-  text += 'Score: ' + score + ' pontos\n';
-  if (p.matchedKeywords && p.matchedKeywords.length > 0) {
-    var unique = p.matchedKeywords.filter(function(v,i,a){return a.indexOf(v)===i});
-    text += 'Palavras-chave: ' + unique.join(', ') + '\n';
-  }
-  if (ev.eixos && ev.eixos.length > 0) {
-    text += 'Eixos tematicos: ' + ev.eixos.join(', ') + '\n';
-  }
-  text += '\n';
-
-  text += '5. CONTEXTO\n';
-  text += '-'.repeat(40) + '\n';
-  text += 'Esta proposicao esta pautada para discussao/votacao no periodo de ' + formatDateBR(range[0]) + ' a ' + formatDateBR(range[1]) + '.\n';
-  if (ev.situacao) text += 'Situacao do evento: ' + ev.situacao + '\n';
-  text += '\n';
-
-  text += '6. RECOMENDACAO\n';
-  text += '-'.repeat(40) + '\n';
-  var prioridade = getVal('cls-prioridade-' + uid);
-  var acao = getVal('cls-acao-' + uid);
-  if (prioridade.indexOf('P0') >= 0 || prioridade.indexOf('P1') >= 0) {
-    text += 'PRIORIDADE ALTA: Acionar o NAL para articulacao imediata.\n';
-    text += 'Verificar posicionamento institucional e mobilizar interlocutores.\n';
-  } else if (prioridade.indexOf('P2') >= 0) {
-    text += 'MONITORAMENTO: Acompanhar resultado da sessao.\n';
-    text += 'Preparar posicionamento caso a materia avance.\n';
-  } else {
-    text += 'INFORMATIVO: Registrar para acompanhamento futuro.\n';
-  }
-  text += 'Acao recomendada: ' + acao + '\n';
-
-  text += '\n---\nPIPPA Pauta Legislativa — Sebrae Nacional\n';
-  text += 'Gerado automaticamente em ' + date + '\n';
-
-  document.getElementById('minutaContent').textContent = text;
-  openModal('minutaModal');
-}
-
-function copyMinuta() {
-  var text = document.getElementById('minutaContent').textContent;
-  navigator.clipboard.writeText(text).then(function(){
-    showToast('Minuta tecnica copiada!');
-  });
 }
 
 function saveClassification(uid) {
