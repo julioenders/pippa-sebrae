@@ -314,8 +314,7 @@ async function fetchData() {
 
     // Fetch page 2 if exists
     if (camaraResp.ok) {
-      var json1 = await camaraResp.clone().json();
-      var nextLink = (json1.links || []).find(function(l){ return l.rel === 'next'; });
+      var nextLink = (camaraJson.links || []).find(function(l){ return l.rel === 'next'; });
       if (nextLink) {
         var r2 = await fetch(nextLink.href);
         if (r2.ok) {
