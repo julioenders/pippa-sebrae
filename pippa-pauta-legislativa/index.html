@@ -1184,16 +1184,17 @@ function renderEvents() {
     return;
   }
 
-  // Group by relevancia (like Legislativo groups by priority)
+  // Group by tipo (Plenario, Comissoes, Audiencias, Outros)
   var groups = {
-    'Alta': { label: 'Relevancia Alta', color: '#ff4d6a', items: [] },
-    'Media': { label: 'Monitoramento (Media)', color: '#ff8c42', items: [] },
-    'Baixa': { label: 'Acompanhamento (Baixa)', color: '#ffc542', items: [] },
-    'none': { label: 'Sem classificacao', color: '#8b8fa8', items: [] }
+    'Plenario': { label: 'Plenario', color: '#ffc542', icon: '&#127963;', items: [] },
+    'Comissao': { label: 'Comissoes', color: '#4ecdc4', icon: '&#128101;', items: [] },
+    'Audiencia': { label: 'Audiencias', color: '#ff8c42', icon: '&#127908;', items: [] },
+    'Outros': { label: 'Outros', color: '#8b8fa8', icon: '&#128196;', items: [] }
   };
 
   propositions.forEach(function(p) {
-    var key = p.relevancia || 'none';
+    var key = p.tipo || 'Outros';
+    if (!groups[key]) key = 'Outros';
     groups[key].items.push(p);
   });
 
@@ -1204,13 +1205,13 @@ function renderEvents() {
 
   var html = '<div class="section-header"><div class="section-title">Proposicoes na Pauta</div><div class="section-count">' + propositions.length + ' proposicoes</div></div>';
 
-  ['Alta','Media','Baixa','none'].forEach(function(key) {
+  ['Plenario','Comissao','Audiencia','Outros'].forEach(function(key) {
     var group = groups[key];
     if (group.items.length === 0) return;
 
     html += '<div class="priority-group">';
     html += '<div class="priority-group-header" style="color:' + group.color + ';border-bottom-color:' + group.color + '">';
-    html += group.label;
+    html += group.icon + ' ' + group.label;
     html += '<span class="priority-group-count">' + group.items.length + ' proposicoes</span>';
     html += '</div>';
 
