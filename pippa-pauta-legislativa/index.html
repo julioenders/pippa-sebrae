@@ -894,11 +894,12 @@ async function fetchPauta() {
   allEvents.sort(function(a,b){ return (a.dataHora||'').localeCompare(b.dataHora||''); });
 
   hideLoading();
-  applyFilters();
 
   if (allEvents.length > 0) {
     document.getElementById('chartsRow').style.display = '';
   }
+
+  applyFilters();
 
   showToast(allEvents.length + ' eventos encontrados');
 }
@@ -962,8 +963,8 @@ function applyFilters() {
   });
 
   updateKPIs();
-  updateCharts();
-  renderEvents();
+  try { updateCharts(); } catch(e) { console.warn('Charts:', e); }
+  try { renderEvents(); } catch(e) { console.warn('Render:', e); }
   updateThermometer();
 }
 
@@ -1054,6 +1055,7 @@ function updateThermometer() {
 // CHARTS
 // =====================================================
 function updateCharts() {
+  if (typeof Chart === 'undefined') return;
   Object.keys(chartInstances).forEach(function(k){
     if (chartInstances[k]) chartInstances[k].destroy();
   });
