@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PIPPA Consultas Publicas — Monitor de Participacao</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#242836;--border:#2e3348;--text:#e4e6ef;--text2:#c4c7d4;--text3:#8b8fa8;--accent:#06b6d4;--accent2:#22d3ee;--purple:#a855f7;--blue:#4f8cff;--emerald:#22c55e;--amber:#f59e0b;--red:#ef4444;--pink:#f472b6;--radius:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+.header{background:linear-gradient(135deg,#1a1d27,#242836);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:16px}
+.logo{font-size:22px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
+.logo-sub{font-size:13px;color:var(--text3);font-weight:400}
+.btn{padding:8px 16px;border-radius:var(--radius);font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent);color:#000}
+.btn-primary:hover{background:var(--accent2)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-back{background:transparent;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:6px 12px;text-decoration:none;border-radius:var(--radius);display:inline-flex;align-items:center;gap:4px}
+.btn-back:hover{border-color:var(--accent);color:var(--accent)}
+
+.layout{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 60px)}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px;overflow-y:auto}
+.filter-section{margin-bottom:20px}
+.filter-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:8px}
+.filter-group{display:flex;flex-direction:column;gap:4px}
+.filter-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;color:var(--text2);cursor:pointer;text-align:left;transition:all .15s}
+.filter-btn:hover{border-color:var(--accent)}
+.filter-btn.active{background:rgba(6,182,212,.1);border-color:var(--accent);color:var(--accent)}
+.filter-count{float:right;font-size:10px;color:var(--text3);background:var(--bg);padding:1px 6px;border-radius:4px}
+.sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);text-align:center;line-height:1.6}
+
+.content{padding:24px;overflow-y:auto}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+.kpi-value{font-size:28px;font-weight:800;line-height:1}
+.kpi-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-top:6px}
+
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.section-count{font-size:12px;color:var(--text3)}
+
+.search-box{width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;margin-bottom:16px}
+.search-box:focus{outline:none;border-color:var(--accent)}
+
+.cons-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;transition:all .2s}
+.cons-card:hover{border-color:rgba(6,182,212,.3)}
+.cons-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}
+.cons-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.cons-info{flex:1;min-width:0}
+.cons-title{font-size:13px;font-weight:700;margin-bottom:2px;line-height:1.4}
+.cons-meta{font-size:11px;color:var(--text3)}
+.cons-expand{color:var(--text3);font-size:12px;transition:transform .2s}
+.cons-card.expanded .cons-expand{transform:rotate(180deg)}
+.cons-details{display:none;padding:0 16px 16px;border-top:1px solid var(--border)}
+.cons-card.expanded .cons-details{display:block}
+
+.tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;margin:2px}
+.tag-aberta{background:rgba(34,197,94,.15);color:var(--emerald)}
+.tag-encerrada{background:rgba(239,68,68,.1);color:var(--red)}
+.tag-futura{background:rgba(245,158,11,.1);color:var(--amber)}
+.tag-relevante{background:rgba(6,182,212,.12);color:var(--accent)}
+.tag-orgao{background:var(--surface2);color:var(--text2)}
+
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:12px}
+.detail-item{background:var(--bg);border-radius:6px;padding:8px 10px}
+.detail-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);display:block;margin-bottom:2px}
+.detail-value{font-size:12px;color:var(--text)}
+
+.loading{display:flex;align-items:center;justify-content:center;gap:8px;padding:40px;color:var(--text3);font-size:13px}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-state .icon{font-size:48px;margin-bottom:12px}
+.empty-state h3{font-size:16px;color:var(--text);margin-bottom:8px}
+.empty-state p{font-size:13px;line-height:1.6}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 20px;font-size:12px;color:var(--text);opacity:0;transform:translateY(10px);transition:all .3s;z-index:999;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+.priority-group{margin-bottom:20px}
+.priority-group-header{font-size:13px;font-weight:700;padding:8px 0;border-bottom:2px solid;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.priority-group-count{font-size:11px;font-weight:400;color:var(--text3)}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <a href="../pippa-portal/index.html" class="btn-back">&#9664; Portal</a>
+    <div>
+      <div class="logo">PIPPA Consultas Publicas</div>
+      <div class="logo-sub">Monitor de Participacao Social — Incidencia Pre-Normativa</div>
+    </div>
+  </div>
+  <div class="header-controls">
+    <button class="btn btn-primary" onclick="fetchData()">&#128269; Consultar APIs</button>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="filter-section">
+      <div class="filter-title">Status</div>
+      <div class="filter-group" id="filterStatus"></div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-title">Relevancia SEBRAE</div>
+      <div class="filter-group" id="filterRelevancia"></div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-title">Orgao</div>
+      <div class="filter-group" id="filterOrgao"></div>
+    </div>
+    <div class="sidebar-footer">
+      PIPPA Consultas Publicas<br>Sebrae Nacional — Observatorio<br>Dados: APIs Camara e Senado
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-value" id="kpiTotal" style="color:var(--accent)">—</div><div class="kpi-label">Total Consultas</div></div>
+      <div class="kpi"><div class="kpi-value" id="kpiAbertas" style="color:var(--emerald)">—</div><div class="kpi-label">Abertas</div></div>
+      <div class="kpi"><div class="kpi-value" id="kpiRelevantes" style="color:var(--amber)">—</div><div class="kpi-label">Relevantes SEBRAE</div></div>
+      <div class="kpi"><div class="kpi-value" id="kpiEncerradas" style="color:var(--text3)">—</div><div class="kpi-label">Encerradas</div></div>
+    </div>
+
+    <input type="text" class="search-box" id="searchBox" placeholder="Buscar consulta por titulo ou orgao..." oninput="applyFilters()">
+
+    <div class="section-header">
+      <div class="section-title">Consultas e Audiencias Publicas</div>
+      <div class="section-count" id="consCount"></div>
+    </div>
+
+    <div id="consContainer">
+      <div class="empty-state">
+        <div class="icon">&#128227;</div>
+        <h3>Monitor de Consultas Publicas</h3>
+        <p>Clique em <strong>Consultar APIs</strong> para buscar audiencias e consultas publicas das comissoes da Camara e do Senado onde o SEBRAE pode incidir.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var allConsultas = [];
+var filteredConsultas = [];
+var filters = { status: null, relevancia: null, orgao: null };
+
+var KW_RELEVANTES = [
+  'micro', 'pequen', 'mpe', 'mei', 'simples', 'empreend',
+  'desburocrat', 'simplifica', 'regulament', 'tributar',
+  'credito', 'financiamento', 'fomento', 'inovacao', 'tecnologia',
+  'digital', 'startup', 'cooperativ', 'licitac', 'compras publicas',
+  'ambiente de negocios', 'livre iniciativa', 'comercio', 'industria',
+  'sebrae', 'senai', 'sesc', 'sesi', 'sistema s',
+  'reforma', 'imposto', 'taxa', 'aliquota',
+  'trabalho', 'emprego', 'renda', 'qualifica',
+  'turismo', 'agronegocio', 'exporta', 'importa'
+];
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+function escapeHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function classifyRelevancia(titulo, descricao) {
+  var text = ((titulo || '') + ' ' + (descricao || '')).toLowerCase();
+  var matched = KW_RELEVANTES.filter(function(kw) { return text.indexOf(kw) >= 0; });
+  return { relevante: matched.length > 0, keywords: matched, score: matched.length };
+}
+
+function getStatus(dataInicio, dataFim) {
+  var now = new Date();
+  now.setHours(0,0,0,0);
+  if (dataInicio) {
+    var di = new Date(dataInicio);
+    if (di > now) return 'Futura';
+  }
+  if (dataFim) {
+    var df = new Date(dataFim);
+    if (df < now) return 'Encerrada';
+  }
+  return 'Aberta';
+}
+
+function formatDateBR(d) {
+  if (!d) return '—';
+  var parts = d.substring(0,10).split('-');
+  if (parts.length < 3) return d;
+  return parts[2] + '/' + parts[1] + '/' + parts[0];
+}
+
+async function fetchData() {
+  var container = document.getElementById('consContainer');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando audiencias e consultas publicas...</div>';
+  allConsultas = [];
+
+  try {
+    // Fetch events from Camara (audiencias publicas, seminarios)
+    var today = new Date();
+    var startDate = new Date(today);
+    startDate.setMonth(startDate.getMonth() - 3);
+    var endDate = new Date(today);
+    endDate.setMonth(endDate.getMonth() + 2);
+
+    var startStr = startDate.toISOString().split('T')[0];
+    var endStr = endDate.toISOString().split('T')[0];
+
+    var camaraUrl = 'https://dadosabertos.camara.leg.br/api/v2/eventos?dataInicio=' + startStr + '&dataFim=' + endStr + '&ordem=DESC&ordenarPor=dataHoraInicio&itens=100';
+    var camaraResp = await fetch(camaraUrl);
+
+    if (camaraResp.ok) {
+      var camaraJson = await camaraResp.json();
+      var eventos = camaraJson.dados || [];
+
+      eventos.forEach(function(ev) {
+        var tipo = (ev.descricaoTipo || '').toLowerCase();
+        var isConsulta = tipo.indexOf('audiencia') >= 0 || tipo.indexOf('seminario') >= 0 || tipo.indexOf('consulta') >= 0 || tipo.indexOf('reuniao deliberativa') >= 0;
+        if (!isConsulta) return;
+
+        var titulo = ev.descricao || ev.descricaoTipo || '';
+        var orgaos = (ev.orgaos || []).map(function(o){ return o.sigla || o.nome || ''; }).join(', ');
+        var local = ev.localCamara ? (ev.localCamara.nome || '') : '';
+        var classificacao = classifyRelevancia(titulo, orgaos);
+        var status = getStatus(ev.dataHoraInicio, ev.dataHoraFim);
+
+        allConsultas.push({
+          id: ev.id,
+          titulo: titulo,
+          tipo: ev.descricaoTipo || 'Audiencia',
+          orgao: orgaos || 'Camara dos Deputados',
+          casa: 'camara',
+          dataInicio: ev.dataHoraInicio ? ev.dataHoraInicio.split('T')[0] : '',
+          dataFim: ev.dataHoraFim ? ev.dataHoraFim.split('T')[0] : '',
+          horaInicio: ev.dataHoraInicio ? ev.dataHoraInicio.split('T')[1] : '',
+          local: local,
+          situacao: ev.descricaoSituacao || '',
+          url: ev.uri || '',
+          status: status,
+          relevante: classificacao.relevante,
+          keywords: classificacao.keywords,
+          score: classificacao.score
+        });
+      });
+    }
+
+    // Fetch page 2 if exists
+    if (camaraResp.ok) {
+      var json1 = await camaraResp.clone().json();
+      var nextLink = (json1.links || []).find(function(l){ return l.rel === 'next'; });
+      if (nextLink) {
+        var r2 = await fetch(nextLink.href);
+        if (r2.ok) {
+          var j2 = await r2.json();
+          (j2.dados || []).forEach(function(ev) {
+            var tipo = (ev.descricaoTipo || '').toLowerCase();
+            var isConsulta = tipo.indexOf('audiencia') >= 0 || tipo.indexOf('seminario') >= 0 || tipo.indexOf('consulta') >= 0 || tipo.indexOf('reuniao deliberativa') >= 0;
+            if (!isConsulta) return;
+
+            var titulo = ev.descricao || ev.descricaoTipo || '';
+            var orgaos = (ev.orgaos || []).map(function(o){ return o.sigla || o.nome || ''; }).join(', ');
+            var classificacao = classifyRelevancia(titulo, orgaos);
+            var status = getStatus(ev.dataHoraInicio, ev.dataHoraFim);
+
+            allConsultas.push({
+              id: ev.id,
+              titulo: titulo,
+              tipo: ev.descricaoTipo || 'Audiencia',
+              orgao: orgaos || 'Camara dos Deputados',
+              casa: 'camara',
+              dataInicio: ev.dataHoraInicio ? ev.dataHoraInicio.split('T')[0] : '',
+              dataFim: ev.dataHoraFim ? ev.dataHoraFim.split('T')[0] : '',
+              horaInicio: ev.dataHoraInicio ? ev.dataHoraInicio.split('T')[1] : '',
+              local: ev.localCamara ? (ev.localCamara.nome || '') : '',
+              situacao: ev.descricaoSituacao || '',
+              url: ev.uri || '',
+              status: status,
+              relevante: classificacao.relevante,
+              keywords: classificacao.keywords,
+              score: classificacao.score
+            });
+          });
+        }
+      }
+    }
+
+    // Fetch Senado agenda
+    container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando agenda do Senado...</div>';
+    var meses = [];
+    for (var m = -2; m <= 1; m++) {
+      var d = new Date(today.getFullYear(), today.getMonth() + m, 1);
+      meses.push(d.getFullYear() + '' + String(d.getMonth()+1).padStart(2,'0'));
+    }
+
+    for (var mi = 0; mi < meses.length; mi++) {
+      try {
+        var senResp = await fetch('https://legis.senado.leg.br/dadosabertos/plenario/agenda/mes/' + meses[mi], { headers: { 'Accept': 'application/json' } });
+        if (senResp.ok) {
+          var senJson = await senResp.json();
+          var sessoes = [];
+          try {
+            var ag = senJson.AgendaPlenario.Sessoes.Sessao;
+            if (!Array.isArray(ag)) ag = ag ? [ag] : [];
+            sessoes = ag;
+          } catch(e) {}
+
+          sessoes.forEach(function(s) {
+            var tipo = (s.TipoSessao || '').toLowerCase();
+            if (tipo.indexOf('audiencia') < 0 && tipo.indexOf('debate') < 0 && tipo.indexOf('sabatina') < 0) return;
+
+            var titulo = s.TipoSessao + (s.Legislatura ? ' — ' + s.Legislatura : '');
+            var classificacao = classifyRelevancia(titulo, '');
+            var dataSessao = s.DataSessao || '';
+            var status = getStatus(dataSessao, dataSessao);
+
+            allConsultas.push({
+              id: 'sen-' + (s.CodigoSessao || mi + '-' + Math.random()),
+              titulo: titulo,
+              tipo: s.TipoSessao || 'Sessao',
+              orgao: 'Senado Federal',
+              casa: 'senado',
+              dataInicio: dataSessao,
+              dataFim: dataSessao,
+              horaInicio: s.HoraInicio || '',
+              local: '',
+              situacao: s.SituacaoSessao || '',
+              url: '',
+              status: status,
+              relevante: classificacao.relevante,
+              keywords: classificacao.keywords,
+              score: classificacao.score
+            });
+          });
+        }
+      } catch(e) {}
+    }
+
+    showToast(allConsultas.length + ' consultas/audiencias encontradas');
+    buildFilters();
+    applyFilters();
+
+  } catch(e) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">&#9888;</div><h3>Erro ao carregar dados</h3><p>' + escapeHtml(e.message) + '</p></div>';
+  }
+}
+
+function buildFilters() {
+  var statusEl = document.getElementById('filterStatus');
+  var statusCounts = { Aberta: 0, Futura: 0, Encerrada: 0 };
+  allConsultas.forEach(function(c){ statusCounts[c.status] = (statusCounts[c.status]||0)+1; });
+  statusEl.innerHTML = '';
+  ['Aberta','Futura','Encerrada'].forEach(function(s) {
+    statusEl.innerHTML += '<button class="filter-btn" onclick="toggleFilter(\'status\',\'' + s + '\',this)">' + s + ' <span class="filter-count">' + (statusCounts[s]||0) + '</span></button>';
+  });
+
+  var relEl = document.getElementById('filterRelevancia');
+  var relCnt = allConsultas.filter(function(c){return c.relevante}).length;
+  var nRelCnt = allConsultas.length - relCnt;
+  relEl.innerHTML = '<button class="filter-btn" onclick="toggleFilter(\'relevancia\',\'sim\',this)">Relevante SEBRAE <span class="filter-count">' + relCnt + '</span></button>';
+  relEl.innerHTML += '<button class="filter-btn" onclick="toggleFilter(\'relevancia\',\'nao\',this)">Outras <span class="filter-count">' + nRelCnt + '</span></button>';
+
+  var orgaos = {};
+  allConsultas.forEach(function(c){
+    var o = c.orgao.split(',')[0].trim();
+    if (o) orgaos[o] = (orgaos[o]||0)+1;
+  });
+  var orgEl = document.getElementById('filterOrgao');
+  orgEl.innerHTML = '';
+  Object.keys(orgaos).sort(function(a,b){return orgaos[b]-orgaos[a]}).slice(0,15).forEach(function(o) {
+    orgEl.innerHTML += '<button class="filter-btn" onclick="toggleFilter(\'orgao\',\'' + escapeHtml(o).replace(/'/g,"\\'") + '\',this)">' + escapeHtml(o.length > 25 ? o.substring(0,23)+'...' : o) + ' <span class="filter-count">' + orgaos[o] + '</span></button>';
+  });
+}
+
+function toggleFilter(type, value, btn) {
+  if (filters[type] === value) {
+    filters[type] = null;
+    btn.classList.remove('active');
+  } else {
+    filters[type] = value;
+    var siblings = btn.parentElement.querySelectorAll('.filter-btn');
+    siblings.forEach(function(s){ s.classList.remove('active'); });
+    btn.classList.add('active');
+  }
+  applyFilters();
+}
+
+function applyFilters() {
+  var search = (document.getElementById('searchBox').value || '').toLowerCase();
+
+  filteredConsultas = allConsultas.filter(function(c) {
+    if (filters.status && c.status !== filters.status) return false;
+    if (filters.relevancia === 'sim' && !c.relevante) return false;
+    if (filters.relevancia === 'nao' && c.relevante) return false;
+    if (filters.orgao && c.orgao.indexOf(filters.orgao) < 0) return false;
+    if (search) {
+      var haystack = (c.titulo + ' ' + c.orgao + ' ' + c.tipo).toLowerCase();
+      if (haystack.indexOf(search) < 0) return false;
+    }
+    return true;
+  });
+
+  filteredConsultas.sort(function(a,b) {
+    if (a.status === 'Aberta' && b.status !== 'Aberta') return -1;
+    if (b.status === 'Aberta' && a.status !== 'Aberta') return 1;
+    if (a.relevante && !b.relevante) return -1;
+    if (b.relevante && !a.relevante) return 1;
+    return (b.dataInicio || '').localeCompare(a.dataInicio || '');
+  });
+
+  updateKPIs();
+  renderConsultas();
+}
+
+function updateKPIs() {
+  document.getElementById('kpiTotal').textContent = filteredConsultas.length;
+  document.getElementById('kpiAbertas').textContent = filteredConsultas.filter(function(c){return c.status==='Aberta'}).length;
+  document.getElementById('kpiRelevantes').textContent = filteredConsultas.filter(function(c){return c.relevante}).length;
+  document.getElementById('kpiEncerradas').textContent = filteredConsultas.filter(function(c){return c.status==='Encerrada'}).length;
+}
+
+function renderConsultas() {
+  var container = document.getElementById('consContainer');
+  document.getElementById('consCount').textContent = filteredConsultas.length + ' consultas/audiencias';
+
+  if (filteredConsultas.length === 0 && allConsultas.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">&#128227;</div><h3>Monitor de Consultas Publicas</h3><p>Clique em <strong>Consultar APIs</strong> para buscar audiencias e consultas publicas.</p></div>';
+    return;
+  }
+
+  if (filteredConsultas.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">&#128269;</div><h3>Nenhuma consulta encontrada</h3><p>Ajuste os filtros ou a busca.</p></div>';
+    return;
+  }
+
+  var groups = {
+    'Aberta': { label: 'Abertas / Em Andamento', color: 'var(--emerald)', items: [] },
+    'Futura': { label: 'Futuras / Agendadas', color: 'var(--amber)', items: [] },
+    'Encerrada': { label: 'Encerradas', color: 'var(--text3)', items: [] }
+  };
+
+  filteredConsultas.forEach(function(c) { groups[c.status].items.push(c); });
+
+  var html = '';
+  ['Aberta','Futura','Encerrada'].forEach(function(key) {
+    var group = groups[key];
+    if (group.items.length === 0) return;
+
+    html += '<div class="priority-group">';
+    html += '<div class="priority-group-header" style="color:' + group.color + ';border-bottom-color:' + group.color + '">';
+    html += group.label;
+    html += '<span class="priority-group-count">' + group.items.length + ' itens</span>';
+    html += '</div>';
+
+    group.items.forEach(function(c) {
+      var uid = c.id;
+      var statusClass = c.status === 'Aberta' ? 'tag-aberta' : c.status === 'Futura' ? 'tag-futura' : 'tag-encerrada';
+      var iconBg = c.relevante ? 'rgba(6,182,212,.12)' : 'rgba(139,143,168,.08)';
+      var iconColor = c.relevante ? 'var(--accent)' : 'var(--text3)';
+
+      html += '<div class="cons-card" id="cc-' + uid + '">';
+      html += '<div class="cons-header" onclick="toggleCons(\'' + uid + '\')">';
+      html += '<div class="cons-icon" style="background:' + iconBg + ';color:' + iconColor + '">&#128227;</div>';
+      html += '<div class="cons-info">';
+      html += '<div class="cons-title">' + escapeHtml(c.titulo) + '</div>';
+      html += '<div class="cons-meta">';
+      html += '<span class="tag ' + statusClass + '">' + c.status + '</span> ';
+      html += '<span class="tag tag-orgao">' + escapeHtml(c.orgao.length > 30 ? c.orgao.substring(0,28)+'...' : c.orgao) + '</span> ';
+      if (c.relevante) html += '<span class="tag tag-relevante">Relevante SEBRAE</span> ';
+      html += '<span style="font-size:10px;color:var(--text3)">' + formatDateBR(c.dataInicio) + '</span>';
+      html += '</div>';
+
+      if (c.keywords.length > 0) {
+        html += '<div style="margin-top:4px">';
+        c.keywords.slice(0,4).forEach(function(kw){ html += '<span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:9px;background:rgba(6,182,212,.08);color:var(--accent);margin:1px">' + escapeHtml(kw) + '</span>'; });
+        html += '</div>';
+      }
+
+      html += '</div>';
+      html += '<div class="cons-expand">&#9660;</div>';
+      html += '</div>';
+
+      // Details
+      html += '<div class="cons-details">';
+      html += '<div class="detail-grid">';
+      html += '<div class="detail-item"><span class="detail-label">Tipo</span><span class="detail-value">' + escapeHtml(c.tipo) + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Orgao</span><span class="detail-value">' + escapeHtml(c.orgao) + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Casa</span><span class="detail-value">' + (c.casa === 'camara' ? 'Camara dos Deputados' : 'Senado Federal') + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Data</span><span class="detail-value">' + formatDateBR(c.dataInicio) + (c.horaInicio ? ' ' + c.horaInicio.substring(0,5) : '') + '</span></div>';
+      if (c.local) html += '<div class="detail-item"><span class="detail-label">Local</span><span class="detail-value">' + escapeHtml(c.local) + '</span></div>';
+      if (c.situacao) html += '<div class="detail-item"><span class="detail-label">Situacao</span><span class="detail-value">' + escapeHtml(c.situacao) + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Score Relevancia</span><span class="detail-value">' + c.score + ' palavras-chave</span></div>';
+      html += '<div class="detail-item" style="grid-column:1/-1"><span class="detail-label">Titulo Completo</span><span class="detail-value">' + escapeHtml(c.titulo) + '</span></div>';
+      html += '</div>';
+      html += '</div>';
+
+      html += '</div>';
+    });
+
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleCons(uid) {
+  var card = document.getElementById('cc-' + uid);
+  if (card) card.classList.toggle('expanded');
+}
+</script>
+</body>
+</html>
