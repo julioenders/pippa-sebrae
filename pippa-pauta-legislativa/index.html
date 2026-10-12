@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIPPA Pauta Legislativa — Monitor de Pautas de Votacao</title>
+  <style>
+:root{
+  --bg:#0f1117;--surface:#1a1d27;--surface2:#242836;--border:#2e3348;
+  --text:#e4e6ef;--text-muted:#8b8fa8;
+  --accent:#8b5cf6;--accent-hover:#a78bfa;
+  --success:#22c55e;--warning:#ffc542;--danger:#ff4d6a;
+  --blue:#4f8cff;--purple:#a855f7;--teal:#4ecdc4;--orange:#ff8c42;
+  --camara:#4f8cff;--senado:#a855f7;
+  --radius:10px;--shadow:0 2px 12px rgba(0,0,0,.3);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.header{background:linear-gradient(135deg,#1a1d27,#242836);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:10px}
+.header-left{display:flex;align-items:center;gap:16px}
+.logo{font-size:22px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
+.logo-sub{font-size:13px;color:var(--text-muted)}
+.header-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.btn:hover{background:var(--accent-hover);transform:translateY(-1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);background:transparent}
+.period-bar{display:flex;gap:2px;background:var(--surface2);border-radius:var(--radius);padding:3px}
+.period-btn{padding:6px 16px;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;border-radius:8px;border:none;background:none;transition:all .2s}
+.period-btn:hover{color:var(--text)}
+.period-btn.active{background:var(--accent);color:#fff}
+.thermometer{display:flex;align-items:center;gap:6px;font-size:12px;padding:4px 12px;border-radius:20px}
+.thermo-green{background:rgba(34,197,94,.15);color:#22c55e}
+.thermo-yellow{background:rgba(255,197,66,.15);color:#ffc542}
+.thermo-orange{background:rgba(255,140,66,.15);color:#ff8c42}
+.thermo-red{background:rgba(255,77,106,.15);color:#ff4d6a}
+.info-btn{background:transparent;border:1px solid var(--border);color:var(--text-muted);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.info-btn:hover{border-color:var(--accent);color:var(--accent)}
+.layout{display:flex;min-height:calc(100vh - 70px)}
+.sidebar{width:260px;min-width:260px;background:var(--surface);border-right:1px solid var(--border);padding:16px;overflow-y:auto;max-height:calc(100vh - 70px);position:sticky;top:70px}
+.main{flex:1;padding:20px 24px;overflow-y:auto}
+.search-box{width:100%;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;margin-bottom:12px}
+.search-box:focus{outline:none;border-color:var(--accent)}
+.filter-section{margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.filter-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;background:var(--surface2)}
+.filter-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.filter-arrow{font-size:10px;transition:transform .2s;color:var(--text-muted)}
+.filter-badge{background:var(--accent);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;display:none}
+.filter-badge.visible{display:inline}
+.filter-body{display:none;flex-wrap:wrap;gap:6px;padding:10px 12px}
+.filter-section.open .filter-body{display:flex}
+.filter-section.open .filter-arrow{transform:rotate(180deg)}
+.filter-chip{padding:4px 10px;font-size:12px;border:1px solid var(--border);border-radius:16px;cursor:pointer;transition:all .15s;color:var(--text-muted)}
+.filter-chip:hover{border-color:var(--accent);color:var(--text)}
+.filter-chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.filter-clear{font-size:11px;color:var(--accent);cursor:pointer;margin-top:6px}
+.kpi-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;text-align:center}
+.kpi-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi-value{font-size:28px;font-weight:700}
+.kpi-value.accent{color:var(--accent)}
+.kpi-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+.section-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.section-sub{font-size:13px;color:var(--text-muted);margin-bottom:16px}
+.day-group{margin-bottom:24px}
+.day-header{font-size:15px;font-weight:700;color:var(--accent);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--accent);display:flex;align-items:center;gap:10px}
+.day-header .day-count{font-size:11px;font-weight:500;background:var(--surface2);color:var(--text-muted);padding:2px 8px;border-radius:10px}
+.event-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+.event-card:hover{border-color:var(--accent)}
+.event-header{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;cursor:pointer}
+.event-time{font-size:14px;font-weight:700;color:var(--accent);min-width:50px;flex-shrink:0}
+.event-body{flex:1;min-width:0}
+.event-title{font-size:14px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.event-orgao{font-size:13px;color:var(--text-muted)}
+.event-local{font-size:12px;color:var(--text-muted);margin-top:2px}
+.event-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.tag{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
+.tag-camara{background:rgba(79,140,255,.15);color:var(--camara)}
+.tag-senado{background:rgba(168,85,247,.15);color:var(--senado)}
+.tag-plenario{background:rgba(255,197,66,.12);color:var(--warning)}
+.tag-comissao{background:rgba(78,205,196,.12);color:var(--teal)}
+.tag-audiencia{background:rgba(255,140,66,.12);color:var(--orange)}
+.tag-sebrae{background:rgba(34,197,94,.15);color:var(--success);font-weight:600}
+.tag-count{background:var(--surface2);color:var(--text-muted)}
+.event-arrow{font-size:18px;color:var(--text-muted);transition:transform .2s;flex-shrink:0;padding-top:2px}
+.event-card.open .event-arrow{transform:rotate(90deg)}
+.event-details{display:none;border-top:1px solid var(--border);padding:14px 16px}
+.event-card.open .event-details{display:block}
+.pauta-list{list-style:none}
+.pauta-item{padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start}
+.pauta-item:last-child{border:none}
+.pauta-sigla{font-size:13px;font-weight:700;color:var(--accent);min-width:110px;flex-shrink:0}
+.pauta-ementa{font-size:13px;color:var(--text-muted);line-height:1.5;flex:1}
+.pauta-regime{font-size:11px;color:var(--warning);margin-top:2px}
+.pauta-relator{font-size:11px;color:var(--text-muted);margin-top:2px}
+.pauta-sebrae-match{background:rgba(34,197,94,.08);border-left:3px solid var(--success);padding-left:9px;border-radius:0 4px 4px 0}
+.pauta-keywords{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.pauta-kw{font-size:10px;background:rgba(34,197,94,.12);color:var(--success);padding:1px 6px;border-radius:8px}
+.no-pauta{font-size:13px;color:var(--text-muted);font-style:italic;padding:8px 0}
+.empty-state{text-align:center;padding:80px 20px;color:var(--text-muted)}
+.empty-state .icon{font-size:48px;margin-bottom:12px}
+.empty-state h3{font-size:18px;margin-bottom:8px;color:var(--text)}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.chart-title{font-size:14px;font-weight:600;margin-bottom:12px}
+.chart-wrap{position:relative;height:200px}
+.loading-overlay{position:fixed;inset:0;background:rgba(15,17,23,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:opacity .3s}
+.loading-overlay.active{opacity:1;pointer-events:all}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{margin-top:16px;font-size:16px;font-weight:600}
+.loading-progress{margin-top:8px;font-size:13px;color:var(--text-muted);max-width:400px;text-align:center}
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,17,23,.85);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-backdrop.active{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;max-width:640px;width:90%;max-height:80vh;overflow-y:auto}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:16px}
+.modal-content{font-size:13px;line-height:1.6;color:var(--text-muted)}
+.modal-actions{display:flex;gap:10px;margin-top:16px;justify-content:flex-end}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#fff;padding:10px 24px;border-radius:var(--radius);font-size:14px;font-weight:600;transition:transform .3s;z-index:300}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.pippa-home-btn{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s}
+.pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff}
+.pippa-home-btn svg{width:13px;height:13px}
+.sidebar-info{margin-top:16px;padding:12px;background:var(--surface2);border-radius:var(--radius);font-size:12px;color:var(--text-muted);line-height:1.5}
+.sidebar-info strong{color:var(--text);display:block;margin-bottom:4px}
+.event-link{font-size:12px;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-top:8px}
+.event-link:hover{text-decoration:underline}
+@media(max-width:900px){.sidebar{display:none}.charts-row{grid-template-columns:1fr}.header{flex-direction:column;align-items:flex-start}}
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <div>
+      <div class="logo">PIPPA Pauta Legislativa</div>
+      <div class="logo-sub">Monitor de Pautas de Votacao — Camara e Senado</div>
+    </div>
+    <button class="info-btn" onclick="openModal('methodologyModal')" title="Metodologia e Fontes">&#8505;</button>
+    <div class="thermometer" id="thermometer">Aguardando...</div>
+  </div>
+  <div class="header-controls">
+    <div class="period-bar">
+      <button class="period-btn" onclick="switchPeriod('hoje',this)">Hoje</button>
+      <button class="period-btn active" onclick="switchPeriod('semana',this)">Esta Semana</button>
+      <button class="period-btn" onclick="switchPeriod('proxima',this)">Proxima Semana</button>
+    </div>
+    <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
+    <button class="btn" id="btnFetch" onclick="fetchPauta()">&#128269; Consultar APIs</button>
+    <button class="btn btn-outline" onclick="exportWhatsApp()">&#128172; WhatsApp</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <input type="text" class="search-box" id="searchInput" placeholder="Buscar proposicao, orgao..." oninput="applyFilters()">
+
+    <div class="filter-section open" data-section="casa">
+      <div class="filter-header" onclick="toggleSection(this)">
+        <div class="filter-title">Casa Legislativa <span class="filter-badge" id="badge-casa"></span></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="filter-clear" onclick="event.stopPropagation();clearFilter('casa')">Limpar</span>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+      </div>
+      <div class="filter-body">
+        <span class="filter-chip" data-filter="casa" data-value="camara" onclick="toggleFilter(this)">Camara</span>
+        <span class="filter-chip" data-filter="casa" data-value="senado" onclick="toggleFilter(this)">Senado</span>
+      </div>
+    </div>
+
+    <div class="filter-section open" data-section="tipo">
+      <div class="filter-header" onclick="toggleSection(this)">
+        <div class="filter-title">Tipo de Evento <span class="filter-badge" id="badge-tipo"></span></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="filter-clear" onclick="event.stopPropagation();clearFilter('tipo')">Limpar</span>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+      </div>
+      <div class="filter-body">
+        <span class="filter-chip" data-filter="tipo" data-value="Plenario" onclick="toggleFilter(this)">Plenario</span>
+        <span class="filter-chip" data-filter="tipo" data-value="Comissao" onclick="toggleFilter(this)">Comissao</span>
+        <span class="filter-chip" data-filter="tipo" data-value="Audiencia" onclick="toggleFilter(this)">Audiencia Publica</span>
+        <span class="filter-chip" data-filter="tipo" data-value="Outro" onclick="toggleFilter(this)">Outros</span>
+      </div>
+    </div>
+
+    <div class="filter-section open" data-section="relevancia">
+      <div class="filter-header" onclick="toggleSection(this)">
+        <div class="filter-title">Relevancia SEBRAE <span class="filter-badge" id="badge-relevancia"></span></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="filter-clear" onclick="event.stopPropagation();clearFilter('relevancia')">Limpar</span>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+      </div>
+      <div class="filter-body">
+        <span class="filter-chip" data-filter="relevancia" data-value="Alta" onclick="toggleFilter(this)">Alta</span>
+        <span class="filter-chip" data-filter="relevancia" data-value="Media" onclick="toggleFilter(this)">Media</span>
+        <span class="filter-chip" data-filter="relevancia" data-value="Baixa" onclick="toggleFilter(this)">Baixa</span>
+      </div>
+    </div>
+
+    <div class="sidebar-info">
+      <strong>Fonte de dados</strong>
+      Camara: API Dados Abertos (dadosabertos.camara.leg.br)<br>
+      Senado: API Dados Abertos (legis.senado.leg.br)<br><br>
+      <strong>Periodo</strong>
+      <span id="sidebarPeriod">Esta semana</span>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="kpi-bar" id="kpiBar">
+      <div class="kpi-card"><div class="kpi-label">Total na Pauta</div><div class="kpi-value accent" id="kpiTotal">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Camara</div><div class="kpi-value" id="kpiCamara" style="color:var(--camara)">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Senado</div><div class="kpi-value" id="kpiSenado" style="color:var(--senado)">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Plenario</div><div class="kpi-value" id="kpiPlenario" style="color:var(--warning)">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Comissoes</div><div class="kpi-value" id="kpiComissao" style="color:var(--teal)">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Relevantes SEBRAE</div><div class="kpi-value" id="kpiSebrae" style="color:var(--success)">0</div></div>
+    </div>
+
+    <div class="charts-row" id="chartsRow" style="display:none">
+      <div class="chart-card">
+        <div class="chart-title">Por Casa Legislativa</div>
+        <div class="chart-wrap"><canvas id="chartCasa"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Por Tipo de Evento</div>
+        <div class="chart-wrap"><canvas id="chartTipo"></canvas></div>
+      </div>
+    </div>
+
+    <div id="eventsContainer">
+      <div class="empty-state" id="emptyState">
+        <div class="icon">&#128203;</div>
+        <h3>Monitor de Pautas Legislativas</h3>
+        <p>Clique em <strong>Consultar APIs</strong> para buscar a pauta da Camara e do Senado.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Consultando APIs...</div>
+  <div class="loading-progress" id="loadingProgress"></div>
+</div>
+
+<div class="modal-backdrop" id="methodologyModal" onclick="if(event.target===this)closeModal(this.id)">
+  <div class="modal">
+    <div class="modal-title">Metodologia e Fontes</div>
+    <div class="modal-content">
+      <div style="margin-bottom:16px">
+        <strong style="color:var(--accent)">O que e a Pauta Legislativa?</strong><br>
+        Este painel monitora os eventos agendados (sessoes plenarias, reunioes de comissao e audiencias publicas) na Camara dos Deputados e no Senado Federal, identificando quais proposicoes estao previstas para discussao ou votacao.
+      </div>
+      <div style="margin-bottom:16px">
+        <strong style="color:var(--accent)">Fontes de Dados</strong><br>
+        &#8226; <strong>Camara:</strong> API Dados Abertos v2 — endpoints /eventos e /eventos/{id}/pauta<br>
+        &#8226; <strong>Senado:</strong> API Dados Abertos — endpoint /plenario/agenda/mes/{YYYYMM}<br>
+        Ambas sao APIs publicas sem necessidade de autenticacao.
+      </div>
+      <div style="margin-bottom:16px">
+        <strong style="color:var(--accent)">Classificacao SEBRAE</strong><br>
+        Cada item de pauta e verificado contra criterios de relevancia para MPEs:<br>
+        &#8226; <strong>Alta:</strong> mencao direta a micro/pequena empresa, MEI, Simples Nacional, LC 123, tratamento diferenciado<br>
+        &#8226; <strong>Media:</strong> temas transversais (tributacao, licitacao, desburocratizacao, credito, startup, inovacao)<br>
+        &#8226; <strong>Baixa:</strong> mencao institucional (Sebrae, Sistema S) ou temas correlatos<br>
+        &#8226; A classificacao e heuristica e serve como alerta — a analise final cabe ao NAL.
+      </div>
+      <div>
+        <strong style="color:var(--accent)">Limitacoes</strong><br>
+        &#8226; A pauta pode ser alterada ate o inicio da sessao.<br>
+        &#8226; Nem todos os eventos da Camara possuem itens de pauta cadastrados na API.<br>
+        &#8226; A agenda do Senado pode nao incluir detalhes de comissoes.<br>
+        &#8226; APIs publicas sem SLA — sujeitas a instabilidade.
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('methodologyModal')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="exportModal" onclick="if(event.target===this)closeModal(this.id)">
+  <div class="modal">
+    <div class="modal-title">Exportar para WhatsApp</div>
+    <pre class="modal-content" id="exportContent" style="white-space:pre-wrap;font-family:inherit"></pre>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('exportModal')">Fechar</button>
+      <button class="btn" onclick="copyExport()">&#128203; Copiar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// =====================================================
+// SEBRAE RELEVANCE KEYWORDS
+// =====================================================
+var KW_ALTA = [
+  'micro empresa','microempresa','pequena empresa','pequenas empresas',
+  'mei ','microempreendedor individual','simples nacional',
+  'empreendedor individual','tratamento diferenciado','tratamento favorecido',
+  'lei complementar 123','lc 123','lc123','estatuto da microempresa',
+  'mpe ','mpes','epp ','me e epp','microempresa e empresa de pequeno porte',
+  'empresa de pequeno porte','supersimples','redesim',
+  'enquadramento mei','limite mei','faturamento mei',
+  'programa nacional de microcrédito','pronampe'
+];
+var KW_MEDIA = [
+  'tributacao','tributaria','reforma tributaria','ibs','cbs','imposto seletivo',
+  'licitacao','licitacoes','compras publicas','pregao eletronico',
+  'desburocratizacao','simplificacao','ambiente de negocios',
+  'startup','startups','marco legal','inovacao','tecnologia',
+  'credito','financiamento','bndes','finep','fampe',
+  'exportacao','comercio exterior','zona franca',
+  'cooperativa','cooperativismo','economia solidaria',
+  'empreendedorismo','capacitacao profissional',
+  'alvara','licenciamento','licenca simplificada'
+];
+var KW_INSTITUCIONAL = [
+  'sebrae','sistema s','senai','sesi','sesc','senac',
+  'servico social','servico de apoio'
+];
+
+// =====================================================
+// STATE
+// =====================================================
+var allEvents = [];
+var filteredEvents = [];
+var activeFilters = { casa: [], tipo: [], relevancia: [] };
+var currentPeriod = 'semana';
+var chartInstances = {};
+
+// =====================================================
+// DATE UTILITIES
+// =====================================================
+function formatDate(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function getMonday(d) {
+  var dt = new Date(d);
+  var day = dt.getDay();
+  var diff = dt.getDate() - day + (day === 0 ? -6 : 1);
+  dt.setDate(diff);
+  dt.setHours(0,0,0,0);
+  return dt;
+}
+function getDateRange() {
+  var today = new Date();
+  today.setHours(0,0,0,0);
+  if (currentPeriod === 'hoje') {
+    return [formatDate(today), formatDate(today)];
+  } else if (currentPeriod === 'semana') {
+    var mon = getMonday(today);
+    var fri = new Date(mon);
+    fri.setDate(fri.getDate() + 4);
+    return [formatDate(mon), formatDate(fri)];
+  } else {
+    var nextMon = getMonday(today);
+    nextMon.setDate(nextMon.getDate() + 7);
+    var nextFri = new Date(nextMon);
+    nextFri.setDate(nextFri.getDate() + 4);
+    return [formatDate(nextMon), formatDate(nextFri)];
+  }
+}
+function formatDateBR(iso) {
+  if (!iso) return '';
+  var parts = iso.substring(0,10).split('-');
+  return parts[2]+'/'+parts[1]+'/'+parts[0];
+}
+function getDayName(iso) {
+  var d = new Date(iso+'T12:00:00');
+  var names = ['Domingo','Segunda-feira','Terca-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sabado'];
+  return names[d.getDay()];
+}
+function formatTime(iso) {
+  if (!iso) return '';
+  var t = iso.indexOf('T');
+  if (t < 0) return '';
+  return iso.substring(t+1, t+6);
+}
+
+// =====================================================
+// PERIOD SWITCHING
+// =====================================================
+function switchPeriod(p, btn) {
+  currentPeriod = p;
+  document.querySelectorAll('.period-btn').forEach(function(b){b.classList.remove('active')});
+  if (btn) btn.classList.add('active');
+  var range = getDateRange();
+  var labels = { hoje:'Hoje', semana:'Esta semana', proxima:'Proxima semana' };
+  document.getElementById('sidebarPeriod').textContent = labels[p] + ' (' + formatDateBR(range[0]) + ' a ' + formatDateBR(range[1]) + ')';
+  fetchPauta();
+}
+
+// =====================================================
+// API: CAMARA DOS DEPUTADOS
+// =====================================================
+async function fetchCamaraEventos(inicio, fim) {
+  var url = 'https://dadosabertos.camara.leg.br/api/v2/eventos?dataInicio='+inicio+'&dataFim='+fim+'&itens=100&ordem=ASC&ordenarPor=dataHoraInicio';
+  try {
+    var resp = await fetch(url);
+    if (!resp.ok) throw new Error('HTTP '+resp.status);
+    var json = await resp.json();
+    return json.dados || [];
+  } catch(e) {
+    console.warn('Camara eventos:', e);
+    return [];
+  }
+}
+
+async function fetchEventoPauta(eventoId) {
+  var url = 'https://dadosabertos.camara.leg.br/api/v2/eventos/'+eventoId+'/pauta';
+  try {
+    var resp = await fetch(url);
+    if (!resp.ok) return [];
+    var json = await resp.json();
+    return json.dados || [];
+  } catch(e) {
+    return [];
+  }
+}
+
+function classifyTipoCamara(desc) {
+  if (!desc) return 'Outro';
+  var d = desc.toLowerCase();
+  if (d.indexOf('deliberat') >= 0 && (d.indexOf('plen') >= 0 || d.indexOf('sess') >= 0)) return 'Plenario';
+  if (d.indexOf('sess') >= 0 && d.indexOf('deliberat') >= 0) return 'Plenario';
+  if (d.indexOf('audiencia') >= 0 || d.indexOf('audiência') >= 0) return 'Audiencia';
+  if (d.indexOf('comiss') >= 0 || d.indexOf('reuni') >= 0) return 'Comissao';
+  if (d.indexOf('semin') >= 0) return 'Outro';
+  if (d.indexOf('sess') >= 0) return 'Plenario';
+  return 'Outro';
+}
+
+function normalizeCamaraEvents(eventos) {
+  return eventos.map(function(ev) {
+    var orgaos = (ev.orgaos || []).map(function(o){return o.sigla || o.nome || ''}).join(', ');
+    var localName = '';
+    if (ev.localCamara) {
+      localName = [ev.localCamara.nome, ev.localCamara.andar, ev.localCamara.sala].filter(Boolean).join(' — ');
+    }
+    var pautaItems = (ev._pauta || []).map(function(p) {
+      var prop = p.proposicao_ || {};
+      var sigla = (prop.siglaTipo||'') + ' ' + (prop.numero||'') + '/' + (prop.ano||'');
+      return {
+        sigla: sigla.trim(),
+        ementa: prop.ementa || p.topico || '',
+        regime: p.codRegime || '',
+        relator: '',
+        url: prop.uri ? 'https://www.camara.leg.br/propostas-legislativas/' + prop.id : '',
+        id: prop.id
+      };
+    });
+    return {
+      id: 'cam-'+ev.id,
+      casa: 'camara',
+      tipo: classifyTipoCamara(ev.descricaoTipo),
+      tipoOriginal: ev.descricaoTipo || '',
+      titulo: ev.descricaoTipo || 'Evento',
+      descricao: ev.descricao || '',
+      orgao: orgaos,
+      dataHora: ev.dataHoraInicio || '',
+      dataFim: ev.dataHoraFim || '',
+      local: localName,
+      situacao: ev.descricaoSituacao || '',
+      pauta: pautaItems,
+      relevanciaSebrae: null,
+      matchedKeywords: [],
+      url: ev.uri ? ev.uri.replace('/api/v2/','https://www.camara.leg.br/evento-legislativo/') : ''
+    };
+  });
+}
+
+// =====================================================
+// API: SENADO FEDERAL
+// =====================================================
+function ensureArray(val) {
+  if (!val) return [];
+  return Array.isArray(val) ? val : [val];
+}
+
+async function fetchSenadoAgenda(inicio, fim) {
+  var mesAno = inicio.substring(0,4) + inicio.substring(5,7);
+  var url = 'https://legis.senado.leg.br/dadosabertos/plenario/agenda/mes/' + mesAno;
+  try {
+    var resp = await fetch(url, { headers: { 'Accept': 'application/json' }});
+    if (!resp.ok) throw new Error('HTTP '+resp.status);
+    var json = await resp.json();
+    return parseSenadoAgenda(json, inicio, fim);
+  } catch(e) {
+    console.warn('Senado agenda:', e);
+    return [];
+  }
+}
+
+function parseSenadoAgenda(json, inicio, fim) {
+  var result = [];
+  try {
+    var agenda = json.AgendaPlenaria || json.ListaAgendaPlenaria || json;
+    var sessoes = agenda.Sessoes || agenda.sessoes || {};
+    var lista = ensureArray(sessoes.Sessao || sessoes.sessao || []);
+
+    var dInicio = new Date(inicio + 'T00:00:00');
+    var dFim = new Date(fim + 'T23:59:59');
+
+    lista.forEach(function(s) {
+      var dataSessao = s.DataSessao || s.dataSessao || '';
+      var isoDate = '';
+      if (dataSessao.indexOf('/') >= 0) {
+        var pts = dataSessao.split('/');
+        isoDate = pts[2]+'-'+pts[1]+'-'+pts[0];
+      } else {
+        isoDate = dataSessao.substring(0,10);
+      }
+
+      var dSessao = new Date(isoDate + 'T12:00:00');
+      if (dSessao < dInicio || dSessao > dFim) return;
+
+      var hora = s.HoraInicioSessao || s.horaInicioSessao || '14:00';
+      var materias = ensureArray((s.Materias || s.materias || {}).Materia || (s.Materias || s.materias || {}).materia || []);
+
+      var pautaItems = materias.map(function(m) {
+        var sigla = m.DescricaoIdentificacaoMateria || m.descricaoIdentificacaoMateria ||
+                    ((m.SiglaMateria||m.siglaMateria||'') + ' ' + (m.NumeroMateria||m.numeroMateria||'') + '/' + (m.AnoMateria||m.anoMateria||''));
+        return {
+          sigla: sigla.trim(),
+          ementa: m.EmentaMateria || m.ementaMateria || m.DescricaoObjetivoProcesso || m.descricaoObjetivoProcesso || '',
+          regime: m.DescricaoObjetivoProcesso || m.descricaoObjetivoProcesso || '',
+          relator: m.NomeRelator || m.nomeRelator || '',
+          url: m.CodigoMateria ? 'https://www25.senado.leg.br/web/atividade/materias/-/materia/' + (m.CodigoMateria || m.codigoMateria) : '',
+          id: m.CodigoMateria || m.codigoMateria || ''
+        };
+      });
+
+      result.push({
+        id: 'sen-' + (s.CodigoSessao || s.codigoSessao || Math.random().toString(36).substring(7)),
+        casa: 'senado',
+        tipo: 'Plenario',
+        tipoOriginal: s.TipoSessao || s.tipoSessao || 'Sessao Plenaria',
+        titulo: s.TipoSessao || s.tipoSessao || 'Sessao Plenaria',
+        descricao: '',
+        orgao: 'Plenario do Senado',
+        dataHora: isoDate + 'T' + hora + ':00',
+        dataFim: '',
+        local: 'Plenario do Senado Federal',
+        situacao: s.SituacaoSessao || s.situacaoSessao || '',
+        pauta: pautaItems,
+        relevanciaSebrae: null,
+        matchedKeywords: [],
+        url: ''
+      });
+    });
+  } catch(e) {
+    console.warn('Parse Senado:', e);
+  }
+  return result;
+}
+
+// =====================================================
+// SEBRAE RELEVANCE CLASSIFICATION
+// =====================================================
+function classifySebrae(event) {
+  var allText = [
+    event.titulo, event.descricao, event.orgao,
+    event.pauta.map(function(p){return p.sigla + ' ' + p.ementa}).join(' ')
+  ].join(' ').toLowerCase();
+
+  var matched = [];
+  var score = 0;
+
+  KW_ALTA.forEach(function(kw) {
+    if (allText.indexOf(kw.toLowerCase()) >= 0) { matched.push(kw); score += 3; }
+  });
+  KW_MEDIA.forEach(function(kw) {
+    if (allText.indexOf(kw.toLowerCase()) >= 0) { matched.push(kw); score += 1; }
+  });
+  KW_INSTITUCIONAL.forEach(function(kw) {
+    if (allText.indexOf(kw.toLowerCase()) >= 0) { matched.push(kw); score += 4; }
+  });
+
+  event.matchedKeywords = matched;
+  if (score >= 3) event.relevanciaSebrae = 'Alta';
+  else if (score >= 1) event.relevanciaSebrae = 'Media';
+  else if (matched.length > 0) event.relevanciaSebrae = 'Baixa';
+  else event.relevanciaSebrae = null;
+
+  event.pauta.forEach(function(item) {
+    var itemText = (item.sigla + ' ' + item.ementa).toLowerCase();
+    var itemKw = [];
+    KW_ALTA.forEach(function(kw){ if (itemText.indexOf(kw.toLowerCase()) >= 0) itemKw.push(kw); });
+    KW_MEDIA.forEach(function(kw){ if (itemText.indexOf(kw.toLowerCase()) >= 0) itemKw.push(kw); });
+    KW_INSTITUCIONAL.forEach(function(kw){ if (itemText.indexOf(kw.toLowerCase()) >= 0) itemKw.push(kw); });
+    item.matchedKeywords = itemKw;
+  });
+}
+
+// =====================================================
+// MAIN FETCH
+// =====================================================
+async function fetchPauta() {
+  showLoading('Consultando APIs da Camara e Senado...');
+
+  var range = getDateRange();
+  var inicio = range[0];
+  var fim = range[1];
+
+  updateLoading('Buscando eventos da Camara...', '');
+  var camaraEventos = await fetchCamaraEventos(inicio, fim);
+
+  updateLoading('Buscando pauta dos eventos...', '0/'+camaraEventos.length);
+  var BATCH = 5;
+  for (var i = 0; i < camaraEventos.length; i += BATCH) {
+    var batch = camaraEventos.slice(i, i + BATCH);
+    var results = await Promise.all(batch.map(function(e){ return fetchEventoPauta(e.id); }));
+    batch.forEach(function(e, j){ e._pauta = results[j]; });
+    updateLoading('Buscando pauta dos eventos...', Math.min(i+BATCH, camaraEventos.length)+'/'+camaraEventos.length);
+  }
+
+  updateLoading('Buscando agenda do Senado...', '');
+  var senadoEventos = await fetchSenadoAgenda(inicio, fim);
+
+  allEvents = normalizeCamaraEvents(camaraEventos).concat(senadoEventos);
+
+  allEvents.forEach(function(e){ classifySebrae(e); });
+  allEvents.sort(function(a,b){ return (a.dataHora||'').localeCompare(b.dataHora||''); });
+
+  hideLoading();
+  applyFilters();
+
+  if (allEvents.length > 0) {
+    document.getElementById('chartsRow').style.display = '';
+  }
+
+  showToast(allEvents.length + ' eventos encontrados');
+}
+
+// =====================================================
+// FILTERS
+// =====================================================
+function toggleFilter(chip) {
+  var filter = chip.dataset.filter;
+  var value = chip.dataset.value;
+  var idx = activeFilters[filter].indexOf(value);
+  if (idx >= 0) {
+    activeFilters[filter].splice(idx, 1);
+    chip.classList.remove('active');
+  } else {
+    activeFilters[filter].push(value);
+    chip.classList.add('active');
+  }
+  var badge = document.getElementById('badge-'+filter);
+  if (badge) {
+    badge.textContent = activeFilters[filter].length;
+    badge.classList.toggle('visible', activeFilters[filter].length > 0);
+  }
+  applyFilters();
+}
+
+function clearFilter(filter) {
+  activeFilters[filter] = [];
+  document.querySelectorAll('.filter-chip[data-filter="'+filter+'"]').forEach(function(c){c.classList.remove('active')});
+  var badge = document.getElementById('badge-'+filter);
+  if (badge) { badge.textContent = '0'; badge.classList.remove('visible'); }
+  applyFilters();
+}
+
+function toggleSection(header) {
+  header.closest('.filter-section').classList.toggle('open');
+}
+
+function applyFilters() {
+  var search = (document.getElementById('searchInput').value || '').toLowerCase();
+  filteredEvents = allEvents.filter(function(ev) {
+    if (activeFilters.casa.length && activeFilters.casa.indexOf(ev.casa) < 0) return false;
+    if (activeFilters.tipo.length && activeFilters.tipo.indexOf(ev.tipo) < 0) return false;
+    if (activeFilters.relevancia.length) {
+      if (!ev.relevanciaSebrae || activeFilters.relevancia.indexOf(ev.relevanciaSebrae) < 0) return false;
+    }
+    if (search) {
+      var txt = [ev.titulo, ev.orgao, ev.descricao, ev.local,
+        ev.pauta.map(function(p){return p.sigla+' '+p.ementa}).join(' ')
+      ].join(' ').toLowerCase();
+      if (txt.indexOf(search) < 0) return false;
+    }
+    return true;
+  });
+
+  updateKPIs();
+  updateCharts();
+  renderEvents();
+  updateThermometer();
+}
+
+// =====================================================
+// KPIs
+// =====================================================
+function updateKPIs() {
+  document.getElementById('kpiTotal').textContent = filteredEvents.length;
+  document.getElementById('kpiCamara').textContent = filteredEvents.filter(function(e){return e.casa==='camara'}).length;
+  document.getElementById('kpiSenado').textContent = filteredEvents.filter(function(e){return e.casa==='senado'}).length;
+  document.getElementById('kpiPlenario').textContent = filteredEvents.filter(function(e){return e.tipo==='Plenario'}).length;
+  document.getElementById('kpiComissao').textContent = filteredEvents.filter(function(e){return e.tipo==='Comissao'}).length;
+  document.getElementById('kpiSebrae').textContent = filteredEvents.filter(function(e){return e.relevanciaSebrae}).length;
+}
+
+// =====================================================
+// THERMOMETER
+// =====================================================
+function updateThermometer() {
+  var el = document.getElementById('thermometer');
+  var alta = filteredEvents.filter(function(e){return e.relevanciaSebrae==='Alta'}).length;
+  var media = filteredEvents.filter(function(e){return e.relevanciaSebrae==='Media'}).length;
+
+  if (alta > 0) {
+    el.className = 'thermometer thermo-red';
+    el.innerHTML = '&#9888; '+alta+' evento'+(alta>1?'s':'')+' com alta relevancia SEBRAE';
+  } else if (media > 0) {
+    el.className = 'thermometer thermo-yellow';
+    el.innerHTML = '&#9679; '+media+' evento'+(media>1?'s':'')+' com media relevancia';
+  } else if (filteredEvents.length > 0) {
+    el.className = 'thermometer thermo-green';
+    el.innerHTML = '&#9679; Sem itens criticos na pauta';
+  } else {
+    el.className = 'thermometer';
+    el.textContent = 'Aguardando dados...';
+  }
+}
+
+// =====================================================
+// CHARTS
+// =====================================================
+function updateCharts() {
+  var casaData = { camara: 0, senado: 0 };
+  var tipoData = {};
+  filteredEvents.forEach(function(e) {
+    casaData[e.casa] = (casaData[e.casa]||0) + 1;
+    tipoData[e.tipo] = (tipoData[e.tipo]||0) + 1;
+  });
+
+  if (chartInstances.casa) chartInstances.casa.destroy();
+  if (chartInstances.tipo) chartInstances.tipo.destroy();
+
+  var casaCtx = document.getElementById('chartCasa');
+  if (casaCtx) {
+    chartInstances.casa = new Chart(casaCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Camara', 'Senado'],
+        datasets: [{ data: [casaData.camara, casaData.senado], backgroundColor: ['#4f8cff','#a855f7'], borderWidth: 0 }]
+      },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{color:'#8b8fa8',font:{size:12}} } } }
+    });
+  }
+
+  var tipoLabels = Object.keys(tipoData);
+  var tipoColors = { Plenario:'#ffc542', Comissao:'#4ecdc4', Audiencia:'#ff8c42', Outro:'#8b8fa8' };
+  var tipoCtx = document.getElementById('chartTipo');
+  if (tipoCtx) {
+    chartInstances.tipo = new Chart(tipoCtx, {
+      type: 'doughnut',
+      data: {
+        labels: tipoLabels,
+        datasets: [{ data: tipoLabels.map(function(l){return tipoData[l]}), backgroundColor: tipoLabels.map(function(l){return tipoColors[l]||'#8b8fa8'}), borderWidth: 0 }]
+      },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{color:'#8b8fa8',font:{size:12}} } } }
+    });
+  }
+}
+
+// =====================================================
+// RENDER EVENTS
+// =====================================================
+function renderEvents() {
+  var container = document.getElementById('eventsContainer');
+
+  if (filteredEvents.length === 0) {
+    container.innerHTML = '<div class="empty-state" id="emptyState"><div class="icon">&#128203;</div><h3>' +
+      (allEvents.length > 0 ? 'Nenhum evento com os filtros atuais' : 'Nenhum evento agendado') +
+      '</h3><p>' +
+      (allEvents.length > 0 ? 'Tente limpar os filtros ou selecionar outro periodo.' : 'Clique em <strong>Consultar APIs</strong> para buscar a pauta.') +
+      '</p></div>';
+    return;
+  }
+
+  var byDay = {};
+  filteredEvents.forEach(function(ev) {
+    var day = (ev.dataHora || '').substring(0, 10) || 'sem-data';
+    if (!byDay[day]) byDay[day] = [];
+    byDay[day].push(ev);
+  });
+
+  var days = Object.keys(byDay).sort();
+  var html = '';
+
+  days.forEach(function(day) {
+    var dayLabel = day === 'sem-data' ? 'Data nao informada' : getDayName(day) + ', ' + formatDateBR(day);
+    var evts = byDay[day];
+
+    html += '<div class="day-group">';
+    html += '<div class="day-header">' + dayLabel + ' <span class="day-count">' + evts.length + ' evento' + (evts.length>1?'s':'') + '</span></div>';
+
+    evts.forEach(function(ev) {
+      var casaTag = ev.casa === 'camara' ? '<span class="tag tag-camara">Camara</span>' : '<span class="tag tag-senado">Senado</span>';
+      var tipoTag = '';
+      if (ev.tipo === 'Plenario') tipoTag = '<span class="tag tag-plenario">Plenario</span>';
+      else if (ev.tipo === 'Comissao') tipoTag = '<span class="tag tag-comissao">Comissao</span>';
+      else if (ev.tipo === 'Audiencia') tipoTag = '<span class="tag tag-audiencia">Audiencia Publica</span>';
+
+      var sebraeTag = '';
+      if (ev.relevanciaSebrae === 'Alta') sebraeTag = '<span class="tag tag-sebrae">SEBRAE Alta</span>';
+      else if (ev.relevanciaSebrae === 'Media') sebraeTag = '<span class="tag tag-sebrae" style="opacity:.7">SEBRAE Media</span>';
+      else if (ev.relevanciaSebrae === 'Baixa') sebraeTag = '<span class="tag tag-sebrae" style="opacity:.5">SEBRAE Baixa</span>';
+
+      var pautaCount = ev.pauta.length > 0 ? '<span class="tag tag-count">' + ev.pauta.length + ' item' + (ev.pauta.length>1?'ns':'') + '</span>' : '';
+
+      html += '<div class="event-card" id="ev-'+ev.id+'">';
+      html += '<div class="event-header" onclick="toggleEvent(\''+ev.id+'\')">';
+      html += '<div class="event-time">' + formatTime(ev.dataHora) + '</div>';
+      html += '<div class="event-body">';
+      html += '<div class="event-title">' + escapeHtml(ev.titulo) + '</div>';
+      html += '<div class="event-orgao">' + escapeHtml(ev.orgao) + '</div>';
+      if (ev.local) html += '<div class="event-local">' + escapeHtml(ev.local) + '</div>';
+      html += '<div class="event-tags">' + casaTag + tipoTag + sebraeTag + pautaCount + '</div>';
+      html += '</div>';
+      html += '<span class="event-arrow">&#8250;</span>';
+      html += '</div>';
+
+      // Details
+      html += '<div class="event-details">';
+      if (ev.situacao) html += '<div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Situacao: <strong>' + escapeHtml(ev.situacao) + '</strong></div>';
+      if (ev.descricao) html += '<div style="font-size:13px;color:var(--text-muted);margin-bottom:10px">' + escapeHtml(ev.descricao) + '</div>';
+
+      if (ev.pauta.length > 0) {
+        html += '<div style="font-size:13px;font-weight:600;margin-bottom:8px">Itens na Pauta (' + ev.pauta.length + ')</div>';
+        html += '<ul class="pauta-list">';
+        ev.pauta.forEach(function(p) {
+          var isMatch = p.matchedKeywords && p.matchedKeywords.length > 0;
+          html += '<li class="pauta-item' + (isMatch?' pauta-sebrae-match':'') + '">';
+          html += '<div class="pauta-sigla">' + escapeHtml(p.sigla);
+          if (p.url) html += ' <a href="' + p.url + '" target="_blank" style="font-size:11px;color:var(--accent)">&#8599;</a>';
+          html += '</div>';
+          html += '<div style="flex:1">';
+          html += '<div class="pauta-ementa">' + escapeHtml(p.ementa || 'Ementa nao disponivel') + '</div>';
+          if (p.relator) html += '<div class="pauta-relator">Relator: ' + escapeHtml(p.relator) + '</div>';
+          if (p.regime) html += '<div class="pauta-regime">' + escapeHtml(p.regime) + '</div>';
+          if (isMatch) {
+            html += '<div class="pauta-keywords">';
+            var unique = p.matchedKeywords.filter(function(v,i,a){return a.indexOf(v)===i});
+            unique.forEach(function(kw){ html += '<span class="pauta-kw">' + escapeHtml(kw) + '</span>'; });
+            html += '</div>';
+          }
+          html += '</div>';
+          html += '</li>';
+        });
+        html += '</ul>';
+      } else {
+        html += '<div class="no-pauta">Pauta nao disponivel na API para este evento.</div>';
+      }
+
+      if (ev.url) html += '<a href="'+ev.url+'" target="_blank" class="event-link">&#8599; Ver no site oficial</a>';
+      html += '</div>';
+      html += '</div>';
+    });
+
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleEvent(id) {
+  var card = document.getElementById('ev-'+id);
+  if (card) card.classList.toggle('open');
+}
+
+// =====================================================
+// WHATSAPP EXPORT
+// =====================================================
+function exportWhatsApp() {
+  if (filteredEvents.length === 0) { showToast('Nenhum evento para exportar'); return; }
+
+  var range = getDateRange();
+  var text = '*PIPPA Pauta Legislativa*\n';
+  text += '_Monitor de Pautas de Votacao_\n';
+  text += 'Periodo: ' + formatDateBR(range[0]) + ' a ' + formatDateBR(range[1]) + '\n\n';
+  text += '📊 *Resumo:* ' + filteredEvents.length + ' eventos | ';
+  text += filteredEvents.filter(function(e){return e.casa==='camara'}).length + ' Camara | ';
+  text += filteredEvents.filter(function(e){return e.casa==='senado'}).length + ' Senado | ';
+  var relevantes = filteredEvents.filter(function(e){return e.relevanciaSebrae});
+  text += relevantes.length + ' relevantes SEBRAE\n\n';
+
+  if (relevantes.length > 0) {
+    text += '⚠️ *Itens Relevantes para SEBRAE:*\n';
+    relevantes.forEach(function(ev) {
+      text += '\n📋 *' + ev.titulo + '* (' + (ev.casa==='camara'?'Camara':'Senado') + ')\n';
+      text += '📅 ' + formatDateBR((ev.dataHora||'').substring(0,10)) + ' ' + formatTime(ev.dataHora) + '\n';
+      text += '🏛 ' + ev.orgao + '\n';
+      text += '🔍 Relevancia: ' + ev.relevanciaSebrae + '\n';
+      ev.pauta.filter(function(p){return p.matchedKeywords && p.matchedKeywords.length>0}).forEach(function(p) {
+        text += '  → ' + p.sigla + ': ' + (p.ementa||'').substring(0,120) + '\n';
+      });
+    });
+  }
+
+  text += '\n---\n_Fonte: APIs da Camara e Senado_\n';
+  text += '_PIPPA — Sebrae Nacional — Observatorio Setorial Territorial_';
+
+  document.getElementById('exportContent').textContent = text;
+  openModal('exportModal');
+}
+
+function copyExport() {
+  var text = document.getElementById('exportContent').textContent;
+  navigator.clipboard.writeText(text).then(function(){
+    showToast('Copiado para a area de transferencia!');
+  });
+}
+
+// =====================================================
+// UI HELPERS
+// =====================================================
+function showLoading(text) {
+  document.getElementById('loadingText').textContent = text;
+  document.getElementById('loadingProgress').textContent = '';
+  document.getElementById('loadingOverlay').classList.add('active');
+  document.getElementById('btnFetch').disabled = true;
+}
+function updateLoading(text, progress) {
+  document.getElementById('loadingText').textContent = text;
+  if (progress !== undefined) document.getElementById('loadingProgress').textContent = progress;
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('active');
+  document.getElementById('btnFetch').disabled = false;
+}
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+function escapeHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// =====================================================
+// INIT
+// =====================================================
+window.addEventListener('DOMContentLoaded', function() {
+  var range = getDateRange();
+  document.getElementById('sidebarPeriod').textContent = 'Esta semana (' + formatDateBR(range[0]) + ' a ' + formatDateBR(range[1]) + ')';
+  fetchPauta();
+});
+</script>
+</body>
+</html>
