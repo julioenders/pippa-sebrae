@@ -415,7 +415,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 <!-- ================================================================== -->
 <!-- LANDING PAGE                                                       -->
 <!-- ================================================================== -->
-<div id="viewLanding" class="view">
+<div id="viewLanding" class="view active">
   <header class="landing-header">
     <div>
       <div class="logo">PIPPA Eleicoes 2026</div>
@@ -476,7 +476,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 <!-- ================================================================== -->
 <!-- PESQUISAS ELEITORAIS VIEW                                          -->
 <!-- ================================================================== -->
-<div id="viewPesquisas" class="view active">
+<div id="viewPesquisas" class="view">
 
   <div class="header">
     <div class="header-left">
@@ -929,7 +929,7 @@ let currentScenario = null;
 window.addEventListener('DOMContentLoaded', () => {
   updateCargoCounts();
   updateCountdown();
-  showView('pesquisas');
+  renderCurrentView();
 });
 
 
