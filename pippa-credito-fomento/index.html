@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PIPPA Credito e Fomento — Radar de Oportunidades</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#242836;--border:#2e3348;--text:#e4e6ef;--text2:#c4c7d4;--text3:#8b8fa8;--accent:#22c55e;--accent2:#34d399;--purple:#a855f7;--blue:#4f8cff;--amber:#f59e0b;--red:#ef4444;--cyan:#06b6d4;--pink:#f472b6;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.3)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+.header{background:linear-gradient(135deg,#1a1d27,#242836);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:16px}
+.logo{font-size:22px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
+.logo-sub{font-size:13px;color:var(--text3);font-weight:400}
+.btn{padding:8px 16px;border-radius:var(--radius);font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent);color:#000}
+.btn-primary:hover{background:var(--accent2)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-back{background:transparent;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:6px 12px;text-decoration:none;border-radius:var(--radius);display:inline-flex;align-items:center;gap:4px}
+.btn-back:hover{border-color:var(--accent);color:var(--accent)}
+
+.layout{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 60px)}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px;overflow-y:auto}
+.filter-section{margin-bottom:20px}
+.filter-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:8px}
+.filter-group{display:flex;flex-direction:column;gap:4px}
+.filter-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;color:var(--text2);cursor:pointer;text-align:left;transition:all .15s}
+.filter-btn:hover{border-color:var(--accent)}
+.filter-btn.active{background:rgba(34,197,94,.1);border-color:var(--accent);color:var(--accent)}
+.filter-count{float:right;font-size:10px;color:var(--text3);background:var(--bg);padding:1px 6px;border-radius:4px}
+.sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);text-align:center;line-height:1.6}
+
+.content{padding:24px;overflow-y:auto}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+.kpi-value{font-size:28px;font-weight:800;line-height:1}
+.kpi-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-top:6px}
+
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.chart-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:12px}
+
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.section-count{font-size:12px;color:var(--text3)}
+
+.search-box{width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;margin-bottom:16px}
+.search-box:focus{outline:none;border-color:var(--accent)}
+
+.indicator-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;transition:all .2s}
+.indicator-card:hover{border-color:rgba(34,197,94,.3)}
+.ind-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}
+.ind-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ind-info{flex:1;min-width:0}
+.ind-name{font-size:14px;font-weight:700;margin-bottom:2px}
+.ind-meta{font-size:11px;color:var(--text3)}
+.ind-value{font-size:18px;font-weight:800;text-align:right}
+.ind-sublabel{font-size:10px;color:var(--text3);text-align:right}
+.ind-expand{color:var(--text3);font-size:12px;transition:transform .2s}
+.indicator-card.expanded .ind-expand{transform:rotate(180deg)}
+.ind-details{display:none;padding:0 16px 16px;border-top:1px solid var(--border)}
+.indicator-card.expanded .ind-details{display:block}
+
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:12px}
+.detail-item{background:var(--bg);border-radius:6px;padding:8px 10px}
+.detail-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);display:block;margin-bottom:2px}
+.detail-value{font-size:12px;color:var(--text)}
+
+.tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;margin:2px}
+.tag-bndes{background:rgba(34,197,94,.1);color:var(--accent)}
+.tag-bcb{background:rgba(79,140,255,.1);color:var(--blue)}
+.tag-pronampe{background:rgba(245,158,11,.1);color:var(--amber)}
+.tag-fampe{background:rgba(168,85,247,.1);color:var(--purple)}
+.tag-aberto{background:rgba(34,197,94,.15);color:var(--accent);font-weight:600}
+.tag-encerrado{background:rgba(239,68,68,.1);color:var(--red)}
+
+.loading{display:flex;align-items:center;justify-content:center;gap:8px;padding:40px;color:var(--text3);font-size:13px}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-state .icon{font-size:48px;margin-bottom:12px}
+.empty-state h3{font-size:16px;color:var(--text);margin-bottom:8px}
+.empty-state p{font-size:13px;line-height:1.6}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 20px;font-size:12px;color:var(--text);opacity:0;transform:translateY(10px);transition:all .3s;z-index:999;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+  .charts-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <a href="../pippa-portal/index.html" class="btn-back">&#9664; Portal</a>
+    <div>
+      <div class="logo">PIPPA Credito e Fomento</div>
+      <div class="logo-sub">Radar de Oportunidades para MPEs</div>
+    </div>
+  </div>
+  <div class="header-controls">
+    <button class="btn btn-primary" onclick="fetchData()">&#128269; Consultar APIs</button>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="filter-section">
+      <div class="filter-title">Fonte</div>
+      <div class="filter-group" id="filterFonte"></div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-title">Indicadores BCB</div>
+      <div class="filter-group" id="filterBCB"></div>
+    </div>
+    <div class="sidebar-footer">
+      PIPPA Credito e Fomento<br>Sebrae Nacional — Observatorio<br>Dados: BCB SGS, APIs publicas
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-value" id="kpiSelic" style="color:var(--accent)">—</div><div class="kpi-label">Selic Meta (% a.a.)</div></div>
+      <div class="kpi"><div class="kpi-value" id="kpiIpca" style="color:var(--amber)">—</div><div class="kpi-label">IPCA Acum. 12m (%)</div></div>
+      <div class="kpi"><div class="kpi-value" id="kpiCreditoPJ" style="color:var(--blue)">—</div><div class="kpi-label">Credito PJ (R$ bi)</div></div>
+      <div class="kpi"><div class="kpi-value" id="kpiInadimplencia" style="color:var(--red)">—</div><div class="kpi-label">Inadimplencia PJ (%)</div></div>
+    </div>
+
+    <div class="charts-row" id="chartsRow" style="display:none">
+      <div class="chart-card">
+        <div class="chart-title">Selic Meta — Historico</div>
+        <canvas id="chartSelic" height="200"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Credito PJ — Saldo (R$ bi)</div>
+        <canvas id="chartCredito" height="200"></canvas>
+      </div>
+    </div>
+
+    <input type="text" class="search-box" id="searchBox" placeholder="Buscar indicador por nome..." oninput="renderIndicadores()">
+
+    <div class="section-header">
+      <div class="section-title">Indicadores de Credito e Fomento</div>
+      <div class="section-count" id="indCount"></div>
+    </div>
+
+    <div id="indContainer">
+      <div class="empty-state">
+        <div class="icon">&#128176;</div>
+        <h3>Radar de Credito e Fomento</h3>
+        <p>Clique em <strong>Consultar APIs</strong> para buscar indicadores de credito, taxas de juros e dados do mercado de credito para MPEs via BCB SGS.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var allIndicadores = [];
+var chartSelic = null;
+var chartCredito = null;
+
+var BCB_SERIES = [
+  { id: 432, nome: 'Selic Meta', unidade: '% a.a.', grupo: 'Taxas', icon: '&#128200;', color: 'var(--accent)' },
+  { id: 433, nome: 'Selic Over (efetiva)', unidade: '% a.a.', grupo: 'Taxas', icon: '&#128200;', color: 'var(--accent2)' },
+  { id: 13522, nome: 'IPCA Acumulado 12 meses', unidade: '%', grupo: 'Inflacao', icon: '&#128201;', color: 'var(--amber)' },
+  { id: 4390, nome: 'CDI Over', unidade: '% a.a.', grupo: 'Taxas', icon: '&#128200;', color: 'var(--cyan)' },
+  { id: 20542, nome: 'Saldo Credito PJ — Total', unidade: 'R$ milhoes', grupo: 'Credito PJ', icon: '&#127974;', color: 'var(--blue)' },
+  { id: 20543, nome: 'Saldo Credito PJ — Recursos Livres', unidade: 'R$ milhoes', grupo: 'Credito PJ', icon: '&#127974;', color: 'var(--blue)' },
+  { id: 20544, nome: 'Saldo Credito PJ — Recursos Direcionados', unidade: 'R$ milhoes', grupo: 'Credito PJ', icon: '&#127974;', color: 'var(--purple)' },
+  { id: 21082, nome: 'Inadimplencia PJ — Total', unidade: '%', grupo: 'Inadimplencia', icon: '&#9888;', color: 'var(--red)' },
+  { id: 21083, nome: 'Inadimplencia PJ — Recursos Livres', unidade: '%', grupo: 'Inadimplencia', icon: '&#9888;', color: 'var(--red)' },
+  { id: 20714, nome: 'Taxa Media Juros PJ — Total', unidade: '% a.a.', grupo: 'Taxas PJ', icon: '&#128178;', color: 'var(--pink)' },
+  { id: 20715, nome: 'Taxa Media Juros PJ — Recursos Livres', unidade: '% a.a.', grupo: 'Taxas PJ', icon: '&#128178;', color: 'var(--pink)' },
+  { id: 25433, nome: 'Concessoes Credito PJ — Total', unidade: 'R$ milhoes', grupo: 'Concessoes', icon: '&#128184;', color: 'var(--accent)' },
+  { id: 25434, nome: 'Concessoes Credito PJ — Recursos Livres', unidade: 'R$ milhoes', grupo: 'Concessoes', icon: '&#128184;', color: 'var(--accent2)' },
+  { id: 20631, nome: 'Spread Medio PJ — Total', unidade: 'p.p.', grupo: 'Spread', icon: '&#128202;', color: 'var(--amber)' }
+];
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+function escapeHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatNum(n) {
+  if (n === null || n === undefined) return '—';
+  return parseFloat(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+async function fetchBCBSeries(serieId, ultimos) {
+  var url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.' + serieId + '/dados/ultimos/' + (ultimos || 12) + '?formato=json';
+  var resp = await fetch(url);
+  if (!resp.ok) return [];
+  return await resp.json();
+}
+
+async function fetchData() {
+  var container = document.getElementById('indContainer');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando indicadores do BCB SGS...</div>';
+  allIndicadores = [];
+
+  try {
+    var promises = BCB_SERIES.map(function(serie) {
+      return fetchBCBSeries(serie.id, 24).then(function(dados) {
+        return {
+          id: serie.id,
+          nome: serie.nome,
+          unidade: serie.unidade,
+          grupo: serie.grupo,
+          icon: serie.icon,
+          color: serie.color,
+          dados: dados,
+          ultimoValor: dados.length > 0 ? dados[dados.length - 1].valor : null,
+          ultimaData: dados.length > 0 ? dados[dados.length - 1].data : null
+        };
+      }).catch(function() {
+        return { id: serie.id, nome: serie.nome, unidade: serie.unidade, grupo: serie.grupo, icon: serie.icon, color: serie.color, dados: [], ultimoValor: null, ultimaData: null };
+      });
+    });
+
+    allIndicadores = await Promise.all(promises);
+    showToast(allIndicadores.filter(function(i){return i.ultimoValor !== null}).length + ' indicadores carregados');
+
+    updateKPIs();
+    updateCharts();
+    buildFilters();
+    renderIndicadores();
+
+  } catch(e) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">&#9888;</div><h3>Erro ao carregar dados</h3><p>' + escapeHtml(e.message) + '</p></div>';
+  }
+}
+
+function updateKPIs() {
+  var selic = allIndicadores.find(function(i){return i.id===432});
+  var ipca = allIndicadores.find(function(i){return i.id===13522});
+  var creditoPJ = allIndicadores.find(function(i){return i.id===20542});
+  var inadimplencia = allIndicadores.find(function(i){return i.id===21082});
+
+  document.getElementById('kpiSelic').textContent = selic && selic.ultimoValor ? formatNum(selic.ultimoValor) : '—';
+  document.getElementById('kpiIpca').textContent = ipca && ipca.ultimoValor ? formatNum(ipca.ultimoValor) : '—';
+
+  if (creditoPJ && creditoPJ.ultimoValor) {
+    var bi = (parseFloat(creditoPJ.ultimoValor.replace(',','.')) / 1000).toFixed(0);
+    document.getElementById('kpiCreditoPJ').textContent = bi;
+  }
+
+  document.getElementById('kpiInadimplencia').textContent = inadimplencia && inadimplencia.ultimoValor ? formatNum(inadimplencia.ultimoValor) : '—';
+}
+
+function updateCharts() {
+  if (typeof Chart === 'undefined') return;
+  document.getElementById('chartsRow').style.display = 'grid';
+
+  // Selic chart
+  var selic = allIndicadores.find(function(i){return i.id===432});
+  if (selic && selic.dados.length > 0) {
+    if (chartSelic) chartSelic.destroy();
+    chartSelic = new Chart(document.getElementById('chartSelic'), {
+      type: 'line',
+      data: {
+        labels: selic.dados.map(function(d){return d.data}),
+        datasets: [{
+          label: 'Selic Meta',
+          data: selic.dados.map(function(d){return parseFloat(d.valor.replace(',','.'))}),
+          borderColor: '#22c55e',
+          backgroundColor: 'rgba(34,197,94,.1)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 2
+        }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#8b8fa8', font: { size: 10 } }, grid: { color: 'rgba(46,51,72,.5)' } }, y: { ticks: { color: '#8b8fa8', font: { size: 10 } }, grid: { color: 'rgba(46,51,72,.5)' } } } }
+    });
+  }
+
+  // Credito PJ chart
+  var credito = allIndicadores.find(function(i){return i.id===20542});
+  if (credito && credito.dados.length > 0) {
+    if (chartCredito) chartCredito.destroy();
+    chartCredito = new Chart(document.getElementById('chartCredito'), {
+      type: 'bar',
+      data: {
+        labels: credito.dados.map(function(d){return d.data}),
+        datasets: [{
+          label: 'Saldo PJ (R$ mi)',
+          data: credito.dados.map(function(d){return parseFloat(d.valor.replace(',','.'))}),
+          backgroundColor: 'rgba(79,140,255,.4)',
+          borderColor: '#4f8cff',
+          borderWidth: 1
+        }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#8b8fa8', font: { size: 10 } }, grid: { color: 'rgba(46,51,72,.5)' } }, y: { ticks: { color: '#8b8fa8', font: { size: 10 } }, grid: { color: 'rgba(46,51,72,.5)' } } } }
+    });
+  }
+}
+
+function buildFilters() {
+  var grupos = {};
+  allIndicadores.forEach(function(i){ grupos[i.grupo] = (grupos[i.grupo]||0)+1; });
+
+  var fonteEl = document.getElementById('filterFonte');
+  fonteEl.innerHTML = '<button class="filter-btn" onclick="toggleFilter(\'fonte\',\'BCB SGS\',this)">BCB SGS <span class="filter-count">' + allIndicadores.length + '</span></button>';
+
+  var bcbEl = document.getElementById('filterBCB');
+  bcbEl.innerHTML = '';
+  Object.keys(grupos).sort().forEach(function(g) {
+    bcbEl.innerHTML += '<button class="filter-btn" onclick="toggleFilter(\'grupo\',\'' + g + '\',this)">' + g + ' <span class="filter-count">' + grupos[g] + '</span></button>';
+  });
+}
+
+var currentFilters = { fonte: null, grupo: null };
+
+function toggleFilter(type, value, btn) {
+  if (currentFilters[type] === value) {
+    currentFilters[type] = null;
+    btn.classList.remove('active');
+  } else {
+    currentFilters[type] = value;
+    var siblings = btn.parentElement.querySelectorAll('.filter-btn');
+    siblings.forEach(function(s){ s.classList.remove('active'); });
+    btn.classList.add('active');
+  }
+  renderIndicadores();
+}
+
+function renderIndicadores() {
+  var search = (document.getElementById('searchBox').value || '').toLowerCase();
+  var container = document.getElementById('indContainer');
+
+  var filtered = allIndicadores.filter(function(i) {
+    if (currentFilters.grupo && i.grupo !== currentFilters.grupo) return false;
+    if (search && i.nome.toLowerCase().indexOf(search) < 0) return false;
+    return true;
+  });
+
+  document.getElementById('indCount').textContent = filtered.length + ' indicadores';
+
+  if (filtered.length === 0 && allIndicadores.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">&#128176;</div><h3>Radar de Credito e Fomento</h3><p>Clique em <strong>Consultar APIs</strong> para buscar indicadores.</p></div>';
+    return;
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">&#128269;</div><h3>Nenhum indicador encontrado</h3><p>Ajuste os filtros ou a busca.</p></div>';
+    return;
+  }
+
+  var html = '';
+  filtered.forEach(function(ind) {
+    var uid = 'ind-' + ind.id;
+    var val = ind.ultimoValor ? formatNum(ind.ultimoValor) : '—';
+
+    html += '<div class="indicator-card" id="' + uid + '">';
+    html += '<div class="ind-header" onclick="toggleInd(\'' + uid + '\')">';
+    html += '<div class="ind-icon" style="background:rgba(34,197,94,.08);color:' + ind.color + '">' + ind.icon + '</div>';
+    html += '<div class="ind-info">';
+    html += '<div class="ind-name">' + escapeHtml(ind.nome) + '</div>';
+    html += '<div class="ind-meta"><span class="tag tag-bcb">BCB SGS ' + ind.id + '</span> <span class="tag" style="background:var(--surface2);color:var(--text3)">' + escapeHtml(ind.grupo) + '</span></div>';
+    html += '</div>';
+    html += '<div style="text-align:right">';
+    html += '<div class="ind-value" style="color:' + ind.color + '">' + val + '</div>';
+    html += '<div class="ind-sublabel">' + escapeHtml(ind.unidade) + (ind.ultimaData ? ' | ' + ind.ultimaData : '') + '</div>';
+    html += '</div>';
+    html += '<div class="ind-expand">&#9660;</div>';
+    html += '</div>';
+
+    // Details
+    html += '<div class="ind-details">';
+    html += '<div class="detail-grid">';
+    html += '<div class="detail-item"><span class="detail-label">Serie BCB</span><span class="detail-value">' + ind.id + '</span></div>';
+    html += '<div class="detail-item"><span class="detail-label">Unidade</span><span class="detail-value">' + escapeHtml(ind.unidade) + '</span></div>';
+    html += '<div class="detail-item"><span class="detail-label">Ultimo Valor</span><span class="detail-value">' + val + '</span></div>';
+    html += '<div class="detail-item"><span class="detail-label">Ultima Data</span><span class="detail-value">' + (ind.ultimaData || '—') + '</span></div>';
+    html += '</div>';
+
+    // Historical data table
+    if (ind.dados.length > 0) {
+      html += '<div style="margin-top:12px"><span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Historico (' + ind.dados.length + ' registros)</span>';
+      html += '<div style="max-height:180px;overflow-y:auto;margin-top:6px">';
+      html += '<table style="width:100%;font-size:11px;border-collapse:collapse">';
+      html += '<tr style="color:var(--text3);text-align:left"><th style="padding:4px 8px;border-bottom:1px solid var(--border)">Data</th><th style="padding:4px 8px;border-bottom:1px solid var(--border);text-align:right">Valor</th></tr>';
+      var reversed = ind.dados.slice().reverse();
+      reversed.forEach(function(d) {
+        html += '<tr><td style="padding:4px 8px;border-bottom:1px solid rgba(46,51,72,.3)">' + d.data + '</td><td style="padding:4px 8px;border-bottom:1px solid rgba(46,51,72,.3);text-align:right;color:' + ind.color + ';font-weight:600">' + formatNum(d.valor) + '</td></tr>';
+      });
+      html += '</table></div></div>';
+    }
+
+    html += '</div>';
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleInd(uid) {
+  var card = document.getElementById(uid);
+  if (card) card.classList.toggle('expanded');
+}
+</script>
+</body>
+</html>
