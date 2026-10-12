@@ -239,24 +239,13 @@ const TOOLS = [
   {
     id: "legislativo",
     nome: "PIPPA Legislativo",
-    subtitulo: "Radar de Proposicoes Legislativas",
+    subtitulo: "Monitoramento Legislativo",
     accent: "#a855f7",
     icon: "⚖️",
-    url: "../pippa-legislativo-dashboard/index.html",
-    descricao: "Painel de monitoramento legislativo que consulta APIs abertas da Camara dos Deputados e Senado Federal, filtra proposicoes relevantes ao SEBRAE e aplica classificacao automatica de prioridade (P0-P4) baseada em analise semantica dos sumarios e criterios estrategicos.",
-    features: ["Classificacao P0 (Critico) a P4 (Arquivo)", "Scoring numerico de relevancia", "Filtro institucional SEBRAE/Sistema S", "Filtros por prioridade, tipo e partido", "APIs da Camara e Senado", "Exportar WhatsApp com briefing narrativo"],
-    destaque: "Saiba quais projetos de lei importam para o SEBRAE. A classificacao automatica de 5 niveis prioriza proposicoes por impacto real em MPEs — de critico a arquivo — com scoring numerico e briefing pronto para compartilhar."
-  },
-  {
-    id: "pauta",
-    nome: "PIPPA Pauta Legislativa",
-    subtitulo: "Monitor de Pautas de Votacao",
-    accent: "#8b5cf6",
-    icon: "📋",
-    url: "../pippa-pauta-legislativa/index.html",
-    descricao: "Monitor em tempo real das pautas de votacao da Camara dos Deputados e Senado Federal. Consulta APIs abertas para identificar quais proposicoes estao agendadas para discussao ou votacao, classificando automaticamente a relevancia para MPEs e o SEBRAE.",
-    features: ["Pauta do dia / semana / proxima semana", "Camara + Senado em tempo real", "Classificacao SEBRAE automatica", "Plenario e Comissoes", "Proposicoes com ementa na pauta", "Exportar WhatsApp"],
-    destaque: "Saiba o que esta na pauta antes que va a voto. O monitor identifica sessoes deliberativas e proposicoes agendadas na Camara e no Senado, cruzando com criterios do SEBRAE para alertar sobre materias relevantes para MPEs."
+    url: "../pippa-legislativo/index.html",
+    descricao: "Hub de inteligencia legislativa com duas ferramentas: o Radar Legislativo que classifica proposicoes por prioridade (P0-P4) e o Monitor de Pauta que acompanha em tempo real as votacoes agendadas na Camara e no Senado.",
+    features: ["Radar de Proposicoes (P0-P4)", "Pauta de Votacao em tempo real", "Classificacao SEBRAE automatica", "Camara + Senado", "Tramitacoes e detalhes via API", "Exportar WhatsApp"],
+    destaque: "Duas ferramentas em um so lugar: saiba quais projetos de lei importam para o SEBRAE e o que esta na pauta antes que va a voto."
   },
   {
     id: "pesquisas",
@@ -398,10 +387,10 @@ const QUESTIONS = [
   { texto: "Como esta a execução orçamentária da UPP?", ferramentas: ["orcamento"], macro: "orcamento" },
   { texto: "Preciso de inteligencia orcamentaria completa", ferramentas: ["emendas", "compras", "orcamento"], macro: "orcamento" },
   { texto: "Quais projetos de lei impactam pequenas empresas?", ferramentas: ["legislativo"], macro: "legislativo" },
-  { texto: "O que esta na pauta de votacao esta semana?", ferramentas: ["pauta"], macro: "legislativo" },
+  { texto: "O que esta na pauta de votacao esta semana?", ferramentas: ["legislativo"], macro: "legislativo" },
   { texto: "Como a reforma tributaria afeta meu negocio?", ferramentas: ["reforma"], macro: "legislativo" },
   { texto: "Quais normas do DOU afetam pequenas empresas?", ferramentas: ["regulatorio"], macro: "legislativo" },
-  { texto: "Preciso acompanhar o cenario regulatorio completo", ferramentas: ["regulatorio", "legislativo", "reforma", "pauta"], macro: "legislativo" },
+  { texto: "Preciso acompanhar o cenario regulatorio completo", ferramentas: ["regulatorio", "legislativo", "reforma"], macro: "legislativo" },
   { texto: "Qual o cenario eleitoral e seus impactos?", ferramentas: ["pesquisas"], macro: "politico" },
   { texto: "Quero entender o cenario politico-legislativo", ferramentas: ["legislativo", "pesquisas", "emendas"], macro: "politico" },
   { texto: "Quais as entregas estratégicas da UPP em 2026?", ferramentas: ["atuacaoupp"], macro: "politico" },
