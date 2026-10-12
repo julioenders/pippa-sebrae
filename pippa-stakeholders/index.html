@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PIPPA Stakeholders — Mapa Parlamentar</title>
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#242836;--border:#2e3348;--text:#e4e6ef;--text2:#c4c7d4;--text3:#8b8fa8;--accent:#f59e0b;--accent2:#fbbf24;--purple:#a855f7;--blue:#4f8cff;--emerald:#22c55e;--red:#ef4444;--cyan:#06b6d4;--pink:#f472b6;--camara:#4f8cff;--senado:#a855f7;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.3)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+.header{background:linear-gradient(135deg,#1a1d27,#242836);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:16px}
+.logo{font-size:22px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
+.logo-sub{font-size:13px;color:var(--text3);font-weight:400}
+.header-controls{display:flex;align-items:center;gap:12px}
+.btn{padding:8px 16px;border-radius:var(--radius);font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent);color:#000}
+.btn-primary:hover{background:var(--accent2)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-back{background:transparent;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:6px 12px;text-decoration:none;border-radius:var(--radius);display:inline-flex;align-items:center;gap:4px}
+.btn-back:hover{border-color:var(--accent);color:var(--accent)}
+
+.layout{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 60px)}
+
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px;overflow-y:auto}
+.filter-section{margin-bottom:20px}
+.filter-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:8px}
+.filter-group{display:flex;flex-direction:column;gap:4px}
+.filter-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;color:var(--text2);cursor:pointer;text-align:left;transition:all .15s}
+.filter-btn:hover{border-color:var(--accent)}
+.filter-btn.active{background:rgba(245,158,11,.1);border-color:var(--accent);color:var(--accent)}
+.filter-count{float:right;font-size:10px;color:var(--text3);background:var(--bg);padding:1px 6px;border-radius:4px}
+.sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);text-align:center;line-height:1.6}
+
+.content{padding:24px;overflow-y:auto}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+.kpi-value{font-size:28px;font-weight:800;line-height:1}
+.kpi-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-top:6px}
+
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.section-count{font-size:12px;color:var(--text3)}
+
+.search-box{width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;margin-bottom:16px}
+.search-box:focus{outline:none;border-color:var(--accent)}
+
+.parl-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;transition:all .2s}
+.parl-card:hover{border-color:rgba(245,158,11,.3)}
+.parl-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}
+.parl-photo{width:48px;height:48px;border-radius:50%;background:var(--surface2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text3);overflow:hidden;flex-shrink:0}
+.parl-photo img{width:100%;height:100%;object-fit:cover}
+.parl-info{flex:1;min-width:0}
+.parl-name{font-size:14px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.parl-meta{font-size:11px;color:var(--text3)}
+.parl-casa{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px}
+.casa-camara{background:rgba(79,140,255,.12);color:var(--camara)}
+.casa-senado{background:rgba(168,85,247,.12);color:var(--senado)}
+.parl-partido{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:var(--surface2);color:var(--text2);margin-left:4px}
+.parl-expand{color:var(--text3);font-size:12px;transition:transform .2s}
+.parl-card.expanded .parl-expand{transform:rotate(180deg)}
+.parl-details{display:none;padding:0 16px 16px;border-top:1px solid var(--border)}
+.parl-card.expanded .parl-details{display:block}
+
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:12px}
+.detail-item{background:var(--bg);border-radius:6px;padding:8px 10px}
+.detail-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);display:block;margin-bottom:2px}
+.detail-value{font-size:12px;color:var(--text)}
+
+.frente-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;margin:2px;background:rgba(245,158,11,.1);color:var(--accent)}
+.comissao-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;margin:2px;background:rgba(79,140,255,.1);color:var(--blue)}
+.orgao-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;margin:2px;background:rgba(34,197,94,.1);color:var(--emerald)}
+
+.loading{display:flex;align-items:center;justify-content:center;gap:8px;padding:40px;color:var(--text3);font-size:13px}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-state .icon{font-size:48px;margin-bottom:12px}
+.empty-state h3{font-size:16px;color:var(--text);margin-bottom:8px}
+.empty-state p{font-size:13px;line-height:1.6}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 20px;font-size:12px;color:var(--text);opacity:0;transform:translateY(10px);transition:all .3s;z-index:999;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center}
+.modal-backdrop.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;max-width:700px;width:90%;max-height:80vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:16px}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+
+.comissao-list{margin-top:12px}
+.comissao-item{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:6px}
+.comissao-item-title{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:4px}
+.comissao-item-detail{font-size:11px;color:var(--text3)}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <a href="../pippa-portal/index.html" class="btn-back">&#9664; Portal</a>
+    <div>
+      <div class="logo">PIPPA Stakeholders</div>
+      <div class="logo-sub">Mapa Parlamentar — CRM Legislativo</div>
+    </div>
+  </div>
+  <div class="header-controls">
+    <select id="selLegislatura" class="btn btn-outline" style="padding:6px 12px;font-size:12px;background:var(--surface)">
+      <option value="57">57a Legislatura (2023-2027)</option>
+    </select>
+    <button class="btn btn-primary" onclick="fetchData()">&#128269; Consultar APIs</button>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="filter-section">
+      <div class="filter-title">Casa</div>
+      <div class="filter-group" id="filterCasa"></div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-title">Partido</div>
+      <div class="filter-group" id="filterPartido"></div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-title">UF</div>
+      <div class="filter-group" id="filterUF"></div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-title">Frentes Parlamentares</div>
+      <div class="filter-group" id="filterFrentes"></div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-title">Comissoes-Chave</div>
+      <div class="filter-group" id="filterComissoes"></div>
+    </div>
+    <div class="sidebar-footer">
+      PIPPA Stakeholders<br>Sebrae Nacional — Observatorio<br>Dados: APIs Camara e Senado
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-value" id="kpiTotal" style="color:var(--accent)">—</div><div class="kpi-label">Parlamentares</div></div>
+      <div class="kpi"><div class="kpi-value" id="kpiCamara" style="color:var(--camara)">—</div><div class="kpi-label">Deputados</div></div>
+      <div class="kpi"><div class="kpi-value" id="kpiSenado" style="color:var(--senado)">—</div><div class="kpi-label">Senadores</div></div>
+      <div class="kpi"><div class="kpi-value" id="kpiFrentes" style="color:var(--emerald)">—</div><div class="kpi-label">Frentes Relevantes</div></div>
+    </div>
+
+    <input type="text" class="search-box" id="searchBox" placeholder="Buscar parlamentar por nome, partido ou UF..." oninput="applyFilters()">
+
+    <div class="section-header">
+      <div class="section-title">Parlamentares</div>
+      <div class="section-count" id="parlCount"></div>
+    </div>
+
+    <div id="parlContainer">
+      <div class="empty-state">
+        <div class="icon">&#128101;</div>
+        <h3>Mapa Parlamentar — Stakeholders</h3>
+        <p>Clique em <strong>Consultar APIs</strong> para buscar deputados, senadores, frentes parlamentares e comissoes relevantes para o SEBRAE.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var allParlamentares = [];
+var filteredParlamentares = [];
+var allFrentes = [];
+var comissoesChave = {};
+var filters = { casa: null, partido: null, uf: null, frente: null, comissao: null };
+
+var FRENTES_RELEVANTES = [
+  'empreendedorismo', 'micro', 'pequen', 'simples', 'mei',
+  'desburocratiz', 'livre iniciativa', 'comercio', 'industria',
+  'inovacao', 'tecnologia', 'digital', 'startup',
+  'cooperativ', 'credito', 'turismo', 'agronegocio',
+  'reforma tributaria', 'municipio', 'desenvolvimento'
+];
+
+var COMISSOES_CHAVE_CAMARA = [
+  'CDEICS', 'CFFC', 'CFT', 'CTASP', 'CCTCI', 'CDU', 'CAPADR', 'CE', 'CME'
+];
+
+var COMISSOES_CHAVE_SENADO = [
+  'CAE', 'CI', 'CDR', 'CMA', 'CCT', 'CE', 'CDH', 'CAS'
+];
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+function escapeHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function fetchData() {
+  var container = document.getElementById('parlContainer');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando parlamentares, frentes e comissoes...</div>';
+  allParlamentares = [];
+  allFrentes = [];
+  comissoesChave = {};
+
+  try {
+    var [depResp, senResp, frentesResp] = await Promise.all([
+      fetch('https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome&itens=100'),
+      fetch('https://legis.senado.leg.br/dadosabertos/senador/lista/atual', { headers: { 'Accept': 'application/json' } }),
+      fetch('https://dadosabertos.camara.leg.br/api/v2/frentes?idLegislatura=57&itens=200')
+    ]);
+
+    // Deputados — paginated
+    var depJson = await depResp.json();
+    var deputados = depJson.dados || [];
+    var depLinks = depJson.links || [];
+    var nextLink = depLinks.find(function(l){ return l.rel === 'next'; });
+    while (nextLink) {
+      var r = await fetch(nextLink.href);
+      var j = await r.json();
+      deputados = deputados.concat(j.dados || []);
+      var nl = (j.links || []).find(function(l){ return l.rel === 'next'; });
+      nextLink = nl;
+    }
+
+    deputados.forEach(function(d) {
+      allParlamentares.push({
+        id: d.id,
+        nome: d.nome,
+        partido: d.siglaPartido,
+        uf: d.siglaUf,
+        casa: 'camara',
+        foto: d.urlFoto,
+        email: d.email || '',
+        frentes: [],
+        orgaos: []
+      });
+    });
+
+    // Senadores
+    if (senResp.ok) {
+      var senJson = await senResp.json();
+      var parlamentares = [];
+      try {
+        var lista = senJson.ListaParlamentarEmExercicio.Parlamentares.Parlamentar;
+        if (!Array.isArray(lista)) lista = [lista];
+        parlamentares = lista;
+      } catch(e) {}
+
+      parlamentares.forEach(function(s) {
+        var id = s.IdentificacaoParlamentar;
+        allParlamentares.push({
+          id: id.CodigoParlamentar,
+          nome: id.NomeParlamentar || id.NomeCompletoParlamentar,
+          partido: id.SiglaPartidoParlamentar,
+          uf: id.UfParlamentar,
+          casa: 'senado',
+          foto: id.UrlFotoParlamentar || '',
+          email: id.EmailParlamentar || '',
+          frentes: [],
+          orgaos: []
+        });
+      });
+    }
+
+    showToast(allParlamentares.length + ' parlamentares carregados');
+
+    // Frentes parlamentares — filter relevant ones
+    if (frentesResp.ok) {
+      var frentesJson = await frentesResp.json();
+      var todasFrentes = frentesJson.dados || [];
+      allFrentes = todasFrentes.filter(function(f) {
+        var titulo = (f.titulo || '').toLowerCase();
+        return FRENTES_RELEVANTES.some(function(kw) { return titulo.indexOf(kw) >= 0; });
+      });
+    }
+
+    // Fetch frente members for relevant frentes (batch 3 at a time)
+    container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando membros de ' + allFrentes.length + ' frentes relevantes...</div>';
+    for (var fi = 0; fi < allFrentes.length; fi += 3) {
+      var batch = allFrentes.slice(fi, fi + 3);
+      var promises = batch.map(function(f) {
+        return fetch('https://dadosabertos.camara.leg.br/api/v2/frentes/' + f.id + '/membros')
+          .then(function(r){ return r.ok ? r.json() : { dados: [] }; })
+          .then(function(j){
+            (j.dados || []).forEach(function(m) {
+              var parl = allParlamentares.find(function(p){ return p.id == m.id; });
+              if (parl) parl.frentes.push(f.titulo);
+            });
+          })
+          .catch(function(){ });
+      });
+      await Promise.all(promises);
+    }
+
+    // Fetch comissoes-chave da Camara
+    container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando comissoes da Camara...</div>';
+    var orgResp = await fetch('https://dadosabertos.camara.leg.br/api/v2/orgaos?idTipoOrgao=2&itens=100&ordem=ASC&ordenarPor=nome');
+    if (orgResp.ok) {
+      var orgJson = await orgResp.json();
+      var orgaos = orgJson.dados || [];
+      var orgRelevantes = orgaos.filter(function(o) {
+        return COMISSOES_CHAVE_CAMARA.indexOf(o.sigla) >= 0;
+      });
+
+      for (var ci = 0; ci < orgRelevantes.length; ci += 3) {
+        var batchC = orgRelevantes.slice(ci, ci + 3);
+        var promC = batchC.map(function(o) {
+          return fetch('https://dadosabertos.camara.leg.br/api/v2/orgaos/' + o.id + '/membros')
+            .then(function(r){ return r.ok ? r.json() : { dados: [] }; })
+            .then(function(j){
+              comissoesChave[o.sigla] = { nome: o.nome, membros: (j.dados || []).map(function(m){ return m.id; }) };
+              (j.dados || []).forEach(function(m) {
+                var parl = allParlamentares.find(function(p){ return p.id == m.id; });
+                if (parl) parl.orgaos.push(o.sigla);
+              });
+            })
+            .catch(function(){ });
+        });
+        await Promise.all(promC);
+      }
+    }
+
+    buildFilters();
+    applyFilters();
+
+  } catch(e) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">&#9888;</div><h3>Erro ao carregar dados</h3><p>' + escapeHtml(e.message) + '</p></div>';
+  }
+}
+
+function buildFilters() {
+  // Casa
+  var casaEl = document.getElementById('filterCasa');
+  var camaraCnt = allParlamentares.filter(function(p){return p.casa==='camara'}).length;
+  var senadoCnt = allParlamentares.filter(function(p){return p.casa==='senado'}).length;
+  casaEl.innerHTML = '<button class="filter-btn" onclick="toggleFilter(\'casa\',\'camara\',this)">Camara <span class="filter-count">' + camaraCnt + '</span></button>';
+  casaEl.innerHTML += '<button class="filter-btn" onclick="toggleFilter(\'casa\',\'senado\',this)">Senado <span class="filter-count">' + senadoCnt + '</span></button>';
+
+  // Partidos
+  var partidos = {};
+  allParlamentares.forEach(function(p){ partidos[p.partido] = (partidos[p.partido]||0)+1; });
+  var partidosSorted = Object.keys(partidos).sort(function(a,b){ return partidos[b]-partidos[a]; });
+  var partidoEl = document.getElementById('filterPartido');
+  partidoEl.innerHTML = '';
+  partidosSorted.slice(0, 20).forEach(function(pt) {
+    partidoEl.innerHTML += '<button class="filter-btn" onclick="toggleFilter(\'partido\',\'' + pt + '\',this)">' + pt + ' <span class="filter-count">' + partidos[pt] + '</span></button>';
+  });
+
+  // UF
+  var ufs = {};
+  allParlamentares.forEach(function(p){ ufs[p.uf] = (ufs[p.uf]||0)+1; });
+  var ufsSorted = Object.keys(ufs).sort();
+  var ufEl = document.getElementById('filterUF');
+  ufEl.innerHTML = '';
+  ufsSorted.forEach(function(u) {
+    ufEl.innerHTML += '<button class="filter-btn" onclick="toggleFilter(\'uf\',\'' + u + '\',this)">' + u + ' <span class="filter-count">' + ufs[u] + '</span></button>';
+  });
+
+  // Frentes
+  var frentesEl = document.getElementById('filterFrentes');
+  frentesEl.innerHTML = '';
+  allFrentes.forEach(function(f) {
+    var memberCount = allParlamentares.filter(function(p){ return p.frentes.indexOf(f.titulo) >= 0; }).length;
+    if (memberCount > 0) {
+      var shortName = f.titulo.length > 40 ? f.titulo.substring(0,38) + '...' : f.titulo;
+      frentesEl.innerHTML += '<button class="filter-btn" onclick="toggleFilter(\'frente\',\'' + escapeHtml(f.titulo).replace(/'/g,"\\'") + '\',this)" title="' + escapeHtml(f.titulo) + '">' + escapeHtml(shortName) + ' <span class="filter-count">' + memberCount + '</span></button>';
+    }
+  });
+
+  // Comissoes
+  var comEl = document.getElementById('filterComissoes');
+  comEl.innerHTML = '';
+  Object.keys(comissoesChave).sort().forEach(function(sigla) {
+    var c = comissoesChave[sigla];
+    comEl.innerHTML += '<button class="filter-btn" onclick="toggleFilter(\'comissao\',\'' + sigla + '\',this)">' + sigla + ' <span class="filter-count">' + c.membros.length + '</span></button>';
+  });
+}
+
+function toggleFilter(type, value, btn) {
+  if (filters[type] === value) {
+    filters[type] = null;
+    btn.classList.remove('active');
+  } else {
+    filters[type] = value;
+    var siblings = btn.parentElement.querySelectorAll('.filter-btn');
+    siblings.forEach(function(s){ s.classList.remove('active'); });
+    btn.classList.add('active');
+  }
+  applyFilters();
+}
+
+function applyFilters() {
+  var search = (document.getElementById('searchBox').value || '').toLowerCase();
+
+  filteredParlamentares = allParlamentares.filter(function(p) {
+    if (filters.casa && p.casa !== filters.casa) return false;
+    if (filters.partido && p.partido !== filters.partido) return false;
+    if (filters.uf && p.uf !== filters.uf) return false;
+    if (filters.frente && p.frentes.indexOf(filters.frente) < 0) return false;
+    if (filters.comissao) {
+      var com = comissoesChave[filters.comissao];
+      if (!com || com.membros.indexOf(p.id) < 0) return false;
+    }
+    if (search) {
+      var haystack = (p.nome + ' ' + p.partido + ' ' + p.uf).toLowerCase();
+      if (haystack.indexOf(search) < 0) return false;
+    }
+    return true;
+  });
+
+  filteredParlamentares.sort(function(a,b) {
+    var scoreA = a.frentes.length * 2 + a.orgaos.length;
+    var scoreB = b.frentes.length * 2 + b.orgaos.length;
+    if (scoreB !== scoreA) return scoreB - scoreA;
+    return a.nome.localeCompare(b.nome);
+  });
+
+  updateKPIs();
+  renderParlamentares();
+}
+
+function updateKPIs() {
+  document.getElementById('kpiTotal').textContent = filteredParlamentares.length;
+  document.getElementById('kpiCamara').textContent = filteredParlamentares.filter(function(p){return p.casa==='camara'}).length;
+  document.getElementById('kpiSenado').textContent = filteredParlamentares.filter(function(p){return p.casa==='senado'}).length;
+  document.getElementById('kpiFrentes').textContent = allFrentes.length;
+}
+
+function renderParlamentares() {
+  var container = document.getElementById('parlContainer');
+  document.getElementById('parlCount').textContent = filteredParlamentares.length + ' parlamentares';
+
+  if (filteredParlamentares.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">&#128101;</div><h3>Nenhum parlamentar encontrado</h3><p>Ajuste os filtros ou realize uma nova consulta.</p></div>';
+    return;
+  }
+
+  var html = '';
+  filteredParlamentares.forEach(function(p) {
+    var uid = p.casa + '-' + p.id;
+    var casaClass = p.casa === 'camara' ? 'casa-camara' : 'casa-senado';
+    var casaLabel = p.casa === 'camara' ? 'CAMARA' : 'SENADO';
+
+    html += '<div class="parl-card" id="pc-' + uid + '">';
+    html += '<div class="parl-header" onclick="toggleParl(\'' + uid + '\')">';
+
+    // Photo
+    if (p.foto) {
+      html += '<div class="parl-photo"><img src="' + p.foto + '" alt="" onerror="this.parentElement.innerHTML=\'&#128100;\'"></div>';
+    } else {
+      html += '<div class="parl-photo">&#128100;</div>';
+    }
+
+    // Info
+    html += '<div class="parl-info">';
+    html += '<div class="parl-name">' + escapeHtml(p.nome) + '</div>';
+    html += '<div class="parl-meta">';
+    html += '<span class="parl-casa ' + casaClass + '">' + casaLabel + '</span>';
+    html += '<span class="parl-partido">' + escapeHtml(p.partido) + '-' + escapeHtml(p.uf) + '</span>';
+    if (p.frentes.length > 0) html += ' <span style="font-size:10px;color:var(--accent)">' + p.frentes.length + ' frente(s)</span>';
+    if (p.orgaos.length > 0) html += ' <span style="font-size:10px;color:var(--blue)">' + p.orgaos.length + ' comissao(oes)</span>';
+    html += '</div>';
+
+    // Frente and comissao tags (collapsed)
+    if (p.frentes.length > 0 || p.orgaos.length > 0) {
+      html += '<div style="margin-top:4px">';
+      p.orgaos.forEach(function(o){ html += '<span class="comissao-tag">' + escapeHtml(o) + '</span>'; });
+      p.frentes.slice(0,2).forEach(function(f){
+        var short = f.length > 30 ? f.substring(0,28) + '...' : f;
+        html += '<span class="frente-tag">' + escapeHtml(short) + '</span>';
+      });
+      if (p.frentes.length > 2) html += '<span class="frente-tag">+' + (p.frentes.length - 2) + '</span>';
+      html += '</div>';
+    }
+
+    html += '</div>'; // parl-info
+    html += '<div class="parl-expand">&#9660;</div>';
+    html += '</div>'; // parl-header
+
+    // Details
+    html += '<div class="parl-details">';
+    html += '<div class="detail-grid">';
+    html += '<div class="detail-item"><span class="detail-label">Nome</span><span class="detail-value">' + escapeHtml(p.nome) + '</span></div>';
+    html += '<div class="detail-item"><span class="detail-label">Casa</span><span class="detail-value">' + (p.casa === 'camara' ? 'Camara dos Deputados' : 'Senado Federal') + '</span></div>';
+    html += '<div class="detail-item"><span class="detail-label">Partido / UF</span><span class="detail-value">' + escapeHtml(p.partido) + ' - ' + escapeHtml(p.uf) + '</span></div>';
+    if (p.email) html += '<div class="detail-item"><span class="detail-label">Email</span><span class="detail-value"><a href="mailto:' + escapeHtml(p.email) + '" style="color:var(--accent);font-size:11px">' + escapeHtml(p.email) + '</a></span></div>';
+    html += '</div>';
+
+    // Frentes
+    if (p.frentes.length > 0) {
+      html += '<div style="margin-top:12px"><span class="detail-label">Frentes Parlamentares (' + p.frentes.length + ')</span>';
+      html += '<div style="margin-top:4px">';
+      p.frentes.forEach(function(f){ html += '<span class="frente-tag">' + escapeHtml(f) + '</span>'; });
+      html += '</div></div>';
+    }
+
+    // Comissoes
+    if (p.orgaos.length > 0) {
+      html += '<div style="margin-top:12px"><span class="detail-label">Comissoes-Chave (' + p.orgaos.length + ')</span>';
+      html += '<div style="margin-top:4px">';
+      p.orgaos.forEach(function(o){
+        var c = comissoesChave[o];
+        html += '<span class="comissao-tag" title="' + (c ? escapeHtml(c.nome) : '') + '">' + escapeHtml(o) + (c ? ' — ' + escapeHtml(c.nome) : '') + '</span>';
+      });
+      html += '</div></div>';
+    }
+
+    // Async detail loader
+    html += '<div id="extra-' + uid + '" style="margin-top:8px"></div>';
+
+    html += '</div>'; // parl-details
+    html += '</div>'; // parl-card
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleParl(uid) {
+  var card = document.getElementById('pc-' + uid);
+  if (!card) return;
+  var wasExpanded = card.classList.contains('expanded');
+  card.classList.toggle('expanded');
+
+  if (!wasExpanded && !card.dataset.loaded) {
+    card.dataset.loaded = '1';
+    var parts = uid.split('-');
+    var casa = parts[0];
+    var id = parts[1];
+    if (casa === 'camara') {
+      loadDeputadoExtra(id, uid);
+    }
+  }
+}
+
+async function loadDeputadoExtra(id, uid) {
+  var container = document.getElementById('extra-' + uid);
+  if (!container) return;
+  container.innerHTML = '<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);padding:4px 0"><div class="spinner" style="width:14px;height:14px"></div>Buscando detalhes...</div>';
+
+  try {
+    var resp = await fetch('https://dadosabertos.camara.leg.br/api/v2/deputados/' + id);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    var d = (await resp.json()).dados;
+
+    var html = '<div class="detail-grid" style="margin-top:8px">';
+    if (d.dataNascimento) html += '<div class="detail-item"><span class="detail-label">Nascimento</span><span class="detail-value">' + d.dataNascimento + '</span></div>';
+    if (d.municipioNascimento) html += '<div class="detail-item"><span class="detail-label">Naturalidade</span><span class="detail-value">' + escapeHtml(d.municipioNascimento) + '/' + escapeHtml(d.ufNascimento || '') + '</span></div>';
+    if (d.escolaridade) html += '<div class="detail-item"><span class="detail-label">Escolaridade</span><span class="detail-value">' + escapeHtml(d.escolaridade) + '</span></div>';
+    if (d.ultimoStatus && d.ultimoStatus.gabinete) {
+      var gab = d.ultimoStatus.gabinete;
+      if (gab.sala) html += '<div class="detail-item"><span class="detail-label">Gabinete</span><span class="detail-value">Sala ' + escapeHtml(gab.sala) + ', Anx ' + escapeHtml(gab.andar || '') + ', Predio ' + escapeHtml(gab.predio || '') + '</span></div>';
+      if (gab.telefone) html += '<div class="detail-item"><span class="detail-label">Telefone</span><span class="detail-value">' + escapeHtml(gab.telefone) + '</span></div>';
+    }
+    html += '</div>';
+
+    container.innerHTML = html;
+  } catch(e) {
+    container.innerHTML = '<div style="font-size:11px;color:var(--text3)">Detalhes nao disponiveis</div>';
+  }
+}
+</script>
+</body>
+</html>
