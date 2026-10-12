@@ -175,6 +175,15 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .btn-action{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:var(--radius);font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;font-family:inherit}
 .btn-action:hover{border-color:var(--accent);color:var(--accent)}
 
+.classification-editor{background:var(--surface2);border-radius:var(--radius);padding:16px;margin-top:12px}
+.class-title{font-size:13px;font-weight:600;margin-bottom:12px;color:var(--accent)}
+.class-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.class-field{display:flex;flex-direction:column;gap:4px}
+.class-field label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
+.class-field select{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-size:12px;outline:none;cursor:pointer;font-family:inherit}
+.class-field select:focus{border-color:var(--accent)}
+.btn-save-class{margin-top:12px;background:var(--success);font-size:12px;padding:6px 16px}
+
 .tramitacao-list{display:flex;flex-direction:column;gap:0}
 .tramitacao-item{padding:10px 0;border-bottom:1px solid var(--border);position:relative;padding-left:14px}
 .tramitacao-item::before{content:'';position:absolute;left:0;top:16px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
@@ -514,13 +523,13 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
   </div>
 </div>
 
-<div class="modal-backdrop" id="alertaModal" onclick="if(event.target===this)closeModal(this.id)">
+<div class="modal-backdrop" id="minutaModal" onclick="if(event.target===this)closeModal(this.id)">
   <div class="modal">
-    <div class="modal-title">Nota de Alerta — Pauta Legislativa</div>
-    <pre class="modal-content" id="alertaContent" style="white-space:pre-wrap;font-family:inherit"></pre>
+    <div class="modal-title">Minuta Tecnica — Pauta Legislativa</div>
+    <pre class="modal-content" id="minutaContent" style="white-space:pre-wrap;font-family:inherit"></pre>
     <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('alertaModal')">Fechar</button>
-      <button class="btn" onclick="copyAlerta()">&#128203; Copiar</button>
+      <button class="btn btn-outline" onclick="closeModal('minutaModal')">Fechar</button>
+      <button class="btn" onclick="copyMinuta()">&#128203; Copiar</button>
     </div>
   </div>
 </div>
@@ -1262,43 +1271,131 @@ function renderEvents() {
       html += '</div>'; // prop-header
 
       // Expandable details
+      var score = p.matchedKeywords.length;
+      var defaultPapel = p.relevancia === 'Alta' ? 'Incidencia ativa' : p.relevancia === 'Media' ? 'Monitoramento estrategico' : 'Monitoramento passivo';
+      var defaultEixo = (p.eixos && p.eixos.length > 0) ? p.eixos[0] : 'Sem conexao';
+      var defaultPrioridade = p.relevancia === 'Alta' ? 'P1 — Alta' : p.relevancia === 'Media' ? 'P2 — Media' : p.relevancia === 'Baixa' ? 'P3 — Baixa' : 'P4 — Arquivar';
+      var defaultAcao = p.relevancia === 'Alta' ? 'Articular posicionamento' : p.relevancia === 'Media' ? 'Monitorar se houver movimentacao' : 'Acompanhar sem acao imediata';
+      var hasInstitucional = p.matchedKeywords.some(function(kw){ return KW_INSTITUCIONAL.indexOf(kw) >= 0; });
+
       html += '<div class="prop-details">';
-      html += '<div class="detail-grid">';
-      html += '<div class="detail-item"><span class="detail-label">Proposicao</span><span class="detail-value">' + escapeHtml(p.sigla) + '</span></div>';
+
+      // Detail grid (4 columns like Legislativo)
+      html += '<div class="detail-grid" style="margin-top:12px">';
+      html += '<div class="detail-item"><span class="detail-label">Sigla / Numero</span><span class="detail-value">' + escapeHtml(p.sigla) + '</span></div>';
       html += '<div class="detail-item"><span class="detail-label">Casa</span><span class="detail-value">' + (p.casa === 'camara' ? 'Camara dos Deputados' : 'Senado Federal') + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Data Prevista</span><span class="detail-value">' + formatDateBR((p.dataHora||'').substring(0,10)) + ' ' + formatTime(p.dataHora) + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Score Relevancia</span><span class="detail-value">' + score + ' pontos</span></div>';
       if (p.relator) html += '<div class="detail-item"><span class="detail-label">Relator</span><span class="detail-value">' + escapeHtml(p.relator) + '</span></div>';
-      if (p.regime) html += '<div class="detail-item"><span class="detail-label">Regime / Objetivo</span><span class="detail-value">' + escapeHtml(p.regime) + '</span></div>';
       html += '<div class="detail-item"><span class="detail-label">Evento</span><span class="detail-value">' + escapeHtml(p.titulo) + '</span></div>';
       html += '<div class="detail-item"><span class="detail-label">Orgao</span><span class="detail-value">' + escapeHtml(p.orgao) + '</span></div>';
-      html += '<div class="detail-item"><span class="detail-label">Data / Hora</span><span class="detail-value">' + formatDateBR((p.dataHora||'').substring(0,10)) + ' ' + formatTime(p.dataHora) + '</span></div>';
       if (p.local) html += '<div class="detail-item"><span class="detail-label">Local</span><span class="detail-value">' + escapeHtml(p.local) + '</span></div>';
       html += '<div class="detail-item" style="grid-column:1/-1"><span class="detail-label">Ementa Completa</span><span class="detail-value">' + escapeHtml(p.ementa || 'Nao disponivel') + '</span></div>';
-      if (p.matchedKeywords.length > 0) {
-        html += '<div class="detail-item" style="grid-column:1/-1"><span class="detail-label">Palavras-chave SEBRAE</span><span class="detail-value"><div class="pauta-keywords">';
-        var allKw = p.matchedKeywords.filter(function(v,i,a){return a.indexOf(v)===i});
-        allKw.forEach(function(kw){ html += '<span class="pauta-kw">' + escapeHtml(kw) + '</span>'; });
-        html += '</div></span></div>';
-      }
       if (p.url) {
         html += '<div class="detail-item"><span class="detail-label">Link Oficial</span><span class="detail-value"><a href="' + p.url + '" target="_blank" style="color:var(--accent)">' + (p.url.length > 60 ? p.url.substring(0,58) + '...' : p.url) + ' &#8599;</a></span></div>';
       }
       html += '</div>';
+
+      // Extra details from API (Camara only) — loads async
+      if (p.propId && p.casa === 'camara') {
+        html += '<div id="extra-' + uid + '" style="margin-top:8px"></div>';
+      }
 
       // Action buttons
       html += '<div class="action-buttons">';
       if (p.propId) {
         html += '<button class="btn-action" onclick="event.stopPropagation();openTramitacoes(\'' + p.propId + '\',\'' + p.casa + '\',\'' + escapeHtml(p.sigla).replace(/'/g,"\\'") + '\')">&#128195; Historico de Tramitacao</button>';
       }
-      html += '<button class="btn-action" onclick="event.stopPropagation();generateAlerta(\'' + p.eventId + '\',' + p.pIdx + ')">&#128221; Nota de Alerta</button>';
+      html += '<button class="btn-action" onclick="event.stopPropagation();generateMinuta(\'' + p.eventId + '\',' + p.pIdx + ')">&#128221; Gerar Minuta Tecnica</button>';
       if (p.url) {
         html += '<a href="' + p.url + '" target="_blank" rel="noopener" class="btn-action" onclick="event.stopPropagation()" style="text-decoration:none">&#128279; Acessar Materia</a>';
       }
       html += '</div>';
 
-      // Extra details from API (Camara only)
-      if (p.propId && p.casa === 'camara') {
-        html += '<div id="extra-' + uid + '" style="margin-top:10px"></div>';
-      }
+      // Classification Editor — 10 Criterios Sebrae
+      html += '<div class="classification-editor">';
+      html += '<div class="class-title">Classificacao — 10 Criterios Sebrae</div>';
+      html += '<div class="class-grid">';
+
+      html += '<div class="class-field"><label>1. Papel do Sebrae</label><select id="cls-papel-' + uid + '">';
+      ['Incidencia ativa','Monitoramento estrategico','Subsidio tecnico','Monitoramento passivo','Delegar a Sebrae UF','Arquivar','Fora do escopo'].forEach(function(opt){
+        html += '<option' + (opt === defaultPapel ? ' selected' : '') + '>' + opt + '</option>';
+      });
+      html += '</select></div>';
+
+      html += '<div class="class-field"><label>2. Relevancia</label><select id="cls-relevancia-' + uid + '">';
+      ['Central','Alta','Media','Baixa','Nula'].forEach(function(opt){
+        html += '<option' + (opt === (p.relevancia||'Nula') ? ' selected' : '') + '>' + opt + '</option>';
+      });
+      html += '</select></div>';
+
+      html += '<div class="class-field"><label>3. Aderencia PE 2024-2027</label><select id="cls-aderencia-' + uid + '">';
+      var defaultAder = p.relevancia === 'Alta' ? 'Alta aderencia' : p.relevancia === 'Media' ? 'Media aderencia' : 'Baixa aderencia';
+      ['Alta aderencia','Media aderencia','Baixa aderencia','Sem aderencia clara'].forEach(function(opt){
+        html += '<option' + (opt === defaultAder ? ' selected' : '') + '>' + opt + '</option>';
+      });
+      html += '</select></div>';
+
+      html += '<div class="class-field"><label>4. Eixo Estrategico</label><select id="cls-eixo-' + uid + '">';
+      ['Ambiente de negocios','MEI e Simples','Credito e financiamento','Compras publicas','Inovacao e digital','Educacao empreendedora','Desenvolvimento territorial','Inclusao produtiva','Setorial/corporativa','Sem conexao'].forEach(function(opt){
+        html += '<option' + (opt === defaultEixo ? ' selected' : '') + '>' + opt + '</option>';
+      });
+      html += '</select></div>';
+
+      html += '<div class="class-field"><label>5. Tipo de Impacto</label><select id="cls-impacto-' + uid + '">';
+      ['Direto MPE/MEI','Direto Sebrae','Indireto','Setorial','Corporativo/profissional','Social amplo','Processual ou simbolico','Sem impacto identificado'].forEach(function(opt){
+        var sel = (p.relevancia === 'Alta' && opt === 'Direto MPE/MEI') || (!p.relevancia && opt === 'Sem impacto identificado') || (p.relevancia === 'Media' && opt === 'Indireto');
+        html += '<option' + (sel ? ' selected' : '') + '>' + opt + '</option>';
+      });
+      html += '</select></div>';
+
+      html += '<div class="class-field"><label>6. Abrangencia</label><select id="cls-abrangencia-' + uid + '">';
+      ['Nacional e transversal','Nacional setorial','Regional/estadual','Local/municipal'].forEach(function(opt){
+        html += '<option' + (opt === 'Nacional e transversal' ? ' selected' : '') + '>' + opt + '</option>';
+      });
+      html += '</select></div>';
+
+      html += '<div class="class-field"><label>7. Situacao de Tramitacao</label><select id="cls-tramitacao-' + uid + '">';
+      ['Ativa e recente','Em comissao','Plenario','Aguardando sancao','Arquivada','Transformada em norma'].forEach(function(opt){
+        var sel = (p.situacaoNorm === 'encerrada' && opt === 'Transformada em norma') || (p.tipo === 'Plenario' && opt === 'Plenario') || (p.tipo === 'Comissao' && opt === 'Em comissao') || (!p.situacao && opt === 'Ativa e recente');
+        html += '<option' + (sel ? ' selected' : '') + '>' + opt + '</option>';
+      });
+      html += '</select></div>';
+
+      html += '<div class="class-field"><label>8. Prioridade</label><select id="cls-prioridade-' + uid + '">';
+      ['P0 — Critica','P1 — Alta','P2 — Media','P3 — Baixa','P4 — Arquivar'].forEach(function(opt){
+        html += '<option' + (opt === defaultPrioridade ? ' selected' : '') + '>' + opt + '</option>';
+      });
+      html += '</select></div>';
+
+      html += '<div class="class-field"><label>9. Acao Recomendada</label><select id="cls-acao-' + uid + '">';
+      ['Articular posicionamento','Elaborar nota tecnica','Monitorar se houver movimentacao','Acompanhar sem acao imediata','Nenhuma acao necessaria'].forEach(function(opt){
+        html += '<option' + (opt === defaultAcao ? ' selected' : '') + '>' + opt + '</option>';
+      });
+      html += '</select></div>';
+
+      html += '<div class="class-field"><label>10. Filtro Institucional</label><select id="cls-institucional-' + uid + '">';
+      ['Sim','Nao'].forEach(function(opt){
+        html += '<option' + ((hasInstitucional && opt === 'Sim') || (!hasInstitucional && opt === 'Nao') ? ' selected' : '') + '>' + opt + '</option>';
+      });
+      html += '</select></div>';
+
+      html += '<div class="class-field"><label>5A. Grau Impacto (Siga Lei)</label><select id="cls-grau-' + uid + '">';
+      var defaultGrau = score >= 3 ? 'Alto' : score >= 1 ? 'Medio' : 'Baixo';
+      ['Muito alto','Alto','Medio','Baixo','Sem impacto'].forEach(function(opt){
+        html += '<option' + (opt === defaultGrau ? ' selected' : '') + '>' + opt + '</option>';
+      });
+      html += '</select></div>';
+
+      html += '<div class="class-field"><label>5B. Posicionamento Sebrae</label><select id="cls-posicionamento-' + uid + '">';
+      ['Favoravel','Favoravel com ressalvas','Neutro / em analise','Contrario com ressalvas','Contrario'].forEach(function(opt){
+        html += '<option' + (opt === 'Neutro / em analise' ? ' selected' : '') + '>' + opt + '</option>';
+      });
+      html += '</select></div>';
+
+      html += '</div>'; // class-grid
+      html += '<button class="btn btn-save-class" onclick="event.stopPropagation();saveClassification(\'' + uid + '\')">Salvar Classificacao</button>';
+      html += '</div>'; // classification-editor
 
       html += '</div>'; // prop-details
       html += '</div>'; // prop-card
@@ -1516,78 +1613,133 @@ async function openTramitacoes(id, casa, sigla) {
 // =====================================================
 // NOTA DE ALERTA
 // =====================================================
-function generateAlerta(evId, pIdx) {
+function generateMinuta(evId, pIdx) {
   var ev = allEvents.find(function(e){return e.id===evId});
   if (!ev || !ev.pauta[pIdx]) return;
   var p = ev.pauta[pIdx];
   var date = new Date().toLocaleDateString('pt-BR');
   var range = getDateRange();
+  var score = (p.matchedKeywords||[]).length;
 
-  var text = 'NOTA DE ALERTA — PAUTA LEGISLATIVA\n';
+  var text = 'MINUTA TECNICA — PAUTA LEGISLATIVA\n';
   text += 'Sebrae Nacional — Observatorio Setorial Territorial\n';
   text += 'Data de emissao: ' + date + '\n';
   text += '='.repeat(60) + '\n\n';
 
-  text += 'PROPOSICAO: ' + p.sigla + '\n';
-  text += 'CASA: ' + (ev.casa === 'camara' ? 'Camara dos Deputados' : 'Senado Federal') + '\n';
-  text += 'EVENTO: ' + ev.titulo + '\n';
-  text += 'ORGAO: ' + ev.orgao + '\n';
-  text += 'DATA PREVISTA: ' + formatDateBR((ev.dataHora||'').substring(0,10)) + ' ' + formatTime(ev.dataHora) + '\n';
-  if (ev.local) text += 'LOCAL: ' + ev.local + '\n';
-  if (p.relator) text += 'RELATOR: ' + p.relator + '\n';
-  if (p.regime) text += 'REGIME: ' + p.regime + '\n';
-  if (p.url) text += 'LINK: ' + p.url + '\n';
+  text += '1. IDENTIFICACAO\n';
+  text += '-'.repeat(40) + '\n';
+  text += 'Proposicao: ' + p.sigla + '\n';
+  text += 'Casa: ' + (ev.casa === 'camara' ? 'Camara dos Deputados' : 'Senado Federal') + '\n';
+  text += 'Evento: ' + ev.titulo + '\n';
+  text += 'Orgao: ' + ev.orgao + '\n';
+  text += 'Data prevista: ' + formatDateBR((ev.dataHora||'').substring(0,10)) + ' ' + formatTime(ev.dataHora) + '\n';
+  if (ev.local) text += 'Local: ' + ev.local + '\n';
+  if (p.relator) text += 'Relator: ' + p.relator + '\n';
+  if (p.regime) text += 'Regime: ' + p.regime + '\n';
+  if (p.url) text += 'Link: ' + p.url + '\n';
   text += '\n';
 
-  text += 'EMENTA\n';
+  text += '2. EMENTA\n';
   text += '-'.repeat(40) + '\n';
   text += (p.ementa || 'Nao disponivel') + '\n\n';
 
-  var isMatch = p.matchedKeywords && p.matchedKeywords.length > 0;
-  if (isMatch || ev.relevanciaSebrae) {
-    text += 'ANALISE DE RELEVANCIA SEBRAE\n';
-    text += '-'.repeat(40) + '\n';
-    text += 'Relevancia do evento: ' + (ev.relevanciaSebrae || 'Nao classificada') + '\n';
-    if (isMatch) {
-      var unique = p.matchedKeywords.filter(function(v,i,a){return a.indexOf(v)===i});
-      text += 'Palavras-chave identificadas: ' + unique.join(', ') + '\n';
-    }
-    if (ev.eixos.length > 0) {
-      text += 'Eixos tematicos: ' + ev.eixos.join(', ') + '\n';
-    }
-    text += '\n';
-  }
+  text += '3. CLASSIFICACAO SEBRAE (10 Criterios)\n';
+  text += '-'.repeat(40) + '\n';
 
-  text += 'CONTEXTO\n';
+  var uid = evId + '-' + pIdx;
+  var getVal = function(id) {
+    var el = document.getElementById(id);
+    return el ? el.value : '—';
+  };
+
+  text += '  1. Papel do Sebrae:        ' + getVal('cls-papel-' + uid) + '\n';
+  text += '  2. Relevancia:             ' + getVal('cls-relevancia-' + uid) + '\n';
+  text += '  3. Aderencia PE 2024-2027: ' + getVal('cls-aderencia-' + uid) + '\n';
+  text += '  4. Eixo Estrategico:       ' + getVal('cls-eixo-' + uid) + '\n';
+  text += '  5. Tipo de Impacto:        ' + getVal('cls-impacto-' + uid) + '\n';
+  text += '  5A. Grau Impacto:          ' + getVal('cls-grau-' + uid) + '\n';
+  text += '  5B. Posicionamento Sebrae: ' + getVal('cls-posicionamento-' + uid) + '\n';
+  text += '  6. Abrangencia:            ' + getVal('cls-abrangencia-' + uid) + '\n';
+  text += '  7. Situacao Tramitacao:     ' + getVal('cls-tramitacao-' + uid) + '\n';
+  text += '  8. Prioridade:             ' + getVal('cls-prioridade-' + uid) + '\n';
+  text += '  9. Acao Recomendada:       ' + getVal('cls-acao-' + uid) + '\n';
+  text += '  10. Filtro Institucional:  ' + getVal('cls-institucional-' + uid) + '\n';
+  text += '\n';
+
+  text += '4. ANALISE DE RELEVANCIA\n';
+  text += '-'.repeat(40) + '\n';
+  text += 'Score: ' + score + ' pontos\n';
+  if (p.matchedKeywords && p.matchedKeywords.length > 0) {
+    var unique = p.matchedKeywords.filter(function(v,i,a){return a.indexOf(v)===i});
+    text += 'Palavras-chave: ' + unique.join(', ') + '\n';
+  }
+  if (ev.eixos && ev.eixos.length > 0) {
+    text += 'Eixos tematicos: ' + ev.eixos.join(', ') + '\n';
+  }
+  text += '\n';
+
+  text += '5. CONTEXTO\n';
   text += '-'.repeat(40) + '\n';
   text += 'Esta proposicao esta pautada para discussao/votacao no periodo de ' + formatDateBR(range[0]) + ' a ' + formatDateBR(range[1]) + '.\n';
   if (ev.situacao) text += 'Situacao do evento: ' + ev.situacao + '\n';
   text += '\n';
 
-  text += 'RECOMENDACAO\n';
+  text += '6. RECOMENDACAO\n';
   text += '-'.repeat(40) + '\n';
-  if (ev.relevanciaSebrae === 'Alta') {
+  var prioridade = getVal('cls-prioridade-' + uid);
+  var acao = getVal('cls-acao-' + uid);
+  if (prioridade.indexOf('P0') >= 0 || prioridade.indexOf('P1') >= 0) {
     text += 'PRIORIDADE ALTA: Acionar o NAL para articulacao imediata.\n';
     text += 'Verificar posicionamento institucional e mobilizar interlocutores.\n';
-  } else if (ev.relevanciaSebrae === 'Media') {
+  } else if (prioridade.indexOf('P2') >= 0) {
     text += 'MONITORAMENTO: Acompanhar resultado da sessao.\n';
     text += 'Preparar posicionamento caso a materia avance.\n';
   } else {
     text += 'INFORMATIVO: Registrar para acompanhamento futuro.\n';
   }
+  text += 'Acao recomendada: ' + acao + '\n';
 
   text += '\n---\nPIPPA Pauta Legislativa — Sebrae Nacional\n';
   text += 'Gerado automaticamente em ' + date + '\n';
 
-  document.getElementById('alertaContent').textContent = text;
-  openModal('alertaModal');
+  document.getElementById('minutaContent').textContent = text;
+  openModal('minutaModal');
 }
 
-function copyAlerta() {
-  var text = document.getElementById('alertaContent').textContent;
+function copyMinuta() {
+  var text = document.getElementById('minutaContent').textContent;
   navigator.clipboard.writeText(text).then(function(){
-    showToast('Nota de alerta copiada!');
+    showToast('Minuta tecnica copiada!');
   });
+}
+
+function saveClassification(uid) {
+  var getVal = function(id) {
+    var el = document.getElementById(id);
+    return el ? el.value : '';
+  };
+  var cls = {
+    papel: getVal('cls-papel-' + uid),
+    relevancia: getVal('cls-relevancia-' + uid),
+    aderencia: getVal('cls-aderencia-' + uid),
+    eixo: getVal('cls-eixo-' + uid),
+    impacto: getVal('cls-impacto-' + uid),
+    abrangencia: getVal('cls-abrangencia-' + uid),
+    tramitacao: getVal('cls-tramitacao-' + uid),
+    prioridade: getVal('cls-prioridade-' + uid),
+    acao: getVal('cls-acao-' + uid),
+    institucional: getVal('cls-institucional-' + uid),
+    grau: getVal('cls-grau-' + uid),
+    posicionamento: getVal('cls-posicionamento-' + uid)
+  };
+  try {
+    var saved = JSON.parse(localStorage.getItem('pippa-pauta-classifications') || '{}');
+    saved[uid] = cls;
+    localStorage.setItem('pippa-pauta-classifications', JSON.stringify(saved));
+    showToast('Classificacao salva com sucesso!');
+  } catch(e) {
+    showToast('Erro ao salvar classificacao');
+  }
 }
 
 // =====================================================
