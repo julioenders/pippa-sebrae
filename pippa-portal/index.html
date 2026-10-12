@@ -378,6 +378,50 @@ const TOOLS = [
     descricao: "Documento de escopo completo para a implantação nacional da PIPPA em 2027. Estruturado em gestão ágil (Scrum), cobre os 3 eixos da plataforma (Nacional, Estadual e Aplicada) com 15 epics, 69 features, 17 sprints, 4 releases trimestrais e orçamento de R$ 2.015.000. Inclui radar de maturidade do observatório com 6 dimensões, OKRs, matriz RACI, gestão de riscos, glossário interativo e linha do tempo de marcos críticos.",
     features: ["3 eixos: Nacional, Estadual, Aplicada", "15 epics e 69 features (MoSCoW)", "4 releases trimestrais com gates", "Radar de Maturidade — 6 dimensões de OI", "Equipe ARP: Eng. Dados Sr + BI + UX", "Orçamento R$ 2.015.000", "OKRs, RACI e gestão de riscos", "Governança Scrum + Kanban", "Glossário interativo com busca", "Metodologia do livro integrada"],
     destaque: "Planejamento completo da implantação nacional. 3 eixos, 15 epics, 17 sprints ao longo de 2027 — do data lake com 36 cubos OLAP à replicação em 5+ estados e ao TransformaLab. Inclui radar de maturidade do observatório em 6 dimensões com evolução projetada por release."
+  },
+  {
+    id: "stakeholders",
+    nome: "PIPPA Stakeholders (teste)",
+    subtitulo: "Mapa Parlamentar — CRM Legislativo",
+    accent: "#f59e0b",
+    icon: "👥",
+    url: "../pippa-stakeholders/index.html",
+    descricao: "CRM visual de parlamentares relevantes para MPEs. Mapeia deputados e senadores com perfil de atuacao, frentes parlamentares (Empreendedorismo, Simples, Desburocratizacao), composicao de comissoes-chave (CDEICS, CAE, CFT) e dados de gabinete via APIs da Camara e do Senado.",
+    features: ["Deputados e Senadores com foto", "Frentes parlamentares relevantes", "Comissoes-chave mapeadas", "Filtros por partido, UF, frente, comissao", "Detalhes de gabinete via API", "Busca por nome"],
+    destaque: "Saiba quem articular sobre o que. O mapa parlamentar cruza frentes parlamentares e comissoes com perfis de cada deputado e senador — o braco tatico do NAL para articulacao legislativa."
+  },
+  {
+    id: "credito",
+    nome: "PIPPA Credito e Fomento (teste)",
+    subtitulo: "Radar de Oportunidades para MPEs",
+    accent: "#22c55e",
+    icon: "💳",
+    url: "../pippa-credito-fomento/index.html",
+    descricao: "Radar de indicadores de credito e fomento para MPEs via BCB SGS. Monitora Selic, IPCA, saldo de credito PJ, inadimplencia, taxas medias de juros, concessoes e spread — 14 series do Banco Central com historico de 24 meses e graficos interativos.",
+    features: ["14 series BCB SGS", "Selic, IPCA, Credito PJ", "Inadimplencia e taxas PJ", "Graficos historicos", "Tabelas com 24 meses", "Filtros por grupo"],
+    destaque: "Acompanhe o cenario de credito que afeta MPEs. Da Selic ao spread bancario, o radar consolida indicadores do Banco Central que orientam a articulacao do SEBRAE em politicas de credito e fomento."
+  },
+  {
+    id: "consultas",
+    nome: "PIPPA Consultas Publicas (teste)",
+    subtitulo: "Monitor de Participacao Social",
+    accent: "#06b6d4",
+    icon: "📢",
+    url: "../pippa-consultas-publicas/index.html",
+    descricao: "Monitor de audiencias e consultas publicas da Camara e do Senado onde o SEBRAE pode incidir antes das normas serem publicadas. Busca eventos de audiencia publica, seminarios e reunioes deliberativas, classificando automaticamente a relevancia para MPEs.",
+    features: ["Audiencias publicas da Camara", "Agenda plenaria do Senado", "Classificacao SEBRAE automatica", "Agrupamento por status (Aberta/Futura/Encerrada)", "Filtros por orgao e relevancia", "Incidencia pre-normativa"],
+    destaque: "Incida antes que a norma saia. O monitor identifica audiencias publicas e consultas onde o SEBRAE pode se posicionar — complementando o Regulatorio que monitora normas ja publicadas."
+  },
+  {
+    id: "impacto",
+    nome: "PIPPA Impacto (teste)",
+    subtitulo: "Portfolio de Evidencias — Prestacao de Contas",
+    accent: "#f472b6",
+    icon: "📊",
+    url: "../pippa-impacto/index.html",
+    descricao: "Dashboard consolidado de resultados do ecossistema PIPPA. Mapeia todas as ferramentas ativas, eixos de atuacao, APIs integradas e indicadores monitorados — visao de portfolio para prestacao de contas da UPP.",
+    features: ["13+ ferramentas mapeadas", "6 eixos de atuacao", "APIs integradas consolidadas", "Graficos de cobertura", "Links diretos para cada dashboard", "Prestacao de contas UPP"],
+    destaque: "Visao panoramica do impacto. Consolida todo o ecossistema PIPPA em um portfolio de evidencias — quantas ferramentas, APIs, indicadores e eixos o observatorio cobre para a UPP."
   }
 ];
 
@@ -410,7 +454,20 @@ const QUESTIONS = [
   { texto: "Como funcionam os laboratorios de experimentacao?", ferramentas: ["transformalab"], macro: "experimentacao" },
   { texto: "Quero ver evidencias de impacto em politicas publicas", ferramentas: ["transformalab", "catalogo", "prototipo"], macro: "experimentacao" },
   { texto: "Quais dados tenho disponiveis para analise?", ferramentas: ["catalogo"], macro: "experimentacao" },
-  { texto: "Quero ver a plataforma em producao", ferramentas: ["prototipo"], macro: "experimentacao" }
+  { texto: "Quero ver a plataforma em producao", ferramentas: ["prototipo"], macro: "experimentacao" },
+  { texto: "Quais parlamentares atuam em frentes relevantes para MPEs? (teste)", ferramentas: ["stakeholders"], macro: "legislativo" },
+  { texto: "Quem sao os deputados na CDEICS e na CFT? (teste)", ferramentas: ["stakeholders"], macro: "legislativo" },
+  { texto: "Qual parlamentar articular sobre Simples Nacional? (teste)", ferramentas: ["stakeholders", "legislativo"], macro: "legislativo" },
+  { texto: "Como esta a Selic e o credito para PJ? (teste)", ferramentas: ["credito"], macro: "orcamento" },
+  { texto: "Qual a taxa media de juros para pequenas empresas? (teste)", ferramentas: ["credito"], macro: "orcamento" },
+  { texto: "Qual o cenario de inadimplencia e spread bancario? (teste)", ferramentas: ["credito"], macro: "orcamento" },
+  { texto: "Quais audiencias publicas estao abertas esta semana? (teste)", ferramentas: ["consultas"], macro: "legislativo" },
+  { texto: "Onde o SEBRAE pode incidir antes das normas sairem? (teste)", ferramentas: ["consultas", "regulatorio"], macro: "legislativo" },
+  { texto: "Quais consultas publicas sao relevantes para MPEs? (teste)", ferramentas: ["consultas"], macro: "legislativo" },
+  { texto: "Qual o impacto consolidado das ferramentas PIPPA? (teste)", ferramentas: ["impacto"], macro: "estrategia" },
+  { texto: "Quantas APIs e indicadores o observatorio monitora? (teste)", ferramentas: ["impacto"], macro: "estrategia" },
+  { texto: "Quero uma visao de portfolio de evidencias da UPP (teste)", ferramentas: ["impacto", "atuacaoupp"], macro: "estrategia" },
+  { texto: "Preciso de um panorama completo de articulacao legislativa (teste)", ferramentas: ["stakeholders", "legislativo", "consultas", "regulatorio"], macro: "legislativo" }
 ];
 
 const MACRO_TEMAS = [
