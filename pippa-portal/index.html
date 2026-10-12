@@ -167,8 +167,8 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
   <h1 class="hero-title">PIPPA</h1>
   <p class="hero-subtitle">Plataforma de Inteligencia em Politicas Publicas Aplicadas — ferramentas de monitoramento legislativo, orcamentario e territorial.</p>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">15</div><div class="hero-stat-label">Ferramentas</div></div>
-    <div class="hero-stat"><div class="hero-stat-value">15</div><div class="hero-stat-label">Dashboards</div></div>
+    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">19</div><div class="hero-stat-label">Ferramentas</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">19</div><div class="hero-stat-label">Dashboards</div></div>
     <div class="hero-stat"><div class="hero-stat-value">23</div><div class="hero-stat-label">Fontes de Dados</div></div>
     <div class="hero-stat"><div class="hero-stat-value">58</div><div class="hero-stat-label">Cubos Analiticos</div></div>
   </div>
@@ -192,8 +192,8 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
     <div class="sidebar-desc">Selecione uma necessidade para filtrar as ferramentas.</div>
     <div class="questions-wrap" id="questionsWrap"></div>
     <div class="sidebar-stats">
-      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">15</div><div class="sidebar-stat-lbl">Visiveis</div></div>
-      <div class="sidebar-stat"><div class="sidebar-stat-val">15</div><div class="sidebar-stat-lbl">Total</div></div>
+      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">19</div><div class="sidebar-stat-lbl">Visiveis</div></div>
+      <div class="sidebar-stat"><div class="sidebar-stat-val">19</div><div class="sidebar-stat-lbl">Total</div></div>
     </div>
   </div>
 </aside>
@@ -201,7 +201,7 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
 <section class="grid-section">
   <div class="grid-header">
     <h2>Ferramentas Disponiveis</h2>
-    <div class="grid-count">Exibindo <span id="showCount">15</span> de 15</div>
+    <div class="grid-count">Exibindo <span id="showCount">19</span> de 19</div>
   </div>
   <div class="cards" id="cardsGrid"></div>
 </section>
@@ -381,7 +381,7 @@ const TOOLS = [
   },
   {
     id: "stakeholders",
-    nome: "PIPPA Stakeholders (teste)",
+    nome: "PIPPA Stakeholders",
     subtitulo: "Mapa Parlamentar — CRM Legislativo",
     accent: "#f59e0b",
     icon: "👥",
@@ -392,7 +392,7 @@ const TOOLS = [
   },
   {
     id: "credito",
-    nome: "PIPPA Credito e Fomento (teste)",
+    nome: "PIPPA Credito e Fomento",
     subtitulo: "Radar de Oportunidades para MPEs",
     accent: "#22c55e",
     icon: "💳",
@@ -403,7 +403,7 @@ const TOOLS = [
   },
   {
     id: "consultas",
-    nome: "PIPPA Consultas Publicas (teste)",
+    nome: "PIPPA Consultas Publicas",
     subtitulo: "Monitor de Participacao Social",
     accent: "#06b6d4",
     icon: "📢",
@@ -414,13 +414,13 @@ const TOOLS = [
   },
   {
     id: "impacto",
-    nome: "PIPPA Impacto (teste)",
+    nome: "PIPPA Impacto",
     subtitulo: "Portfolio de Evidencias — Prestacao de Contas",
     accent: "#f472b6",
     icon: "📊",
     url: "../pippa-impacto/index.html",
     descricao: "Dashboard consolidado de resultados do ecossistema PIPPA. Mapeia todas as ferramentas ativas, eixos de atuacao, APIs integradas e indicadores monitorados — visao de portfolio para prestacao de contas da UPP.",
-    features: ["13+ ferramentas mapeadas", "6 eixos de atuacao", "APIs integradas consolidadas", "Graficos de cobertura", "Links diretos para cada dashboard", "Prestacao de contas UPP"],
+    features: ["19 ferramentas mapeadas", "6 eixos de atuacao", "APIs integradas consolidadas", "Graficos de cobertura", "Links diretos para cada dashboard", "Prestacao de contas UPP"],
     destaque: "Visao panoramica do impacto. Consolida todo o ecossistema PIPPA em um portfolio de evidencias — quantas ferramentas, APIs, indicadores e eixos o observatorio cobre para a UPP."
   }
 ];
@@ -455,19 +455,20 @@ const QUESTIONS = [
   { texto: "Quero ver evidencias de impacto em politicas publicas", ferramentas: ["transformalab", "catalogo", "prototipo"], macro: "experimentacao" },
   { texto: "Quais dados tenho disponiveis para analise?", ferramentas: ["catalogo"], macro: "experimentacao" },
   { texto: "Quero ver a plataforma em producao", ferramentas: ["prototipo"], macro: "experimentacao" },
-  { texto: "Quais parlamentares atuam em frentes relevantes para MPEs? (teste)", ferramentas: ["stakeholders"], macro: "legislativo" },
-  { texto: "Quem sao os deputados na CDEICS e na CFT? (teste)", ferramentas: ["stakeholders"], macro: "legislativo" },
-  { texto: "Qual parlamentar articular sobre Simples Nacional? (teste)", ferramentas: ["stakeholders", "legislativo"], macro: "legislativo" },
-  { texto: "Como esta a Selic e o credito para PJ? (teste)", ferramentas: ["credito"], macro: "orcamento" },
-  { texto: "Qual a taxa media de juros para pequenas empresas? (teste)", ferramentas: ["credito"], macro: "orcamento" },
-  { texto: "Qual o cenario de inadimplencia e spread bancario? (teste)", ferramentas: ["credito"], macro: "orcamento" },
-  { texto: "Quais audiencias publicas estao abertas esta semana? (teste)", ferramentas: ["consultas"], macro: "legislativo" },
-  { texto: "Onde o SEBRAE pode incidir antes das normas sairem? (teste)", ferramentas: ["consultas", "regulatorio"], macro: "legislativo" },
-  { texto: "Quais consultas publicas sao relevantes para MPEs? (teste)", ferramentas: ["consultas"], macro: "legislativo" },
-  { texto: "Qual o impacto consolidado das ferramentas PIPPA? (teste)", ferramentas: ["impacto"], macro: "estrategia" },
-  { texto: "Quantas APIs e indicadores o observatorio monitora? (teste)", ferramentas: ["impacto"], macro: "estrategia" },
-  { texto: "Quero uma visao de portfolio de evidencias da UPP (teste)", ferramentas: ["impacto", "atuacaoupp"], macro: "estrategia" },
-  { texto: "Preciso de um panorama completo de articulacao legislativa (teste)", ferramentas: ["stakeholders", "legislativo", "consultas", "regulatorio"], macro: "legislativo" }
+  { texto: "Quais parlamentares atuam em frentes relevantes para MPEs?", ferramentas: ["stakeholders"], macro: "legislativo" },
+  { texto: "Quem sao os deputados nas comissoes-chave (CDEICS, CFT, CAE)?", ferramentas: ["stakeholders"], macro: "legislativo" },
+  { texto: "Qual parlamentar articular sobre Simples Nacional?", ferramentas: ["stakeholders", "legislativo"], macro: "legislativo" },
+  { texto: "Quais audiencias publicas estao abertas esta semana?", ferramentas: ["consultas"], macro: "legislativo" },
+  { texto: "Onde o SEBRAE pode incidir antes das normas sairem?", ferramentas: ["consultas", "regulatorio"], macro: "legislativo" },
+  { texto: "Quais consultas publicas sao relevantes para MPEs?", ferramentas: ["consultas"], macro: "legislativo" },
+  { texto: "Preciso de um panorama completo de articulacao legislativa", ferramentas: ["stakeholders", "legislativo", "consultas", "regulatorio"], macro: "legislativo" },
+  { texto: "Como esta a Selic e o credito para PJ?", ferramentas: ["credito"], macro: "orcamento" },
+  { texto: "Qual a taxa media de juros para pequenas empresas?", ferramentas: ["credito"], macro: "orcamento" },
+  { texto: "Qual o cenario de inadimplencia e spread bancario?", ferramentas: ["credito"], macro: "orcamento" },
+  { texto: "Preciso de uma visao completa de credito e orcamento", ferramentas: ["credito", "orcamento", "emendas"], macro: "orcamento" },
+  { texto: "Qual o impacto consolidado das ferramentas PIPPA?", ferramentas: ["impacto"], macro: "estrategia" },
+  { texto: "Quantas APIs e indicadores o observatorio monitora?", ferramentas: ["impacto"], macro: "estrategia" },
+  { texto: "Quero uma visao de portfolio de evidencias da UPP", ferramentas: ["impacto", "atuacaoupp"], macro: "estrategia" }
 ];
 
 const MACRO_TEMAS = [
