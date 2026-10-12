@@ -132,6 +132,35 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .pauta-kw{font-size:10px;background:rgba(34,197,94,.12);color:var(--success);padding:1px 6px;border-radius:8px}
 .no-pauta{font-size:13px;color:var(--text-muted);font-style:italic;padding:8px 0}
 
+.pauta-item-card{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px;overflow:hidden;transition:border-color .2s;list-style:none}
+.pauta-item-card:hover{border-color:var(--accent)}
+.pauta-item-card.pauta-sebrae-match{border-left:3px solid var(--success)}
+.pauta-item-header{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;cursor:pointer}
+.pauta-item-arrow{font-size:18px;color:var(--text-muted);transition:transform .2s;flex-shrink:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:4px}
+.pauta-item-arrow:hover{background:var(--surface2)}
+.pauta-item-card.open .pauta-item-arrow{transform:rotate(90deg)}
+.pauta-item-detail{display:none;border-top:1px solid var(--border);padding:14px}
+.pauta-item-card.open .pauta-item-detail{display:block}
+
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:12px}
+.detail-item{display:flex;flex-direction:column;gap:2px}
+.detail-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
+.detail-value{font-size:13px;color:var(--text);line-height:1.5}
+
+.action-buttons{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn-action{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:var(--radius);font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;font-family:inherit}
+.btn-action:hover{border-color:var(--accent);color:var(--accent)}
+
+.tramitacao-list{display:flex;flex-direction:column;gap:0}
+.tramitacao-item{padding:10px 0;border-bottom:1px solid var(--border);position:relative;padding-left:14px}
+.tramitacao-item::before{content:'';position:absolute;left:0;top:16px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.tramitacao-item:last-child{border:none}
+.tramitacao-date{font-size:11px;color:var(--accent);font-weight:600}
+.tramitacao-desc{font-size:13px;color:var(--text-muted);margin-top:2px;line-height:1.5}
+.tramitacao-orgao{font-size:11px;color:var(--text-muted);margin-top:2px;font-style:italic}
+
+.mini-spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;display:inline-block}
+
 .empty-state{text-align:center;padding:80px 20px;color:var(--text-muted)}
 .empty-state .icon{font-size:48px;margin-bottom:12px}
 .empty-state h3{font-size:18px;margin-bottom:8px;color:var(--text)}
@@ -445,6 +474,29 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal('exportModal')">Fechar</button>
       <button class="btn" onclick="copyExport()">&#128203; Copiar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="tramitacaoModal" onclick="if(event.target===this)closeModal(this.id)">
+  <div class="modal">
+    <div class="modal-title" id="tramitacaoTitle">Historico de Tramitacao</div>
+    <div id="tramitacaoContent">
+      <div style="text-align:center;padding:20px;color:var(--text-muted)">Selecione um item de pauta para ver a tramitacao.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('tramitacaoModal')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="alertaModal" onclick="if(event.target===this)closeModal(this.id)">
+  <div class="modal">
+    <div class="modal-title">Nota de Alerta — Pauta Legislativa</div>
+    <pre class="modal-content" id="alertaContent" style="white-space:pre-wrap;font-family:inherit"></pre>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('alertaModal')">Fechar</button>
+      <button class="btn" onclick="copyAlerta()">&#128203; Copiar</button>
     </div>
   </div>
 </div>
@@ -1104,23 +1156,62 @@ function renderEvents() {
 
       if (ev.pauta.length > 0) {
         html += '<div style="font-size:13px;font-weight:600;margin-bottom:8px">Itens na Pauta (' + ev.pauta.length + ')</div>';
-        html += '<ul class="pauta-list">';
-        ev.pauta.forEach(function(p) {
+        html += '<ul class="pauta-list" style="list-style:none">';
+        ev.pauta.forEach(function(p, pIdx) {
           var isMatch = p.matchedKeywords && p.matchedKeywords.length > 0;
-          html += '<li class="pauta-item' + (isMatch?' pauta-sebrae-match':'') + '">';
-          html += '<div class="pauta-sigla">' + escapeHtml(p.sigla);
-          if (p.url) html += ' <a href="' + p.url + '" target="_blank" style="font-size:11px;color:var(--accent)">&#8599;</a>';
-          html += '</div>';
-          html += '<div style="flex:1">';
-          html += '<div class="pauta-ementa">' + escapeHtml(p.ementa || 'Ementa nao disponivel') + '</div>';
-          if (p.relator) html += '<div class="pauta-relator">Relator: ' + escapeHtml(p.relator) + '</div>';
-          if (p.regime) html += '<div class="pauta-regime">' + escapeHtml(p.regime) + '</div>';
+          var itemId = ev.id + '-' + pIdx;
+          var casaLabel = ev.casa === 'camara' ? 'Camara dos Deputados' : 'Senado Federal';
+
+          html += '<li class="pauta-item-card' + (isMatch ? ' pauta-sebrae-match' : '') + '" id="pi-' + itemId + '">';
+
+          html += '<div class="pauta-item-header" onclick="togglePautaItem(\'' + itemId + '\')">';
+          html += '<div class="pauta-sigla">' + escapeHtml(p.sigla) + '</div>';
+          html += '<div style="flex:1;min-width:0">';
+          var shortEmenta = (p.ementa || 'Ementa nao disponivel');
+          if (shortEmenta.length > 150) shortEmenta = shortEmenta.substring(0,147) + '...';
+          html += '<div class="pauta-ementa">' + escapeHtml(shortEmenta) + '</div>';
           if (isMatch) {
-            html += '<div class="pauta-keywords">';
+            html += '<div class="pauta-keywords" style="margin-top:4px">';
             var unique = p.matchedKeywords.filter(function(v,i,a){return a.indexOf(v)===i});
-            unique.forEach(function(kw){ html += '<span class="pauta-kw">' + escapeHtml(kw) + '</span>'; });
+            unique.slice(0,3).forEach(function(kw){ html += '<span class="pauta-kw">' + escapeHtml(kw) + '</span>'; });
+            if (unique.length > 3) html += '<span class="pauta-kw">+' + (unique.length-3) + '</span>';
             html += '</div>';
           }
+          html += '</div>';
+          html += '<span class="pauta-item-arrow">&#8250;</span>';
+          html += '</div>';
+
+          html += '<div class="pauta-item-detail">';
+          html += '<div class="detail-grid">';
+          html += '<div class="detail-item"><span class="detail-label">Proposicao</span><span class="detail-value">' + escapeHtml(p.sigla) + '</span></div>';
+          html += '<div class="detail-item"><span class="detail-label">Casa</span><span class="detail-value">' + casaLabel + '</span></div>';
+          if (p.relator) html += '<div class="detail-item"><span class="detail-label">Relator</span><span class="detail-value">' + escapeHtml(p.relator) + '</span></div>';
+          if (p.regime) html += '<div class="detail-item"><span class="detail-label">Regime / Objetivo</span><span class="detail-value">' + escapeHtml(p.regime) + '</span></div>';
+          html += '<div class="detail-item"><span class="detail-label">Evento</span><span class="detail-value">' + escapeHtml(ev.titulo) + ' — ' + escapeHtml(ev.orgao) + '</span></div>';
+          html += '<div class="detail-item"><span class="detail-label">Data / Hora</span><span class="detail-value">' + formatDateBR((ev.dataHora||'').substring(0,10)) + ' ' + formatTime(ev.dataHora) + '</span></div>';
+          html += '<div class="detail-item" style="grid-column:1/-1"><span class="detail-label">Ementa Completa</span><span class="detail-value">' + escapeHtml(p.ementa || 'Nao disponivel') + '</span></div>';
+          if (isMatch) {
+            html += '<div class="detail-item" style="grid-column:1/-1"><span class="detail-label">Relevancia SEBRAE</span><span class="detail-value"><div class="pauta-keywords">';
+            var uniqueAll = p.matchedKeywords.filter(function(v,i,a){return a.indexOf(v)===i});
+            uniqueAll.forEach(function(kw){ html += '<span class="pauta-kw">' + escapeHtml(kw) + '</span>'; });
+            html += '</div></span></div>';
+          }
+          html += '</div>';
+
+          html += '<div class="action-buttons">';
+          if (p.id) {
+            html += '<button class="btn-action" onclick="event.stopPropagation();openTramitacoes(\'' + p.id + '\',\'' + ev.casa + '\',\'' + escapeHtml(p.sigla).replace(/'/g,"\\'") + '\')">&#128195; Tramitacao</button>';
+          }
+          html += '<button class="btn-action" onclick="event.stopPropagation();generateAlerta(\'' + ev.id + '\',' + pIdx + ')">&#128221; Nota de Alerta</button>';
+          if (p.url) {
+            html += '<a href="' + p.url + '" target="_blank" rel="noopener" class="btn-action" onclick="event.stopPropagation()" style="text-decoration:none">&#128279; Acessar Materia</a>';
+          }
+          html += '</div>';
+
+          if (p.id && ev.casa === 'camara') {
+            html += '<div id="extra-' + itemId + '" style="margin-top:10px"></div>';
+          }
+
           html += '</div>';
           html += '</li>';
         });
@@ -1216,6 +1307,211 @@ function showToast(msg) {
 function escapeHtml(s) {
   if (!s) return '';
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// =====================================================
+// PAUTA ITEM DETAILS
+// =====================================================
+function togglePautaItem(itemId) {
+  var card = document.getElementById('pi-'+itemId);
+  if (!card) return;
+  var wasOpen = card.classList.contains('open');
+  card.classList.toggle('open');
+
+  if (!wasOpen && !card.dataset.loaded) {
+    var parts = itemId.split('-');
+    var evId = parts.slice(0,2).join('-');
+    var pIdx = parseInt(parts[2]);
+    var ev = allEvents.find(function(e){return e.id===evId});
+    if (ev && ev.casa === 'camara' && ev.pauta[pIdx] && ev.pauta[pIdx].id) {
+      fetchProposicaoDetails(ev.pauta[pIdx].id, itemId);
+    }
+    card.dataset.loaded = '1';
+  }
+}
+
+async function fetchProposicaoDetails(propId, itemId) {
+  var container = document.getElementById('extra-'+itemId);
+  if (!container) return;
+  container.innerHTML = '<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted);padding:8px 0"><div class="mini-spinner"></div>Buscando detalhes da proposicao...</div>';
+
+  try {
+    var resp = await fetch('https://dadosabertos.camara.leg.br/api/v2/proposicoes/'+propId);
+    if (!resp.ok) throw new Error('HTTP '+resp.status);
+    var json = await resp.json();
+    var d = json.dados;
+    if (!d) { container.innerHTML = ''; return; }
+
+    var html = '<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-top:8px">';
+    html += '<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Detalhes via API</div>';
+    html += '<div class="detail-grid">';
+    if (d.statusProposicao) {
+      var st = d.statusProposicao;
+      if (st.siglaOrgao) html += '<div class="detail-item"><span class="detail-label">Local Atual</span><span class="detail-value" style="color:var(--blue)">' + escapeHtml(st.siglaOrgao) + '</span></div>';
+      if (st.descricaoSituacao) html += '<div class="detail-item"><span class="detail-label">Situacao</span><span class="detail-value" style="color:var(--purple)">' + escapeHtml(st.descricaoSituacao) + '</span></div>';
+      if (st.despacho) html += '<div class="detail-item" style="grid-column:1/-1"><span class="detail-label">Ultimo Despacho</span><span class="detail-value">' + escapeHtml(st.despacho) + '</span></div>';
+    }
+    if (d.dataApresentacao) html += '<div class="detail-item"><span class="detail-label">Data Apresentacao</span><span class="detail-value">' + formatDateBR(d.dataApresentacao) + '</span></div>';
+    if (d.keywords) html += '<div class="detail-item"><span class="detail-label">Palavras-chave</span><span class="detail-value">' + escapeHtml(d.keywords) + '</span></div>';
+    if (d.urlInteiroTeor) html += '<div class="detail-item"><span class="detail-label">Inteiro Teor</span><span class="detail-value"><a href="' + d.urlInteiroTeor + '" target="_blank" style="color:var(--accent)">Baixar PDF &#8599;</a></span></div>';
+    html += '</div></div>';
+    container.innerHTML = html;
+  } catch(e) {
+    container.innerHTML = '<div style="font-size:12px;color:var(--danger);padding:4px 0">Nao foi possivel carregar detalhes: ' + escapeHtml(e.message) + '</div>';
+  }
+}
+
+// =====================================================
+// TRAMITACAO
+// =====================================================
+async function openTramitacoes(id, casa, sigla) {
+  var modal = document.getElementById('tramitacaoModal');
+  var content = document.getElementById('tramitacaoContent');
+  var title = document.getElementById('tramitacaoTitle');
+
+  title.textContent = 'Historico de Tramitacao — ' + (sigla || id);
+  content.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted)"><div class="mini-spinner" style="margin:0 auto 8px"></div>Carregando tramitacoes...</div>';
+  openModal('tramitacaoModal');
+
+  try {
+    var tramitacoes = [];
+
+    if (casa === 'camara') {
+      var resp = await fetch('https://dadosabertos.camara.leg.br/api/v2/proposicoes/'+id+'/tramitacoes');
+      if (resp.ok) {
+        var json = await resp.json();
+        if (json.dados) {
+          tramitacoes = json.dados.map(function(t){
+            return {
+              data: t.dataHora ? t.dataHora.split('T')[0] : '',
+              descricao: t.descricaoTramitacao || t.despacho || '',
+              orgao: t.siglaOrgao || '',
+              situacao: t.descricaoSituacao || ''
+            };
+          });
+          tramitacoes.sort(function(a,b){return b.data.localeCompare(a.data)});
+        }
+      }
+    } else {
+      var resp2 = await fetch('https://legis.senado.leg.br/dadosabertos/materia/movimentacoes/'+id, {headers:{'Accept':'application/json'}});
+      if (resp2.ok) {
+        var json2 = await resp2.json();
+        var movs = json2 && json2.MovimentacaoMateria && json2.MovimentacaoMateria.Materia;
+        if (movs) {
+          var autuacoes = ensureArray((movs.Autuacoes || {}).Autuacao);
+          autuacoes.forEach(function(aut){
+            var informes = ensureArray((aut.InformesLegislativos || {}).InformeLegislativo);
+            informes.forEach(function(inf){
+              tramitacoes.push({
+                data: (inf.Data || '').substring(0,10),
+                descricao: inf.Descricao || '',
+                orgao: (inf.Colegiado || {}).SiglaColegiado || (inf.Local || {}).SiglaLocal || '',
+                situacao: (inf.SituacaoIniciada || {}).SiglaSituacao || ''
+              });
+            });
+          });
+          tramitacoes = tramitacoes.filter(function(t){return t.descricao});
+          tramitacoes.sort(function(a,b){return b.data.localeCompare(a.data)});
+        }
+      }
+    }
+
+    if (tramitacoes.length === 0) {
+      content.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted)">Nenhuma tramitacao encontrada para esta materia.</div>';
+      return;
+    }
+
+    var html = '<div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">' + tramitacoes.length + ' movimentacao(oes) encontrada(s)</div>';
+    html += '<div class="tramitacao-list">';
+    tramitacoes.forEach(function(t){
+      html += '<div class="tramitacao-item">';
+      html += '<div class="tramitacao-date">' + t.data + '</div>';
+      html += '<div class="tramitacao-desc">' + escapeHtml(t.descricao) + '</div>';
+      if (t.orgao) html += '<div class="tramitacao-orgao">' + escapeHtml(t.orgao) + (t.situacao ? ' — ' + escapeHtml(t.situacao) : '') + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    content.innerHTML = html;
+  } catch(e) {
+    content.innerHTML = '<div style="text-align:center;padding:20px;color:var(--danger)">Erro ao carregar tramitacoes: ' + escapeHtml(e.message) + '</div>';
+  }
+}
+
+// =====================================================
+// NOTA DE ALERTA
+// =====================================================
+function generateAlerta(evId, pIdx) {
+  var ev = allEvents.find(function(e){return e.id===evId});
+  if (!ev || !ev.pauta[pIdx]) return;
+  var p = ev.pauta[pIdx];
+  var date = new Date().toLocaleDateString('pt-BR');
+  var range = getDateRange();
+
+  var text = 'NOTA DE ALERTA — PAUTA LEGISLATIVA\n';
+  text += 'Sebrae Nacional — Observatorio Setorial Territorial\n';
+  text += 'Data de emissao: ' + date + '\n';
+  text += '='.repeat(60) + '\n\n';
+
+  text += 'PROPOSICAO: ' + p.sigla + '\n';
+  text += 'CASA: ' + (ev.casa === 'camara' ? 'Camara dos Deputados' : 'Senado Federal') + '\n';
+  text += 'EVENTO: ' + ev.titulo + '\n';
+  text += 'ORGAO: ' + ev.orgao + '\n';
+  text += 'DATA PREVISTA: ' + formatDateBR((ev.dataHora||'').substring(0,10)) + ' ' + formatTime(ev.dataHora) + '\n';
+  if (ev.local) text += 'LOCAL: ' + ev.local + '\n';
+  if (p.relator) text += 'RELATOR: ' + p.relator + '\n';
+  if (p.regime) text += 'REGIME: ' + p.regime + '\n';
+  if (p.url) text += 'LINK: ' + p.url + '\n';
+  text += '\n';
+
+  text += 'EMENTA\n';
+  text += '-'.repeat(40) + '\n';
+  text += (p.ementa || 'Nao disponivel') + '\n\n';
+
+  var isMatch = p.matchedKeywords && p.matchedKeywords.length > 0;
+  if (isMatch || ev.relevanciaSebrae) {
+    text += 'ANALISE DE RELEVANCIA SEBRAE\n';
+    text += '-'.repeat(40) + '\n';
+    text += 'Relevancia do evento: ' + (ev.relevanciaSebrae || 'Nao classificada') + '\n';
+    if (isMatch) {
+      var unique = p.matchedKeywords.filter(function(v,i,a){return a.indexOf(v)===i});
+      text += 'Palavras-chave identificadas: ' + unique.join(', ') + '\n';
+    }
+    if (ev.eixos.length > 0) {
+      text += 'Eixos tematicos: ' + ev.eixos.join(', ') + '\n';
+    }
+    text += '\n';
+  }
+
+  text += 'CONTEXTO\n';
+  text += '-'.repeat(40) + '\n';
+  text += 'Esta proposicao esta pautada para discussao/votacao no periodo de ' + formatDateBR(range[0]) + ' a ' + formatDateBR(range[1]) + '.\n';
+  if (ev.situacao) text += 'Situacao do evento: ' + ev.situacao + '\n';
+  text += '\n';
+
+  text += 'RECOMENDACAO\n';
+  text += '-'.repeat(40) + '\n';
+  if (ev.relevanciaSebrae === 'Alta') {
+    text += 'PRIORIDADE ALTA: Acionar o NAL para articulacao imediata.\n';
+    text += 'Verificar posicionamento institucional e mobilizar interlocutores.\n';
+  } else if (ev.relevanciaSebrae === 'Media') {
+    text += 'MONITORAMENTO: Acompanhar resultado da sessao.\n';
+    text += 'Preparar posicionamento caso a materia avance.\n';
+  } else {
+    text += 'INFORMATIVO: Registrar para acompanhamento futuro.\n';
+  }
+
+  text += '\n---\nPIPPA Pauta Legislativa — Sebrae Nacional\n';
+  text += 'Gerado automaticamente em ' + date + '\n';
+
+  document.getElementById('alertaContent').textContent = text;
+  openModal('alertaModal');
+}
+
+function copyAlerta() {
+  var text = document.getElementById('alertaContent').textContent;
+  navigator.clipboard.writeText(text).then(function(){
+    showToast('Nota de alerta copiada!');
+  });
 }
 
 // =====================================================
