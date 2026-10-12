@@ -1146,45 +1146,12 @@ function updateCharts() {
 function renderEvents() {
   var container = document.getElementById('eventsContainer');
 
-  // Flatten all pauta items into propositions
-  var propositions = [];
-  filteredEvents.forEach(function(ev) {
-    ev.pauta.forEach(function(p, pIdx) {
-      propositions.push({
-        sigla: p.sigla,
-        ementa: p.ementa,
-        relator: p.relator,
-        regime: p.regime,
-        url: p.url,
-        propId: p.id,
-        matchedKeywords: p.matchedKeywords || [],
-        relevancia: p.relevancia,
-        eixos: p.eixos || [],
-        eventId: ev.id,
-        pIdx: pIdx,
-        casa: ev.casa,
-        tipo: ev.tipo,
-        orgao: ev.orgao,
-        titulo: ev.titulo,
-        dataHora: ev.dataHora,
-        local: ev.local,
-        situacao: ev.situacao,
-        situacaoNorm: ev.situacaoNorm
-      });
-    });
-  });
-
-  if (propositions.length === 0 && filteredEvents.length === 0) {
+  if (filteredEvents.length === 0) {
     container.innerHTML = '<div class="empty-state"><div class="icon">&#128203;</div><h3>Painel de Monitoramento — Pauta Legislativa</h3><p>Selecione o periodo e clique em <strong>Consultar APIs</strong> para buscar a pauta.</p></div>';
     return;
   }
 
-  if (propositions.length === 0) {
-    container.innerHTML = '<div class="empty-state"><div class="icon">&#128203;</div><h3>Nenhuma proposicao com os filtros atuais</h3><p>Tente limpar os filtros ou selecionar outro periodo. Foram encontrados ' + filteredEvents.length + ' eventos, mas nenhum com itens de pauta registrados.</p></div>';
-    return;
-  }
-
-  // Group by tipo (Plenario, Comissoes, Audiencias, Outros)
+  // Group events by tipo (Plenario, Comissoes, Audiencias, Outros)
   var groups = {
     'Plenario': { label: 'Plenario', color: '#ffc542', icon: '&#127963;', items: [] },
     'Comissao': { label: 'Comissoes', color: '#4ecdc4', icon: '&#128101;', items: [] },
@@ -1192,18 +1159,17 @@ function renderEvents() {
     'Outros': { label: 'Outros', color: '#8b8fa8', icon: '&#128196;', items: [] }
   };
 
-  propositions.forEach(function(p) {
-    var key = p.tipo || 'Outros';
+  filteredEvents.forEach(function(ev) {
+    var key = ev.tipo || 'Outros';
     if (!groups[key]) key = 'Outros';
-    groups[key].items.push(p);
+    groups[key].items.push(ev);
   });
 
-  // Sort within each group by date
   Object.keys(groups).forEach(function(k) {
     groups[k].items.sort(function(a,b){ return (a.dataHora||'').localeCompare(b.dataHora||''); });
   });
 
-  var html = '<div class="section-header"><div class="section-title">Proposicoes na Pauta</div><div class="section-count">' + propositions.length + ' proposicoes</div></div>';
+  var html = '<div class="section-header"><div class="section-title">Pautas Legislativas</div><div class="section-count">' + filteredEvents.length + ' pautas</div></div>';
 
   ['Plenario','Comissao','Audiencia','Outros'].forEach(function(key) {
     var group = groups[key];
@@ -1212,191 +1178,123 @@ function renderEvents() {
     html += '<div class="priority-group">';
     html += '<div class="priority-group-header" style="color:' + group.color + ';border-bottom-color:' + group.color + '">';
     html += group.icon + ' ' + group.label;
-    html += '<span class="priority-group-count">' + group.items.length + ' proposicoes</span>';
+    html += '<span class="priority-group-count">' + group.items.length + ' pautas</span>';
     html += '</div>';
 
-    group.items.forEach(function(p) {
-      var uid = p.eventId + '-' + p.pIdx;
-      var casaClass = p.casa === 'camara' ? 'casa-camara' : 'casa-senado';
-      var casaLabel = p.casa === 'camara' ? 'CAMARA' : 'SENADO';
-      var priClass = p.relevancia === 'Alta' ? 'priority-alta' : p.relevancia === 'Media' ? 'priority-media' : p.relevancia === 'Baixa' ? 'priority-baixa' : 'priority-none';
-      var priLabel = p.relevancia || '—';
+    group.items.forEach(function(ev) {
+      var uid = ev.id;
+      var casaClass = ev.casa === 'camara' ? 'casa-camara' : 'casa-senado';
+      var casaLabel = ev.casa === 'camara' ? 'CAMARA' : 'SENADO';
+      var relClass = ev.relevanciaSebrae === 'Alta' ? 'priority-alta' : ev.relevanciaSebrae === 'Media' ? 'priority-media' : ev.relevanciaSebrae === 'Baixa' ? 'priority-baixa' : 'priority-none';
+      var relLabel = ev.relevanciaSebrae || '—';
+      var pautaCount = ev.pauta.length;
 
       html += '<div class="prop-card" id="pc-' + uid + '">';
       html += '<div class="prop-header" onclick="toggleProp(\'' + uid + '\')">';
 
-      // Priority badge
-      html += '<div class="prop-priority ' + priClass + '">' + escapeHtml(priLabel.substring(0,5)) + '</div>';
+      // Relevancia badge
+      html += '<div class="prop-priority ' + relClass + '">' + escapeHtml(relLabel.substring(0,5)) + '</div>';
 
       // Info
       html += '<div class="prop-info">';
-      html += '<div class="prop-title">' + escapeHtml(p.sigla) + ' <span class="prop-casa ' + casaClass + '">' + casaLabel + '</span></div>';
+      html += '<div class="prop-title">' + escapeHtml(ev.titulo) + ' <span class="prop-casa ' + casaClass + '">' + casaLabel + '</span></div>';
+      html += '<div class="prop-autor">' + escapeHtml(ev.orgao) + ' — ' + formatDateBR((ev.dataHora||'').substring(0,10)) + ' ' + formatTime(ev.dataHora) + '</div>';
+      if (ev.local) html += '<div class="prop-autor" style="margin-top:2px">' + escapeHtml(ev.local) + '</div>';
 
-      // Orgao line
-      html += '<div class="prop-autor">' + escapeHtml(p.orgao) + ' — ' + formatTime(p.dataHora) + '</div>';
+      // Situacao + pauta count
+      html += '<div class="situacao-line">';
+      if (ev.situacao) html += '<span class="situacao-badge status">' + escapeHtml(ev.situacao) + '</span>';
+      html += '<span class="situacao-badge" style="background:rgba(139,143,168,.12);color:#8b8fa8">' + pautaCount + ' proposicao(oes) na pauta</span>';
+      html += '</div>';
 
-      // Ementa
-      html += '<div class="prop-ementa">' + escapeHtml(p.ementa || 'Ementa nao disponivel') + '</div>';
-
-      // Situacao badges
-      var hasSituacao = p.tipo || p.situacao;
-      if (hasSituacao) {
-        html += '<div class="situacao-line">';
-        if (p.tipo) {
-          var tipoStyle = p.tipo === 'Plenario' ? 'background:rgba(255,197,66,.12);color:#ffc542' : p.tipo === 'Comissao' ? 'background:rgba(78,205,196,.12);color:#4ecdc4' : 'background:rgba(139,143,168,.12);color:#8b8fa8';
-          html += '<span class="situacao-badge" style="' + tipoStyle + '">' + escapeHtml(p.tipo) + '</span>';
+      // Tags — eixos and relevancia
+      var allEixos = [];
+      var allKw = [];
+      ev.pauta.forEach(function(p) {
+        (p.eixos||[]).forEach(function(e){ if(allEixos.indexOf(e)<0) allEixos.push(e); });
+        (p.matchedKeywords||[]).forEach(function(kw){ if(allKw.indexOf(kw)<0) allKw.push(kw); });
+      });
+      if (ev.relevanciaSebrae || allEixos.length > 0 || allKw.length > 0) {
+        html += '<div class="prop-tags">';
+        if (ev.relevanciaSebrae) {
+          var relTagClass = ev.relevanciaSebrae === 'Alta' ? 'prop-tag-relevancia-alta' : ev.relevanciaSebrae === 'Media' ? 'prop-tag-relevancia-media' : 'prop-tag-relevancia-baixa';
+          html += '<span class="prop-tag ' + relTagClass + '">' + ev.relevanciaSebrae + '</span>';
         }
-        if (p.situacao) {
-          html += '<span class="situacao-badge status">' + escapeHtml(p.situacao) + '</span>';
-        }
+        allEixos.forEach(function(e){ html += '<span class="prop-tag prop-tag-eixo">' + escapeHtml(e) + '</span>'; });
+        allKw.slice(0,3).forEach(function(kw){ html += '<span class="prop-tag">' + escapeHtml(kw) + '</span>'; });
         html += '</div>';
       }
-
-      // Tags
-      html += '<div class="prop-tags">';
-      if (p.relevancia) {
-        var relTagClass = p.relevancia === 'Alta' ? 'prop-tag-relevancia-alta' : p.relevancia === 'Media' ? 'prop-tag-relevancia-media' : 'prop-tag-relevancia-baixa';
-        html += '<span class="prop-tag ' + relTagClass + '">' + p.relevancia + '</span>';
-      }
-      if (p.eixos.length > 0) {
-        p.eixos.forEach(function(e){ html += '<span class="prop-tag prop-tag-eixo">' + escapeHtml(e) + '</span>'; });
-      }
-      if (p.matchedKeywords.length > 0) {
-        var unique = p.matchedKeywords.filter(function(v,i,a){return a.indexOf(v)===i});
-        unique.slice(0,3).forEach(function(kw){ html += '<span class="prop-tag">' + escapeHtml(kw) + '</span>'; });
-      }
-      html += '</div>';
 
       html += '</div>'; // prop-info
       html += '<div class="prop-expand">&#9660;</div>';
       html += '</div>'; // prop-header
 
-      // Expandable details
-      var score = p.matchedKeywords.length;
-      var defaultPapel = p.relevancia === 'Alta' ? 'Incidencia ativa' : p.relevancia === 'Media' ? 'Monitoramento estrategico' : 'Monitoramento passivo';
-      var defaultEixo = (p.eixos && p.eixos.length > 0) ? p.eixos[0] : 'Sem conexao';
-      var defaultPrioridade = p.relevancia === 'Alta' ? 'P1 — Alta' : p.relevancia === 'Media' ? 'P2 — Media' : p.relevancia === 'Baixa' ? 'P3 — Baixa' : 'P4 — Arquivar';
-      var defaultAcao = p.relevancia === 'Alta' ? 'Articular posicionamento' : p.relevancia === 'Media' ? 'Monitorar se houver movimentacao' : 'Acompanhar sem acao imediata';
-      var hasInstitucional = p.matchedKeywords.some(function(kw){ return KW_INSTITUCIONAL.indexOf(kw) >= 0; });
-
+      // Expandable details — event info + list of propositions
       html += '<div class="prop-details">';
 
-      // Detail grid (4 columns like Legislativo)
+      // Event detail grid
       html += '<div class="detail-grid" style="margin-top:12px">';
-      html += '<div class="detail-item"><span class="detail-label">Sigla / Numero</span><span class="detail-value">' + escapeHtml(p.sigla) + '</span></div>';
-      html += '<div class="detail-item"><span class="detail-label">Casa</span><span class="detail-value">' + (p.casa === 'camara' ? 'Camara dos Deputados' : 'Senado Federal') + '</span></div>';
-      html += '<div class="detail-item"><span class="detail-label">Data Prevista</span><span class="detail-value">' + formatDateBR((p.dataHora||'').substring(0,10)) + ' ' + formatTime(p.dataHora) + '</span></div>';
-      html += '<div class="detail-item"><span class="detail-label">Score Relevancia</span><span class="detail-value">' + score + ' pontos</span></div>';
-      if (p.relator) html += '<div class="detail-item"><span class="detail-label">Relator</span><span class="detail-value">' + escapeHtml(p.relator) + '</span></div>';
-      html += '<div class="detail-item"><span class="detail-label">Evento</span><span class="detail-value">' + escapeHtml(p.titulo) + '</span></div>';
-      html += '<div class="detail-item"><span class="detail-label">Orgao</span><span class="detail-value">' + escapeHtml(p.orgao) + '</span></div>';
-      if (p.local) html += '<div class="detail-item"><span class="detail-label">Local</span><span class="detail-value">' + escapeHtml(p.local) + '</span></div>';
-      html += '<div class="detail-item" style="grid-column:1/-1"><span class="detail-label">Ementa Completa</span><span class="detail-value">' + escapeHtml(p.ementa || 'Nao disponivel') + '</span></div>';
-      if (p.url) {
-        html += '<div class="detail-item"><span class="detail-label">Link Oficial</span><span class="detail-value"><a href="' + p.url + '" target="_blank" style="color:var(--accent)">' + (p.url.length > 60 ? p.url.substring(0,58) + '...' : p.url) + ' &#8599;</a></span></div>';
-      }
+      html += '<div class="detail-item"><span class="detail-label">Evento</span><span class="detail-value">' + escapeHtml(ev.titulo) + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Casa</span><span class="detail-value">' + (ev.casa === 'camara' ? 'Camara dos Deputados' : 'Senado Federal') + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Data / Hora</span><span class="detail-value">' + formatDateBR((ev.dataHora||'').substring(0,10)) + ' ' + formatTime(ev.dataHora) + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Orgao</span><span class="detail-value">' + escapeHtml(ev.orgao) + '</span></div>';
+      if (ev.local) html += '<div class="detail-item"><span class="detail-label">Local</span><span class="detail-value">' + escapeHtml(ev.local) + '</span></div>';
+      if (ev.situacao) html += '<div class="detail-item"><span class="detail-label">Situacao</span><span class="detail-value">' + escapeHtml(ev.situacao) + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Relevancia Sebrae</span><span class="detail-value">' + (ev.relevanciaSebrae || 'Nao classificada') + '</span></div>';
+      html += '<div class="detail-item"><span class="detail-label">Proposicoes</span><span class="detail-value">' + pautaCount + ' item(ns)</span></div>';
       html += '</div>';
 
-      // Extra details from API (Camara only) — loads async
-      if (p.propId && p.casa === 'camara') {
-        html += '<div id="extra-' + uid + '" style="margin-top:8px"></div>';
+      // Propositions in this pauta
+      if (pautaCount > 0) {
+        html += '<div style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px">';
+        html += '<div style="font-size:13px;font-weight:600;color:var(--text1);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Proposicoes na Pauta</div>';
+
+        ev.pauta.forEach(function(p, pIdx) {
+          var pUid = ev.id + '-' + pIdx;
+          var relP = p.relevancia || '';
+          var relPClass = relP === 'Alta' ? 'prop-tag-relevancia-alta' : relP === 'Media' ? 'prop-tag-relevancia-media' : relP === 'Baixa' ? 'prop-tag-relevancia-baixa' : '';
+
+          html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px">';
+
+          // Proposition header
+          html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">';
+          html += '<strong style="color:var(--accent);font-size:13px">' + escapeHtml(p.sigla) + '</strong>';
+          if (relP) html += '<span class="prop-tag ' + relPClass + '" style="font-size:10px">' + relP + '</span>';
+          if (p.relator) html += '<span style="font-size:11px;color:var(--text3)">Rel: ' + escapeHtml(p.relator) + '</span>';
+          html += '</div>';
+
+          // Ementa
+          html += '<div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:8px">' + escapeHtml(p.ementa || 'Ementa nao disponivel') + '</div>';
+
+          // Keywords
+          if (p.matchedKeywords && p.matchedKeywords.length > 0) {
+            html += '<div class="prop-tags" style="margin-bottom:8px">';
+            var unique = p.matchedKeywords.filter(function(v,i,a){return a.indexOf(v)===i});
+            unique.slice(0,5).forEach(function(kw){ html += '<span class="prop-tag">' + escapeHtml(kw) + '</span>'; });
+            html += '</div>';
+          }
+
+          // Link + actions
+          html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+          if (p.id && ev.casa === 'camara') {
+            html += '<button class="btn-action" style="font-size:11px;padding:4px 10px" onclick="event.stopPropagation();openTramitacoes(\'' + p.id + '\',\'' + ev.casa + '\',\'' + escapeHtml(p.sigla).replace(/'/g,"\\'") + '\')">&#128195; Tramitacao</button>';
+          }
+          html += '<button class="btn-action" style="font-size:11px;padding:4px 10px" onclick="event.stopPropagation();generateMinuta(\'' + ev.id + '\',' + pIdx + ')">&#128221; Minuta Tecnica</button>';
+          if (p.url) {
+            html += '<a href="' + p.url + '" target="_blank" rel="noopener" class="btn-action" onclick="event.stopPropagation()" style="text-decoration:none;font-size:11px;padding:4px 10px">&#128279; Acessar</a>';
+          }
+          html += '</div>';
+
+          html += '</div>'; // proposition item
+        });
+
+        html += '</div>'; // propositions container
       }
 
-      // Action buttons
-      html += '<div class="action-buttons">';
-      if (p.propId) {
-        html += '<button class="btn-action" onclick="event.stopPropagation();openTramitacoes(\'' + p.propId + '\',\'' + p.casa + '\',\'' + escapeHtml(p.sigla).replace(/'/g,"\\'") + '\')">&#128195; Historico de Tramitacao</button>';
-      }
-      html += '<button class="btn-action" onclick="event.stopPropagation();generateMinuta(\'' + p.eventId + '\',' + p.pIdx + ')">&#128221; Gerar Minuta Tecnica</button>';
-      if (p.url) {
-        html += '<a href="' + p.url + '" target="_blank" rel="noopener" class="btn-action" onclick="event.stopPropagation()" style="text-decoration:none">&#128279; Acessar Materia</a>';
-      }
+      // Action buttons for the event
+      html += '<div class="action-buttons" style="margin-top:12px">';
+      html += '<button class="btn-action" onclick="event.stopPropagation();generateMinuta(\'' + ev.id + '\',0)">&#128221; Gerar Minuta Tecnica</button>';
       html += '</div>';
-
-      // Classification Editor — 10 Criterios Sebrae
-      html += '<div class="classification-editor">';
-      html += '<div class="class-title">Classificacao — 10 Criterios Sebrae</div>';
-      html += '<div class="class-grid">';
-
-      html += '<div class="class-field"><label>1. Papel do Sebrae</label><select id="cls-papel-' + uid + '">';
-      ['Incidencia ativa','Monitoramento estrategico','Subsidio tecnico','Monitoramento passivo','Delegar a Sebrae UF','Arquivar','Fora do escopo'].forEach(function(opt){
-        html += '<option' + (opt === defaultPapel ? ' selected' : '') + '>' + opt + '</option>';
-      });
-      html += '</select></div>';
-
-      html += '<div class="class-field"><label>2. Relevancia</label><select id="cls-relevancia-' + uid + '">';
-      ['Central','Alta','Media','Baixa','Nula'].forEach(function(opt){
-        html += '<option' + (opt === (p.relevancia||'Nula') ? ' selected' : '') + '>' + opt + '</option>';
-      });
-      html += '</select></div>';
-
-      html += '<div class="class-field"><label>3. Aderencia PE 2024-2027</label><select id="cls-aderencia-' + uid + '">';
-      var defaultAder = p.relevancia === 'Alta' ? 'Alta aderencia' : p.relevancia === 'Media' ? 'Media aderencia' : 'Baixa aderencia';
-      ['Alta aderencia','Media aderencia','Baixa aderencia','Sem aderencia clara'].forEach(function(opt){
-        html += '<option' + (opt === defaultAder ? ' selected' : '') + '>' + opt + '</option>';
-      });
-      html += '</select></div>';
-
-      html += '<div class="class-field"><label>4. Eixo Estrategico</label><select id="cls-eixo-' + uid + '">';
-      ['Ambiente de negocios','MEI e Simples','Credito e financiamento','Compras publicas','Inovacao e digital','Educacao empreendedora','Desenvolvimento territorial','Inclusao produtiva','Setorial/corporativa','Sem conexao'].forEach(function(opt){
-        html += '<option' + (opt === defaultEixo ? ' selected' : '') + '>' + opt + '</option>';
-      });
-      html += '</select></div>';
-
-      html += '<div class="class-field"><label>5. Tipo de Impacto</label><select id="cls-impacto-' + uid + '">';
-      ['Direto MPE/MEI','Direto Sebrae','Indireto','Setorial','Corporativo/profissional','Social amplo','Processual ou simbolico','Sem impacto identificado'].forEach(function(opt){
-        var sel = (p.relevancia === 'Alta' && opt === 'Direto MPE/MEI') || (!p.relevancia && opt === 'Sem impacto identificado') || (p.relevancia === 'Media' && opt === 'Indireto');
-        html += '<option' + (sel ? ' selected' : '') + '>' + opt + '</option>';
-      });
-      html += '</select></div>';
-
-      html += '<div class="class-field"><label>6. Abrangencia</label><select id="cls-abrangencia-' + uid + '">';
-      ['Nacional e transversal','Nacional setorial','Regional/estadual','Local/municipal'].forEach(function(opt){
-        html += '<option' + (opt === 'Nacional e transversal' ? ' selected' : '') + '>' + opt + '</option>';
-      });
-      html += '</select></div>';
-
-      html += '<div class="class-field"><label>7. Situacao de Tramitacao</label><select id="cls-tramitacao-' + uid + '">';
-      ['Ativa e recente','Em comissao','Plenario','Aguardando sancao','Arquivada','Transformada em norma'].forEach(function(opt){
-        var sel = (p.situacaoNorm === 'encerrada' && opt === 'Transformada em norma') || (p.tipo === 'Plenario' && opt === 'Plenario') || (p.tipo === 'Comissao' && opt === 'Em comissao') || (!p.situacao && opt === 'Ativa e recente');
-        html += '<option' + (sel ? ' selected' : '') + '>' + opt + '</option>';
-      });
-      html += '</select></div>';
-
-      html += '<div class="class-field"><label>8. Prioridade</label><select id="cls-prioridade-' + uid + '">';
-      ['P0 — Critica','P1 — Alta','P2 — Media','P3 — Baixa','P4 — Arquivar'].forEach(function(opt){
-        html += '<option' + (opt === defaultPrioridade ? ' selected' : '') + '>' + opt + '</option>';
-      });
-      html += '</select></div>';
-
-      html += '<div class="class-field"><label>9. Acao Recomendada</label><select id="cls-acao-' + uid + '">';
-      ['Articular posicionamento','Elaborar nota tecnica','Monitorar se houver movimentacao','Acompanhar sem acao imediata','Nenhuma acao necessaria'].forEach(function(opt){
-        html += '<option' + (opt === defaultAcao ? ' selected' : '') + '>' + opt + '</option>';
-      });
-      html += '</select></div>';
-
-      html += '<div class="class-field"><label>10. Filtro Institucional</label><select id="cls-institucional-' + uid + '">';
-      ['Sim','Nao'].forEach(function(opt){
-        html += '<option' + ((hasInstitucional && opt === 'Sim') || (!hasInstitucional && opt === 'Nao') ? ' selected' : '') + '>' + opt + '</option>';
-      });
-      html += '</select></div>';
-
-      html += '<div class="class-field"><label>5A. Grau Impacto (Siga Lei)</label><select id="cls-grau-' + uid + '">';
-      var defaultGrau = score >= 3 ? 'Alto' : score >= 1 ? 'Medio' : 'Baixo';
-      ['Muito alto','Alto','Medio','Baixo','Sem impacto'].forEach(function(opt){
-        html += '<option' + (opt === defaultGrau ? ' selected' : '') + '>' + opt + '</option>';
-      });
-      html += '</select></div>';
-
-      html += '<div class="class-field"><label>5B. Posicionamento Sebrae</label><select id="cls-posicionamento-' + uid + '">';
-      ['Favoravel','Favoravel com ressalvas','Neutro / em analise','Contrario com ressalvas','Contrario'].forEach(function(opt){
-        html += '<option' + (opt === 'Neutro / em analise' ? ' selected' : '') + '>' + opt + '</option>';
-      });
-      html += '</select></div>';
-
-      html += '</div>'; // class-grid
-      html += '<button class="btn btn-save-class" onclick="event.stopPropagation();saveClassification(\'' + uid + '\')">Salvar Classificacao</button>';
-      html += '</div>'; // classification-editor
 
       html += '</div>'; // prop-details
       html += '</div>'; // prop-card
@@ -1411,19 +1309,7 @@ function renderEvents() {
 function toggleProp(uid) {
   var card = document.getElementById('pc-'+uid);
   if (!card) return;
-  var wasExpanded = card.classList.contains('expanded');
   card.classList.toggle('expanded');
-
-  if (!wasExpanded && !card.dataset.loaded) {
-    var parts = uid.split('-');
-    var evId = parts.slice(0,2).join('-');
-    var pIdx = parseInt(parts[2]);
-    var ev = allEvents.find(function(e){return e.id===evId});
-    if (ev && ev.casa === 'camara' && ev.pauta[pIdx] && ev.pauta[pIdx].id) {
-      fetchProposicaoDetails(ev.pauta[pIdx].id, uid);
-    }
-    card.dataset.loaded = '1';
-  }
 }
 
 // =====================================================
