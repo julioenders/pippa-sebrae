@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PIPPA Pauta Legislativa — Monitor de Pautas de Votacao</title>
+  <title>PIPPA Pauta Legislativa — Painel de Monitoramento</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <style>
 :root{
   --bg:#0f1117;--surface:#1a1d27;--surface2:#242836;--border:#2e3348;
@@ -16,58 +17,88 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.header{background:linear-gradient(135deg,#1a1d27,#242836);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:10px}
+
+.header{
+  background:linear-gradient(135deg,#1a1d27 0%,#242836 100%);
+  border-bottom:1px solid var(--border);
+  padding:16px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
 .header-left{display:flex;align-items:center;gap:16px}
 .logo{font-size:22px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
-.logo-sub{font-size:13px;color:var(--text-muted)}
-.header-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.btn{background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.logo-sub{font-size:13px;color:var(--text-muted);font-weight:400}
+.header-controls{display:flex;align-items:center;gap:12px}
+.date-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:var(--radius);font-size:14px;outline:none;cursor:pointer}
+.date-input:focus{border-color:var(--accent)}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
 .btn:hover{background:var(--accent-hover);transform:translateY(-1px)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
 .btn-outline:hover{border-color:var(--accent);color:var(--accent);background:transparent}
-.period-bar{display:flex;gap:2px;background:var(--surface2);border-radius:var(--radius);padding:3px}
-.period-btn{padding:6px 16px;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;border-radius:8px;border:none;background:none;transition:all .2s}
-.period-btn:hover{color:var(--text)}
-.period-btn.active{background:var(--accent);color:#fff}
-.thermometer{display:flex;align-items:center;gap:6px;font-size:12px;padding:4px 12px;border-radius:20px}
+.thermometer{display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600}
 .thermo-green{background:rgba(34,197,94,.15);color:#22c55e}
 .thermo-yellow{background:rgba(255,197,66,.15);color:#ffc542}
 .thermo-orange{background:rgba(255,140,66,.15);color:#ff8c42}
 .thermo-red{background:rgba(255,77,106,.15);color:#ff4d6a}
 .info-btn{background:transparent;border:1px solid var(--border);color:var(--text-muted);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
 .info-btn:hover{border-color:var(--accent);color:var(--accent)}
-.layout{display:flex;min-height:calc(100vh - 70px)}
-.sidebar{width:260px;min-width:260px;background:var(--surface);border-right:1px solid var(--border);padding:16px;overflow-y:auto;max-height:calc(100vh - 70px);position:sticky;top:70px}
-.main{flex:1;padding:20px 24px;overflow-y:auto}
-.search-box{width:100%;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;margin-bottom:12px}
-.search-box:focus{outline:none;border-color:var(--accent)}
-.filter-section{margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.filter-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;background:var(--surface2)}
-.filter-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
-.filter-arrow{font-size:10px;transition:transform .2s;color:var(--text-muted)}
-.filter-badge{background:var(--accent);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;display:none}
-.filter-badge.visible{display:inline}
-.filter-body{display:none;flex-wrap:wrap;gap:6px;padding:10px 12px}
-.filter-section.open .filter-body{display:flex}
+.pippa-home-btn{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s}
+.pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff}
+.pippa-home-btn svg{width:13px;height:13px}
+
+.layout{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 64px)}
+
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:16px;overflow-y:auto;max-height:calc(100vh - 64px);position:sticky;top:64px}
+.search-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:var(--radius);font-size:13px;outline:none;margin-bottom:16px}
+.search-input:focus{border-color:var(--accent)}
+.search-input::placeholder{color:var(--text-muted)}
+
+.filter-section{margin-bottom:4px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.filter-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;background:var(--surface2);transition:background .2s;user-select:none}
+.filter-header:hover{background:var(--border)}
+.filter-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);font-weight:600;display:flex;align-items:center;gap:8px}
+.filter-arrow{font-size:10px;color:var(--text-muted);transition:transform .2s}
 .filter-section.open .filter-arrow{transform:rotate(180deg)}
-.filter-chip{padding:4px 10px;font-size:12px;border:1px solid var(--border);border-radius:16px;cursor:pointer;transition:all .15s;color:var(--text-muted)}
+.filter-badge{background:var(--accent);color:#fff;font-size:10px;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 5px;font-weight:700}
+.filter-badge.visible{display:flex}
+.filter-body{max-height:0;overflow:hidden;transition:max-height .25s ease,padding .25s ease;padding:0 12px}
+.filter-section.open .filter-body{max-height:300px;padding:10px 12px}
+.filter-group{display:flex;flex-wrap:wrap;gap:6px}
+.filter-chip{background:var(--surface);border:1px solid var(--border);color:var(--text-muted);padding:4px 12px;border-radius:16px;font-size:12px;cursor:pointer;transition:all .2s;user-select:none}
 .filter-chip:hover{border-color:var(--accent);color:var(--text)}
 .filter-chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
-.filter-clear{font-size:11px;color:var(--accent);cursor:pointer;margin-top:6px}
-.kpi-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
-.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;text-align:center}
-.kpi-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.kpi-value{font-size:28px;font-weight:700}
-.kpi-value.accent{color:var(--accent)}
-.kpi-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
-.section-title{font-size:18px;font-weight:700;margin-bottom:4px}
-.section-sub{font-size:13px;color:var(--text-muted);margin-bottom:16px}
+.filter-clear{font-size:11px;color:var(--accent);cursor:pointer;margin-top:8px;display:block;text-align:right}
+.filter-clear:hover{text-decoration:underline}
+.sidebar-footer{margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted);text-align:center;line-height:1.6}
+
+.main{padding:20px 24px;overflow-y:auto}
+
+.kpi-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+.kpi-value{font-size:32px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-label{font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
+.kpi-bar-secondary{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-bottom:24px}
+.kpi-card-sm{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center}
+.kpi-card-sm .kpi-value{font-size:24px}
+.kpi-card-sm .kpi-label{font-size:11px}
+.kpi-section-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:600}
+
+.charts-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;min-width:0;overflow:hidden}
+.chart-title{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--text)}
+.chart-wrapper{position:relative;height:220px}
+
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:16px;font-weight:600}
+.section-count{font-size:13px;color:var(--text-muted);background:var(--surface2);padding:4px 10px;border-radius:12px}
+
 .day-group{margin-bottom:24px}
 .day-header{font-size:15px;font-weight:700;color:var(--accent);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--accent);display:flex;align-items:center;gap:10px}
 .day-header .day-count{font-size:11px;font-weight:500;background:var(--surface2);color:var(--text-muted);padding:2px 8px;border-radius:10px}
-.event-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;transition:border-color .2s}
-.event-card:hover{border-color:var(--accent)}
+
+.event-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;transition:all .2s}
+.event-card:hover{border-color:var(--accent);box-shadow:var(--shadow)}
 .event-header{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;cursor:pointer}
 .event-time{font-size:14px;font-weight:700;color:var(--accent);min-width:50px;flex-shrink:0}
 .event-body{flex:1;min-width:0}
@@ -83,10 +114,12 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .tag-audiencia{background:rgba(255,140,66,.12);color:var(--orange)}
 .tag-sebrae{background:rgba(34,197,94,.15);color:var(--success);font-weight:600}
 .tag-count{background:var(--surface2);color:var(--text-muted)}
-.event-arrow{font-size:18px;color:var(--text-muted);transition:transform .2s;flex-shrink:0;padding-top:2px}
+.event-arrow{font-size:18px;color:var(--text-muted);transition:transform .2s;flex-shrink:0;padding-top:2px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.event-arrow:hover{background:var(--surface2)}
 .event-card.open .event-arrow{transform:rotate(90deg)}
 .event-details{display:none;border-top:1px solid var(--border);padding:14px 16px}
 .event-card.open .event-details{display:block}
+
 .pauta-list{list-style:none}
 .pauta-item{padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start}
 .pauta-item:last-child{border:none}
@@ -98,19 +131,21 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .pauta-keywords{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
 .pauta-kw{font-size:10px;background:rgba(34,197,94,.12);color:var(--success);padding:1px 6px;border-radius:8px}
 .no-pauta{font-size:13px;color:var(--text-muted);font-style:italic;padding:8px 0}
+
 .empty-state{text-align:center;padding:80px 20px;color:var(--text-muted)}
 .empty-state .icon{font-size:48px;margin-bottom:12px}
 .empty-state h3{font-size:18px;margin-bottom:8px;color:var(--text)}
-.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
-.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.chart-title{font-size:14px;font-weight:600;margin-bottom:12px}
-.chart-wrap{position:relative;height:200px}
+
+.event-link{font-size:12px;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-top:8px}
+.event-link:hover{text-decoration:underline}
+
 .loading-overlay{position:fixed;inset:0;background:rgba(15,17,23,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:opacity .3s}
 .loading-overlay.active{opacity:1;pointer-events:all}
 .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{margin-top:16px;font-size:16px;font-weight:600}
 .loading-progress{margin-top:8px;font-size:13px;color:var(--text-muted);max-width:400px;text-align:center}
+
 .modal-backdrop{position:fixed;inset:0;background:rgba(15,17,23,.85);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
 .modal-backdrop.active{opacity:1;pointer-events:all}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;max-width:640px;width:90%;max-height:80vh;overflow-y:auto}
@@ -119,14 +154,17 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .modal-actions{display:flex;gap:10px;margin-top:16px;justify-content:flex-end}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#fff;padding:10px 24px;border-radius:var(--radius);font-size:14px;font-weight:600;transition:transform .3s;z-index:300}
 .toast.show{transform:translateX(-50%) translateY(0)}
-.pippa-home-btn{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s}
-.pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff}
-.pippa-home-btn svg{width:13px;height:13px}
-.sidebar-info{margin-top:16px;padding:12px;background:var(--surface2);border-radius:var(--radius);font-size:12px;color:var(--text-muted);line-height:1.5}
-.sidebar-info strong{color:var(--text);display:block;margin-bottom:4px}
-.event-link{font-size:12px;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-top:8px}
-.event-link:hover{text-decoration:underline}
-@media(max-width:900px){.sidebar{display:none}.charts-row{grid-template-columns:1fr}.header{flex-direction:column;align-items:flex-start}}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .charts-row{grid-template-columns:1fr 1fr}
+  .header{flex-direction:column;align-items:flex-start;gap:12px}
+  .header-controls{flex-wrap:wrap}
+}
+@media(max-width:600px){
+  .charts-row{grid-template-columns:1fr}
+}
   </style>
 </head>
 <body>
@@ -135,107 +173,214 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
   <div class="header-left">
     <div>
       <div class="logo">PIPPA Pauta Legislativa</div>
-      <div class="logo-sub">Monitor de Pautas de Votacao — Camara e Senado</div>
+      <div class="logo-sub">Painel de Monitoramento — Pautas de Votacao</div>
     </div>
     <button class="info-btn" onclick="openModal('methodologyModal')" title="Metodologia e Fontes">&#8505;</button>
-    <div class="thermometer" id="thermometer">Aguardando...</div>
   </div>
   <div class="header-controls">
-    <div class="period-bar">
-      <button class="period-btn" onclick="switchPeriod('hoje',this)">Hoje</button>
-      <button class="period-btn active" onclick="switchPeriod('semana',this)">Esta Semana</button>
-      <button class="period-btn" onclick="switchPeriod('proxima',this)">Proxima Semana</button>
-    </div>
     <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
-    <button class="btn" id="btnFetch" onclick="fetchPauta()">&#128269; Consultar APIs</button>
-    <button class="btn btn-outline" onclick="exportWhatsApp()">&#128172; WhatsApp</button>
+    <div id="thermometer" class="thermometer thermo-green">Sem dados carregados</div>
+    <input type="date" id="dateInputInicio" class="date-input" title="Data inicio">
+    <span style="color:var(--text-muted);font-size:13px">a</span>
+    <input type="date" id="dateInputFim" class="date-input" title="Data fim">
+    <button class="btn" id="btnFetch" onclick="fetchPauta()">Consultar APIs</button>
+    <button class="btn btn-outline" onclick="exportWhatsApp()">Exportar WhatsApp</button>
   </div>
 </header>
 
 <div class="layout">
-  <aside class="sidebar">
-    <input type="text" class="search-box" id="searchInput" placeholder="Buscar proposicao, orgao..." oninput="applyFilters()">
 
-    <div class="filter-section open" data-section="casa">
+  <aside class="sidebar">
+    <input type="text" class="search-input" id="searchInput" placeholder="Buscar proposicao, orgao, ementa..." oninput="applyFilters()">
+
+    <!-- Casa Legislativa -->
+    <div class="filter-section" data-section="casa">
       <div class="filter-header" onclick="toggleSection(this)">
         <div class="filter-title">Casa Legislativa <span class="filter-badge" id="badge-casa"></span></div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="filter-clear" onclick="event.stopPropagation();clearFilter('casa')">Limpar</span>
-          <span class="filter-arrow">&#9660;</span>
-        </div>
+        <span class="filter-arrow">&#9660;</span>
       </div>
       <div class="filter-body">
-        <span class="filter-chip" data-filter="casa" data-value="camara" onclick="toggleFilter(this)">Camara</span>
-        <span class="filter-chip" data-filter="casa" data-value="senado" onclick="toggleFilter(this)">Senado</span>
+        <div class="filter-group" id="filterCasa">
+          <span class="filter-chip" data-filter="casa" data-value="camara" onclick="toggleFilter(this)">Camara</span>
+          <span class="filter-chip" data-filter="casa" data-value="senado" onclick="toggleFilter(this)">Senado</span>
+        </div>
+        <span class="filter-clear" onclick="clearFilter('casa')">Limpar</span>
       </div>
     </div>
 
-    <div class="filter-section open" data-section="tipo">
+    <!-- Tipo de Evento -->
+    <div class="filter-section" data-section="tipo">
       <div class="filter-header" onclick="toggleSection(this)">
         <div class="filter-title">Tipo de Evento <span class="filter-badge" id="badge-tipo"></span></div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="filter-clear" onclick="event.stopPropagation();clearFilter('tipo')">Limpar</span>
-          <span class="filter-arrow">&#9660;</span>
-        </div>
+        <span class="filter-arrow">&#9660;</span>
       </div>
       <div class="filter-body">
-        <span class="filter-chip" data-filter="tipo" data-value="Plenario" onclick="toggleFilter(this)">Plenario</span>
-        <span class="filter-chip" data-filter="tipo" data-value="Comissao" onclick="toggleFilter(this)">Comissao</span>
-        <span class="filter-chip" data-filter="tipo" data-value="Audiencia" onclick="toggleFilter(this)">Audiencia Publica</span>
-        <span class="filter-chip" data-filter="tipo" data-value="Outro" onclick="toggleFilter(this)">Outros</span>
+        <div class="filter-group" id="filterTipo">
+          <span class="filter-chip" data-filter="tipo" data-value="Plenario" onclick="toggleFilter(this)">Plenario</span>
+          <span class="filter-chip" data-filter="tipo" data-value="Comissao" onclick="toggleFilter(this)">Comissao</span>
+          <span class="filter-chip" data-filter="tipo" data-value="Audiencia" onclick="toggleFilter(this)">Audiencia Publica</span>
+          <span class="filter-chip" data-filter="tipo" data-value="Outro" onclick="toggleFilter(this)">Outros</span>
+        </div>
+        <span class="filter-clear" onclick="clearFilter('tipo')">Limpar</span>
       </div>
     </div>
 
-    <div class="filter-section open" data-section="relevancia">
+    <!-- Relevancia SEBRAE -->
+    <div class="filter-section" data-section="relevancia">
       <div class="filter-header" onclick="toggleSection(this)">
         <div class="filter-title">Relevancia SEBRAE <span class="filter-badge" id="badge-relevancia"></span></div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="filter-clear" onclick="event.stopPropagation();clearFilter('relevancia')">Limpar</span>
-          <span class="filter-arrow">&#9660;</span>
-        </div>
+        <span class="filter-arrow">&#9660;</span>
       </div>
       <div class="filter-body">
-        <span class="filter-chip" data-filter="relevancia" data-value="Alta" onclick="toggleFilter(this)">Alta</span>
-        <span class="filter-chip" data-filter="relevancia" data-value="Media" onclick="toggleFilter(this)">Media</span>
-        <span class="filter-chip" data-filter="relevancia" data-value="Baixa" onclick="toggleFilter(this)">Baixa</span>
+        <div class="filter-group" id="filterRelevancia">
+          <span class="filter-chip" data-filter="relevancia" data-value="Alta" onclick="toggleFilter(this)">Alta</span>
+          <span class="filter-chip" data-filter="relevancia" data-value="Media" onclick="toggleFilter(this)">Media</span>
+          <span class="filter-chip" data-filter="relevancia" data-value="Baixa" onclick="toggleFilter(this)">Baixa</span>
+        </div>
+        <span class="filter-clear" onclick="clearFilter('relevancia')">Limpar</span>
       </div>
     </div>
 
-    <div class="sidebar-info">
-      <strong>Fonte de dados</strong>
-      Camara: API Dados Abertos (dadosabertos.camara.leg.br)<br>
-      Senado: API Dados Abertos (legis.senado.leg.br)<br><br>
-      <strong>Periodo</strong>
-      <span id="sidebarPeriod">Esta semana</span>
+    <!-- Eixo Tematico -->
+    <div class="filter-section" data-section="eixo">
+      <div class="filter-header" onclick="toggleSection(this)">
+        <div class="filter-title">Eixo Tematico <span class="filter-badge" id="badge-eixo"></span></div>
+        <span class="filter-arrow">&#9660;</span>
+      </div>
+      <div class="filter-body">
+        <div class="filter-group" id="filterEixo">
+          <span class="filter-chip" data-filter="eixo" data-value="Ambiente de negocios" onclick="toggleFilter(this)">Ambiente negocios</span>
+          <span class="filter-chip" data-filter="eixo" data-value="MEI e Simples" onclick="toggleFilter(this)">MEI/Simples</span>
+          <span class="filter-chip" data-filter="eixo" data-value="Credito e financiamento" onclick="toggleFilter(this)">Credito</span>
+          <span class="filter-chip" data-filter="eixo" data-value="Compras publicas" onclick="toggleFilter(this)">Compras publicas</span>
+          <span class="filter-chip" data-filter="eixo" data-value="Inovacao e digital" onclick="toggleFilter(this)">Inovacao</span>
+          <span class="filter-chip" data-filter="eixo" data-value="Tributario" onclick="toggleFilter(this)">Tributario</span>
+        </div>
+        <span class="filter-clear" onclick="clearFilter('eixo')">Limpar</span>
+      </div>
+    </div>
+
+    <!-- Situacao -->
+    <div class="filter-section" data-section="situacao">
+      <div class="filter-header" onclick="toggleSection(this)">
+        <div class="filter-title">Situacao do Evento <span class="filter-badge" id="badge-situacao"></span></div>
+        <span class="filter-arrow">&#9660;</span>
+      </div>
+      <div class="filter-body">
+        <div class="filter-group" id="filterSituacao">
+          <span class="filter-chip" data-filter="situacao" data-value="prevista" onclick="toggleFilter(this)">Prevista</span>
+          <span class="filter-chip" data-filter="situacao" data-value="encerrada" onclick="toggleFilter(this)">Encerrada</span>
+          <span class="filter-chip" data-filter="situacao" data-value="cancelada" onclick="toggleFilter(this)">Cancelada</span>
+        </div>
+        <span class="filter-clear" onclick="clearFilter('situacao')">Limpar</span>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      PIPPA Pauta Legislativa v1.0<br>
+      Sebrae Nacional — Observatorio<br>
+      APIs: Camara dos Deputados · Senado Federal
     </div>
   </aside>
 
-  <main class="main">
-    <div class="kpi-bar" id="kpiBar">
-      <div class="kpi-card"><div class="kpi-label">Total na Pauta</div><div class="kpi-value accent" id="kpiTotal">0</div></div>
-      <div class="kpi-card"><div class="kpi-label">Camara</div><div class="kpi-value" id="kpiCamara" style="color:var(--camara)">0</div></div>
-      <div class="kpi-card"><div class="kpi-label">Senado</div><div class="kpi-value" id="kpiSenado" style="color:var(--senado)">0</div></div>
-      <div class="kpi-card"><div class="kpi-label">Plenario</div><div class="kpi-value" id="kpiPlenario" style="color:var(--warning)">0</div></div>
-      <div class="kpi-card"><div class="kpi-label">Comissoes</div><div class="kpi-value" id="kpiComissao" style="color:var(--teal)">0</div></div>
-      <div class="kpi-card"><div class="kpi-label">Relevantes SEBRAE</div><div class="kpi-value" id="kpiSebrae" style="color:var(--success)">0</div></div>
+  <main class="main" id="mainContent">
+
+    <!-- KPI Bar Principal -->
+    <div class="kpi-bar">
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--accent)" id="kpiTotal">—</div>
+        <div class="kpi-label">Total na Pauta</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--camara)" id="kpiCamara">—</div>
+        <div class="kpi-label">Camara</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--senado)" id="kpiSenado">—</div>
+        <div class="kpi-label">Senado</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--success)" id="kpiSebrae">—</div>
+        <div class="kpi-label">Relevantes Sebrae</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--danger)" id="kpiAlta">—</div>
+        <div class="kpi-label">Alta Relevancia</div>
+      </div>
     </div>
 
+    <!-- KPI Detalhamento -->
+    <div class="kpi-section-label">Detalhamento por Tipo</div>
+    <div class="kpi-bar-secondary">
+      <div class="kpi-card-sm">
+        <div class="kpi-value" style="color:var(--warning)" id="kpiPlenario">—</div>
+        <div class="kpi-label">Plenario</div>
+      </div>
+      <div class="kpi-card-sm">
+        <div class="kpi-value" style="color:var(--teal)" id="kpiComissao">—</div>
+        <div class="kpi-label">Comissoes</div>
+      </div>
+      <div class="kpi-card-sm">
+        <div class="kpi-value" style="color:var(--orange)" id="kpiAudiencia">—</div>
+        <div class="kpi-label">Audiencias</div>
+      </div>
+      <div class="kpi-card-sm">
+        <div class="kpi-value" style="color:var(--text-muted)" id="kpiOutro">—</div>
+        <div class="kpi-label">Outros</div>
+      </div>
+      <div class="kpi-card-sm">
+        <div class="kpi-value" style="color:var(--accent)" id="kpiItens">—</div>
+        <div class="kpi-label">Itens na Pauta</div>
+      </div>
+    </div>
+
+    <!-- Painel Estrategico -->
+    <div class="kpi-section-label">Painel Estrategico</div>
+    <div class="kpi-bar-secondary">
+      <div class="kpi-card-sm" style="min-width:140px">
+        <div class="kpi-value" style="font-size:14px;color:var(--accent)" id="kpiDiaMaisAtivo">—</div>
+        <div class="kpi-label">Dia mais ativo</div>
+      </div>
+      <div class="kpi-card-sm" style="min-width:140px">
+        <div class="kpi-value" style="font-size:14px;color:var(--success)" id="kpiOrgaoDestaque">—</div>
+        <div class="kpi-label">Orgao destaque</div>
+      </div>
+      <div class="kpi-card-sm" style="min-width:100px">
+        <div class="kpi-value" style="color:var(--warning)" id="kpiDias">—</div>
+        <div class="kpi-label">Dias com pauta</div>
+      </div>
+      <div class="kpi-card-sm" style="min-width:100px">
+        <div class="kpi-value" style="color:var(--success)" id="kpiItensSebrae">—</div>
+        <div class="kpi-label">Itens SEBRAE</div>
+      </div>
+    </div>
+
+    <!-- Charts -->
     <div class="charts-row" id="chartsRow" style="display:none">
       <div class="chart-card">
         <div class="chart-title">Por Casa Legislativa</div>
-        <div class="chart-wrap"><canvas id="chartCasa"></canvas></div>
+        <div class="chart-wrapper"><canvas id="chartCasa"></canvas></div>
       </div>
       <div class="chart-card">
         <div class="chart-title">Por Tipo de Evento</div>
-        <div class="chart-wrap"><canvas id="chartTipo"></canvas></div>
+        <div class="chart-wrapper"><canvas id="chartTipo"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Relevancia SEBRAE</div>
+        <div class="chart-wrapper"><canvas id="chartRelevancia"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Eventos por Dia</div>
+        <div class="chart-wrapper"><canvas id="chartDia"></canvas></div>
       </div>
     </div>
 
+    <!-- Events Container -->
     <div id="eventsContainer">
-      <div class="empty-state" id="emptyState">
+      <div class="empty-state">
         <div class="icon">&#128203;</div>
-        <h3>Monitor de Pautas Legislativas</h3>
-        <p>Clique em <strong>Consultar APIs</strong> para buscar a pauta da Camara e do Senado.</p>
+        <h3>Painel de Monitoramento — Pauta Legislativa</h3>
+        <p>Selecione o periodo desejado e clique em <strong>Consultar APIs</strong> para buscar a pauta da Camara e do Senado.</p>
       </div>
     </div>
   </main>
@@ -268,6 +413,16 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
         &#8226; <strong>Media:</strong> temas transversais (tributacao, licitacao, desburocratizacao, credito, startup, inovacao)<br>
         &#8226; <strong>Baixa:</strong> mencao institucional (Sebrae, Sistema S) ou temas correlatos<br>
         &#8226; A classificacao e heuristica e serve como alerta — a analise final cabe ao NAL.
+      </div>
+      <div style="margin-bottom:16px">
+        <strong style="color:var(--accent)">Eixos Tematicos</strong><br>
+        Cada item de pauta e classificado em eixos estrategicos alinhados ao Mapa Estrategico do Sebrae:<br>
+        &#8226; <strong>Ambiente de negocios:</strong> desburocratizacao, licenciamento, REDESIM<br>
+        &#8226; <strong>MEI e Simples:</strong> microempreendedor, Simples Nacional, LC 123<br>
+        &#8226; <strong>Credito:</strong> financiamento, PRONAMPE, FAMPE, BNDES<br>
+        &#8226; <strong>Compras publicas:</strong> licitacao, pregao, contrato administrativo<br>
+        &#8226; <strong>Inovacao e digital:</strong> startups, tecnologia, marco legal<br>
+        &#8226; <strong>Tributario:</strong> reforma tributaria, IBS, CBS, imposto
       </div>
       <div>
         <strong style="color:var(--accent)">Limitacoes</strong><br>
@@ -326,13 +481,22 @@ var KW_INSTITUCIONAL = [
   'servico social','servico de apoio'
 ];
 
+// EIXO TEMATICO KEYWORDS
+var EIXO_KW = {
+  'Ambiente de negocios': ['desburocratizacao','simplificacao','ambiente de negocios','alvara','licenciamento','licenca simplificada','redesim','registro','abertura de empresa','junta comercial'],
+  'MEI e Simples': ['mei ','microempreendedor','simples nacional','lc 123','lc123','supersimples','microempresa','pequena empresa','mpe ','epp ','empresa de pequeno porte','estatuto da microempresa','tratamento diferenciado','tratamento favorecido'],
+  'Credito e financiamento': ['credito','financiamento','pronampe','fampe','bndes','finep','juros','microcrédito','fundo garantidor'],
+  'Compras publicas': ['licitacao','licitacoes','compras publicas','pregao','contrato administrativo','lei 14133'],
+  'Inovacao e digital': ['inovacao','tecnologia','startup','startups','marco legal','digital','inteligencia artificial','marco civil'],
+  'Tributario': ['tributacao','tributaria','reforma tributaria','ibs','cbs','imposto seletivo','imposto','icms','iss','pis','cofins','contribuicao']
+};
+
 // =====================================================
 // STATE
 // =====================================================
 var allEvents = [];
 var filteredEvents = [];
-var activeFilters = { casa: [], tipo: [], relevancia: [] };
-var currentPeriod = 'semana';
+var activeFilters = { casa: [], tipo: [], relevancia: [], eixo: [], situacao: [] };
 var chartInstances = {};
 
 // =====================================================
@@ -350,22 +514,9 @@ function getMonday(d) {
   return dt;
 }
 function getDateRange() {
-  var today = new Date();
-  today.setHours(0,0,0,0);
-  if (currentPeriod === 'hoje') {
-    return [formatDate(today), formatDate(today)];
-  } else if (currentPeriod === 'semana') {
-    var mon = getMonday(today);
-    var fri = new Date(mon);
-    fri.setDate(fri.getDate() + 4);
-    return [formatDate(mon), formatDate(fri)];
-  } else {
-    var nextMon = getMonday(today);
-    nextMon.setDate(nextMon.getDate() + 7);
-    var nextFri = new Date(nextMon);
-    nextFri.setDate(nextFri.getDate() + 4);
-    return [formatDate(nextMon), formatDate(nextFri)];
-  }
+  var inicio = document.getElementById('dateInputInicio').value;
+  var fim = document.getElementById('dateInputFim').value;
+  return [inicio, fim];
 }
 function formatDateBR(iso) {
   if (!iso) return '';
@@ -382,19 +533,6 @@ function formatTime(iso) {
   var t = iso.indexOf('T');
   if (t < 0) return '';
   return iso.substring(t+1, t+6);
-}
-
-// =====================================================
-// PERIOD SWITCHING
-// =====================================================
-function switchPeriod(p, btn) {
-  currentPeriod = p;
-  document.querySelectorAll('.period-btn').forEach(function(b){b.classList.remove('active')});
-  if (btn) btn.classList.add('active');
-  var range = getDateRange();
-  var labels = { hoje:'Hoje', semana:'Esta semana', proxima:'Proxima semana' };
-  document.getElementById('sidebarPeriod').textContent = labels[p] + ' (' + formatDateBR(range[0]) + ' a ' + formatDateBR(range[1]) + ')';
-  fetchPauta();
 }
 
 // =====================================================
@@ -437,6 +575,14 @@ function classifyTipoCamara(desc) {
   return 'Outro';
 }
 
+function classifySituacao(sit) {
+  if (!sit) return 'prevista';
+  var s = sit.toLowerCase();
+  if (s.indexOf('cancel') >= 0) return 'cancelada';
+  if (s.indexOf('encerrad') >= 0 || s.indexOf('realizad') >= 0 || s.indexOf('finaliz') >= 0) return 'encerrada';
+  return 'prevista';
+}
+
 function normalizeCamaraEvents(eventos) {
   return eventos.map(function(ev) {
     var orgaos = (ev.orgaos || []).map(function(o){return o.sigla || o.nome || ''}).join(', ');
@@ -452,7 +598,7 @@ function normalizeCamaraEvents(eventos) {
         ementa: prop.ementa || p.topico || '',
         regime: p.codRegime || '',
         relator: '',
-        url: prop.uri ? 'https://www.camara.leg.br/propostas-legislativas/' + prop.id : '',
+        url: prop.id ? 'https://www.camara.leg.br/propostas-legislativas/' + prop.id : '',
         id: prop.id
       };
     });
@@ -468,9 +614,11 @@ function normalizeCamaraEvents(eventos) {
       dataFim: ev.dataHoraFim || '',
       local: localName,
       situacao: ev.descricaoSituacao || '',
+      situacaoNorm: classifySituacao(ev.descricaoSituacao),
       pauta: pautaItems,
       relevanciaSebrae: null,
       matchedKeywords: [],
+      eixos: [],
       url: ev.uri ? ev.uri.replace('/api/v2/','https://www.camara.leg.br/evento-legislativo/') : ''
     };
   });
@@ -485,17 +633,24 @@ function ensureArray(val) {
 }
 
 async function fetchSenadoAgenda(inicio, fim) {
-  var mesAno = inicio.substring(0,4) + inicio.substring(5,7);
-  var url = 'https://legis.senado.leg.br/dadosabertos/plenario/agenda/mes/' + mesAno;
-  try {
-    var resp = await fetch(url, { headers: { 'Accept': 'application/json' }});
-    if (!resp.ok) throw new Error('HTTP '+resp.status);
-    var json = await resp.json();
-    return parseSenadoAgenda(json, inicio, fim);
-  } catch(e) {
-    console.warn('Senado agenda:', e);
-    return [];
+  var startMonth = inicio.substring(0,4) + inicio.substring(5,7);
+  var endMonth = fim.substring(0,4) + fim.substring(5,7);
+  var months = [startMonth];
+  if (endMonth !== startMonth) months.push(endMonth);
+
+  var allSessoes = [];
+  for (var m = 0; m < months.length; m++) {
+    var url = 'https://legis.senado.leg.br/dadosabertos/plenario/agenda/mes/' + months[m];
+    try {
+      var resp = await fetch(url, { headers: { 'Accept': 'application/json' }});
+      if (!resp.ok) continue;
+      var json = await resp.json();
+      allSessoes = allSessoes.concat(parseSenadoAgenda(json, inicio, fim));
+    } catch(e) {
+      console.warn('Senado agenda:', e);
+    }
   }
+  return allSessoes;
 }
 
 function parseSenadoAgenda(json, inicio, fim) {
@@ -532,10 +687,12 @@ function parseSenadoAgenda(json, inicio, fim) {
           ementa: m.EmentaMateria || m.ementaMateria || m.DescricaoObjetivoProcesso || m.descricaoObjetivoProcesso || '',
           regime: m.DescricaoObjetivoProcesso || m.descricaoObjetivoProcesso || '',
           relator: m.NomeRelator || m.nomeRelator || '',
-          url: m.CodigoMateria ? 'https://www25.senado.leg.br/web/atividade/materias/-/materia/' + (m.CodigoMateria || m.codigoMateria) : '',
+          url: (m.CodigoMateria || m.codigoMateria) ? 'https://www25.senado.leg.br/web/atividade/materias/-/materia/' + (m.CodigoMateria || m.codigoMateria) : '',
           id: m.CodigoMateria || m.codigoMateria || ''
         };
       });
+
+      var situacaoSenado = s.SituacaoSessao || s.situacaoSessao || '';
 
       result.push({
         id: 'sen-' + (s.CodigoSessao || s.codigoSessao || Math.random().toString(36).substring(7)),
@@ -548,10 +705,12 @@ function parseSenadoAgenda(json, inicio, fim) {
         dataHora: isoDate + 'T' + hora + ':00',
         dataFim: '',
         local: 'Plenario do Senado Federal',
-        situacao: s.SituacaoSessao || s.situacaoSessao || '',
+        situacao: situacaoSenado,
+        situacaoNorm: classifySituacao(situacaoSenado),
         pauta: pautaItems,
         relevanciaSebrae: null,
         matchedKeywords: [],
+        eixos: [],
         url: ''
       });
     });
@@ -589,6 +748,17 @@ function classifySebrae(event) {
   else if (matched.length > 0) event.relevanciaSebrae = 'Baixa';
   else event.relevanciaSebrae = null;
 
+  // Eixo tematico
+  var eixos = [];
+  Object.keys(EIXO_KW).forEach(function(eixo) {
+    EIXO_KW[eixo].forEach(function(kw) {
+      if (allText.indexOf(kw.toLowerCase()) >= 0 && eixos.indexOf(eixo) < 0) {
+        eixos.push(eixo);
+      }
+    });
+  });
+  event.eixos = eixos;
+
   event.pauta.forEach(function(item) {
     var itemText = (item.sigla + ' ' + item.ementa).toLowerCase();
     var itemKw = [];
@@ -603,11 +773,16 @@ function classifySebrae(event) {
 // MAIN FETCH
 // =====================================================
 async function fetchPauta() {
-  showLoading('Consultando APIs da Camara e Senado...');
-
   var range = getDateRange();
   var inicio = range[0];
   var fim = range[1];
+
+  if (!inicio || !fim) {
+    showToast('Selecione as datas de inicio e fim');
+    return;
+  }
+
+  showLoading('Consultando APIs da Camara e Senado...');
 
   updateLoading('Buscando eventos da Camara...', '');
   var camaraEventos = await fetchCamaraEventos(inicio, fim);
@@ -681,6 +856,13 @@ function applyFilters() {
     if (activeFilters.relevancia.length) {
       if (!ev.relevanciaSebrae || activeFilters.relevancia.indexOf(ev.relevanciaSebrae) < 0) return false;
     }
+    if (activeFilters.eixo.length) {
+      var hasEixo = activeFilters.eixo.some(function(e){ return ev.eixos.indexOf(e) >= 0; });
+      if (!hasEixo) return false;
+    }
+    if (activeFilters.situacao.length) {
+      if (activeFilters.situacao.indexOf(ev.situacaoNorm) < 0) return false;
+    }
     if (search) {
       var txt = [ev.titulo, ev.orgao, ev.descricao, ev.local,
         ev.pauta.map(function(p){return p.sigla+' '+p.ementa}).join(' ')
@@ -700,12 +882,60 @@ function applyFilters() {
 // KPIs
 // =====================================================
 function updateKPIs() {
-  document.getElementById('kpiTotal').textContent = filteredEvents.length;
-  document.getElementById('kpiCamara').textContent = filteredEvents.filter(function(e){return e.casa==='camara'}).length;
-  document.getElementById('kpiSenado').textContent = filteredEvents.filter(function(e){return e.casa==='senado'}).length;
-  document.getElementById('kpiPlenario').textContent = filteredEvents.filter(function(e){return e.tipo==='Plenario'}).length;
-  document.getElementById('kpiComissao').textContent = filteredEvents.filter(function(e){return e.tipo==='Comissao'}).length;
-  document.getElementById('kpiSebrae').textContent = filteredEvents.filter(function(e){return e.relevanciaSebrae}).length;
+  var total = filteredEvents.length;
+  var camara = filteredEvents.filter(function(e){return e.casa==='camara'}).length;
+  var senado = filteredEvents.filter(function(e){return e.casa==='senado'}).length;
+  var sebrae = filteredEvents.filter(function(e){return e.relevanciaSebrae}).length;
+  var alta = filteredEvents.filter(function(e){return e.relevanciaSebrae==='Alta'}).length;
+  var plenario = filteredEvents.filter(function(e){return e.tipo==='Plenario'}).length;
+  var comissao = filteredEvents.filter(function(e){return e.tipo==='Comissao'}).length;
+  var audiencia = filteredEvents.filter(function(e){return e.tipo==='Audiencia'}).length;
+  var outro = filteredEvents.filter(function(e){return e.tipo==='Outro'}).length;
+  var totalItens = filteredEvents.reduce(function(s,e){return s+e.pauta.length},0);
+  var itensSebrae = filteredEvents.reduce(function(s,e){
+    return s + e.pauta.filter(function(p){return p.matchedKeywords && p.matchedKeywords.length>0}).length;
+  },0);
+
+  document.getElementById('kpiTotal').textContent = total || '—';
+  document.getElementById('kpiCamara').textContent = camara || '—';
+  document.getElementById('kpiSenado').textContent = senado || '—';
+  document.getElementById('kpiSebrae').textContent = sebrae || '—';
+  document.getElementById('kpiAlta').textContent = alta || '—';
+  document.getElementById('kpiPlenario').textContent = plenario || '—';
+  document.getElementById('kpiComissao').textContent = comissao || '—';
+  document.getElementById('kpiAudiencia').textContent = audiencia || '—';
+  document.getElementById('kpiOutro').textContent = outro || '—';
+  document.getElementById('kpiItens').textContent = totalItens || '—';
+  document.getElementById('kpiItensSebrae').textContent = itensSebrae || '—';
+
+  // Painel estrategico
+  var byDay = {};
+  filteredEvents.forEach(function(e){
+    var day = (e.dataHora||'').substring(0,10);
+    if (day) byDay[day] = (byDay[day]||0)+1;
+  });
+  var dias = Object.keys(byDay);
+  document.getElementById('kpiDias').textContent = dias.length || '—';
+
+  if (dias.length > 0) {
+    var diaMaisAtivo = dias.reduce(function(a,b){return byDay[a]>byDay[b]?a:b});
+    document.getElementById('kpiDiaMaisAtivo').textContent = getDayName(diaMaisAtivo).split('-')[0];
+  } else {
+    document.getElementById('kpiDiaMaisAtivo').textContent = '—';
+  }
+
+  var byOrgao = {};
+  filteredEvents.forEach(function(e){
+    if (e.orgao) byOrgao[e.orgao] = (byOrgao[e.orgao]||0)+1;
+  });
+  var orgaos = Object.keys(byOrgao);
+  if (orgaos.length > 0) {
+    var topOrgao = orgaos.reduce(function(a,b){return byOrgao[a]>byOrgao[b]?a:b});
+    var shortOrgao = topOrgao.length > 20 ? topOrgao.substring(0,18)+'...' : topOrgao;
+    document.getElementById('kpiOrgaoDestaque').textContent = shortOrgao;
+  } else {
+    document.getElementById('kpiOrgaoDestaque').textContent = '—';
+  }
 }
 
 // =====================================================
@@ -726,8 +956,8 @@ function updateThermometer() {
     el.className = 'thermometer thermo-green';
     el.innerHTML = '&#9679; Sem itens criticos na pauta';
   } else {
-    el.className = 'thermometer';
-    el.textContent = 'Aguardando dados...';
+    el.className = 'thermometer thermo-green';
+    el.textContent = 'Sem dados carregados';
   }
 }
 
@@ -735,39 +965,77 @@ function updateThermometer() {
 // CHARTS
 // =====================================================
 function updateCharts() {
-  var casaData = { camara: 0, senado: 0 };
-  var tipoData = {};
-  filteredEvents.forEach(function(e) {
-    casaData[e.casa] = (casaData[e.casa]||0) + 1;
-    tipoData[e.tipo] = (tipoData[e.tipo]||0) + 1;
+  Object.keys(chartInstances).forEach(function(k){
+    if (chartInstances[k]) chartInstances[k].destroy();
   });
+  chartInstances = {};
 
-  if (chartInstances.casa) chartInstances.casa.destroy();
-  if (chartInstances.tipo) chartInstances.tipo.destroy();
+  var doughnutOpts = {responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#8b8fa8',font:{size:11},padding:8}}}};
 
+  // Casa
+  var casaData = {camara:0,senado:0};
+  filteredEvents.forEach(function(e){casaData[e.casa]=(casaData[e.casa]||0)+1});
   var casaCtx = document.getElementById('chartCasa');
   if (casaCtx) {
     chartInstances.casa = new Chart(casaCtx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Camara', 'Senado'],
-        datasets: [{ data: [casaData.camara, casaData.senado], backgroundColor: ['#4f8cff','#a855f7'], borderWidth: 0 }]
-      },
-      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{color:'#8b8fa8',font:{size:12}} } } }
+      type:'doughnut',
+      data:{labels:['Camara','Senado'],datasets:[{data:[casaData.camara,casaData.senado],backgroundColor:['#4f8cff','#a855f7'],borderWidth:0}]},
+      options:doughnutOpts
     });
   }
 
+  // Tipo
+  var tipoData = {};
+  filteredEvents.forEach(function(e){tipoData[e.tipo]=(tipoData[e.tipo]||0)+1});
   var tipoLabels = Object.keys(tipoData);
-  var tipoColors = { Plenario:'#ffc542', Comissao:'#4ecdc4', Audiencia:'#ff8c42', Outro:'#8b8fa8' };
+  var tipoColors = {Plenario:'#ffc542',Comissao:'#4ecdc4',Audiencia:'#ff8c42',Outro:'#8b8fa8'};
   var tipoCtx = document.getElementById('chartTipo');
   if (tipoCtx) {
     chartInstances.tipo = new Chart(tipoCtx, {
-      type: 'doughnut',
-      data: {
-        labels: tipoLabels,
-        datasets: [{ data: tipoLabels.map(function(l){return tipoData[l]}), backgroundColor: tipoLabels.map(function(l){return tipoColors[l]||'#8b8fa8'}), borderWidth: 0 }]
+      type:'doughnut',
+      data:{labels:tipoLabels,datasets:[{data:tipoLabels.map(function(l){return tipoData[l]}),backgroundColor:tipoLabels.map(function(l){return tipoColors[l]||'#8b8fa8'}),borderWidth:0}]},
+      options:doughnutOpts
+    });
+  }
+
+  // Relevancia
+  var relData = {Alta:0,Media:0,Baixa:0,Nula:0};
+  filteredEvents.forEach(function(e){
+    if (e.relevanciaSebrae) relData[e.relevanciaSebrae]=(relData[e.relevanciaSebrae]||0)+1;
+    else relData.Nula++;
+  });
+  var relCtx = document.getElementById('chartRelevancia');
+  if (relCtx) {
+    chartInstances.relevancia = new Chart(relCtx, {
+      type:'doughnut',
+      data:{labels:['Alta','Media','Baixa','Nula'],datasets:[{data:[relData.Alta,relData.Media,relData.Baixa,relData.Nula],backgroundColor:['#ff4d6a','#ffc542','#4ecdc4','#8b8fa8'],borderWidth:0}]},
+      options:doughnutOpts
+    });
+  }
+
+  // Eventos por dia (bar chart)
+  var byDay = {};
+  filteredEvents.forEach(function(e){
+    var day = (e.dataHora||'').substring(0,10);
+    if (day) byDay[day] = (byDay[day]||0)+1;
+  });
+  var dayLabels = Object.keys(byDay).sort();
+  var dayCtx = document.getElementById('chartDia');
+  if (dayCtx) {
+    chartInstances.dia = new Chart(dayCtx, {
+      type:'bar',
+      data:{
+        labels:dayLabels.map(function(d){return formatDateBR(d)}),
+        datasets:[{data:dayLabels.map(function(d){return byDay[d]}),backgroundColor:'rgba(139,92,246,.6)',borderColor:'#8b5cf6',borderWidth:1,borderRadius:4}]
       },
-      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{color:'#8b8fa8',font:{size:12}} } } }
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          x:{ticks:{color:'#8b8fa8',font:{size:11}},grid:{color:'rgba(46,51,72,.5)'}},
+          y:{beginAtZero:true,ticks:{color:'#8b8fa8',font:{size:11},stepSize:1},grid:{color:'rgba(46,51,72,.5)'}}
+        }
+      }
     });
   }
 }
@@ -779,10 +1047,10 @@ function renderEvents() {
   var container = document.getElementById('eventsContainer');
 
   if (filteredEvents.length === 0) {
-    container.innerHTML = '<div class="empty-state" id="emptyState"><div class="icon">&#128203;</div><h3>' +
-      (allEvents.length > 0 ? 'Nenhum evento com os filtros atuais' : 'Nenhum evento agendado') +
+    container.innerHTML = '<div class="empty-state"><div class="icon">&#128203;</div><h3>' +
+      (allEvents.length > 0 ? 'Nenhum evento com os filtros atuais' : 'Painel de Monitoramento — Pauta Legislativa') +
       '</h3><p>' +
-      (allEvents.length > 0 ? 'Tente limpar os filtros ou selecionar outro periodo.' : 'Clique em <strong>Consultar APIs</strong> para buscar a pauta.') +
+      (allEvents.length > 0 ? 'Tente limpar os filtros ou selecionar outro periodo.' : 'Selecione o periodo e clique em <strong>Consultar APIs</strong> para buscar a pauta.') +
       '</p></div>';
     return;
   }
@@ -795,7 +1063,7 @@ function renderEvents() {
   });
 
   var days = Object.keys(byDay).sort();
-  var html = '';
+  var html = '<div class="section-header"><div class="section-title">Eventos Agendados</div><div class="section-count">' + filteredEvents.length + ' evento' + (filteredEvents.length>1?'s':'') + '</div></div>';
 
   days.forEach(function(day) {
     var dayLabel = day === 'sem-data' ? 'Data nao informada' : getDayName(day) + ', ' + formatDateBR(day);
@@ -830,7 +1098,6 @@ function renderEvents() {
       html += '<span class="event-arrow">&#8250;</span>';
       html += '</div>';
 
-      // Details
       html += '<div class="event-details">';
       if (ev.situacao) html += '<div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Situacao: <strong>' + escapeHtml(ev.situacao) + '</strong></div>';
       if (ev.descricao) html += '<div style="font-size:13px;color:var(--text-muted);margin-bottom:10px">' + escapeHtml(ev.descricao) + '</div>';
@@ -886,7 +1153,7 @@ function exportWhatsApp() {
 
   var range = getDateRange();
   var text = '*PIPPA Pauta Legislativa*\n';
-  text += '_Monitor de Pautas de Votacao_\n';
+  text += '_Painel de Monitoramento — Pautas de Votacao_\n';
   text += 'Periodo: ' + formatDateBR(range[0]) + ' a ' + formatDateBR(range[1]) + '\n\n';
   text += '📊 *Resumo:* ' + filteredEvents.length + ' eventos | ';
   text += filteredEvents.filter(function(e){return e.casa==='camara'}).length + ' Camara | ';
@@ -955,8 +1222,13 @@ function escapeHtml(s) {
 // INIT
 // =====================================================
 window.addEventListener('DOMContentLoaded', function() {
-  var range = getDateRange();
-  document.getElementById('sidebarPeriod').textContent = 'Esta semana (' + formatDateBR(range[0]) + ' a ' + formatDateBR(range[1]) + ')';
+  var today = new Date();
+  today.setHours(0,0,0,0);
+  var mon = getMonday(today);
+  var fri = new Date(mon);
+  fri.setDate(fri.getDate() + 4);
+  document.getElementById('dateInputInicio').value = formatDate(mon);
+  document.getElementById('dateInputFim').value = formatDate(fri);
   fetchPauta();
 });
 </script>
