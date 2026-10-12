@@ -1274,6 +1274,9 @@ function renderEvents() {
             html += '</div>';
           }
 
+          // Container for auto-loaded details (situação, local, tramitações)
+          html += '<div id="prop-detail-' + pUid + '" style="margin:8px 0"></div>';
+
           // Link + actions
           html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
           if (p.id && ev.casa === 'camara') {
@@ -1309,7 +1312,117 @@ function renderEvents() {
 function toggleProp(uid) {
   var card = document.getElementById('pc-'+uid);
   if (!card) return;
+  var wasExpanded = card.classList.contains('expanded');
   card.classList.toggle('expanded');
+
+  if (!wasExpanded && !card.dataset.loaded) {
+    card.dataset.loaded = '1';
+    var ev = allEvents.find(function(e){return e.id===uid});
+    if (!ev) return;
+    ev.pauta.forEach(function(p, pIdx) {
+      if (p.id) {
+        loadPropDetails(p.id, ev.casa, uid + '-' + pIdx, p.sigla);
+      }
+    });
+  }
+}
+
+async function loadPropDetails(propId, casa, pUid, sigla) {
+  var container = document.getElementById('prop-detail-' + pUid);
+  if (!container) return;
+  container.innerHTML = '<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);padding:4px 0"><div class="mini-spinner"></div>Buscando detalhes...</div>';
+
+  try {
+    var situacao = '', local = '', despacho = '', dataApres = '', urlTeor = '';
+    var tramitacoes = [];
+
+    if (casa === 'camara') {
+      var resp = await fetch('https://dadosabertos.camara.leg.br/api/v2/proposicoes/' + propId);
+      if (resp.ok) {
+        var d = (await resp.json()).dados;
+        if (d && d.statusProposicao) {
+          situacao = d.statusProposicao.descricaoSituacao || '';
+          local = d.statusProposicao.siglaOrgao || '';
+          despacho = d.statusProposicao.despacho || '';
+        }
+        dataApres = d ? d.dataApresentacao || '' : '';
+        urlTeor = d ? d.urlInteiroTeor || '' : '';
+      }
+      var resp2 = await fetch('https://dadosabertos.camara.leg.br/api/v2/proposicoes/' + propId + '/tramitacoes');
+      if (resp2.ok) {
+        var json2 = await resp2.json();
+        if (json2.dados) {
+          tramitacoes = json2.dados.map(function(t){
+            return { data: t.dataHora ? t.dataHora.split('T')[0] : '', descricao: t.descricaoTramitacao || t.despacho || '', orgao: t.siglaOrgao || '' };
+          });
+          tramitacoes.sort(function(a,b){return b.data.localeCompare(a.data)});
+        }
+      }
+    } else {
+      var resp3 = await fetch('https://legis.senado.leg.br/dadosabertos/materia/movimentacoes/' + propId, {headers:{'Accept':'application/json'}});
+      if (resp3.ok) {
+        var json3 = await resp3.json();
+        var movs = json3 && json3.MovimentacaoMateria && json3.MovimentacaoMateria.Materia;
+        if (movs) {
+          if (movs.SituacaoAtual) {
+            var sit = ensureArray((movs.SituacaoAtual.Autuacoes||{}).Autuacao);
+            if (sit.length > 0 && sit[0].Situacao) {
+              situacao = sit[0].Situacao.DescricaoSituacao || '';
+              local = sit[0].Local ? sit[0].Local.SiglaLocal || '' : '';
+            }
+          }
+          var autuacoes = ensureArray((movs.Autuacoes || {}).Autuacao);
+          autuacoes.forEach(function(aut){
+            var informes = ensureArray((aut.InformesLegislativos || {}).InformeLegislativo);
+            informes.forEach(function(inf){
+              tramitacoes.push({
+                data: (inf.Data || '').substring(0,10),
+                descricao: inf.Descricao || '',
+                orgao: (inf.Colegiado || {}).SiglaColegiado || (inf.Local || {}).SiglaLocal || ''
+              });
+            });
+          });
+          tramitacoes = tramitacoes.filter(function(t){return t.descricao});
+          tramitacoes.sort(function(a,b){return b.data.localeCompare(a.data)});
+        }
+      }
+    }
+
+    var html = '';
+
+    // Status box (situação + local)
+    if (situacao || local) {
+      html += '<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:8px">';
+      if (situacao) html += '<div style="font-size:12px"><strong style="color:var(--text2)">Situacao atual:</strong> <span style="color:var(--purple);font-weight:600">' + escapeHtml(situacao) + '</span></div>';
+      if (local) html += '<div style="font-size:12px;margin-top:4px"><strong style="color:var(--text2)">Local:</strong> <span style="color:var(--blue);font-weight:600">' + escapeHtml(local) + '</span></div>';
+      if (despacho) html += '<div style="font-size:11px;color:var(--text3);margin-top:6px;line-height:1.4">' + escapeHtml(despacho) + '</div>';
+      if (dataApres) html += '<div style="font-size:11px;color:var(--text3);margin-top:4px">Apresentacao: ' + formatDateBR(dataApres) + '</div>';
+      if (urlTeor) html += '<div style="margin-top:4px"><a href="' + urlTeor + '" target="_blank" style="font-size:11px;color:var(--accent)">Inteiro teor (PDF) &#8599;</a></div>';
+      html += '</div>';
+    }
+
+    // Tramitações timeline
+    if (tramitacoes.length > 0) {
+      var maxShow = 5;
+      html += '<div style="font-size:11px;color:var(--text3);margin-bottom:6px">' + tramitacoes.length + ' movimentacao(oes)</div>';
+      html += '<div class="tramitacao-list" style="max-height:200px;overflow-y:auto">';
+      tramitacoes.slice(0, maxShow).forEach(function(t){
+        html += '<div class="tramitacao-item">';
+        html += '<div class="tramitacao-date">' + t.data + '</div>';
+        html += '<div class="tramitacao-desc">' + escapeHtml(t.descricao) + '</div>';
+        if (t.orgao) html += '<div class="tramitacao-orgao">' + escapeHtml(t.orgao) + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+      if (tramitacoes.length > maxShow) {
+        html += '<div style="font-size:11px;color:var(--text3);margin-top:4px;cursor:pointer" onclick="event.stopPropagation();openTramitacoes(\'' + propId + '\',\'' + casa + '\',\'' + escapeHtml(sigla).replace(/'/g,"\\'") + '\')">Ver todas as ' + tramitacoes.length + ' movimentacoes &#8594;</div>';
+      }
+    }
+
+    container.innerHTML = html || '<div style="font-size:11px;color:var(--text3)">Sem detalhes disponiveis via API</div>';
+  } catch(e) {
+    container.innerHTML = '<div style="font-size:11px;color:var(--danger)">Erro ao buscar detalhes: ' + escapeHtml(e.message) + '</div>';
+  }
 }
 
 // =====================================================
