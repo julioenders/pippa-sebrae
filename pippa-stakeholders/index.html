@@ -362,25 +362,42 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <button class="btn btn-outline" onclick="closeScoreMethodology()" style="flex-shrink:0">Fechar</button>
     </div>
 
-    <p>O score mede o alinhamento de cada parlamentar com a missao do SEBRAE (fortalecimento de MPEs), combinando tres eixos com pesos distintos:</p>
+    <p>O score mede o alinhamento de cada parlamentar com a missao do SEBRAE (fortalecimento de MPEs), combinando tres eixos independentes. Cada eixo gera uma nota de 0 a 100 e o score final e a media ponderada.</p>
 
-    <h3>Formula do Score Final</h3>
-    <p><strong style="color:var(--text);font-size:14px">Score = (Frentes &times; 0,40) + (Comissoes &times; 0,30) + (Autorias &times; 0,30)</strong></p>
-    <p>Cada eixo gera uma nota de 0 a 100, e o score final e a media ponderada. A faixa e determinada pelo resultado:</p>
-    <ul>
-      <li><strong style="color:var(--emerald)">Alto (&ge;50)</strong> — parlamentar com atuacao consistente em pautas MPE</li>
-      <li><strong style="color:var(--accent)">Medio (20-49)</strong> — participacao parcial em temas relevantes</li>
-      <li><strong style="color:var(--text3)">Baixo (&lt;20)</strong> — pouca ou nenhuma atuacao identificada</li>
-    </ul>
+    <h3>Score Final — Passo a Passo</h3>
+    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:16px">
+      <p style="margin:0 0 8px"><strong style="color:var(--text);font-size:14px">1.</strong> Calcular cada eixo separadamente (resultado de 0 a 100 cada):</p>
+      <ul style="margin:0 0 12px">
+        <li><strong style="color:var(--emerald)">Nota Frentes</strong> = pontuacao das frentes parlamentares (detalhes abaixo)</li>
+        <li><strong style="color:var(--blue)">Nota Comissoes</strong> = pontuacao das comissoes (detalhes abaixo)</li>
+        <li><strong style="color:var(--purple)">Nota Autorias</strong> = pontuacao de autorias tematicas (detalhes abaixo)</li>
+      </ul>
+      <p style="margin:0 0 8px"><strong style="color:var(--text);font-size:14px">2.</strong> Aplicar os pesos e somar:</p>
+      <p style="margin:0 0 8px;padding:8px 12px;background:rgba(255,255,255,.05);border-radius:6px;font-family:monospace;font-size:13px"><strong>Score Final = (Nota Frentes &times; 0,40) + (Nota Comissoes &times; 0,30) + (Nota Autorias &times; 0,30)</strong></p>
+      <p style="margin:0 0 8px"><strong style="color:var(--text);font-size:14px">3.</strong> Classificar na faixa:</p>
+      <ul style="margin:0">
+        <li><strong style="color:var(--emerald)">Alto (&ge;50)</strong> — atuacao consistente em pautas MPE</li>
+        <li><strong style="color:var(--accent)">Medio (20-49)</strong> — participacao parcial em temas relevantes</li>
+        <li><strong style="color:var(--text3)">Baixo (&lt;20)</strong> — pouca ou nenhuma atuacao identificada</li>
+      </ul>
+    </div>
 
-    <h3 style="color:var(--emerald)">Eixo 1 — Frentes Parlamentares (40%)</h3>
-    <p>Cada frente do parlamentar e classificada no tier mais alto que corresponder. Pontos por frente:</p>
-    <ul>
-      <li><strong>Tier 1 (20 pts/frente):</strong> Temas centrais MPE/MEI</li>
-      <li><strong>Tier 2 (12 pts/frente):</strong> Temas de apoio</li>
-      <li><strong>Tier 3 (5 pts/frente):</strong> Temas amplos do ecossistema</li>
-    </ul>
-    <p style="margin-top:8px"><strong>Keywords Tier 1:</strong></p>
+    <h3 style="color:var(--emerald)">Eixo 1 — Frentes Parlamentares (peso: 40%)</h3>
+    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:12px">
+      <p style="margin:0 0 8px"><strong>Passo 1:</strong> Listar todas as frentes parlamentares do deputado (via API da Camara).</p>
+      <p style="margin:0 0 8px"><strong>Passo 2:</strong> Para cada frente, verificar se o titulo contem alguma keyword das listas abaixo. Cada frente e classificada <em>uma unica vez</em>, no tier mais alto que corresponder (uma frente que contem keywords de Tier 1 e Tier 3 conta apenas como Tier 1).</p>
+      <p style="margin:0 0 8px"><strong>Passo 3:</strong> Somar os pontos de todas as frentes classificadas:</p>
+      <ul style="margin:0 0 8px">
+        <li>Cada frente Tier 1 = <strong>20 pontos</strong></li>
+        <li>Cada frente Tier 2 = <strong>12 pontos</strong></li>
+        <li>Cada frente Tier 3 = <strong>5 pontos</strong></li>
+      </ul>
+      <p style="margin:0 0 8px"><strong>Passo 4:</strong> Limitar a 100 (teto).</p>
+      <p style="margin:0;padding:8px 12px;background:rgba(255,255,255,.05);border-radius:6px;font-family:monospace;font-size:12px"><strong>Nota Frentes = min(100, frentes_T1 &times; 20 + frentes_T2 &times; 12 + frentes_T3 &times; 5)</strong></p>
+    </div>
+    <p style="margin-top:8px"><strong>Exemplo:</strong> Deputado participa de 2 frentes Tier 1, 1 frente Tier 2 e 3 frentes Tier 3 &rarr; (2 &times; 20) + (1 &times; 12) + (3 &times; 5) = 40 + 12 + 15 = <strong>67</strong></p>
+
+    <p style="margin-top:12px"><strong>Keywords Tier 1</strong> — temas centrais MPE/MEI (20 pts/frente):</p>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
       <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">empreendedorismo</span>
       <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">micro e pequen*</span>
@@ -390,7 +407,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">mei</span>
       <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">microempreendedor</span>
     </div>
-    <p><strong>Keywords Tier 2:</strong></p>
+    <p><strong>Keywords Tier 2</strong> — temas de apoio (12 pts/frente):</p>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
       <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">desburocratiz*</span>
       <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">inovacao</span>
@@ -400,7 +417,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">livre iniciativa</span>
       <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">fomento</span>
     </div>
-    <p><strong>Keywords Tier 3:</strong></p>
+    <p><strong>Keywords Tier 3</strong> — temas amplos do ecossistema (5 pts/frente):</p>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
       <span class="comissao-tag">comercio</span>
       <span class="comissao-tag">industria</span>
@@ -412,33 +429,49 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <span class="comissao-tag">desenvolvimento regional</span>
     </div>
 
-    <h3 style="color:var(--blue)">Eixo 2 — Comissoes Estrategicas (30%)</h3>
-    <p>Verifica se o parlamentar integra comissoes relevantes. Pontos por comissao:</p>
-    <ul>
-      <li><strong>Tier 1 (35 pts/comissao):</strong> Comissoes diretamente ligadas a MPEs</li>
-      <li><strong>Tier 2 (18 pts/comissao):</strong> Comissoes de apoio ao ecossistema</li>
-    </ul>
-    <p style="margin-top:8px"><strong>Comissoes Tier 1:</strong></p>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
-      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">CDEICS</span>
-      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">CFT</span>
-      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">CAE</span>
+    <h3 style="color:var(--blue)">Eixo 2 — Comissoes Estrategicas (peso: 30%)</h3>
+    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:12px">
+      <p style="margin:0 0 8px"><strong>Passo 1:</strong> Listar as comissoes do parlamentar (Camara: via API de orgaos; Senado: via API /senador/{id}/comissoes).</p>
+      <p style="margin:0 0 8px"><strong>Passo 2:</strong> Para cada comissao, verificar se a sigla aparece na lista Tier 1 ou Tier 2 abaixo.</p>
+      <p style="margin:0 0 8px"><strong>Passo 3:</strong> Somar os pontos:</p>
+      <ul style="margin:0 0 8px">
+        <li>Cada comissao Tier 1 = <strong>35 pontos</strong></li>
+        <li>Cada comissao Tier 2 = <strong>18 pontos</strong></li>
+      </ul>
+      <p style="margin:0 0 8px"><strong>Passo 4:</strong> Limitar a 100 (teto).</p>
+      <p style="margin:0;padding:8px 12px;background:rgba(255,255,255,.05);border-radius:6px;font-family:monospace;font-size:12px"><strong>Nota Comissoes = min(100, comissoes_T1 &times; 35 + comissoes_T2 &times; 18)</strong></p>
     </div>
-    <p><strong>Comissoes Tier 2:</strong></p>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CCTCI</span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CI</span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CDR</span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CAS</span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CAPADR</span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CE</span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CCT</span>
-    </div>
-    <p style="font-size:11px;color:var(--text3)">Camara: CDEICS, CFT, CCTCI, CAPADR, CE &bull; Senado: CAE, CI, CDR, CAS, CCT</p>
+    <p style="margin-top:8px"><strong>Exemplo:</strong> Deputado na CDEICS (Tier 1) e na CE (Tier 2) &rarr; (1 &times; 35) + (1 &times; 18) = <strong>53</strong></p>
 
-    <h3 style="color:var(--purple)">Eixo 3 — Autorias Tematicas (30%)</h3>
-    <p>Busca proposicoes na Camara (desde 2023) cujas ementas contenham keywords MPE, e identifica os deputados autores. A nota e proporcional ao numero de autorias em relacao ao parlamentar com mais autorias.</p>
-    <p style="margin-top:8px"><strong>Keywords de busca:</strong></p>
+    <p style="margin-top:12px"><strong>Comissoes Tier 1</strong> — diretamente ligadas a MPEs (35 pts/comissao):</p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
+      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">CDEICS <span style="font-size:10px;opacity:.7">Camara</span></span>
+      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">CFT <span style="font-size:10px;opacity:.7">Camara</span></span>
+      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">CAE <span style="font-size:10px;opacity:.7">Senado</span></span>
+    </div>
+    <p><strong>Comissoes Tier 2</strong> — apoio ao ecossistema (18 pts/comissao):</p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CCTCI <span style="font-size:10px;opacity:.7">Camara</span></span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CAPADR <span style="font-size:10px;opacity:.7">Camara</span></span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CE <span style="font-size:10px;opacity:.7">Camara</span></span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CI <span style="font-size:10px;opacity:.7">Senado</span></span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CDR <span style="font-size:10px;opacity:.7">Senado</span></span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CAS <span style="font-size:10px;opacity:.7">Senado</span></span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CCT <span style="font-size:10px;opacity:.7">Senado</span></span>
+    </div>
+
+    <h3 style="color:var(--purple)">Eixo 3 — Autorias Tematicas (peso: 30%)</h3>
+    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:12px">
+      <p style="margin:0 0 8px"><strong>Passo 1:</strong> Buscar proposicoes na API da Camara (desde 2023) usando 12 termos de busca em 4 lotes: <em>microempresa, pequena empresa, simples nacional, empreendedorismo, microempreendedor, MEI, desburocratizacao, pronampe, startup, cooperativa, microcredito, credito produtivo</em>.</p>
+      <p style="margin:0 0 8px"><strong>Passo 2:</strong> Filtrar as proposicoes cujas ementas contenham pelo menos uma das 16 keywords abaixo.</p>
+      <p style="margin:0 0 8px"><strong>Passo 3:</strong> Para cada proposicao filtrada, consultar /proposicoes/{id}/autores e identificar o deputado autor.</p>
+      <p style="margin:0 0 8px"><strong>Passo 4:</strong> Contar quantas autorias tematicas cada deputado acumulou.</p>
+      <p style="margin:0 0 8px"><strong>Passo 5:</strong> Normalizar: dividir a contagem do parlamentar pela maior contagem entre todos, e multiplicar por 100.</p>
+      <p style="margin:0;padding:8px 12px;background:rgba(255,255,255,.05);border-radius:6px;font-family:monospace;font-size:12px"><strong>Nota Autorias = min(100, (autorias_parlamentar / maior_contagem) &times; 100)</strong></p>
+    </div>
+    <p style="margin-top:8px"><strong>Exemplo:</strong> Deputado A tem 8 autorias, e o maximo encontrado entre todos e 20 &rarr; (8 / 20) &times; 100 = <strong>40</strong>. Deputado B tem 20 autorias &rarr; (20 / 20) &times; 100 = <strong>100</strong>.</p>
+
+    <p style="margin-top:12px"><strong>Keywords de filtragem de ementas:</strong></p>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
       <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">microempresa</span>
       <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">pequena empresa</span>
@@ -457,7 +490,17 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">microcredito</span>
       <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">fomento</span>
     </div>
-    <p><strong>Calculo:</strong> scoreAutorias = min(100, (autorias_parlamentar / max_autorias) &times; 100)</p>
+
+    <h3>Exemplo Completo</h3>
+    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:12px">
+      <p style="margin:0 0 6px"><strong>Deputado X</strong> — participa de 2 frentes T1 + 1 frente T2, e membro da CDEICS (T1), e autor de 8 proposicoes tematicas (maximo encontrado: 20).</p>
+      <ul style="margin:0 0 8px">
+        <li>Nota Frentes = min(100, 2&times;20 + 1&times;12) = <strong>52</strong></li>
+        <li>Nota Comissoes = min(100, 1&times;35) = <strong>35</strong></li>
+        <li>Nota Autorias = min(100, 8/20 &times; 100) = <strong>40</strong></li>
+      </ul>
+      <p style="margin:0;padding:8px 12px;background:rgba(255,255,255,.05);border-radius:6px;font-family:monospace;font-size:13px">Score Final = (52 &times; 0,40) + (35 &times; 0,30) + (40 &times; 0,30) = 20,8 + 10,5 + 12,0 = <strong style="color:var(--emerald)">43 (Medio)</strong></p>
+    </div>
 
     <h3>Fontes de Dados</h3>
     <ul>
@@ -469,8 +512,8 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 
     <h3>Limitacoes</h3>
     <ul>
-      <li>Frentes parlamentares sao da API da Camara — senadores nao sao cruzados com frentes.</li>
-      <li>Autorias buscam apenas proposicoes da Camara (desde 2023) — senadores nao recebem pontuacao neste eixo.</li>
+      <li>Frentes parlamentares sao da API da Camara — senadores nao sao cruzados com frentes (Nota Frentes = 0).</li>
+      <li>Autorias buscam apenas proposicoes da Camara (desde 2023) — senadores nao recebem pontuacao neste eixo (Nota Autorias = 0).</li>
       <li>O score reflete dados disponiveis nas APIs publicas no momento da consulta.</li>
     </ul>
   </div>
