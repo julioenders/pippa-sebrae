@@ -90,6 +90,43 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .elec-eleito{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;margin:2px;background:rgba(34,197,94,.15);color:var(--emerald);border:1px solid rgba(34,197,94,.25)}
 .elec-nao-eleito{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;margin:2px;background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.25)}
 
+.analytics-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;overflow:hidden}
+.analytics-toggle{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;cursor:pointer;user-select:none}
+.analytics-toggle:hover{background:var(--surface2)}
+.analytics-toggle h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent)}
+.analytics-toggle .arrow{color:var(--text3);transition:transform .2s;font-size:12px}
+.analytics-panel.open .analytics-toggle .arrow{transform:rotate(180deg)}
+.analytics-body{display:none;padding:0 20px 20px;border-top:1px solid var(--border)}
+.analytics-panel.open .analytics-body{display:block}
+.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:1100px){.analytics-grid{grid-template-columns:1fr}}
+.chart-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px}
+.chart-card h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:14px}
+.chart-card-full{grid-column:1/-1}
+
+.donut-container{display:flex;align-items:center;gap:24px}
+.donut-svg{width:140px;height:140px;flex-shrink:0}
+.donut-legend{display:flex;flex-direction:column;gap:6px;flex:1}
+.donut-legend-item{display:flex;align-items:center;gap:8px;font-size:12px}
+.donut-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.donut-legend-pct{font-weight:700;min-width:38px;text-align:right}
+.donut-center-text{font-size:11px;fill:var(--text3);text-anchor:middle}
+.donut-center-value{font-size:18px;font-weight:800;fill:var(--text);text-anchor:middle}
+
+.hbar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.hbar-label{font-size:11px;color:var(--text2);min-width:110px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar-track{flex:1;height:20px;background:var(--surface2);border-radius:4px;overflow:hidden;display:flex;position:relative}
+.hbar-fill{height:100%;transition:width .4s}
+.hbar-val{font-size:10px;color:var(--text3);min-width:36px;text-align:right}
+
+.mini-bar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px}
+.mini-bar-cell{text-align:center;padding:6px 4px;border-radius:6px;background:var(--surface2);border:1px solid transparent;transition:border-color .2s}
+.mini-bar-cell:hover{border-color:var(--accent)}
+.mini-bar-uf{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px}
+.mini-bar-stack{height:18px;border-radius:3px;overflow:hidden;display:flex}
+.mini-bar-stack span{display:block;height:100%}
+.mini-bar-nums{font-size:9px;color:var(--text3);margin-top:3px}
+
 .loading{display:flex;align-items:center;justify-content:center;gap:8px;padding:40px;color:var(--text3);font-size:13px}
 .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -178,6 +215,16 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <div class="kpi"><div class="kpi-value" id="kpiFrentes" style="color:var(--emerald)">—</div><div class="kpi-label">Frentes Relevantes</div></div>
       <div class="kpi"><div class="kpi-value" id="kpiCandidatos" style="color:var(--cyan)">—</div><div class="kpi-label">Candidatos 2026</div></div>
       <div class="kpi"><div class="kpi-value" id="kpiEleitos" style="color:var(--emerald)">—</div><div class="kpi-label">Eleitos 2026</div></div>
+    </div>
+
+    <div class="analytics-panel open" id="analyticsPanel">
+      <div class="analytics-toggle" onclick="document.getElementById('analyticsPanel').classList.toggle('open')">
+        <h3>Analise Eleitoral 2026</h3>
+        <span class="arrow">&#9660;</span>
+      </div>
+      <div class="analytics-body" id="analyticsBody">
+        <div style="text-align:center;padding:20px;color:var(--text3);font-size:12px">Clique em <strong>Consultar APIs</strong> para gerar analises</div>
+      </div>
     </div>
 
     <input type="text" class="search-box" id="searchBox" placeholder="Buscar parlamentar por nome, partido ou UF..." oninput="applyFilters()">
@@ -1115,7 +1162,243 @@ function applyFilters() {
   });
 
   updateKPIs();
+  renderAnalytics();
   renderParlamentares();
+}
+
+function renderAnalytics() {
+  var body = document.getElementById('analyticsBody');
+  var data = filteredParlamentares;
+  if (data.length === 0) {
+    body.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3);font-size:12px">Nenhum dado para analise</div>';
+    return;
+  }
+
+  var cands = data.filter(function(p){ return !!p.eleicao2026; });
+  var eleitos = cands.filter(function(p){ return p.eleicao2026.eleito; });
+  var naoEleitos = cands.filter(function(p){ return !p.eleicao2026.eleito; });
+  var naoCands = data.filter(function(p){ return !p.eleicao2026; });
+  var total = data.length;
+
+  // --- Donut: Taxa de Renovacao ---
+  var depFedReeleitos = eleitos.filter(function(p){ return p.eleicao2026.cargo === 'Deputado Federal'; }).length;
+  var depFedNao = naoEleitos.filter(function(p){ return p.eleicao2026.cargo === 'Deputado Federal'; }).length;
+  var migraram = cands.filter(function(p){
+    return (p.casa === 'camara' && p.eleicao2026.cargo !== 'Deputado Federal' && p.eleicao2026.cargo !== 'Deputado Estadual')
+        || (p.casa === 'senado' && p.eleicao2026.cargo !== 'Senador');
+  }).length;
+  var migEleitos = cands.filter(function(p){
+    var migrou = (p.casa === 'camara' && p.eleicao2026.cargo !== 'Deputado Federal' && p.eleicao2026.cargo !== 'Deputado Estadual')
+              || (p.casa === 'senado' && p.eleicao2026.cargo !== 'Senador');
+    return migrou && p.eleicao2026.eleito;
+  }).length;
+
+  function donutSvg(segments, centerLabel, centerValue) {
+    var R = 52, cx = 70, cy = 70, C = 2 * Math.PI * R;
+    var svg = '<svg class="donut-svg" viewBox="0 0 140 140">';
+    svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="var(--surface2)" stroke-width="14"/>';
+    var offset = 0;
+    segments.forEach(function(s) {
+      if (s.pct <= 0) return;
+      var dash = C * s.pct / 100;
+      var gap = C - dash;
+      svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="' + s.color + '" stroke-width="14" stroke-dasharray="' + dash.toFixed(1) + ' ' + gap.toFixed(1) + '" stroke-dashoffset="' + (-offset).toFixed(1) + '" transform="rotate(-90 ' + cx + ' ' + cy + ')"/>';
+      offset += dash;
+    });
+    svg += '<text x="' + cx + '" y="' + (cy - 6) + '" class="donut-center-value">' + centerValue + '</text>';
+    svg += '<text x="' + cx + '" y="' + (cy + 10) + '" class="donut-center-text">' + centerLabel + '</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  function legendItem(color, label, count, pct) {
+    return '<div class="donut-legend-item"><span class="donut-legend-dot" style="background:' + color + '"></span><span style="flex:1">' + label + ' (' + count + ')</span><span class="donut-legend-pct">' + pct + '%</span></div>';
+  }
+
+  // Donut 1: Situacao Eleitoral Geral
+  var pctEleito = total > 0 ? (eleitos.length / total * 100).toFixed(1) : 0;
+  var pctNaoEleito = total > 0 ? (naoEleitos.length / total * 100).toFixed(1) : 0;
+  var pctNaoCand = total > 0 ? (naoCands.length / total * 100).toFixed(1) : 0;
+
+  var donut1 = donutSvg([
+    { pct: parseFloat(pctEleito), color: 'var(--emerald)' },
+    { pct: parseFloat(pctNaoEleito), color: 'var(--red)' },
+    { pct: parseFloat(pctNaoCand), color: 'var(--border)' }
+  ], 'candidatos', cands.length);
+
+  var leg1 = legendItem('var(--emerald)', 'Eleitos', eleitos.length, pctEleito)
+           + legendItem('var(--red)', 'Nao eleitos', naoEleitos.length, pctNaoEleito)
+           + legendItem('#2e3348', 'Nao candidatos', naoCands.length, pctNaoCand);
+
+  // Donut 2: Renovacao da Camara
+  var depsCamara = data.filter(function(p){ return p.casa === 'camara'; });
+  var depsReeleitos = depsCamara.filter(function(p){ return p.eleicao2026 && p.eleicao2026.cargo === 'Deputado Federal' && p.eleicao2026.eleito; }).length;
+  var depsNaoReeleitos = depsCamara.filter(function(p){ return p.eleicao2026 && p.eleicao2026.cargo === 'Deputado Federal' && !p.eleicao2026.eleito; }).length;
+  var depsMigraram = depsCamara.filter(function(p){ return p.eleicao2026 && p.eleicao2026.cargo !== 'Deputado Federal' && p.eleicao2026.cargo !== 'Deputado Estadual'; }).length;
+  var depsNaoCand = depsCamara.filter(function(p){ return !p.eleicao2026; }).length;
+  var depsT = depsCamara.length || 1;
+  var taxaRenovacao = ((depsNaoReeleitos + depsMigraram + depsNaoCand) / depsT * 100).toFixed(1);
+
+  var donut2 = donutSvg([
+    { pct: depsReeleitos / depsT * 100, color: 'var(--emerald)' },
+    { pct: depsNaoReeleitos / depsT * 100, color: 'var(--red)' },
+    { pct: depsMigraram / depsT * 100, color: 'var(--purple)' },
+    { pct: depsNaoCand / depsT * 100, color: 'var(--border)' }
+  ], 'renovacao', taxaRenovacao + '%');
+
+  var leg2 = legendItem('var(--emerald)', 'Reeleitos Dep.Fed.', depsReeleitos, (depsReeleitos/depsT*100).toFixed(1))
+           + legendItem('var(--red)', 'Nao reeleitos', depsNaoReeleitos, (depsNaoReeleitos/depsT*100).toFixed(1))
+           + legendItem('var(--purple)', 'Migraram de cargo', depsMigraram, (depsMigraram/depsT*100).toFixed(1))
+           + legendItem('#2e3348', 'Nao candidatos', depsNaoCand, (depsNaoCand/depsT*100).toFixed(1));
+
+  // --- HBar: Resultado por Cargo ---
+  var cargos = {};
+  cands.forEach(function(p) {
+    var c = p.eleicao2026.cargo;
+    if (!cargos[c]) cargos[c] = { eleitos: 0, nao: 0 };
+    if (p.eleicao2026.eleito) cargos[c].eleitos++; else cargos[c].nao++;
+  });
+  var cargoKeys = Object.keys(cargos).sort(function(a,b){ return (cargos[b].eleitos+cargos[b].nao)-(cargos[a].eleitos+cargos[a].nao); });
+  var maxCargo = 1;
+  cargoKeys.forEach(function(k){ maxCargo = Math.max(maxCargo, cargos[k].eleitos + cargos[k].nao); });
+
+  var hbars = '';
+  cargoKeys.forEach(function(k) {
+    var e = cargos[k].eleitos, n = cargos[k].nao, t = e + n;
+    var wE = (e / maxCargo * 100).toFixed(1), wN = (n / maxCargo * 100).toFixed(1);
+    hbars += '<div class="hbar-row">';
+    hbars += '<span class="hbar-label">' + k + '</span>';
+    hbars += '<div class="hbar-track">';
+    hbars += '<div class="hbar-fill" style="width:' + wE + '%;background:var(--emerald)"></div>';
+    hbars += '<div class="hbar-fill" style="width:' + wN + '%;background:var(--red)"></div>';
+    hbars += '</div>';
+    hbars += '<span class="hbar-val">' + e + '/' + t + '</span>';
+    hbars += '</div>';
+  });
+
+  // --- HBar: Top 15 Partidos ---
+  var partidos = {};
+  cands.forEach(function(p) {
+    if (!partidos[p.partido]) partidos[p.partido] = { eleitos: 0, nao: 0 };
+    if (p.eleicao2026.eleito) partidos[p.partido].eleitos++; else partidos[p.partido].nao++;
+  });
+  var ptKeys = Object.keys(partidos).sort(function(a,b){ return (partidos[b].eleitos+partidos[b].nao)-(partidos[a].eleitos+partidos[a].nao); }).slice(0, 15);
+  var maxPt = 1;
+  ptKeys.forEach(function(k){ maxPt = Math.max(maxPt, partidos[k].eleitos + partidos[k].nao); });
+
+  var ptBars = '';
+  ptKeys.forEach(function(k) {
+    var e = partidos[k].eleitos, n = partidos[k].nao, t = e + n;
+    var taxa = t > 0 ? (e / t * 100).toFixed(0) : 0;
+    var wE = (e / maxPt * 100).toFixed(1), wN = (n / maxPt * 100).toFixed(1);
+    ptBars += '<div class="hbar-row">';
+    ptBars += '<span class="hbar-label" style="min-width:60px">' + k + '</span>';
+    ptBars += '<div class="hbar-track">';
+    ptBars += '<div class="hbar-fill" style="width:' + wE + '%;background:var(--emerald)"></div>';
+    ptBars += '<div class="hbar-fill" style="width:' + wN + '%;background:var(--red)"></div>';
+    ptBars += '</div>';
+    ptBars += '<span class="hbar-val">' + taxa + '% (' + e + '/' + t + ')</span>';
+    ptBars += '</div>';
+  });
+
+  // --- Mini-bars: Resultado por UF ---
+  var ufs = {};
+  cands.forEach(function(p) {
+    if (!ufs[p.uf]) ufs[p.uf] = { e: 0, n: 0 };
+    if (p.eleicao2026.eleito) ufs[p.uf].e++; else ufs[p.uf].n++;
+  });
+  var ufKeys = Object.keys(ufs).sort();
+  var miniBars = '';
+  ufKeys.forEach(function(uf) {
+    var e = ufs[uf].e, n = ufs[uf].n, t = e + n;
+    var pE = t > 0 ? (e / t * 100).toFixed(0) : 0;
+    miniBars += '<div class="mini-bar-cell">';
+    miniBars += '<div class="mini-bar-uf">' + uf + '</div>';
+    miniBars += '<div class="mini-bar-stack">';
+    miniBars += '<span style="width:' + pE + '%;background:var(--emerald)"></span>';
+    miniBars += '<span style="width:' + (100 - pE) + '%;background:var(--red)"></span>';
+    miniBars += '</div>';
+    miniBars += '<div class="mini-bar-nums">' + e + 'E / ' + n + 'N</div>';
+    miniBars += '</div>';
+  });
+
+  // --- Migracao de cargo ---
+  var migracoes = {};
+  cands.forEach(function(p) {
+    var cargoOrigem = p.casa === 'camara' ? 'Deputado Federal' : 'Senador';
+    var cargoDestino = p.eleicao2026.cargo;
+    if (cargoOrigem !== cargoDestino && !(cargoOrigem === 'Deputado Federal' && cargoDestino === 'Deputado Estadual')) {
+      var chave = cargoOrigem + ' → ' + cargoDestino;
+      if (!migracoes[chave]) migracoes[chave] = { eleitos: 0, nao: 0 };
+      if (p.eleicao2026.eleito) migracoes[chave].eleitos++; else migracoes[chave].nao++;
+    }
+  });
+  var migKeys = Object.keys(migracoes).sort(function(a,b){ return (migracoes[b].eleitos+migracoes[b].nao)-(migracoes[a].eleitos+migracoes[a].nao); });
+  var maxMig = 1;
+  migKeys.forEach(function(k){ maxMig = Math.max(maxMig, migracoes[k].eleitos + migracoes[k].nao); });
+  var migBars = '';
+  migKeys.forEach(function(k) {
+    var e = migracoes[k].eleitos, n = migracoes[k].nao, t = e + n;
+    var wE = (e / maxMig * 100).toFixed(1), wN = (n / maxMig * 100).toFixed(1);
+    migBars += '<div class="hbar-row">';
+    migBars += '<span class="hbar-label" style="min-width:160px">' + k + '</span>';
+    migBars += '<div class="hbar-track">';
+    migBars += '<div class="hbar-fill" style="width:' + wE + '%;background:var(--emerald)"></div>';
+    migBars += '<div class="hbar-fill" style="width:' + wN + '%;background:var(--red)"></div>';
+    migBars += '</div>';
+    migBars += '<span class="hbar-val">' + e + '/' + t + '</span>';
+    migBars += '</div>';
+  });
+
+  // --- Assemble ---
+  var html = '<div class="analytics-grid">';
+
+  // Card 1: Situacao geral
+  html += '<div class="chart-card">';
+  html += '<h4>Situacao Eleitoral dos Parlamentares</h4>';
+  html += '<div class="donut-container">' + donut1 + '<div class="donut-legend">' + leg1 + '</div></div>';
+  html += '</div>';
+
+  // Card 2: Renovacao Camara
+  html += '<div class="chart-card">';
+  html += '<h4>Taxa de Renovacao — Camara</h4>';
+  html += '<div class="donut-container">' + donut2 + '<div class="donut-legend">' + leg2 + '</div></div>';
+  html += '</div>';
+
+  // Card 3: Resultado por cargo
+  html += '<div class="chart-card">';
+  html += '<h4>Resultado por Cargo Disputado</h4>';
+  html += '<div style="margin-bottom:6px;display:flex;gap:12px;font-size:10px"><span style="color:var(--emerald)">&#9632; Eleitos</span><span style="color:var(--red)">&#9632; Nao eleitos</span></div>';
+  html += hbars;
+  html += '</div>';
+
+  // Card 4: Migracao de cargo
+  html += '<div class="chart-card">';
+  html += '<h4>Migracao de Cargo</h4>';
+  if (migBars) {
+    html += '<div style="margin-bottom:6px;font-size:10px;color:var(--text3)">Parlamentares que concorreram a cargo diferente do atual</div>';
+    html += migBars;
+  } else {
+    html += '<div style="font-size:12px;color:var(--text3)">Nenhuma migracao identificada</div>';
+  }
+  html += '</div>';
+
+  // Card 5: Partidos (full width)
+  html += '<div class="chart-card chart-card-full">';
+  html += '<h4>Resultado por Partido (Top 15)</h4>';
+  html += '<div style="margin-bottom:6px;display:flex;gap:12px;font-size:10px"><span style="color:var(--emerald)">&#9632; Eleitos</span><span style="color:var(--red)">&#9632; Nao eleitos</span><span style="color:var(--text3)">Taxa = eleitos/candidatos</span></div>';
+  html += ptBars;
+  html += '</div>';
+
+  // Card 6: UFs (full width)
+  html += '<div class="chart-card chart-card-full">';
+  html += '<h4>Resultado por UF</h4>';
+  html += '<div style="margin-bottom:8px;display:flex;gap:12px;font-size:10px"><span style="color:var(--emerald)">&#9632; Eleitos (E)</span><span style="color:var(--red)">&#9632; Nao eleitos (N)</span></div>';
+  html += '<div class="mini-bar-grid">' + miniBars + '</div>';
+  html += '</div>';
+
+  html += '</div>'; // analytics-grid
+  body.innerHTML = html;
 }
 
 function updateKPIs() {
