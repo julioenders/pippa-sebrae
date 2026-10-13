@@ -267,26 +267,36 @@ async function fetchData() {
   allIndicadores = [];
 
   try {
-    var promises = BCB_SERIES.map(function(serie) {
-      return fetchBCBSeries(serie.id, 24).then(function(dados) {
-        return {
-          id: serie.id,
-          nome: serie.nome,
-          unidade: serie.unidade,
-          grupo: serie.grupo,
-          icon: serie.icon,
-          color: serie.color,
-          dados: dados,
-          ultimoValor: dados.length > 0 ? dados[dados.length - 1].valor : null,
-          ultimaData: dados.length > 0 ? dados[dados.length - 1].data : null
-        };
-      }).catch(function() {
-        return { id: serie.id, nome: serie.nome, unidade: serie.unidade, grupo: serie.grupo, icon: serie.icon, color: serie.color, dados: [], ultimoValor: null, ultimaData: null };
-      });
-    });
+    var BATCH = 3;
+    for (var b = 0; b < BCB_SERIES.length; b += BATCH) {
+      var batch = BCB_SERIES.slice(b, b + BATCH);
+      var results = await Promise.all(batch.map(function(serie) {
+        return fetchBCBSeries(serie.id, 24).then(function(dados) {
+          return {
+            id: serie.id,
+            nome: serie.nome,
+            unidade: serie.unidade,
+            grupo: serie.grupo,
+            icon: serie.icon,
+            color: serie.color,
+            dados: dados,
+            ultimoValor: dados.length > 0 ? dados[dados.length - 1].valor : null,
+            ultimaData: dados.length > 0 ? dados[dados.length - 1].data : null
+          };
+        }).catch(function() {
+          return { id: serie.id, nome: serie.nome, unidade: serie.unidade, grupo: serie.grupo, icon: serie.icon, color: serie.color, dados: [], ultimoValor: null, ultimaData: null };
+        });
+      }));
+      allIndicadores = allIndicadores.concat(results);
+      container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando indicadores do BCB SGS... ' + allIndicadores.length + '/' + BCB_SERIES.length + '</div>';
+    }
 
-    allIndicadores = await Promise.all(promises);
-    showToast(allIndicadores.filter(function(i){return i.ultimoValor !== null}).length + ' indicadores carregados');
+    var carregados = allIndicadores.filter(function(i){return i.ultimoValor !== null}).length;
+    if (carregados === 0) {
+      showToast('Nenhum indicador carregado — verifique sua conexao');
+    } else {
+      showToast(carregados + ' de ' + allIndicadores.length + ' indicadores carregados');
+    }
 
     updateKPIs();
     updateCharts();
