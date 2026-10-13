@@ -276,7 +276,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 
       <div class="analytics-panel open" id="scoreMethodPanel">
         <div class="analytics-toggle" onclick="document.getElementById('scoreMethodPanel').classList.toggle('open')">
-          <h3>Metodologia do Score</h3>
+          <h3>Metodologia do Score <span onclick="event.stopPropagation();openScoreMethodology()" style="cursor:pointer;margin-left:8px;font-size:16px;color:var(--cyan);vertical-align:middle" title="Ver detalhes completos do calculo">&#9432;</span></h3>
           <span class="arrow">&#9660;</span>
         </div>
         <div class="analytics-body">
@@ -351,6 +351,127 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <li>A API do Senado nao expoe frentes parlamentares — apenas deputados sao cruzados com frentes.</li>
       <li>APIs publicas sem SLA — sujeitas a instabilidade.</li>
       <li>A composicao de comissoes pode mudar ao longo da legislatura.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="methodology-backdrop" id="scoreMethodModal" onclick="if(event.target===this)closeScoreMethodology()">
+  <div class="methodology-modal" style="max-width:900px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <h2>Metodologia de Calculo — Score de Alinhamento SEBRAE</h2>
+      <button class="btn btn-outline" onclick="closeScoreMethodology()" style="flex-shrink:0">Fechar</button>
+    </div>
+
+    <p>O score mede o alinhamento de cada parlamentar com a missao do SEBRAE (fortalecimento de MPEs), combinando tres eixos com pesos distintos:</p>
+
+    <h3>Formula do Score Final</h3>
+    <p><strong style="color:var(--text);font-size:14px">Score = (Frentes &times; 0,40) + (Comissoes &times; 0,30) + (Autorias &times; 0,30)</strong></p>
+    <p>Cada eixo gera uma nota de 0 a 100, e o score final e a media ponderada. A faixa e determinada pelo resultado:</p>
+    <ul>
+      <li><strong style="color:var(--emerald)">Alto (&ge;50)</strong> — parlamentar com atuacao consistente em pautas MPE</li>
+      <li><strong style="color:var(--accent)">Medio (20-49)</strong> — participacao parcial em temas relevantes</li>
+      <li><strong style="color:var(--text3)">Baixo (&lt;20)</strong> — pouca ou nenhuma atuacao identificada</li>
+    </ul>
+
+    <h3 style="color:var(--emerald)">Eixo 1 — Frentes Parlamentares (40%)</h3>
+    <p>Cada frente do parlamentar e classificada no tier mais alto que corresponder. Pontos por frente:</p>
+    <ul>
+      <li><strong>Tier 1 (20 pts/frente):</strong> Temas centrais MPE/MEI</li>
+      <li><strong>Tier 2 (12 pts/frente):</strong> Temas de apoio</li>
+      <li><strong>Tier 3 (5 pts/frente):</strong> Temas amplos do ecossistema</li>
+    </ul>
+    <p style="margin-top:8px"><strong>Keywords Tier 1:</strong></p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
+      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">empreendedorismo</span>
+      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">micro e pequen*</span>
+      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">microempresa</span>
+      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">pequena empresa</span>
+      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">simples nacional</span>
+      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">mei</span>
+      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">microempreendedor</span>
+    </div>
+    <p><strong>Keywords Tier 2:</strong></p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">desburocratiz*</span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">inovacao</span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">startup</span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">cooperativ*</span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">credito</span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">livre iniciativa</span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">fomento</span>
+    </div>
+    <p><strong>Keywords Tier 3:</strong></p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
+      <span class="comissao-tag">comercio</span>
+      <span class="comissao-tag">industria</span>
+      <span class="comissao-tag">turismo</span>
+      <span class="comissao-tag">agronegocio</span>
+      <span class="comissao-tag">tecnologia</span>
+      <span class="comissao-tag">digital</span>
+      <span class="comissao-tag">exporta*</span>
+      <span class="comissao-tag">desenvolvimento regional</span>
+    </div>
+
+    <h3 style="color:var(--blue)">Eixo 2 — Comissoes Estrategicas (30%)</h3>
+    <p>Verifica se o parlamentar integra comissoes relevantes. Pontos por comissao:</p>
+    <ul>
+      <li><strong>Tier 1 (35 pts/comissao):</strong> Comissoes diretamente ligadas a MPEs</li>
+      <li><strong>Tier 2 (18 pts/comissao):</strong> Comissoes de apoio ao ecossistema</li>
+    </ul>
+    <p style="margin-top:8px"><strong>Comissoes Tier 1:</strong></p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
+      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">CDEICS</span>
+      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">CFT</span>
+      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">CAE</span>
+    </div>
+    <p><strong>Comissoes Tier 2:</strong></p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CCTCI</span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CI</span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CDR</span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CAS</span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CAPADR</span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CE</span>
+      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CCT</span>
+    </div>
+    <p style="font-size:11px;color:var(--text3)">Camara: CDEICS, CFT, CCTCI, CAPADR, CE &bull; Senado: CAE, CI, CDR, CAS, CCT</p>
+
+    <h3 style="color:var(--purple)">Eixo 3 — Autorias Tematicas (30%)</h3>
+    <p>Busca proposicoes na Camara (desde 2023) cujas ementas contenham keywords MPE, e identifica os deputados autores. A nota e proporcional ao numero de autorias em relacao ao parlamentar com mais autorias.</p>
+    <p style="margin-top:8px"><strong>Keywords de busca:</strong></p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">microempresa</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">pequena empresa</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">pequeno porte</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">simples nacional</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">mei</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">microempreendedor</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">empreendedorismo</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">desburocratiza*</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">sebrae</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">pronampe</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">redesim</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">startup</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">cooperativa</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">credito produtivo</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">microcredito</span>
+      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">fomento</span>
+    </div>
+    <p><strong>Calculo:</strong> scoreAutorias = min(100, (autorias_parlamentar / max_autorias) &times; 100)</p>
+
+    <h3>Fontes de Dados</h3>
+    <ul>
+      <li><strong>Frentes:</strong> API Camara — GET /frentes?idLegislatura=57 + /frentes/{id}/membros</li>
+      <li><strong>Comissoes Camara:</strong> API Camara — GET /orgaos?idTipoOrgao=2 + /orgaos/{id}/membros</li>
+      <li><strong>Comissoes Senado:</strong> API Senado — GET /senador/{id}/comissoes</li>
+      <li><strong>Autorias:</strong> API Camara — GET /proposicoes?keywords={kw} + /proposicoes/{id}/autores</li>
+    </ul>
+
+    <h3>Limitacoes</h3>
+    <ul>
+      <li>Frentes parlamentares sao da API da Camara — senadores nao sao cruzados com frentes.</li>
+      <li>Autorias buscam apenas proposicoes da Camara (desde 2023) — senadores nao recebem pontuacao neste eixo.</li>
+      <li>O score reflete dados disponiveis nas APIs publicas no momento da consulta.</li>
     </ul>
   </div>
 </div>
@@ -1714,6 +1835,12 @@ function showMethodology() {
 }
 function closeMethodology() {
   document.getElementById('methodologyModal').classList.remove('active');
+}
+function openScoreMethodology() {
+  document.getElementById('scoreMethodModal').classList.add('active');
+}
+function closeScoreMethodology() {
+  document.getElementById('scoreMethodModal').classList.remove('active');
 }
 
 // === TAB SWITCHING ===
