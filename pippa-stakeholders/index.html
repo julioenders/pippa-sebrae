@@ -255,107 +255,133 @@ function escapeHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+async function safeFetch(url, opts) {
+  var controller = new AbortController();
+  var timeout = setTimeout(function(){ controller.abort(); }, 30000);
+  try {
+    var resp = await fetch(url, Object.assign({}, opts, { signal: controller.signal }));
+    clearTimeout(timeout);
+    return resp;
+  } catch(e) {
+    clearTimeout(timeout);
+    return null;
+  }
+}
+
 async function fetchData() {
+  var leg = document.getElementById('selLegislatura').value;
   var container = document.getElementById('parlContainer');
   container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando parlamentares, frentes e comissoes...</div>';
   allParlamentares = [];
   allFrentes = [];
   comissoesChave = {};
+  var warnings = [];
 
   try {
-    var [depResp, senResp, frentesResp] = await Promise.all([
-      fetch('https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome&itens=100'),
-      fetch('https://legis.senado.leg.br/dadosabertos/senador/lista/atual', { headers: { 'Accept': 'application/json' } }),
-      fetch('https://dadosabertos.camara.leg.br/api/v2/frentes?idLegislatura=57&itens=200')
-    ]);
-
-    // Deputados — paginated
-    var depJson = await depResp.json();
-    var deputados = depJson.dados || [];
-    var depLinks = depJson.links || [];
-    var nextLink = depLinks.find(function(l){ return l.rel === 'next'; });
-    while (nextLink) {
-      var r = await fetch(nextLink.href);
-      var j = await r.json();
-      deputados = deputados.concat(j.dados || []);
-      var nl = (j.links || []).find(function(l){ return l.rel === 'next'; });
-      nextLink = nl;
-    }
-
-    deputados.forEach(function(d) {
-      allParlamentares.push({
-        id: d.id,
-        nome: d.nome,
-        partido: d.siglaPartido,
-        uf: d.siglaUf,
-        casa: 'camara',
-        foto: d.urlFoto,
-        email: d.email || '',
-        frentes: [],
-        orgaos: []
-      });
-    });
-
-    // Senadores
-    if (senResp.ok) {
-      var senJson = await senResp.json();
-      var parlamentares = [];
-      try {
-        var lista = senJson.ListaParlamentarEmExercicio.Parlamentares.Parlamentar;
-        if (!Array.isArray(lista)) lista = [lista];
-        parlamentares = lista;
-      } catch(e) {}
-
-      parlamentares.forEach(function(s) {
-        var id = s.IdentificacaoParlamentar;
+    // Deputados
+    container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando deputados da Camara...</div>';
+    var depResp = await safeFetch('https://dadosabertos.camara.leg.br/api/v2/deputados?idLegislatura=' + leg + '&ordem=ASC&ordenarPor=nome&itens=100');
+    if (depResp && depResp.ok) {
+      var depJson = await depResp.json();
+      var deputados = depJson.dados || [];
+      var depLinks = depJson.links || [];
+      var nextLink = depLinks.find(function(l){ return l.rel === 'next'; });
+      while (nextLink) {
+        var r = await safeFetch(nextLink.href);
+        if (!r || !r.ok) break;
+        var j = await r.json();
+        deputados = deputados.concat(j.dados || []);
+        var nl = (j.links || []).find(function(l){ return l.rel === 'next'; });
+        nextLink = nl;
+      }
+      deputados.forEach(function(d) {
         allParlamentares.push({
-          id: id.CodigoParlamentar,
-          nome: id.NomeParlamentar || id.NomeCompletoParlamentar,
-          partido: id.SiglaPartidoParlamentar,
-          uf: id.UfParlamentar,
-          casa: 'senado',
-          foto: id.UrlFotoParlamentar || '',
-          email: id.EmailParlamentar || '',
+          id: d.id,
+          nome: d.nome,
+          partido: d.siglaPartido,
+          uf: d.siglaUf,
+          casa: 'camara',
+          foto: d.urlFoto,
+          email: d.email || '',
           frentes: [],
           orgaos: []
         });
       });
+    } else {
+      warnings.push('Camara (deputados)');
     }
 
-    showToast(allParlamentares.length + ' parlamentares carregados');
+    // Senadores
+    container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando senadores...</div>';
+    var senResp = await safeFetch('https://legis.senado.leg.br/dadosabertos/senador/lista/atual', { headers: { 'Accept': 'application/json' } });
+    if (senResp && senResp.ok) {
+      try {
+        var senJson = await senResp.json();
+        var parlamentares = [];
+        var lista = senJson.ListaParlamentarEmExercicio.Parlamentares.Parlamentar;
+        if (!Array.isArray(lista)) lista = [lista];
+        parlamentares = lista;
+        parlamentares.forEach(function(s) {
+          var id = s.IdentificacaoParlamentar;
+          allParlamentares.push({
+            id: id.CodigoParlamentar,
+            nome: id.NomeParlamentar || id.NomeCompletoParlamentar,
+            partido: id.SiglaPartidoParlamentar,
+            uf: id.UfParlamentar,
+            casa: 'senado',
+            foto: id.UrlFotoParlamentar || '',
+            email: id.EmailParlamentar || '',
+            frentes: [],
+            orgaos: []
+          });
+        });
+      } catch(e) {
+        warnings.push('Senado (parse)');
+      }
+    } else {
+      warnings.push('Senado (conexao)');
+    }
 
-    // Frentes parlamentares — filter relevant ones
-    if (frentesResp.ok) {
+    if (allParlamentares.length === 0) {
+      container.innerHTML = '<div class="empty-state"><div class="icon">&#9888;</div><h3>Nenhuma API respondeu</h3><p>Verifique sua conexao de internet e tente novamente. As APIs da Camara e do Senado podem estar temporariamente indisponiveis.</p></div>';
+      return;
+    }
+
+    // Frentes parlamentares
+    container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando frentes parlamentares...</div>';
+    var frentesResp = await safeFetch('https://dadosabertos.camara.leg.br/api/v2/frentes?idLegislatura=' + leg + '&itens=200');
+    if (frentesResp && frentesResp.ok) {
       var frentesJson = await frentesResp.json();
       var todasFrentes = frentesJson.dados || [];
       allFrentes = todasFrentes.filter(function(f) {
         var titulo = (f.titulo || '').toLowerCase();
         return FRENTES_RELEVANTES.some(function(kw) { return titulo.indexOf(kw) >= 0; });
       });
+
+      container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando membros de ' + allFrentes.length + ' frentes relevantes...</div>';
+      for (var fi = 0; fi < allFrentes.length; fi += 3) {
+        var batch = allFrentes.slice(fi, fi + 3);
+        var promises = batch.map(function(f) {
+          return safeFetch('https://dadosabertos.camara.leg.br/api/v2/frentes/' + f.id + '/membros')
+            .then(function(r){ return (r && r.ok) ? r.json() : { dados: [] }; })
+            .then(function(j){
+              (j.dados || []).forEach(function(m) {
+                var parl = allParlamentares.find(function(p){ return p.id == m.id; });
+                if (parl) parl.frentes.push(f.titulo);
+              });
+            })
+            .catch(function(){ });
+        });
+        await Promise.all(promises);
+      }
+    } else {
+      warnings.push('Frentes parlamentares');
     }
 
-    // Fetch frente members for relevant frentes (batch 3 at a time)
-    container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando membros de ' + allFrentes.length + ' frentes relevantes...</div>';
-    for (var fi = 0; fi < allFrentes.length; fi += 3) {
-      var batch = allFrentes.slice(fi, fi + 3);
-      var promises = batch.map(function(f) {
-        return fetch('https://dadosabertos.camara.leg.br/api/v2/frentes/' + f.id + '/membros')
-          .then(function(r){ return r.ok ? r.json() : { dados: [] }; })
-          .then(function(j){
-            (j.dados || []).forEach(function(m) {
-              var parl = allParlamentares.find(function(p){ return p.id == m.id; });
-              if (parl) parl.frentes.push(f.titulo);
-            });
-          })
-          .catch(function(){ });
-      });
-      await Promise.all(promises);
-    }
-
-    // Fetch comissoes-chave da Camara
+    // Comissoes-chave da Camara
     container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando comissoes da Camara...</div>';
-    var orgResp = await fetch('https://dadosabertos.camara.leg.br/api/v2/orgaos?idTipoOrgao=2&itens=100&ordem=ASC&ordenarPor=nome');
-    if (orgResp.ok) {
+    var orgResp = await safeFetch('https://dadosabertos.camara.leg.br/api/v2/orgaos?idTipoOrgao=2&itens=100&ordem=ASC&ordenarPor=nome');
+    if (orgResp && orgResp.ok) {
       var orgJson = await orgResp.json();
       var orgaos = orgJson.dados || [];
       var orgRelevantes = orgaos.filter(function(o) {
@@ -365,8 +391,8 @@ async function fetchData() {
       for (var ci = 0; ci < orgRelevantes.length; ci += 3) {
         var batchC = orgRelevantes.slice(ci, ci + 3);
         var promC = batchC.map(function(o) {
-          return fetch('https://dadosabertos.camara.leg.br/api/v2/orgaos/' + o.id + '/membros')
-            .then(function(r){ return r.ok ? r.json() : { dados: [] }; })
+          return safeFetch('https://dadosabertos.camara.leg.br/api/v2/orgaos/' + o.id + '/membros')
+            .then(function(r){ return (r && r.ok) ? r.json() : { dados: [] }; })
             .then(function(j){
               comissoesChave[o.sigla] = { nome: o.nome, membros: (j.dados || []).map(function(m){ return m.id; }) };
               (j.dados || []).forEach(function(m) {
@@ -378,10 +404,16 @@ async function fetchData() {
         });
         await Promise.all(promC);
       }
+    } else {
+      warnings.push('Comissoes');
     }
 
     buildFilters();
     applyFilters();
+
+    var msg = allParlamentares.length + ' parlamentares carregados';
+    if (warnings.length > 0) msg += ' (indisponivel: ' + warnings.join(', ') + ')';
+    showToast(msg);
 
   } catch(e) {
     container.innerHTML = '<div class="empty-state"><div class="icon">&#9888;</div><h3>Erro ao carregar dados</h3><p>' + escapeHtml(e.message) + '</p></div>';
