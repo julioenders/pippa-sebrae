@@ -2066,7 +2066,8 @@ async function computeScores() {
       scoreFrentes: sf, scoreComissoes: sc, scoreAutorias: sa,
       autorias: autoCount,
       frentesMatch: frentesMatch,
-      orgaos: p.orgaos
+      orgaos: p.orgaos,
+      eleicao2026: p.eleicao2026 || null
     };
   });
 
@@ -2134,6 +2135,11 @@ function renderScoreRanking() {
     html += '<div class="parl-meta">';
     html += '<span class="parl-casa ' + casaClass + '">' + casaLabel + '</span>';
     html += '<span class="parl-partido">' + escapeHtml(p.partido) + ' - ' + escapeHtml(p.uf) + '</span>';
+    if (p.eleicao2026) {
+      var elColor = p.eleicao2026.eleito ? 'var(--emerald)' : 'var(--red)';
+      var elIcon = p.eleicao2026.eleito ? '&#10003;' : '&#10007;';
+      html += '<span style="font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(255,255,255,.06);color:' + elColor + '">' + elIcon + ' ' + (p.eleicao2026.eleito ? 'Eleito' : 'Nao eleito') + ' — ' + escapeHtml(p.eleicao2026.cargo) + '</span>';
+    }
     html += '</div>';
     html += '<div class="score-breakdown">';
     html += '<span class="score-axis">Frentes: <span class="score-axis-val" style="color:var(--emerald)">' + p.scoreFrentes + '</span></span>';
@@ -2157,6 +2163,14 @@ function renderScoreRanking() {
     html += '<div class="detail-item"><span class="detail-label">Frentes (40%)</span><span class="detail-value" style="color:var(--emerald)">' + p.scoreFrentes + '/100</span></div>';
     html += '<div class="detail-item"><span class="detail-label">Comissoes (30%)</span><span class="detail-value" style="color:var(--blue)">' + p.scoreComissoes + '/100</span></div>';
     html += '<div class="detail-item"><span class="detail-label">Autorias (30%)</span><span class="detail-value" style="color:var(--purple)">' + p.scoreAutorias.toFixed(0) + '/100' + (p.autorias > 0 ? ' (' + p.autorias + ' PLs)' : '') + '</span></div>';
+    if (p.eleicao2026) {
+      var elColor2 = p.eleicao2026.eleito ? 'var(--emerald)' : 'var(--red)';
+      var elStatus2 = p.eleicao2026.eleito ? 'ELEITO' : 'NAO ELEITO';
+      var urna2 = p.eleicao2026.urna ? ' (urna: ' + escapeHtml(p.eleicao2026.urna) + ')' : '';
+      html += '<div class="detail-item"><span class="detail-label">Eleicoes 2026</span><span class="detail-value" style="color:' + elColor2 + '">Candidato a ' + escapeHtml(p.eleicao2026.cargo) + ' — ' + escapeHtml(p.eleicao2026.uf) + urna2 + ' — ' + elStatus2 + '</span></div>';
+    } else {
+      html += '<div class="detail-item"><span class="detail-label">Eleicoes 2026</span><span class="detail-value" style="color:var(--text3)">Nao candidato</span></div>';
+    }
     html += '</div>';
 
     if (p.frentesMatch.length > 0) {
