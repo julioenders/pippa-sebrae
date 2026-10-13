@@ -156,6 +156,22 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
   .sidebar{display:none}
   .kpi-row{grid-template-columns:repeat(2,1fr)}
 }
+
+.tab-nav{display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid var(--border)}
+.tab-btn{padding:10px 24px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border:none;background:none;color:var(--text3);cursor:pointer;transition:all .2s;border-bottom:2px solid transparent;margin-bottom:-2px}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.score-badge{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;font-size:15px;font-weight:800;flex-shrink:0;border:2px solid}
+.score-alto{background:rgba(34,197,94,.12);border-color:var(--emerald);color:var(--emerald)}
+.score-medio{background:rgba(245,158,11,.12);border-color:var(--accent);color:var(--accent)}
+.score-baixo{background:rgba(139,143,168,.12);border-color:var(--text3);color:var(--text3)}
+.score-bar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;flex:1;min-width:100px}
+.score-fill{height:100%;border-radius:3px;transition:width .4s}
+.score-breakdown{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap}
+.score-axis{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:4px}
+.score-axis-val{font-weight:700;color:var(--text2)}
+.score-rank{font-size:11px;font-weight:800;color:var(--text3);min-width:28px;text-align:right}
 </style>
 </head>
 <body>
@@ -209,6 +225,12 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
   </div>
 
   <div class="content">
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('mapa')">Mapa Parlamentar</button>
+      <button class="tab-btn" onclick="switchTab('alinhamento')">Alinhamento SEBRAE</button>
+    </div>
+
+    <div id="tabMapa">
     <div class="kpi-row" style="grid-template-columns:repeat(6,1fr)">
       <div class="kpi"><div class="kpi-value" id="kpiTotal" style="color:var(--accent)">—</div><div class="kpi-label">Parlamentares</div></div>
       <div class="kpi"><div class="kpi-value" id="kpiCamara" style="color:var(--camara)">—</div><div class="kpi-label">Deputados</div></div>
@@ -242,6 +264,59 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
         <p>Clique em <strong>Consultar APIs</strong> para buscar deputados, senadores, frentes parlamentares e comissoes relevantes para o SEBRAE.</p>
       </div>
     </div>
+    </div><!-- /tabMapa -->
+
+    <div id="tabAlinhamento" style="display:none">
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-value" id="kpiScoreAlto" style="color:var(--emerald)">—</div><div class="kpi-label">Alto Alinhamento</div></div>
+        <div class="kpi"><div class="kpi-value" id="kpiScoreMedio" style="color:var(--accent)">—</div><div class="kpi-label">Medio</div></div>
+        <div class="kpi"><div class="kpi-value" id="kpiScoreBaixo" style="color:var(--text3)">—</div><div class="kpi-label">Baixo / Nenhum</div></div>
+        <div class="kpi"><div class="kpi-value" id="kpiScoreMedia" style="color:var(--cyan)">—</div><div class="kpi-label">Score Medio</div></div>
+      </div>
+
+      <div class="analytics-panel open" id="scoreMethodPanel">
+        <div class="analytics-toggle" onclick="document.getElementById('scoreMethodPanel').classList.toggle('open')">
+          <h3>Metodologia do Score</h3>
+          <span class="arrow">&#9660;</span>
+        </div>
+        <div class="analytics-body">
+          <div style="font-size:12px;color:var(--text3);line-height:1.8">
+            <p>O Score de Alinhamento mede a proximidade de cada parlamentar com a missao do SEBRAE (apoio a MPEs), baseado em <strong>3 eixos</strong>:</p>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px">
+              <div style="background:var(--bg);border-radius:8px;padding:12px;border:1px solid var(--border)">
+                <div style="font-weight:700;color:var(--emerald);margin-bottom:4px">Frentes Parlamentares (40%)</div>
+                <div style="font-size:11px">Participacao em frentes com temas de empreendedorismo, MPE, Simples, inovacao, cooperativismo, credito, etc.</div>
+              </div>
+              <div style="background:var(--bg);border-radius:8px;padding:12px;border:1px solid var(--border)">
+                <div style="font-weight:700;color:var(--blue);margin-bottom:4px">Comissoes Estrategicas (30%)</div>
+                <div style="font-size:11px">Atuacao em comissoes-chave: CDEICS, CFT, CAE, CCTCI, CI, CDR — com peso maior para as mais relevantes.</div>
+              </div>
+              <div style="background:var(--bg);border-radius:8px;padding:12px;border:1px solid var(--border)">
+                <div style="font-weight:700;color:var(--purple);margin-bottom:4px">Autorias Tematicas (30%)</div>
+                <div style="font-size:11px">Proposicoes autorais com keywords MPE: microempresa, MEI, Simples Nacional, empreendedorismo, desburocratizacao, etc.</div>
+              </div>
+            </div>
+            <p style="margin-top:10px"><strong>Faixas:</strong> Alto (&ge;50) | Medio (20-49) | Baixo (&lt;20)</p>
+          </div>
+        </div>
+      </div>
+
+      <input type="text" class="search-box" id="scoreSearchBox" placeholder="Buscar parlamentar no ranking..." oninput="renderScoreRanking()">
+
+      <div class="section-header">
+        <div class="section-title">Ranking de Alinhamento SEBRAE</div>
+        <div class="section-count" id="scoreCount"></div>
+      </div>
+
+      <div id="scoreContainer">
+        <div class="empty-state">
+          <div class="icon">&#128202;</div>
+          <h3>Score de Alinhamento SEBRAE</h3>
+          <p>Clique em <strong>Consultar APIs</strong> para buscar dados e calcular o score de alinhamento de cada parlamentar.</p>
+        </div>
+      </div>
+    </div><!-- /tabAlinhamento -->
+
   </div>
 </div>
 
@@ -1639,6 +1714,270 @@ function showMethodology() {
 }
 function closeMethodology() {
   document.getElementById('methodologyModal').classList.remove('active');
+}
+
+// === TAB SWITCHING ===
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('tabMapa').style.display = tab === 'mapa' ? 'block' : 'none';
+  document.getElementById('tabAlinhamento').style.display = tab === 'alinhamento' ? 'block' : 'none';
+  document.querySelector('.tab-btn[onclick*="' + tab + '"]').classList.add('active');
+  if (tab === 'alinhamento' && allParlamentares.length > 0 && !scoreComputed) computeScores();
+}
+
+// === SCORE DE ALINHAMENTO SEBRAE ===
+var scoreComputed = false;
+var parlScores = [];
+
+var SEBRAE_FRENTE_KEYWORDS = {
+  tier1: ['empreendedorismo', 'micro e pequen', 'microempresa', 'pequena empresa', 'simples nacional', 'mei ', 'microempreendedor'],
+  tier2: ['desburocratiz', 'inovacao', 'startup', 'cooperativ', 'credito', 'livre iniciativa', 'fomento'],
+  tier3: ['comercio', 'industria', 'turismo', 'agronegocio', 'tecnologia', 'digital', 'exporta', 'desenvolvimento regional']
+};
+
+var COMISSOES_TIER1 = ['CDEICS', 'CFT', 'CAE'];
+var COMISSOES_TIER2 = ['CCTCI', 'CI', 'CDR', 'CAS', 'CAPADR', 'CE'];
+
+var AUTORIA_KEYWORDS = [
+  'microempresa', 'pequena empresa', 'pequeno porte', 'simples nacional',
+  'mei', 'microempreendedor', 'empreendedorismo', 'desburocratiza',
+  'sebrae', 'pronampe', 'redesim', 'startup', 'cooperativa',
+  'credito produtivo', 'microcredito', 'fomento'
+];
+
+function matchKeywords(text, keywords) {
+  var t = normalizeStr(text);
+  var count = 0;
+  keywords.forEach(function(k) { if (t.indexOf(normalizeStr(k)) >= 0) count++; });
+  return count;
+}
+
+function scoreFrentes(p) {
+  var pts = 0;
+  p.frentes.forEach(function(f) {
+    var fn = normalizeStr(f);
+    SEBRAE_FRENTE_KEYWORDS.tier1.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) pts += 15; });
+    SEBRAE_FRENTE_KEYWORDS.tier2.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) pts += 10; });
+    SEBRAE_FRENTE_KEYWORDS.tier3.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) pts += 5; });
+  });
+  return Math.min(100, pts);
+}
+
+function scoreComissoes(p) {
+  var pts = 0;
+  p.orgaos.forEach(function(o) {
+    if (COMISSOES_TIER1.indexOf(o) >= 0) pts += 35;
+    else if (COMISSOES_TIER2.indexOf(o) >= 0) pts += 18;
+  });
+  return Math.min(100, pts);
+}
+
+async function fetchAutorias() {
+  var autoriasMap = {};
+  var keyBatches = [
+    ['microempresa', 'pequena+empresa', 'simples+nacional'],
+    ['empreendedorismo', 'microempreendedor', 'MEI'],
+    ['desburocratizacao', 'pronampe', 'startup'],
+    ['cooperativa', 'microcredito', 'credito+produtivo']
+  ];
+
+  for (var bi = 0; bi < keyBatches.length; bi++) {
+    var batch = keyBatches[bi];
+    var batchPromises = batch.map(function(kw) {
+      return fetch('https://dadosabertos.camara.leg.br/api/v2/proposicoes?keywords=' + kw + '&dataInicio=2023-01-01&itens=100&ordem=DESC&ordenarPor=id')
+        .then(function(r) { return r.ok ? r.json() : { dados: [] }; })
+        .then(function(j) { return j.dados || []; })
+        .catch(function() { return []; });
+    });
+    var results = await Promise.all(batchPromises);
+    results.forEach(function(props) {
+      props.forEach(function(prop) {
+        var ementa = normalizeStr(prop.ementa || '');
+        AUTORIA_KEYWORDS.forEach(function(ak) {
+          if (ementa.indexOf(normalizeStr(ak)) >= 0 && prop.id) {
+            autoriasMap[prop.id] = prop;
+          }
+        });
+      });
+    });
+  }
+
+  var propIds = Object.keys(autoriasMap);
+  var depAutorias = {};
+
+  for (var pi = 0; pi < propIds.length; pi += 5) {
+    var pBatch = propIds.slice(pi, pi + 5);
+    var detailPromises = pBatch.map(function(pid) {
+      return fetch('https://dadosabertos.camara.leg.br/api/v2/proposicoes/' + pid)
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(j) {
+          if (j && j.dados && j.dados.idDeputadoAutor) {
+            var aid = j.dados.idDeputadoAutor;
+            depAutorias[aid] = (depAutorias[aid] || 0) + 1;
+          }
+        })
+        .catch(function() {});
+    });
+    await Promise.all(detailPromises);
+  }
+
+  return depAutorias;
+}
+
+async function computeScores() {
+  var container = document.getElementById('scoreContainer');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>Calculando scores (frentes + comissoes)...</div>';
+
+  var depAutorias = {};
+  try {
+    container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando autorias tematicas na Camara...</div>';
+    depAutorias = await fetchAutorias();
+  } catch(e) {}
+
+  var maxAutorias = 1;
+  Object.keys(depAutorias).forEach(function(k) { if (depAutorias[k] > maxAutorias) maxAutorias = depAutorias[k]; });
+
+  parlScores = allParlamentares.map(function(p) {
+    var sf = scoreFrentes(p);
+    var sc = scoreComissoes(p);
+    var autoCount = depAutorias[p.id] || 0;
+    var sa = Math.min(100, (autoCount / Math.max(maxAutorias, 1)) * 100);
+
+    var total = Math.round(0.40 * sf + 0.30 * sc + 0.30 * sa);
+    var faixa = total >= 50 ? 'alto' : (total >= 20 ? 'medio' : 'baixo');
+
+    var frentesMatch = [];
+    p.frentes.forEach(function(f) {
+      var fn = normalizeStr(f);
+      var matched = false;
+      var allKws = SEBRAE_FRENTE_KEYWORDS.tier1.concat(SEBRAE_FRENTE_KEYWORDS.tier2).concat(SEBRAE_FRENTE_KEYWORDS.tier3);
+      allKws.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) matched = true; });
+      if (matched) frentesMatch.push(f);
+    });
+
+    return {
+      id: p.id, nome: p.nome, partido: p.partido, uf: p.uf, casa: p.casa,
+      foto: p.foto, email: p.email,
+      score: total, faixa: faixa,
+      scoreFrentes: sf, scoreComissoes: sc, scoreAutorias: sa,
+      autorias: autoCount,
+      frentesMatch: frentesMatch,
+      orgaos: p.orgaos
+    };
+  });
+
+  parlScores.sort(function(a, b) { return b.score - a.score; });
+  scoreComputed = true;
+
+  updateScoreKPIs();
+  renderScoreRanking();
+  showToast('Score calculado para ' + parlScores.length + ' parlamentares');
+}
+
+function updateScoreKPIs() {
+  var alto = parlScores.filter(function(p) { return p.faixa === 'alto'; }).length;
+  var medio = parlScores.filter(function(p) { return p.faixa === 'medio'; }).length;
+  var baixo = parlScores.filter(function(p) { return p.faixa === 'baixo'; }).length;
+  var avg = parlScores.length > 0 ? (parlScores.reduce(function(s, p) { return s + p.score; }, 0) / parlScores.length).toFixed(1) : '—';
+
+  document.getElementById('kpiScoreAlto').textContent = alto;
+  document.getElementById('kpiScoreMedio').textContent = medio;
+  document.getElementById('kpiScoreBaixo').textContent = baixo;
+  document.getElementById('kpiScoreMedia').textContent = avg;
+}
+
+function renderScoreRanking() {
+  var search = normalizeStr(document.getElementById('scoreSearchBox').value || '');
+  var container = document.getElementById('scoreContainer');
+
+  var filtered = parlScores;
+  if (search) {
+    filtered = parlScores.filter(function(p) {
+      return normalizeStr(p.nome).indexOf(search) >= 0
+        || normalizeStr(p.partido).indexOf(search) >= 0
+        || normalizeStr(p.uf).indexOf(search) >= 0;
+    });
+  }
+
+  if (filters.casa) filtered = filtered.filter(function(p) { return p.casa === filters.casa; });
+  if (filters.partido) filtered = filtered.filter(function(p) { return p.partido === filters.partido; });
+  if (filters.uf) filtered = filtered.filter(function(p) { return p.uf === filters.uf; });
+
+  document.getElementById('scoreCount').textContent = filtered.length + ' parlamentares';
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">&#128269;</div><h3>Nenhum resultado</h3><p>Ajuste a busca ou os filtros.</p></div>';
+    return;
+  }
+
+  var html = '';
+  filtered.forEach(function(p, idx) {
+    var uid = 'sc-' + p.casa + '-' + p.id;
+    var scoreColor = p.faixa === 'alto' ? 'var(--emerald)' : (p.faixa === 'medio' ? 'var(--accent)' : 'var(--text3)');
+    var badgeClass = 'score-' + p.faixa;
+    var casaClass = p.casa === 'camara' ? 'casa-camara' : 'casa-senado';
+    var casaLabel = p.casa === 'camara' ? 'CAMARA' : 'SENADO';
+
+    html += '<div class="parl-card" id="' + uid + '">';
+    html += '<div class="parl-header" onclick="document.getElementById(\'' + uid + '\').classList.toggle(\'expanded\')">';
+
+    html += '<div class="score-rank">#' + (idx + 1) + '</div>';
+
+    html += '<div class="score-badge ' + badgeClass + '">' + p.score + '</div>';
+
+    html += '<div class="parl-info">';
+    html += '<div class="parl-name">' + escapeHtml(p.nome) + '</div>';
+    html += '<div class="parl-meta">';
+    html += '<span class="parl-casa ' + casaClass + '">' + casaLabel + '</span>';
+    html += '<span class="parl-partido">' + escapeHtml(p.partido) + ' - ' + escapeHtml(p.uf) + '</span>';
+    html += '</div>';
+    html += '<div class="score-breakdown">';
+    html += '<span class="score-axis">Frentes: <span class="score-axis-val" style="color:var(--emerald)">' + p.scoreFrentes + '</span></span>';
+    html += '<span class="score-axis">Comissoes: <span class="score-axis-val" style="color:var(--blue)">' + p.scoreComissoes + '</span></span>';
+    html += '<span class="score-axis">Autorias: <span class="score-axis-val" style="color:var(--purple)">' + p.scoreAutorias.toFixed(0) + '</span></span>';
+    if (p.autorias > 0) html += '<span class="score-axis">(' + p.autorias + ' PLs)</span>';
+    html += '</div>';
+    html += '</div>';
+
+    html += '<div style="min-width:120px;display:flex;align-items:center;gap:8px">';
+    html += '<div class="score-bar"><div class="score-fill" style="width:' + p.score + '%;background:' + scoreColor + '"></div></div>';
+    html += '</div>';
+
+    html += '<div class="parl-expand">&#9660;</div>';
+    html += '</div>';
+
+    // Expandable details
+    html += '<div class="parl-details">';
+    html += '<div class="detail-grid">';
+    html += '<div class="detail-item"><span class="detail-label">Score Total</span><span class="detail-value" style="font-size:18px;font-weight:800;color:' + scoreColor + '">' + p.score + '/100</span></div>';
+    html += '<div class="detail-item"><span class="detail-label">Frentes (40%)</span><span class="detail-value" style="color:var(--emerald)">' + p.scoreFrentes + '/100</span></div>';
+    html += '<div class="detail-item"><span class="detail-label">Comissoes (30%)</span><span class="detail-value" style="color:var(--blue)">' + p.scoreComissoes + '/100</span></div>';
+    html += '<div class="detail-item"><span class="detail-label">Autorias (30%)</span><span class="detail-value" style="color:var(--purple)">' + p.scoreAutorias.toFixed(0) + '/100' + (p.autorias > 0 ? ' (' + p.autorias + ' PLs)' : '') + '</span></div>';
+    html += '</div>';
+
+    if (p.frentesMatch.length > 0) {
+      html += '<div style="margin-top:12px"><span class="detail-label">Frentes SEBRAE-relevantes (' + p.frentesMatch.length + ')</span>';
+      html += '<div style="margin-top:4px">';
+      p.frentesMatch.forEach(function(f) { html += '<span class="frente-tag">' + escapeHtml(f) + '</span>'; });
+      html += '</div></div>';
+    }
+
+    if (p.orgaos.length > 0) {
+      html += '<div style="margin-top:12px"><span class="detail-label">Comissoes-Chave (' + p.orgaos.length + ')</span>';
+      html += '<div style="margin-top:4px">';
+      p.orgaos.forEach(function(o) {
+        var c = comissoesChave[o];
+        var tier = COMISSOES_TIER1.indexOf(o) >= 0 ? ' (Tier 1)' : '';
+        html += '<span class="comissao-tag">' + escapeHtml(o) + (c ? ' — ' + escapeHtml(c.nome) : '') + tier + '</span>';
+      });
+      html += '</div></div>';
+    }
+
+    html += '</div>';
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
 }
 </script>
 </body>
