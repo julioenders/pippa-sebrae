@@ -251,7 +251,7 @@ function escapeHtml(s) {
 
 function formatNum(n) {
   if (n === null || n === undefined) return '—';
-  return parseFloat(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return parseFloat(String(n).replace(',','.')).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 async function fetchBCBSeries(serieId, ultimos) {
@@ -350,8 +350,8 @@ function updateCharts() {
       data: {
         labels: credito.dados.map(function(d){return d.data}),
         datasets: [{
-          label: 'Saldo PJ (R$ mi)',
-          data: credito.dados.map(function(d){return parseFloat(d.valor.replace(',','.'))}),
+          label: 'Saldo PJ (R$ bi)',
+          data: credito.dados.map(function(d){return parseFloat(d.valor.replace(',','.'))/1000}),
           backgroundColor: 'rgba(79,140,255,.4)',
           borderColor: '#4f8cff',
           borderWidth: 1
