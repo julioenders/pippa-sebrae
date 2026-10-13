@@ -82,6 +82,11 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .frente-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;margin:2px;background:rgba(245,158,11,.1);color:var(--accent)}
 .comissao-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;margin:2px;background:rgba(79,140,255,.1);color:var(--blue)}
 .orgao-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;margin:2px;background:rgba(34,197,94,.1);color:var(--emerald)}
+.elec-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;margin:2px}
+.elec-presidente{background:rgba(239,68,68,.15);color:var(--red)}
+.elec-governador{background:rgba(168,85,247,.15);color:var(--purple)}
+.elec-senador{background:rgba(6,182,212,.15);color:var(--cyan)}
+.elec-deputado{background:rgba(245,158,11,.15);color:var(--accent)}
 
 .loading{display:flex;align-items:center;justify-content:center;gap:8px;padding:40px;color:var(--text3);font-size:13px}
 .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
@@ -154,17 +159,22 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <div class="filter-title">Comissoes-Chave</div>
       <div class="filter-group" id="filterComissoes"></div>
     </div>
+    <div class="filter-section">
+      <div class="filter-title">Eleicoes 2026</div>
+      <div class="filter-group" id="filterEleicao"></div>
+    </div>
     <div class="sidebar-footer">
       PIPPA Stakeholders<br>Sebrae Nacional — Observatorio<br>Dados: APIs Camara e Senado
     </div>
   </div>
 
   <div class="content">
-    <div class="kpi-row">
+    <div class="kpi-row" style="grid-template-columns:repeat(5,1fr)">
       <div class="kpi"><div class="kpi-value" id="kpiTotal" style="color:var(--accent)">—</div><div class="kpi-label">Parlamentares</div></div>
       <div class="kpi"><div class="kpi-value" id="kpiCamara" style="color:var(--camara)">—</div><div class="kpi-label">Deputados</div></div>
       <div class="kpi"><div class="kpi-value" id="kpiSenado" style="color:var(--senado)">—</div><div class="kpi-label">Senadores</div></div>
       <div class="kpi"><div class="kpi-value" id="kpiFrentes" style="color:var(--emerald)">—</div><div class="kpi-label">Frentes Relevantes</div></div>
+      <div class="kpi"><div class="kpi-value" id="kpiCandidatos" style="color:var(--cyan)">—</div><div class="kpi-label">Candidatos 2026</div></div>
     </div>
 
     <input type="text" class="search-box" id="searchBox" placeholder="Buscar parlamentar por nome, partido ou UF..." oninput="applyFilters()">
@@ -225,7 +235,7 @@ var allParlamentares = [];
 var filteredParlamentares = [];
 var allFrentes = [];
 var comissoesChave = {};
-var filters = { casa: null, partido: null, uf: null, frente: null, comissao: null };
+var filters = { casa: null, partido: null, uf: null, frente: null, comissao: null, eleicao: null };
 
 var FRENTES_RELEVANTES = [
   'empreendedorismo', 'micro', 'pequen', 'simples', 'mei',
@@ -242,6 +252,100 @@ var COMISSOES_CHAVE_CAMARA = [
 var COMISSOES_CHAVE_SENADO = [
   'CAE', 'CI', 'CDR', 'CMA', 'CCT', 'CE', 'CDH', 'CAS'
 ];
+
+function normalizeStr(s) {
+  return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+}
+
+// Parlamentares federais candidatos em 2026 — fonte: PIPPA Pesquisas Eleitorais (ElectioLab API)
+var CANDIDATOS_2026 = {
+  'flavio bolsonaro': { cargo: 'Presidente', uf: 'BR' },
+  'sergio moro': { cargo: 'Governador', uf: 'PR' },
+  'renan filho': { cargo: 'Governador', uf: 'AL' },
+  'omar aziz': { cargo: 'Governador', uf: 'AM' },
+  'cleitinho': { cargo: 'Governador', uf: 'MG' },
+  'wellington fagundes': { cargo: 'Governador', uf: 'MT' },
+  'marcos rogerio': { cargo: 'Governador', uf: 'RO' },
+  'efraim filho': { cargo: 'Governador', uf: 'PB' },
+  'alan rick': { cargo: 'Governador', uf: 'AC' },
+  'douglas ruas': { cargo: 'Governador', uf: 'RJ' },
+  'sandro alex': { cargo: 'Governador', uf: 'PR' },
+  'luciano zucco': { cargo: 'Governador', uf: 'RS' },
+  'juliana brizola': { cargo: 'Governador', uf: 'RS' },
+  'professora dorinha': { cargo: 'Governador', uf: 'TO' },
+  'vicentinho junior': { cargo: 'Governador', uf: 'TO' },
+  'expedito netto': { cargo: 'Governador', uf: 'RO' },
+  'arthur lira': { cargo: 'Senador', uf: 'AL' },
+  'gleisi hoffmann': { cargo: 'Senador', uf: 'PR' },
+  'michelle bolsonaro': { cargo: 'Senador', uf: 'DF' },
+  'bia kicis': { cargo: 'Senador', uf: 'DF' },
+  'erika kokay': { cargo: 'Senador', uf: 'DF' },
+  'filipe barros': { cargo: 'Senador', uf: 'PR' },
+  'deltan dallagnol': { cargo: 'Senador', uf: 'PR' },
+  'marcel van hattem': { cargo: 'Senador', uf: 'RS' },
+  'ricardo salles': { cargo: 'Senador', uf: 'SP' },
+  'andre do prado': { cargo: 'Senador', uf: 'SP' },
+  'guilherme derrite': { cargo: 'Senador', uf: 'SP' },
+  'carlos jordy': { cargo: 'Senador', uf: 'RJ' },
+  'benedita da silva': { cargo: 'Senador', uf: 'RJ' },
+  'pedro paulo': { cargo: 'Senador', uf: 'RJ' },
+  'gustavo gayer': { cargo: 'Senador', uf: 'GO' },
+  'domingos savio': { cargo: 'Senador', uf: 'MG' },
+  'aecio neves': { cargo: 'Senador', uf: 'MG' },
+  'marcelo aro': { cargo: 'Senador', uf: 'MG' },
+  'marilia arraes': { cargo: 'Senador', uf: 'PE' },
+  'tulio gadelha': { cargo: 'Senador', uf: 'PE' },
+  'eduardo da fonte': { cargo: 'Senador', uf: 'PE' },
+  'mendonca filho': { cargo: 'Senador', uf: 'PE' },
+  'joao roma': { cargo: 'Senador', uf: 'BA' },
+  'andre fufuca': { cargo: 'Senador', uf: 'MA' },
+  'luizianne lins': { cargo: 'Senador', uf: 'CE' },
+  'ronaldo fonseca': { cargo: 'Senador', uf: 'DF' },
+  'capitao alberto neto': { cargo: 'Senador', uf: 'AM' },
+  'carol de toni': { cargo: 'Senador', uf: 'SC' },
+  'paulo pimenta': { cargo: 'Senador', uf: 'RS' },
+  'sanderson': { cargo: 'Senador', uf: 'RS' },
+  'mariana carvalho': { cargo: 'Senador', uf: 'RO' },
+  'fernando maximo': { cargo: 'Senador', uf: 'RO' },
+  'celso sabino': { cargo: 'Senador', uf: 'PA' },
+  'eder mauro': { cargo: 'Senador', uf: 'PA' },
+  'andre moura': { cargo: 'Senador', uf: 'SE' },
+  'rodrigo valadares': { cargo: 'Senador', uf: 'SE' },
+  'humberto costa': { cargo: 'Senador', uf: 'PE' },
+  'carlos portinho': { cargo: 'Senador', uf: 'RJ' },
+  'carlos viana': { cargo: 'Senador', uf: 'MG' },
+  'eliziane gama': { cargo: 'Senador', uf: 'MA' },
+  'weverton rocha': { cargo: 'Senador', uf: 'MA' },
+  'cid gomes': { cargo: 'Senador', uf: 'CE' },
+  'leila barros': { cargo: 'Senador', uf: 'DF' },
+  'eduardo braga': { cargo: 'Senador', uf: 'AM' },
+  'plinio valerio': { cargo: 'Senador', uf: 'AM' },
+  'randolfe rodrigues': { cargo: 'Senador', uf: 'AP' },
+  'fabiano contarato': { cargo: 'Senador', uf: 'ES' },
+  'marcos do val': { cargo: 'Senador', uf: 'ES' },
+  'rose de freitas': { cargo: 'Senador', uf: 'ES' },
+  'vanderlan cardoso': { cargo: 'Senador', uf: 'GO' },
+  'ciro nogueira': { cargo: 'Senador', uf: 'PI' },
+  'marcelo castro': { cargo: 'Senador', uf: 'PI' },
+  'veneziano vital': { cargo: 'Senador', uf: 'PB' },
+  'soraya thronicke': { cargo: 'Senador', uf: 'MS' },
+  'carlos favaro': { cargo: 'Senador', uf: 'MT' },
+  'zequinha marinho': { cargo: 'Senador', uf: 'PA' },
+  'esperidiao amin': { cargo: 'Senador', uf: 'SC' },
+  'eduardo gomes': { cargo: 'Senador', uf: 'TO' },
+  'styvenson valentim': { cargo: 'Senador', uf: 'RN' },
+  'chico rodrigues': { cargo: 'Senador', uf: 'RR' }
+};
+
+function matchElection(nome) {
+  var norm = normalizeStr(nome);
+  if (CANDIDATOS_2026[norm]) return CANDIDATOS_2026[norm];
+  var keys = Object.keys(CANDIDATOS_2026);
+  for (var i = 0; i < keys.length; i++) {
+    if (norm.indexOf(keys[i]) >= 0 || keys[i].indexOf(norm) >= 0) return CANDIDATOS_2026[keys[i]];
+  }
+  return null;
+}
 
 function showToast(msg) {
   var t = document.getElementById('toast');
@@ -276,6 +380,7 @@ async function fetchData() {
   allFrentes = [];
   comissoesChave = {};
   var warnings = [];
+  var seenIds = {};
 
   try {
     // Deputados
@@ -295,6 +400,9 @@ async function fetchData() {
         nextLink = nl;
       }
       deputados.forEach(function(d) {
+        var key = 'camara-' + d.id;
+        if (seenIds[key]) return;
+        seenIds[key] = true;
         allParlamentares.push({
           id: d.id,
           nome: d.nome,
@@ -304,7 +412,8 @@ async function fetchData() {
           foto: d.urlFoto,
           email: d.email || '',
           frentes: [],
-          orgaos: []
+          orgaos: [],
+          eleicao2026: matchElection(d.nome)
         });
       });
     } else {
@@ -323,16 +432,21 @@ async function fetchData() {
         parlamentares = lista;
         parlamentares.forEach(function(s) {
           var id = s.IdentificacaoParlamentar;
+          var key = 'senado-' + id.CodigoParlamentar;
+          if (seenIds[key]) return;
+          seenIds[key] = true;
+          var nomeSen = id.NomeParlamentar || id.NomeCompletoParlamentar;
           allParlamentares.push({
             id: id.CodigoParlamentar,
-            nome: id.NomeParlamentar || id.NomeCompletoParlamentar,
+            nome: nomeSen,
             partido: id.SiglaPartidoParlamentar,
             uf: id.UfParlamentar,
             casa: 'senado',
             foto: id.UrlFotoParlamentar || '',
             email: id.EmailParlamentar || '',
             frentes: [],
-            orgaos: []
+            orgaos: [],
+            eleicao2026: matchElection(nomeSen)
           });
         });
       } catch(e) {
@@ -466,6 +580,18 @@ function buildFilters() {
     var c = comissoesChave[sigla];
     comEl.innerHTML += '<button class="filter-btn" onclick="toggleFilter(\'comissao\',\'' + sigla + '\',this)">' + sigla + ' <span class="filter-count">' + c.membros.length + '</span></button>';
   });
+
+  // Eleicoes 2026
+  var elecEl = document.getElementById('filterEleicao');
+  var candCnt = allParlamentares.filter(function(p){ return !!p.eleicao2026; }).length;
+  var naoCandCnt = allParlamentares.length - candCnt;
+  elecEl.innerHTML = '<button class="filter-btn" onclick="toggleFilter(\'eleicao\',\'candidato\',this)">Candidato 2026 <span class="filter-count">' + candCnt + '</span></button>';
+  elecEl.innerHTML += '<button class="filter-btn" onclick="toggleFilter(\'eleicao\',\'nao_candidato\',this)">Nao candidato <span class="filter-count">' + naoCandCnt + '</span></button>';
+  var cargos = {};
+  allParlamentares.forEach(function(p){ if (p.eleicao2026) cargos[p.eleicao2026.cargo] = (cargos[p.eleicao2026.cargo]||0)+1; });
+  Object.keys(cargos).sort().forEach(function(c) {
+    elecEl.innerHTML += '<button class="filter-btn" onclick="toggleFilter(\'eleicao\',\'' + c + '\',this)">Cand. a ' + c + ' <span class="filter-count">' + cargos[c] + '</span></button>';
+  });
 }
 
 function toggleFilter(type, value, btn) {
@@ -493,6 +619,13 @@ function applyFilters() {
       var com = comissoesChave[filters.comissao];
       if (!com || com.membros.indexOf(p.id) < 0) return false;
     }
+    if (filters.eleicao) {
+      if (filters.eleicao === 'candidato' && !p.eleicao2026) return false;
+      if (filters.eleicao === 'nao_candidato' && p.eleicao2026) return false;
+      if (filters.eleicao !== 'candidato' && filters.eleicao !== 'nao_candidato') {
+        if (!p.eleicao2026 || p.eleicao2026.cargo !== filters.eleicao) return false;
+      }
+    }
     if (search) {
       var haystack = (p.nome + ' ' + p.partido + ' ' + p.uf).toLowerCase();
       if (haystack.indexOf(search) < 0) return false;
@@ -516,6 +649,7 @@ function updateKPIs() {
   document.getElementById('kpiCamara').textContent = filteredParlamentares.filter(function(p){return p.casa==='camara'}).length;
   document.getElementById('kpiSenado').textContent = filteredParlamentares.filter(function(p){return p.casa==='senado'}).length;
   document.getElementById('kpiFrentes').textContent = allFrentes.length;
+  document.getElementById('kpiCandidatos').textContent = filteredParlamentares.filter(function(p){return !!p.eleicao2026}).length;
 }
 
 function renderParlamentares() {
@@ -553,17 +687,19 @@ function renderParlamentares() {
     if (p.orgaos.length > 0) html += ' <span style="font-size:10px;color:var(--blue)">' + p.orgaos.length + ' comissao(oes)</span>';
     html += '</div>';
 
-    // Frente and comissao tags (collapsed)
-    if (p.frentes.length > 0 || p.orgaos.length > 0) {
-      html += '<div style="margin-top:4px">';
-      p.orgaos.forEach(function(o){ html += '<span class="comissao-tag">' + escapeHtml(o) + '</span>'; });
-      p.frentes.slice(0,2).forEach(function(f){
-        var short = f.length > 30 ? f.substring(0,28) + '...' : f;
-        html += '<span class="frente-tag">' + escapeHtml(short) + '</span>';
-      });
-      if (p.frentes.length > 2) html += '<span class="frente-tag">+' + (p.frentes.length - 2) + '</span>';
-      html += '</div>';
+    // Election + frente/comissao tags
+    html += '<div style="margin-top:4px">';
+    if (p.eleicao2026) {
+      var elCls = 'elec-' + p.eleicao2026.cargo.toLowerCase();
+      html += '<span class="elec-tag ' + elCls + '">&#127463;&#127479; Candidato a ' + escapeHtml(p.eleicao2026.cargo) + ' — ' + escapeHtml(p.eleicao2026.uf) + '</span>';
     }
+    p.orgaos.forEach(function(o){ html += '<span class="comissao-tag">' + escapeHtml(o) + '</span>'; });
+    p.frentes.slice(0,2).forEach(function(f){
+      var short = f.length > 30 ? f.substring(0,28) + '...' : f;
+      html += '<span class="frente-tag">' + escapeHtml(short) + '</span>';
+    });
+    if (p.frentes.length > 2) html += '<span class="frente-tag">+' + (p.frentes.length - 2) + '</span>';
+    html += '</div>';
 
     html += '</div>'; // parl-info
     html += '<div class="parl-expand">&#9660;</div>';
@@ -576,6 +712,7 @@ function renderParlamentares() {
     html += '<div class="detail-item"><span class="detail-label">Casa</span><span class="detail-value">' + (p.casa === 'camara' ? 'Camara dos Deputados' : 'Senado Federal') + '</span></div>';
     html += '<div class="detail-item"><span class="detail-label">Partido / UF</span><span class="detail-value">' + escapeHtml(p.partido) + ' - ' + escapeHtml(p.uf) + '</span></div>';
     if (p.email) html += '<div class="detail-item"><span class="detail-label">Email</span><span class="detail-value"><a href="mailto:' + escapeHtml(p.email) + '" style="color:var(--accent);font-size:11px">' + escapeHtml(p.email) + '</a></span></div>';
+    if (p.eleicao2026) html += '<div class="detail-item"><span class="detail-label">Eleicoes 2026</span><span class="detail-value" style="color:var(--cyan)">Candidato a ' + escapeHtml(p.eleicao2026.cargo) + ' — ' + escapeHtml(p.eleicao2026.uf) + '</span></div>';
     html += '</div>';
 
     // Frentes
