@@ -23,9 +23,12 @@ CARGO_PRIORITY = {"Presidente": 5, "Governador": 4, "Senador": 3, "Deputado Fede
 
 ctx = ssl.create_default_context()
 
-def fetch_json(url):
+def fetch_json(url, extra_headers=None):
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "PIPPA/1.0"})
+        headers = {"User-Agent": "PIPPA/1.0"}
+        if extra_headers:
+            headers.update(extra_headers)
+        req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=30, context=ctx) as r:
             return json.loads(r.read())
     except Exception:
@@ -101,10 +104,10 @@ print(f"  {len(deps)} deputados")
 print("Buscando senadores...")
 sens = []
 for endpoint in [
-    f"{SENADO_API}/senador/lista/atual?format=json",
-    f"{SENADO_API}/senador/lista/legislatura/57?format=json",
+    f"{SENADO_API}/senador/lista/atual",
+    f"{SENADO_API}/senador/lista/legislatura/57",
 ]:
-    sd = fetch_json(endpoint)
+    sd = fetch_json(endpoint, {"Accept": "application/json"})
     if not sd:
         continue
     for top_key in ["ListaParlamentarEmExercicio", "ListaParlamentarLegislatura"]:
