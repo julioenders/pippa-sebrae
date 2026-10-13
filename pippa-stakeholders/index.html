@@ -1736,7 +1736,7 @@ var SEBRAE_FRENTE_KEYWORDS = {
 };
 
 var COMISSOES_TIER1 = ['CDEICS', 'CFT', 'CAE'];
-var COMISSOES_TIER2 = ['CCTCI', 'CI', 'CDR', 'CAS', 'CAPADR', 'CE'];
+var COMISSOES_TIER2 = ['CCTCI', 'CI', 'CDR', 'CAS', 'CAPADR', 'CE', 'CCT'];
 
 var AUTORIA_KEYWORDS = [
   'microempresa', 'pequena empresa', 'pequeno porte', 'simples nacional',
@@ -1753,14 +1753,18 @@ function matchKeywords(text, keywords) {
 }
 
 function scoreFrentes(p) {
-  var pts = 0;
+  var t1 = 0, t2 = 0, t3 = 0;
   p.frentes.forEach(function(f) {
     var fn = normalizeStr(f);
-    SEBRAE_FRENTE_KEYWORDS.tier1.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) pts += 15; });
-    SEBRAE_FRENTE_KEYWORDS.tier2.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) pts += 10; });
-    SEBRAE_FRENTE_KEYWORDS.tier3.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) pts += 5; });
+    var tier = 0;
+    SEBRAE_FRENTE_KEYWORDS.tier1.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) tier = 3; });
+    if (tier < 3) SEBRAE_FRENTE_KEYWORDS.tier2.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) tier = Math.max(tier, 2); });
+    if (tier < 2) SEBRAE_FRENTE_KEYWORDS.tier3.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) tier = Math.max(tier, 1); });
+    if (tier === 3) t1++;
+    else if (tier === 2) t2++;
+    else if (tier === 1) t3++;
   });
-  return Math.min(100, pts);
+  return Math.min(100, t1 * 20 + t2 * 12 + t3 * 5);
 }
 
 function scoreComissoes(p) {
@@ -1808,13 +1812,16 @@ async function fetchAutorias() {
   for (var pi = 0; pi < propIds.length; pi += 5) {
     var pBatch = propIds.slice(pi, pi + 5);
     var detailPromises = pBatch.map(function(pid) {
-      return fetch('https://dadosabertos.camara.leg.br/api/v2/proposicoes/' + pid)
-        .then(function(r) { return r.ok ? r.json() : null; })
+      return fetch('https://dadosabertos.camara.leg.br/api/v2/proposicoes/' + pid + '/autores')
+        .then(function(r) { return r.ok ? r.json() : { dados: [] }; })
         .then(function(j) {
-          if (j && j.dados && j.dados.idDeputadoAutor) {
-            var aid = j.dados.idDeputadoAutor;
-            depAutorias[aid] = (depAutorias[aid] || 0) + 1;
-          }
+          (j.dados || []).forEach(function(autor) {
+            if (autor.uri && autor.uri.indexOf('/deputados/') >= 0) {
+              var parts = autor.uri.split('/');
+              var aid = parseInt(parts[parts.length - 1]);
+              if (aid) depAutorias[aid] = (depAutorias[aid] || 0) + 1;
+            }
+          });
         })
         .catch(function() {});
     });
@@ -1826,7 +1833,34 @@ async function fetchAutorias() {
 
 async function computeScores() {
   var container = document.getElementById('scoreContainer');
-  container.innerHTML = '<div class="loading"><div class="spinner"></div>Calculando scores (frentes + comissoes)...</div>';
+
+  var senators = allParlamentares.filter(function(p) { return p.casa === 'senado' && p.orgaos.length === 0; });
+  if (senators.length > 0) {
+    container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando comissoes do Senado (' + senators.length + ' senadores)...</div>';
+    for (var si = 0; si < senators.length; si += 5) {
+      var sBatch = senators.slice(si, si + 5);
+      await Promise.all(sBatch.map(function(s) {
+        return fetch('https://legis.senado.leg.br/dadosabertos/senador/' + s.id + '/comissoes', { headers: { 'Accept': 'application/json' } })
+          .then(function(r) { return r.ok ? r.json() : null; })
+          .then(function(j) {
+            if (!j) return;
+            try {
+              var root = j.MembroComissaoParlamentar || j;
+              var parl = root.Parlamentar || root;
+              var coms = parl.Comissoes || parl.comissoes || {};
+              var lista = coms.Comissao || coms.comissao || [];
+              if (!Array.isArray(lista)) lista = [lista];
+              lista.forEach(function(c) {
+                var ic = c.IdentificacaoComissao || c;
+                var sigla = ic.SiglaComissao || ic.siglaComissao || '';
+                if (sigla && s.orgaos.indexOf(sigla) < 0) s.orgaos.push(sigla);
+              });
+            } catch(e) {}
+          })
+          .catch(function() {});
+      }));
+    }
+  }
 
   var depAutorias = {};
   try {
