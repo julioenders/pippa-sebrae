@@ -99,7 +99,8 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .analytics-body{display:none;padding:0 20px 20px;border-top:1px solid var(--border)}
 .analytics-panel.open .analytics-body{display:block}
 .analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
-@media(max-width:1100px){.analytics-grid{grid-template-columns:1fr}}
+@media(max-width:1200px){.analytics-grid{grid-template-columns:1fr}}
+@media(max-width:1400px){.donut-container{flex-direction:column;align-items:flex-start;gap:12px}}
 .chart-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px}
 .chart-card h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:14px}
 .chart-card-full{grid-column:1/-1}
@@ -1251,6 +1252,28 @@ function renderAnalytics() {
            + legendItem('var(--purple)', 'Migraram de cargo', depsMigraram, (depsMigraram/depsT*100).toFixed(1))
            + legendItem('#2e3348', 'Nao candidatos', depsNaoCand, (depsNaoCand/depsT*100).toFixed(1));
 
+  // Donut 3: Renovacao do Senado
+  var senSenado = data.filter(function(p){ return p.casa === 'senado'; });
+  var senReeleitos = senSenado.filter(function(p){ return p.eleicao2026 && p.eleicao2026.cargo === 'Senador' && p.eleicao2026.eleito; }).length;
+  var senNaoReeleitos = senSenado.filter(function(p){ return p.eleicao2026 && p.eleicao2026.cargo === 'Senador' && !p.eleicao2026.eleito; }).length;
+  var senMigraram = senSenado.filter(function(p){ return p.eleicao2026 && p.eleicao2026.cargo !== 'Senador'; }).length;
+  var senMigEleitos = senSenado.filter(function(p){ return p.eleicao2026 && p.eleicao2026.cargo !== 'Senador' && p.eleicao2026.eleito; }).length;
+  var senNaoCand = senSenado.filter(function(p){ return !p.eleicao2026; }).length;
+  var senT = senSenado.length || 1;
+  var taxaRenSen = ((senNaoReeleitos + senMigraram + senNaoCand) / senT * 100).toFixed(1);
+
+  var donut3 = donutSvg([
+    { pct: senReeleitos / senT * 100, color: 'var(--emerald)' },
+    { pct: senNaoReeleitos / senT * 100, color: 'var(--red)' },
+    { pct: senMigraram / senT * 100, color: 'var(--purple)' },
+    { pct: senNaoCand / senT * 100, color: 'var(--border)' }
+  ], 'renovacao', taxaRenSen + '%');
+
+  var leg3 = legendItem('var(--emerald)', 'Reeleitos Senador', senReeleitos, (senReeleitos/senT*100).toFixed(1))
+           + legendItem('var(--red)', 'Nao reeleitos', senNaoReeleitos, (senNaoReeleitos/senT*100).toFixed(1))
+           + legendItem('var(--purple)', 'Migraram de cargo', senMigraram, (senMigraram/senT*100).toFixed(1))
+           + legendItem('#2e3348', 'Nao candidatos', senNaoCand, (senNaoCand/senT*100).toFixed(1));
+
   // --- HBar: Resultado por Cargo ---
   var cargos = {};
   cands.forEach(function(p) {
@@ -1351,7 +1374,10 @@ function renderAnalytics() {
   });
 
   // --- Assemble ---
-  var html = '<div class="analytics-grid">';
+  var html = '';
+
+  // Row 1: 3 donuts
+  html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px">';
 
   // Card 1: Situacao geral
   html += '<div class="chart-card">';
@@ -1365,7 +1391,18 @@ function renderAnalytics() {
   html += '<div class="donut-container">' + donut2 + '<div class="donut-legend">' + leg2 + '</div></div>';
   html += '</div>';
 
-  // Card 3: Resultado por cargo
+  // Card 3: Renovacao Senado
+  html += '<div class="chart-card">';
+  html += '<h4>Taxa de Renovacao — Senado</h4>';
+  html += '<div class="donut-container">' + donut3 + '<div class="donut-legend">' + leg3 + '</div></div>';
+  html += '</div>';
+
+  html += '</div>'; // row 1
+
+  // Row 2+: grid 2 cols
+  html += '<div class="analytics-grid">';
+
+  // Card 4: Resultado por cargo
   html += '<div class="chart-card">';
   html += '<h4>Resultado por Cargo Disputado</h4>';
   html += '<div style="margin-bottom:6px;display:flex;gap:12px;font-size:10px"><span style="color:var(--emerald)">&#9632; Eleitos</span><span style="color:var(--red)">&#9632; Nao eleitos</span></div>';
