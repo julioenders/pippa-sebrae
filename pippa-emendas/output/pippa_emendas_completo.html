@@ -2072,81 +2072,50 @@ function toggleInfoModal() {
 }
 
 function openExportModal() {
-  const estados = getFilteredEstados();
-  const totalEmp = estados.reduce((s,d) => s + d.empenhado, 0);
-  const totalPago = estados.reduce((s,d) => s + d.pago, 0);
-  const execPct = totalEmp > 0 ? (totalPago/totalEmp*100).toFixed(1) : '0.0';
-  const totalQtd = estados.reduce((s,d) => s + d.qtd, 0);
-
-  const { from, to } = getAnoRange();
-  const serieFiltrada = DATA.serie.filter(d => d.ano >= from && d.ano <= to);
-  const totalEmpSerie = serieFiltrada.reduce((s, d) => s + d.empenhado, 0);
-  const totalLiqSerie = serieFiltrada.reduce((s, d) => s + (d.liquidado || 0), 0);
-  const liqRatio = totalEmpSerie > 0 ? totalLiqSerie / totalEmpSerie : 0;
-  const totalLiq = totalEmp * liqRatio;
-
-  const uf = getHeaderUf();
-  let autoresFiltered = DATA.autores;
-  if (uf) autoresFiltered = autoresFiltered.filter(d => d.uf === uf);
-  if (activeFilters.regiao.length) autoresFiltered = autoresFiltered.filter(d => activeFilters.regiao.includes(UF_REGIAO[d.uf]));
-  if (activeFilters.uf.length) autoresFiltered = autoresFiltered.filter(d => activeFilters.uf.includes(d.uf));
-  if (activeFilters.partido.length) autoresFiltered = autoresFiltered.filter(d => activeFilters.partido.includes(d.partido));
-  const yearRatios = getUfYearRatios();
-  autoresFiltered = applyUfRatios(autoresFiltered, yearRatios);
-  const sr = getSetorRatios();
-  if (sr) autoresFiltered = applyUfRatios(autoresFiltered, sr);
-  const totalAutores = autoresFiltered.filter(d => d.qtd > 0).length;
-
-  const numEmojis = ['\u0031\ufe0f\u20e3','\u0032\ufe0f\u20e3','\u0033\ufe0f\u20e3','\u0034\ufe0f\u20e3','\u0035\ufe0f\u20e3'];
-
-  let t = '\ud83c\udfe6 *PIPPA Emendas Parlamentares*
-';
-  t += '\ud83d\udcc5 Relat\u00f3rio gerado em ' + new Date().toLocaleDateString('pt-BR') + '
-
-';
-  t += '\ud83d\udcca *PANORAMA GERAL (' + from + ' a ' + to + ')*
-';
-  t += '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501
-
-';
-  t += '\ud83d\udcb0 *Empenhado:* ' + fmtReais(totalEmp) + '
-';
-  t += '\u2705 *Pago:* ' + fmtReais(totalPago) + '
-';
-  t += '\ud83d\udcc8 *Liquidado:* ' + fmtReais(totalLiq) + '
-';
-  t += '\u26a1 *Taxa de Execu\u00e7\u00e3o:* ' + execPct + '%
-';
-  t += '\ud83d\udccb *Total de Emendas:* ' + totalQtd.toLocaleString('pt-BR') + '
-';
-  t += '\ud83d\udc64 *Autores Identificados:* ' + totalAutores.toLocaleString('pt-BR') + '
-
-';
-
-  t += '\ud83c\udfc6 *TOP 5 ESTADOS POR EMPENHADO*
-';
-  t += '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501
-';
-  estados.slice(0, 5).forEach((d, i) => {
-    t += numEmojis[i] + ' ' + d.uf + ' \u2014 ' + fmtReais(d.empenhado) + ' (execu\u00e7\u00e3o: ' + d.execucao.toFixed(1) + '%)
-';
+  var estados = getFilteredEstados();
+  var totalEmp = estados.reduce(function(s,d){return s + d.empenhado}, 0);
+  var totalPago = estados.reduce(function(s,d){return s + d.pago}, 0);
+  var execPct = totalEmp > 0 ? (totalPago/totalEmp*100).toFixed(1) : '0.0';
+  var totalQtd = estados.reduce(function(s,d){return s + d.qtd}, 0);
+  var rng = getAnoRange();
+  var from = rng.from, to = rng.to;
+  var serieFiltrada = DATA.serie.filter(function(d){return d.ano >= from && d.ano <= to});
+  var totalEmpSerie = serieFiltrada.reduce(function(s,d){return s + d.empenhado}, 0);
+  var totalLiqSerie = serieFiltrada.reduce(function(s,d){return s + (d.liquidado || 0)}, 0);
+  var liqRatio = totalEmpSerie > 0 ? totalLiqSerie / totalEmpSerie : 0;
+  var totalLiq = totalEmp * liqRatio;
+  var uf = getHeaderUf();
+  var af = DATA.autores.slice();
+  if (uf) af = af.filter(function(d){return d.uf === uf});
+  if (activeFilters.regiao.length) af = af.filter(function(d){return activeFilters.regiao.indexOf(UF_REGIAO[d.uf]) >= 0});
+  if (activeFilters.uf.length) af = af.filter(function(d){return activeFilters.uf.indexOf(d.uf) >= 0});
+  if (activeFilters.partido.length) af = af.filter(function(d){return activeFilters.partido.indexOf(d.partido) >= 0});
+  var yr = getUfYearRatios(); af = applyUfRatios(af, yr);
+  var sr = getSetorRatios(); if (sr) af = applyUfRatios(af, sr);
+  var totalAutores = af.filter(function(d){return d.qtd > 0}).length;
+  var ne = ['1\ufe0f\u20e3','2\ufe0f\u20e3','3\ufe0f\u20e3','4\ufe0f\u20e3','5\ufe0f\u20e3'];
+  var t = '\ud83c\udfe6 *PIPPA Emendas Parlamentares*\n';
+  t += '\ud83d\udcc5 Relat\u00f3rio gerado em ' + new Date().toLocaleDateString('pt-BR') + '\n\n';
+  t += '\ud83d\udcca *PANORAMA GERAL (' + from + ' a ' + to + ')*\n';
+  t += '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n';
+  t += '\ud83d\udcb0 *Empenhado:* ' + fmtReais(totalEmp) + '\n';
+  t += '\u2705 *Pago:* ' + fmtReais(totalPago) + '\n';
+  t += '\ud83d\udcc8 *Liquidado:* ' + fmtReais(totalLiq) + '\n';
+  t += '\u26a1 *Taxa de Execu\u00e7\u00e3o:* ' + execPct + '%\n';
+  t += '\ud83d\udccb *Total de Emendas:* ' + totalQtd.toLocaleString('pt-BR') + '\n';
+  t += '\ud83d\udc64 *Autores Identificados:* ' + totalAutores.toLocaleString('pt-BR') + '\n\n';
+  t += '\ud83c\udfc6 *TOP 5 ESTADOS POR EMPENHADO*\n';
+  t += '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n';
+  estados.slice(0, 5).forEach(function(d, i) {
+    t += ne[i] + ' ' + d.uf + ' \u2014 ' + fmtReais(d.empenhado) + ' (execu\u00e7\u00e3o: ' + d.execucao.toFixed(1) + '%)\n';
   });
-
-  t += '
-\ud83c\udfe2 *TOP 5 PARTIDOS POR EMPENHADO*
-';
-  t += '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501
-';
-  getFilteredPartidos().slice(0, 5).forEach((d, i) => {
-    t += numEmojis[i] + ' ' + d.partido + ' \u2014 ' + fmtReais(d.empenhado) + '
-';
+  t += '\n\ud83c\udfe2 *TOP 5 PARTIDOS POR EMPENHADO*\n';
+  t += '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n';
+  getFilteredPartidos().slice(0, 5).forEach(function(d, i) {
+    t += ne[i] + ' ' + d.partido + ' \u2014 ' + fmtReais(d.empenhado) + '\n';
   });
-
-  t += '
-\u2139\ufe0f Dados: Portal da Transpar\u00eancia (CGU), C\u00e2mara dos Deputados e Senado Federal
-';
+  t += '\n\u2139\ufe0f Dados: Portal da Transpar\u00eancia (CGU), C\u00e2mara dos Deputados e Senado Federal\n';
   t += '\ud83d\udce1 PIPPA \u2014 Plataforma de Intelig\u00eancia em Pol\u00edticas P\u00fablicas Aplicadas | Sebrae Nacional';
-
   exportText = t;
   document.getElementById('exportContent').textContent = t;
   document.getElementById('exportModal').classList.add('active');
