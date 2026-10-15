@@ -312,6 +312,9 @@ a { color:var(--accent); text-decoration:none; }
   border:1px solid var(--border);
   transition: border-color .35s ease;
 }
+.table-wrapper table td, .table-wrapper table th { padding:8px 10px; }
+.table-wrapper table tr { border-bottom:1px solid var(--border); }
+.table-wrapper table tr:last-child { border-bottom:none; }
 
 .footer {
   text-align:center; padding:2rem; font-size:.7rem; color:var(--text2);
@@ -380,7 +383,10 @@ a { color:var(--accent); text-decoration:none; }
 </div>
 
 <div class="tabs">
-  <div class="tab active" data-tab="descritiva" onclick="switchTab('descritiva')">
+  <div class="tab active" data-tab="aprovado" onclick="switchTab('aprovado')">
+    <span class="tab-icon">&#x1F4CB;</span>Aprovado
+  </div>
+  <div class="tab" data-tab="descritiva" onclick="switchTab('descritiva')">
     <span class="tab-icon">&#x1F4CA;</span>Descritiva
   </div>
   <div class="tab" data-tab="diagnostica" onclick="switchTab('diagnostica')">
@@ -396,8 +402,41 @@ a { color:var(--accent); text-decoration:none; }
 
 <div class="main">
 
+<!-- ========== APROVADO ========== -->
+<div class="tab-content active" id="tab-aprovado">
+  <div class="kpi-row" id="kpiAprovado"></div>
+  <div class="chart-grid">
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Composição por Núcleo</div>
+      <div class="chart-canvas"><canvas id="chartNucleoPie" height="260"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--accent2)"></span>Orçamento por Projeto</div>
+      <div class="chart-canvas"><canvas id="chartProjetoBar" height="260"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-grid full">
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Comparativo 2025 vs 2027</div>
+      <div class="chart-canvas"><canvas id="chartComparativo" height="200"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-grid full">
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Detalhamento por Ação — Orçamento Aprovado</div>
+      <div class="table-wrapper" id="tableAprovado"></div>
+    </div>
+  </div>
+  <div class="chart-grid full">
+    <div class="chart-box">
+      <div class="chart-title"><span class="dot" style="background:var(--orange)"></span>Notas da Proposta Orçamentária</div>
+      <div id="notasAprovado" style="font-size:.82rem;line-height:1.7;color:var(--text2)"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ========== DESCRITIVA ========== -->
-<div class="tab-content active" id="tab-descritiva">
+<div class="tab-content" id="tab-descritiva">
   <div class="kpi-row" id="kpiRow"></div>
   <div class="chart-grid">
     <div class="chart-box">
@@ -490,7 +529,7 @@ a { color:var(--accent); text-decoration:none; }
     <div class="modal-title">&#9432; Sobre o PIPPA Orçamento</div>
     <div class="modal-content" style="text-align:left">
 
-      <p style="color:var(--status-yellow);font-size:.78rem;padding:10px;background:rgba(243,157,114,.08);border-radius:8px;border:1px solid rgba(243,157,114,.2);margin-bottom:16px"><strong>Dados sintéticos para validação.</strong> Este dashboard foi construído a partir da estrutura orçamentária real da UPP 2027 (R$ 68,75 mi), porém os dados de execução mensal (Empenhado, Liquidado, Pago) e metas físicas foram simulados para fins de prototipagem e validação do layout. A atualização com dados reais será feita mensalmente via planilha Excel.</p>
+      <p style="color:var(--accent);font-size:.78rem;padding:10px;background:rgba(42,79,218,.06);border-radius:8px;border:1px solid rgba(42,79,218,.15);margin-bottom:16px"><strong>Aba "Aprovado" — dados reais.</strong> A aba de Orçamento Aprovado utiliza dados oficiais da proposta orçamentária UPP 2027 (R$ 58,74 mi), aprovada pela Presidência do Sebrae. As demais abas (Descritiva, Diagnóstica, Preditiva, Prescritiva) utilizam dados de execução ajustados proporcionalmente para validação do layout.</p>
 
       <div style="font-size:.9rem;font-weight:700;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--accent)">O que é</div>
       <p style="margin-bottom:12px">Ferramenta de inteligência orçamentária da <strong>UPP — Unidade de Políticas Públicas</strong> do Sebrae Nacional. Acompanha a execução orçamentária 2027 em quatro camadas analíticas.</p>
@@ -688,6 +727,73 @@ function updateChartDefaults() {
 
 const DATA = {"orcamento":[{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Comunidades empreendedoras de aprendizagem","loa":5819398.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Sensibilizar gestores públicos","loa":0.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Simplificar e desonerar o dia a dia do empreendedor","loa":3570663.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Abertura de oportunidades para MPE junto ao governo","loa":10170000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas e cadastramento","loa":200000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Avaliar políticas públicas voltadas ao empreendedorismo","loa":750000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Promover jornadas formativas para a rede de PP","loa":700000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Articular agendas legislativas para competitividade MPE","loa":2700000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Parlamento + Empreendedor","loa":1000000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Laboratórios e observatórios de políticas públicas","loa":1950000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de Políticas Públicas","acao":"Impulsionar ecossistemas empreendedores com parceiros públicos","loa":30229067.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Gestão UPP","projeto":"Gestão de Viagens UPP","acao":"Viagens Colaboradores","loa":1200000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Gestão UPP","projeto":"Bodyshop","acao":"Bodyshop — contrato compartilhado","loa":221662.44,"credito":0.0,"remanejamento":0.0},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Licitações — Brindes","loa":150000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Compra direta / impressões","loa":80000.0,"credito":0.0,"remanejamento":0.0}],"execucao":[{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Comunidades empreendedoras de aprendizagem","tipo":"Empenhado","meses":[311254.4,292484.77,493037.01,333843.71,370146.68,520639.36,615976.85,532993.67,685184.41,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Comunidades empreendedoras de aprendizagem","tipo":"Liquidado","meses":[219824.26,258590.99,355841.92,251938.32,277502.45,393140.07,432184.57,418433.41,537286.43,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Comunidades empreendedoras de aprendizagem","tipo":"Pago","meses":[186741.87,238370.7,311698.29,224467.96,254463.97,356211.57,408434.93,346457.14,438798.73,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Sensibilizar gestores públicos","tipo":"Empenhado","meses":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Sensibilizar gestores públicos","tipo":"Liquidado","meses":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Sensibilizar gestores públicos","tipo":"Pago","meses":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Simplificar e desonerar o dia a dia do empreendedor","tipo":"Empenhado","meses":[142533.4,240274.34,312752.65,311906.96,309063.52,269926.24,283580.57,317742.06,292486.86,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Simplificar e desonerar o dia a dia do empreendedor","tipo":"Liquidado","meses":[129972.44,212026.0,248523.76,266565.03,270783.83,208476.71,205666.91,251400.07,224262.67,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Simplificar e desonerar o dia a dia do empreendedor","tipo":"Pago","meses":[118102.15,190085.77,223514.14,254598.19,218860.59,169775.63,174824.12,217871.49,217220.34,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Abertura de oportunidades para MPE junto ao governo","tipo":"Empenhado","meses":[546138.0,661214.73,896695.19,833157.26,732684.12,786534.2,1107684.36,803274.02,860048.17,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Abertura de oportunidades para MPE junto ao governo","tipo":"Liquidado","meses":[465463.99,489861.35,771157.81,758767.13,518758.72,592060.25,862519.99,745949.9,655061.6,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Abertura de oportunidades para MPE junto ao governo","tipo":"Pago","meses":[386709.8,425347.58,694235.55,712998.28,444462.9,574134.88,791775.21,658370.4,590240.81,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas e cadastramento","tipo":"Empenhado","meses":[8813.71,11079.83,14234.15,12072.37,16018.0,21841.06,21640.48,18180.92,20517.55,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas e cadastramento","tipo":"Liquidado","meses":[7457.69,8363.39,10287.41,10344.35,11466.99,18177.85,15210.45,15167.3,14934.48,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas e cadastramento","tipo":"Pago","meses":[7171.37,8192.42,8317.17,9750.31,9961.28,17719.66,14141.61,12862.3,13116.32,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Avaliar políticas públicas voltadas ao empreendedorismo","tipo":"Empenhado","meses":[36632.32,38574.14,64085.43,60157.96,70703.46,66620.98,52232.01,72864.55,85459.72,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Avaliar políticas públicas voltadas ao empreendedorismo","tipo":"Liquidado","meses":[34377.75,31829.31,58806.68,51269.17,59026.42,46644.21,48694.58,56606.9,80053.32,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Avaliar políticas públicas voltadas ao empreendedorismo","tipo":"Pago","meses":[32921.97,26486.99,50204.45,42425.81,55493.85,40036.97,46657.68,45875.74,65276.88,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Promover jornadas formativas para a rede de PP","tipo":"Empenhado","meses":[34754.83,46260.79,50818.05,50482.37,65039.65,76413.95,64730.56,53610.83,57698.96,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Promover jornadas formativas para a rede de PP","tipo":"Liquidado","meses":[24929.75,33867.42,38940.05,38010.68,48798.46,65904.7,47269.56,45412.51,41413.33,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Promover jornadas formativas para a rede de PP","tipo":"Pago","meses":[23356.89,29991.32,37267.1,34098.36,41776.8,57920.88,39727.49,38211.03,37835.15,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Articular agendas legislativas para competitividade MPE","tipo":"Empenhado","meses":[116703.57,123705.02,163923.9,209693.12,259593.41,228105.42,275848.14,179822.01,305541.39,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Articular agendas legislativas para competitividade MPE","tipo":"Liquidado","meses":[108108.94,93954.1,120169.0,171564.15,194072.67,183828.94,239530.29,143975.44,232872.67,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Articular agendas legislativas para competitividade MPE","tipo":"Pago","meses":[103215.31,86476.86,116370.76,161481.58,158644.24,162516.63,234056.96,123973.58,194271.14,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Parlamento + Empreendedor","tipo":"Empenhado","meses":[48715.34,51036.02,83631.12,93723.09,101098.63,86871.8,71437.46,73550.13,92144.11,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Parlamento + Empreendedor","tipo":"Liquidado","meses":[39238.77,47505.16,70047.86,85194.94,92219.53,65452.42,56774.44,65902.22,86553.67,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Parlamento + Empreendedor","tipo":"Pago","meses":[33358.37,41793.32,56676.14,83015.59,76536.31,57086.76,55488.81,58119.26,84751.29,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Laboratórios e observatórios de políticas públicas","tipo":"Empenhado","meses":[100218.71,102187.76,141039.11,152405.49,134666.41,143821.95,155083.85,141880.0,179327.57,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Laboratórios e observatórios de políticas públicas","tipo":"Liquidado","meses":[88152.58,96278.99,125100.82,125843.13,126612.65,122070.14,113206.81,120403.59,151696.44,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Laboratórios e observatórios de políticas públicas","tipo":"Pago","meses":[72978.3,87060.51,101367.92,119990.11,103115.88,112492.3,108707.03,109746.51,135631.93,0.0,0.0,0.0]},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de Políticas Públicas","acao":"Impulsionar ecossistemas empreendedores com parceiros públicos","tipo":"Empenhado","meses":[1839972.46,1532966.58,1927099.89,1782619.17,3143944.45,2334515.82,3296476.32,2939455.52,3602697.72,0.0,0.0,0.0]},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de Políticas Públicas","acao":"Impulsionar ecossistemas empreendedores com parceiros públicos","tipo":"Liquidado","meses":[1381938.55,1224758.22,1501296.19,1452070.56,2258343.02,2178838.27,2612067.74,2574624.95,3110908.15,0.0,0.0,0.0]},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de Políticas Públicas","acao":"Impulsionar ecossistemas empreendedores com parceiros públicos","tipo":"Pago","meses":[1283702.79,1127885.04,1404215.79,1422625.18,1893322.01,2088537.52,2163822.37,2343171.31,2493107.17,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Gestão de Viagens UPP","acao":"Viagens Colaboradores","tipo":"Empenhado","meses":[69513.12,85362.55,68299.02,94717.34,106711.9,126280.16,105796.67,113555.96,128870.78,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Gestão de Viagens UPP","acao":"Viagens Colaboradores","tipo":"Liquidado","meses":[53861.87,62619.65,57255.48,83294.72,81740.88,115107.65,81375.63,97576.18,107983.41,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Gestão de Viagens UPP","acao":"Viagens Colaboradores","tipo":"Pago","meses":[49521.15,51396.78,48611.2,69688.32,72580.65,93998.48,65152.44,82661.85,94699.69,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Bodyshop","acao":"Bodyshop — contrato compartilhado","tipo":"Empenhado","meses":[8365.93,15541.77,16348.83,15030.86,21803.3,16966.47,24221.68,15281.35,26300.59,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Bodyshop","acao":"Bodyshop — contrato compartilhado","tipo":"Liquidado","meses":[6013.52,12999.1,12049.47,13899.72,20162.19,12312.54,19415.97,14249.4,23741.36,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Bodyshop","acao":"Bodyshop — contrato compartilhado","tipo":"Pago","meses":[5766.72,12352.1,9916.0,13111.63,16892.16,11578.97,17701.91,13617.14,22759.77,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Licitações — Brindes","tipo":"Empenhado","meses":[5717.95,10634.82,12275.86,9045.54,10765.21,11846.57,10475.19,14777.2,15391.9,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Licitações — Brindes","tipo":"Liquidado","meses":[5055.47,9577.28,9411.91,8304.18,9733.33,10648.12,7838.4,13916.03,12312.28,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Licitações — Brindes","tipo":"Pago","meses":[4346.66,9151.4,8863.46,7926.73,8593.12,8954.72,6733.88,11831.99,12024.26,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Compra direta / impressões","tipo":"Empenhado","meses":[4072.43,5764.27,5002.15,6685.63,6704.74,6141.53,8893.78,7473.17,6018.23,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Compra direta / impressões","tipo":"Liquidado","meses":[3806.94,4292.31,3637.07,5204.22,5338.98,5387.33,7422.86,6484.14,5212.14,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Compra direta / impressões","tipo":"Pago","meses":[3124.59,4177.52,3194.15,4731.26,4825.3,4311.5,6899.53,5612.42,4479.5,0.0,0.0,0.0]}],"metas":[{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em PP","acao":"Comunidades empreendedoras","indicador":"Comunidades criadas","unidade":"unidade","meta":14,"realizado":9.0},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em PP","acao":"Sensibilizar gestores públicos","indicador":"Gestores sensibilizados","unidade":"pessoas","meta":500.0,"realizado":320.0},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Oportunidades para MPE","indicador":"Editais monitorados","unidade":"unidade","meta":2000.0,"realizado":1450.0},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas","indicador":"MPE cadastradas","unidade":"empresas","meta":3333,"realizado":2500},{"nucleo":"Projetos Especiais","projeto":"Gestão Movimenta","acao":"Avaliar PP empreendedorismo","indicador":"Políticas avaliadas","unidade":"unidade","meta":12.0,"realizado":7.0},{"nucleo":"Projetos Especiais","projeto":"Gestão Movimenta","acao":"Jornadas formativas","indicador":"Jornadas realizadas","unidade":"evento","meta":8.0,"realizado":6.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa","acao":"Agendas legislativas","indicador":"Proposições monitoradas","unidade":"proposição","meta":300.0,"realizado":245.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa","acao":"Parlamento + Empreendedor","indicador":"Eventos realizados","unidade":"evento","meta":15,"realizado":14.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa","acao":"Laboratórios e observatórios","indicador":"Laboratórios implementados","unidade":"unidade","meta":4,"realizado":2.0},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de PP","acao":"Ecossistemas empreendedores","indicador":"Parcerias firmadas","unidade":"parceria","meta":50.0,"realizado":38.0},{"nucleo":"Gestão UPP","projeto":"Viagens","acao":"Viagens","indicador":"Viagens realizadas","unidade":"viagem","meta":138,"realizado":98.0},{"nucleo":"Gestão UPP","projeto":"Conteúdos Estratégicos","acao":"Brindes e impressões","indicador":"Materiais produzidos","unidade":"lote","meta":30.0,"realizado":22.0}],"ano":2027,"unidade":"UPP — Unidade de Políticas Públicas","mes_atual":9};
 
+const DATA_APROVADO = {
+  versao: "Versão 2",
+  proposta2027: 58740790.44,
+  orcamento2025: 41438648,
+  diferenca: 17302142.44,
+  pctDiferenca: 29.46,
+  nucleos: [
+    {
+      nome: "Projetos Especiais", tipo: "3 Projetos", total: 21210061,
+      projetos: [
+        { nome: "Entrega de Valor em Políticas Públicas", total: 9390061, acoes: [
+          { nome: "Construir comunidades empreendedoras de aprendizagem para a vida toda", valor: 5819398 },
+          { nome: "Sensibilizar gestores públicos e realizar entregas de políticas e serviços públicos", valor: 0 },
+          { nome: "Simplificar, desonerar e agilizar o dia a dia do empreendedor", valor: 3570663 }
+        ]},
+        { nome: "Fomento a Compras Públicas", total: 10370000, acoes: [
+          { nome: "Abertura de oportunidades para MPE junto ao governo", valor: 10170000 },
+          { nome: "Conexão por meio de plataformas e cadastramento/oferta de oportunidades", valor: 200000 }
+        ]},
+        { nome: "Gestão do Programa Nacional Movimenta", total: 1450000, acoes: [
+          { nome: "Avaliar políticas públicas voltadas ao empreendedorismo", valor: 750000 },
+          { nome: "Promover jornadas formativas para a rede de políticas públicas", valor: 700000 }
+        ]}
+      ]
+    },
+    {
+      nome: "NAL", tipo: "1 Projeto", total: 5650000,
+      projetos: [
+        { nome: "Inteligência Legislativa para o Ambiente de Negócios", total: 5650000, acoes: [
+          { nome: "Articular agendas legislativas para a competitividade das MPE", valor: 2700000 },
+          { nome: "Parlamento + Empreendedor (orçamento aprovado pela Resolução DIREX 97/2024)", valor: 1000000 },
+          { nome: "Implementar laboratórios e observatórios de políticas públicas", valor: 1950000 }
+        ]}
+      ]
+    },
+    {
+      nome: "RelGov", tipo: "1 Projeto", total: 30229067,
+      projetos: [
+        { nome: "Ecossistemas de Políticas Públicas", total: 30229067, acoes: [
+          { nome: "Impulsionar ecossistemas empreendedores com parceiros públicos", valor: 30229067 }
+        ]}
+      ]
+    },
+    {
+      nome: "Gestão UPP", tipo: "1 Processo", total: 1651662.44,
+      projetos: [
+        { nome: "Gestão de Viagens UPP", total: 1200000, acoes: [
+          { nome: "Viagens Colaboradores", valor: 1200000 }
+        ]},
+        { nome: "Bodyshop", total: 221662.44, acoes: [
+          { nome: "Bodyshop", valor: 221662.44 }
+        ]},
+        { nome: "Produção e Disseminação de Conteúdos Estratégicos", total: 230000, acoes: [
+          { nome: "Licitações — Brindes", valor: 150000 },
+          { nome: "Compra direta/impressões", valor: 80000 }
+        ]}
+      ]
+    }
+  ],
+  notas: [
+    "Foi criado um projeto para o NAL, considerando ainda a movimentação do Ambiente de Negócios, Laboratório e Observatório para esse núcleo, além das ações já existentes.",
+    "A realocação das ações já existentes no projeto do NAL impactaram da seguinte maneira os demais projetos: Projetos Especiais — em 2026 foi previsto o valor de R$ 2.400.000,00 que devem migrar para o novo projeto. RelGov — em 2026 as iniciativas vinculadas ao NAL foram vinculadas ao projeto Ecossistemas, que somaram R$ 2.565.464,96. Dessa forma, o valor real de orçamento utilizado pelo NAL em 2026 foi de R$ 4.965.464,96.",
+    "Tendo em vista a atuação do contrato de Bodyshop entre os núcleos, propõe-se que essa ação passe a integrar o projeto de Gestão da Unidade.",
+    "Considerando a necessidade de solicitação de brindes para ações e núcleos diferentes, bem como impressões gráficas e similares, propõe-se a inclusão de ação de Produção e Disseminação para esse atendimento, no Projeto de Gestão da Unidade."
+  ]
+};
+
 let filteredOrc, filteredExec, filteredMetas, currentMes;
 let charts = {};
 
@@ -754,12 +860,134 @@ function mesesTotals(rows, tipo) {
 function renderAll() {
   updateChartDefaults();
   renderHeader();
+  renderAprovado();
   renderKPIs();
   updateThermometer();
   renderDescritiva();
   renderDiagnostica();
   renderPreditiva();
   renderPrescritiva();
+}
+
+function renderAprovado() {
+  const d = DATA_APROVADO;
+  const c = tc();
+
+  document.getElementById('kpiAprovado').innerHTML = `
+    <div class="kpi kpi-blue">
+      <div class="kpi-label">Proposta UPP 2027</div>
+      <div class="kpi-value">${fmt(d.proposta2027)}</div>
+      <div class="kpi-detail">Aprovada pela Presidência</div>
+    </div>
+    <div class="kpi kpi-green">
+      <div class="kpi-label">Orçamento 2025</div>
+      <div class="kpi-value">${fmt(d.orcamento2025)}</div>
+      <div class="kpi-detail">Base de comparação</div>
+    </div>
+    <div class="kpi kpi-purple">
+      <div class="kpi-label">Variação 2025 → 2027</div>
+      <div class="kpi-value" style="color:var(--green)">+${fmt(d.diferenca)}</div>
+      <div class="kpi-detail">+${d.pctDiferenca.toFixed(1)}% de crescimento</div>
+    </div>
+    <div class="kpi kpi-cyan">
+      <div class="kpi-label">Núcleos / Projetos</div>
+      <div class="kpi-value">4 / ${d.nucleos.reduce((s,n)=>s+n.projetos.length,0)}</div>
+      <div class="kpi-detail">${d.nucleos.reduce((s,n)=>s+n.projetos.reduce((a,p)=>a+p.acoes.length,0),0)} ações orçamentárias</div>
+    </div>
+  `;
+
+  // Doughnut — composição por núcleo
+  const nucLabels = d.nucleos.map(n=>n.nome);
+  const nucValues = d.nucleos.map(n=>n.total);
+  const nucColors = d.nucleos.map(n=> NUCLEO_COLORS[Object.keys(NUCLEO_COLORS).find(k=>k.includes(n.nome))] || SEBRAE_PALETTE[nucLabels.indexOf(n.nome)]);
+  if(charts.nucPie) charts.nucPie.destroy();
+  charts.nucPie = new Chart(document.getElementById('chartNucleoPie'),{
+    type:'doughnut',
+    data:{ labels:nucLabels, datasets:[{ data:nucValues, backgroundColor:nucColors, borderWidth:0, hoverOffset:8 }] },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ position:'bottom', labels:{ padding:12, usePointStyle:true, pointStyle:'circle', font:{size:11} } },
+        tooltip:{ callbacks:{ label:ctx=> `${ctx.label}: ${fmt(ctx.raw)} (${(ctx.raw/d.proposta2027*100).toFixed(1)}%)` } }
+      }
+    }
+  });
+
+  // Bar — orçamento por projeto
+  const allProjs = [];
+  d.nucleos.forEach(n=> n.projetos.forEach(p=> allProjs.push({ nome:p.nome, valor:p.total, nucleo:n.nome })));
+  allProjs.sort((a,b)=>b.valor-a.valor);
+  const projLabels = allProjs.map(p=> p.nome.length>30 ? p.nome.substring(0,28)+'...' : p.nome);
+  const projColors = allProjs.map(p=> NUCLEO_COLORS[Object.keys(NUCLEO_COLORS).find(k=>k.includes(p.nucleo))] || '#2a4fda');
+  if(charts.projBar) charts.projBar.destroy();
+  charts.projBar = new Chart(document.getElementById('chartProjetoBar'),{
+    type:'bar',
+    data:{ labels:projLabels, datasets:[{ data:allProjs.map(p=>p.valor), backgroundColor:projColors, borderRadius:4, barThickness:22 }] },
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:ctx=> fmt(ctx.raw)+' ('+allProjs[ctx.dataIndex].nucleo+')' } } },
+      scales:{
+        x:{ grid:{color:c.grid}, ticks:{color:c.label, font:{size:10}, callback:v=> v>=1e6?(v/1e6).toFixed(0)+'M':'R$ '+v.toLocaleString('pt-BR')} },
+        y:{ grid:{display:false}, ticks:{color:c.label, font:{size:10}} }
+      }
+    }
+  });
+
+  // Comparativo 2025 vs 2027
+  const compLabels = d.nucleos.map(n=>n.nome);
+  const comp2025Pct = [50.24, 14.68, 31.27, 3.81];
+  const comp2025Values = comp2025Pct.map(p=> d.orcamento2025 * p/100);
+  const comp2027Values = d.nucleos.map(n=>n.total);
+  if(charts.comparativo) charts.comparativo.destroy();
+  charts.comparativo = new Chart(document.getElementById('chartComparativo'),{
+    type:'bar',
+    data:{
+      labels:compLabels,
+      datasets:[
+        { label:'Orçamento 2025 (estimado)', data:comp2025Values, backgroundColor:c.mutedBg, borderColor:c.ideal, borderWidth:1, borderRadius:4, barPercentage:.4, categoryPercentage:.6 },
+        { label:'Proposta 2027', data:comp2027Values, backgroundColor:nucColors, borderRadius:4, barPercentage:.4, categoryPercentage:.6 }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{usePointStyle:true,pointStyle:'circle',font:{size:11}} } },
+      scales:{
+        x:{ grid:{display:false}, ticks:{color:c.label,font:{size:10}} },
+        y:{ grid:{color:c.grid}, ticks:{color:c.label,font:{size:10},callback:v=>v>=1e6?(v/1e6).toFixed(0)+'M':v} }
+      }
+    }
+  });
+
+  // Tabela detalhada
+  let rows = '';
+  d.nucleos.forEach(n=>{
+    const pctNuc = (n.total/d.proposta2027*100).toFixed(1);
+    rows += `<tr style="background:var(--surface2)"><td colspan="3" style="font-weight:700;color:var(--accent)">${n.nome} <span style="font-weight:400;color:var(--text2);font-size:.72rem">(${n.tipo})</span></td><td style="font-weight:700;text-align:right">R$ ${fmtN(n.total)}</td><td style="text-align:center;font-weight:700">${pctNuc}%</td></tr>`;
+    n.projetos.forEach(p=>{
+      rows += `<tr><td style="padding-left:1.5rem;font-weight:600;color:var(--text)" colspan="2">${p.nome}</td><td></td><td style="text-align:right;font-weight:600">R$ ${fmtN(p.total)}</td><td style="text-align:center">${(p.total/d.proposta2027*100).toFixed(1)}%</td></tr>`;
+      p.acoes.forEach(a=>{
+        rows += `<tr><td></td><td colspan="2" style="padding-left:.5rem;color:var(--text2);font-size:.78rem">${a.nome}</td><td style="text-align:right;color:var(--text2);font-size:.78rem">R$ ${fmtN(a.valor)}</td><td style="text-align:center;color:var(--text2);font-size:.78rem">${(a.valor/d.proposta2027*100).toFixed(2)}%</td></tr>`;
+      });
+    });
+  });
+  rows += `<tr style="background:var(--accent);color:#fff"><td colspan="3" style="font-weight:800;font-size:.9rem">TOTAL PROPOSTA UPP 2027</td><td style="text-align:right;font-weight:800;font-size:.9rem">R$ ${fmtN(d.proposta2027)}</td><td style="text-align:center;font-weight:800">100%</td></tr>`;
+
+  document.getElementById('tableAprovado').innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:.8rem">
+      <thead><tr style="border-bottom:2px solid var(--border)">
+        <th style="text-align:left;padding:8px;color:var(--text2);font-size:.72rem;text-transform:uppercase">Núcleo</th>
+        <th colspan="2" style="text-align:left;padding:8px;color:var(--text2);font-size:.72rem;text-transform:uppercase">Projeto / Ação</th>
+        <th style="text-align:right;padding:8px;color:var(--text2);font-size:.72rem;text-transform:uppercase">Valor</th>
+        <th style="text-align:center;padding:8px;color:var(--text2);font-size:.72rem;text-transform:uppercase">% Total</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+
+  // Notas
+  document.getElementById('notasAprovado').innerHTML = d.notas.map((n,i)=>
+    `<div style="background:var(--surface);border-radius:8px;padding:10px 14px;margin-bottom:8px;border-left:3px solid var(--accent)"><strong style="color:var(--accent)">Nota ${i+1}</strong> — ${n}</div>`
+  ).join('');
 }
 
 function renderHeader() {}
