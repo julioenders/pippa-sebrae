@@ -1,5 +1,6 @@
-import requests, json, time, sys
+import requests, json, time, sys, os
 from calendar import monthrange
+from datetime import date
 
 PNCP = 'https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao'
 MODS = [6, 8, 5, 9, 12]
@@ -21,7 +22,8 @@ UF_R = {
     'RR':'NO','RS':'SU','SC':'SU','SE':'NE','SP':'SE','TO':'NO'
 }
 
-OUTPATH = 'C:/Users/julio.albuquerque/Documents/Github/pippa-sebrae/pippa-compras-dashboard/scripts/pncp_monitor_data.json'
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPATH = os.path.join(SCRIPT_DIR, 'pncp_monitor_data.json')
 DELAY = 3
 errors = 0
 
@@ -31,8 +33,11 @@ def fetch_semester(uf, year, half):
         di, df = f'{year}0101', f'{year}0630'
     else:
         di = f'{year}0701'
-        _, last = monthrange(year, 10)
-        df = f'{year}1231' if year < 2026 else f'{year}1009'
+        hoje = date.today()
+        if year < hoje.year:
+            df = f'{year}1231'
+        else:
+            df = hoje.strftime('%Y%m%d')
 
     est_total, hom_total, qtd_total = 0, 0, 0
     for mod in MODS:
@@ -88,7 +93,8 @@ def fetch_semester(uf, year, half):
     return est_total, hom_total, qtd_total
 
 cache = {}
-years = [2026]
+current_year = date.today().year
+years = list(range(current_year - 4, current_year + 1))
 total_ops = len(UFS) * len(years) * 2
 done = 0
 t0 = time.time()

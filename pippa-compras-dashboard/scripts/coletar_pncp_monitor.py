@@ -75,8 +75,6 @@ def fetch_month(uf, year, month, modalidade):
     if month == 12:
         df = f"{year}1231"
     else:
-        next_month_first = date(year, month + 1, 1)
-        last_day = date(next_month_first.year, next_month_first.month, 1)
         from calendar import monthrange
         _, last = monthrange(year, month)
         df = f"{year}{month:02d}{last:02d}"
@@ -138,7 +136,8 @@ def collect_all():
     years = list(range(current_year - 4, current_year + 1))
     current_month = datetime.now().month
 
-    total_queries = len(UFS) * len(years) * 12 * len(MODALIDADES)
+    total_months = sum(current_month if y == current_year else 12 for y in years)
+    total_queries = len(UFS) * total_months * len(MODALIDADES)
     done = 0
 
     results = progress.get("results", {})
