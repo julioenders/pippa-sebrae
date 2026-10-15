@@ -1594,6 +1594,7 @@
         <option value="12">Credenciamento</option>
       </select>
       <button class="action-btn" onclick="consultarFornecedores()" style="background:var(--rose);color:#fff;border:none;padding:8px 18px;border-radius:var(--radius);cursor:pointer;font-weight:700;font-size:13px;">Consultar Fornecedores</button>
+      <button class="btn btn-outline" onclick="openFornExportModal()">Exportar WhatsApp</button>
     </div>
   </header>
 
@@ -2697,6 +2698,82 @@ function openPncpMonExportModal() {
   const { filtered } = getPncpMonFiltered();
   if (!filtered || filtered.length === 0) { showToast('Carregue os dados primeiro'); return; }
   const text = generatePncpMonExportText();
+  document.getElementById('sharedExportContent').textContent = text;
+  document.getElementById('sharedExportModal').classList.add('active');
+  document.getElementById('sharedExportModal')._exportText = text;
+}
+
+// ── Fornecedores PNCP WhatsApp Export ───────────────────────────
+function generateFornExportText() {
+  const data = _fornLastData;
+  if (!data || data.length === 0) return '';
+  const localLabel = _fornLastLocalLabel;
+  const mesLabel = _fornLastMesLabel;
+  const scope = localLabel + ' — ' + mesLabel + '/2026';
+
+  const porteCount = {};
+  const porteValor = {};
+  let totalHom = 0, totalEst = 0;
+  data.forEach(d => {
+    const p = normalizePorte(d.porte, d.porteId);
+    porteCount[p] = (porteCount[p] || 0) + 1;
+    porteValor[p] = (porteValor[p] || 0) + d.valorHom;
+    totalHom += d.valorHom;
+    totalEst += d.valorEst;
+  });
+  const total = data.length;
+  const mpeCount = (porteCount['ME'] || 0) + (porteCount['EPP'] || 0);
+  const meiCount = porteCount['MEI'] || 0;
+  const demaisCount = porteCount['Demais'] || 0;
+  const economiaMedia = totalEst > 0 ? ((totalEst - totalHom) / totalEst * 100) : 0;
+
+  var filtros = [];
+  const uf = document.getElementById('fornUf').value;
+  const munSel = document.getElementById('fornMun');
+  const mod = document.getElementById('fornMod');
+  if (uf) filtros.push('UF: ' + uf);
+  if (munSel.value && munSel.selectedOptions[0]) filtros.push('Municipio: ' + munSel.selectedOptions[0].textContent);
+  if (mod.value && mod.selectedOptions[0]) filtros.push('Modalidade: ' + mod.selectedOptions[0].textContent);
+
+  var t = '🏢 *PIPPA — Fornecedores PNCP*\n';
+  t += '📅 Relatorio gerado em ' + new Date().toLocaleDateString('pt-BR') + '\n';
+  if (filtros.length) t += '🔍 Filtros: ' + filtros.join(' | ') + '\n';
+  t += '\n📊 *PANORAMA — ' + scope + '*\n';
+  t += '━━━━━━━━━━━━━━━━━━\n\n';
+  t += '📝 *Contratacoes consultadas:* ' + total.toLocaleString('pt-BR') + '\n';
+  t += '✅ *MPE (ME + EPP):* ' + mpeCount + ' (' + (total > 0 ? (mpeCount / total * 100).toFixed(1) : '0.0') + '%)\n';
+  t += '🏪 *MEI:* ' + meiCount + ' (' + (total > 0 ? (meiCount / total * 100).toFixed(1) : '0.0') + '%)\n';
+  t += '🏭 *Demais (Medio/Grande):* ' + demaisCount + ' (' + (total > 0 ? (demaisCount / total * 100).toFixed(1) : '0.0') + '%)\n';
+  t += '💰 *Total Homologado:* ' + formatCurrency(totalHom) + '\n';
+  t += '📉 *Economia Media:* ' + economiaMedia.toFixed(1) + '%\n';
+
+  var porteLabels = Object.keys(porteCount).sort();
+  if (porteLabels.length > 0) {
+    t += '\n💼 *VALOR POR PORTE*\n\n';
+    porteLabels.forEach(function(p) {
+      t += '▸ *' + p + ':* ' + formatCurrency(porteValor[p] || 0) + ' (' + porteCount[p] + ' contratacoes)\n';
+    });
+  }
+
+  var top5 = data.slice().sort(function(a, b) { return b.valorHom - a.valorHom; }).slice(0, 5);
+  if (top5.length > 0) {
+    t += '\n🏆 *TOP 5 FORNECEDORES*\n\n';
+    top5.forEach(function(d, i) {
+      var p = normalizePorte(d.porte, d.porteId);
+      t += (i + 1) + '. ' + d.fornecedor.substring(0, 60) + '\n';
+      t += '   💰 ' + formatCurrency(d.valorHom) + ' | ' + p + '\n';
+      t += '   📋 ' + d.objeto.substring(0, 80) + '\n\n';
+    });
+  }
+
+  t += '\n🔗 Fonte: PNCP — Portal Nacional de Contratacoes Publicas (pncp.gov.br)\n';
+  t += '📡 PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas | Sebrae Nacional';
+  return t;
+}
+
+function openFornExportModal() {
+  if (!_fornLastData || _fornLastData.length === 0) { showToast('Consulte fornecedores primeiro'); return; }
+  var text = generateFornExportText();
   document.getElementById('sharedExportContent').textContent = text;
   document.getElementById('sharedExportModal').classList.add('active');
   document.getElementById('sharedExportModal')._exportText = text;
@@ -132035,6 +132112,9 @@ function renderPncpMonDashboard() {
 // =====================================================
 
 let fornCharts = {};
+let _fornLastData = null;
+let _fornLastLocalLabel = '';
+let _fornLastMesLabel = '';
 const FORN_DELAY = 200;
 const FORN_BATCH = 5;
 const FORN_MAX_PAGES = 5;
@@ -132302,6 +132382,9 @@ async function consultarFornecedores() {
 }
 
 function renderFornecedores(data, localLabel, mesLabel) {
+  _fornLastData = data;
+  _fornLastLocalLabel = localLabel;
+  _fornLastMesLabel = mesLabel;
   const scope = `${localLabel} — ${mesLabel}/2026`;
   const gc = chartGridColor();
   const co = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: chartTextColor(), font: { size: 11 } } } } };
