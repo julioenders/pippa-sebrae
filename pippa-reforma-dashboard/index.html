@@ -756,6 +756,21 @@
 .icon-sun{display:none;}
 [data-theme="dark"] .icon-sun{display:block;}
 [data-theme="dark"] .icon-moon{display:none;}
+
+.info-btn{background:transparent;border:1px solid var(--border);color:var(--text-muted);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.info-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+.info-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;align-items:center;justify-content:center}
+.info-modal-backdrop.active{display:flex}
+.info-modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;max-width:620px;width:90%;max-height:80vh;overflow-y:auto}
+.info-modal h2{font-family:var(--font-heading);font-size:18px;font-weight:800;margin-bottom:16px;color:var(--text-accent)}
+.info-modal h3{font-family:var(--font-heading);font-size:13px;font-weight:600;color:var(--text-accent);text-transform:uppercase;letter-spacing:.5px;margin-top:16px;margin-bottom:8px}
+.info-modal ul{list-style:none;padding:0}
+.info-modal li{font-size:13px;color:var(--text-muted);padding:4px 0;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.info-modal li::before{content:'\2022';color:var(--accent);font-weight:700;flex-shrink:0}
+.info-modal .info-footer{margin-top:20px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted);text-align:center;line-height:1.6}
+.info-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;color:var(--text-muted);cursor:pointer}
+.info-close:hover{color:var(--text)}
 </style>
 </head>
 <body>
@@ -766,12 +781,15 @@
         <div class="logo">PIPPA Reforma Tributaria</div>
         <div class="logo-sub">Plataforma de Inteligencia em Politicas Publicas Aplicadas</div>
       </div>
+      <button class="info-btn" onclick="toggleReformaInfoModal()" title="Sobre o painel">i</button>
     </div>
     <div class="header-controls">
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
       <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
       <div id="thermometer" class="thermometer thermo-green">Sem dados carregados</div>
-      <input type="date" id="dateInput" class="date-input" title="Data de consulta">
+      <input type="date" id="dateInputInicio" class="date-input" title="Data inicio">
+      <span style="color:var(--text-muted);font-size:13px">a</span>
+      <input type="date" id="dateInputFim" class="date-input" title="Data fim">
       <button class="btn" id="btnFetch" onclick="fetchData()">Monitorar Noticias</button>
       <button class="btn btn-outline" onclick="exportWhatsApp()">Exportar WhatsApp</button>
     </div>
@@ -1219,7 +1237,10 @@ function getVarAlpha(name, alpha) {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
-document.getElementById('dateInput').valueAsDate = new Date();
+const _today = new Date();
+const _weekAgo = new Date(_today); _weekAgo.setDate(_weekAgo.getDate() - 10);
+document.getElementById('dateInputFim').valueAsDate = _today;
+document.getElementById('dateInputInicio').valueAsDate = _weekAgo;
 
 function normalize(text) {
   if (!text) return '';
@@ -1303,7 +1324,8 @@ function isRecentDay(dateStr, targetDate, daysBefore = 1) {
   return d >= tStart && d <= tEnd;
 }
 
-async function fetchRSS(query, date) {
+async function fetchRSS(query, date, daysBefore) {
+  if (daysBefore === undefined) daysBefore = 7;
   const rssUrl = `https://news.google.com/rss/search?q=${query}&hl=pt-BR&gl=BR&ceid=BR:pt-419`;
   const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
@@ -1315,7 +1337,7 @@ async function fetchRSS(query, date) {
     if (data.status !== 'ok' || !data.items) return [];
 
     return data.items
-      .filter(item => isRecentDay(item.pubDate, date, 7))
+      .filter(item => isRecentDay(item.pubDate, date, daysBefore))
       .map(item => ({
         fullTitle: item.title || '',
         title: extractTitle(item.title || ''),
@@ -1330,8 +1352,10 @@ async function fetchRSS(query, date) {
 }
 
 async function fetchData() {
-  const date = document.getElementById('dateInput').value;
-  if (!date) { alert('Selecione uma data.'); return; }
+  const dateFrom = document.getElementById('dateInputInicio').value;
+  const dateTo = document.getElementById('dateInputFim').value;
+  const date = dateTo;
+  if (!dateFrom || !dateTo) { alert('Selecione as datas de inicio e fim.'); return; }
 
   const btn = document.getElementById('btnFetch');
   btn.disabled = true;
@@ -1339,12 +1363,13 @@ async function fetchData() {
   try {
     showLoading('Buscando noticias sobre Reforma Tributaria...', '');
 
+    const daysDiff = Math.ceil((new Date(dateTo + 'T23:59:59') - new Date(dateFrom + 'T00:00:00')) / 86400000) + 1;
     const allResults = [];
     const seenTitles = new Set();
 
     for (let i = 0; i < SEARCH_QUERIES.length; i++) {
       showLoading('Buscando noticias...', `Consulta ${i + 1} de ${SEARCH_QUERIES.length}...`);
-      const items = await fetchRSS(SEARCH_QUERIES[i], date);
+      const items = await fetchRSS(SEARCH_QUERIES[i], dateTo, daysDiff);
       for (const item of items) {
         const key = normalize(item.title).substring(0, 60);
         if (!seenTitles.has(key)) {
@@ -1368,7 +1393,7 @@ async function fetchData() {
     });
 
     weeklyNews = classifiedAll;
-    allNews = classifiedAll.filter(n => isRecentDay(n.pubDate, date, 1));
+    allNews = classifiedAll.filter(n => isRecentDay(n.pubDate, dateTo, daysDiff));
 
     // Sort: Fatos first, then Propostas, then Expectativas; within each, Alto impacto first
     const statusOrder = { 'Fato Confirmado': 0, 'Proposta/Discussao': 1, 'Expectativa/Projecao': 2 };
@@ -1683,7 +1708,7 @@ function updateCharts() {
   Chart.defaults.font.family = "'Segoe UI', sans-serif";
 
   // Historico semanal — line chart
-  const selectedDate = document.getElementById('dateInput').value;
+  const selectedDate = document.getElementById('dateInputFim').value;
   if (selectedDate) {
     const dayLabels = [];
     const dayCounts = { total: [], fato: [], proposta: [], expectativa: [] };
@@ -1803,15 +1828,17 @@ function updateCharts() {
 }
 
 function exportWhatsApp() {
-  const date = document.getElementById('dateInput').value;
+  const dateFrom = document.getElementById('dateInputInicio').value;
+  const dateTo = document.getElementById('dateInputFim').value;
   if (!allNews.length) { alert('Busque as noticias primeiro.'); return; }
 
   const hasActiveFilter = Object.values(activeFilters).some(f => f.length > 0) ||
     (document.getElementById('searchInput') && document.getElementById('searchInput').value.trim().length > 0);
   const source = hasActiveFilter ? filteredNews : allNews;
 
-  const dateObj = new Date(date + 'T12:00:00');
-  const dateStr = dateObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+  const dateFromObj = new Date(dateFrom + 'T12:00:00');
+  const dateToObj = new Date(dateTo + 'T12:00:00');
+  const dateStr = dateFromObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' }) + ' a ' + dateToObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
 
   const fatos = source.filter(n => n.status === 'Fato Confirmado');
   const propostas = source.filter(n => n.status === 'Proposta/Discussao');
@@ -1946,6 +1973,48 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<script>function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n)}</script>
+<div class="info-modal-backdrop" id="reformaInfoModal" onclick="if(event.target===this)toggleReformaInfoModal()">
+  <div class="info-modal" style="position:relative">
+    <button class="info-close" onclick="toggleReformaInfoModal()">&times;</button>
+    <h2>PIPPA Reforma Tributaria</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">Agente de inteligencia que monitora noticias sobre a Reforma Tributaria brasileira, classifica automaticamente por status, impacto para MPEs e setor economico afetado.</p>
+
+    <h3>Fonte de Dados</h3>
+    <ul>
+      <li>Google News RSS — agregador de noticias em tempo real, filtrado por termos especificos da Reforma Tributaria.</li>
+      <li>Monitoramento cobre: IBS, CBS, Imposto Seletivo, Split Payment, Comite Gestor, transicao tributaria, entre outros.</li>
+    </ul>
+
+    <h3>Classificacao Automatica</h3>
+    <ul>
+      <li><strong>Fato Confirmado:</strong> Noticias sobre eventos ja ocorridos — aprovacoes, sancoes, publicacoes oficiais.</li>
+      <li><strong>Proposta/Discussao:</strong> Projetos em tramitacao, emendas, debates no Congresso.</li>
+      <li><strong>Expectativa/Projecao:</strong> Analises, previsoes de mercado, cenarios futuros.</li>
+    </ul>
+
+    <h3>Impacto para MPE</h3>
+    <ul>
+      <li><strong>Alto:</strong> Mudancas diretas em tributacao, obrigacoes ou beneficios para micro e pequenas empresas.</li>
+      <li><strong>Medio:</strong> Impactos indiretos — cadeia de fornecedores, setores relacionados.</li>
+      <li><strong>Baixo:</strong> Noticias de contexto geral sem efeito direto nas MPEs.</li>
+    </ul>
+
+    <h3>Credibilidade das Fontes</h3>
+    <ul>
+      <li><strong>Oficial:</strong> Diario Oficial, Receita Federal, Congresso Nacional, portais .gov.br.</li>
+      <li><strong>Institucional:</strong> Agencias de noticias, grandes veiculos, consultorias tributarias.</li>
+      <li><strong>Midia:</strong> Portais de noticias, blogs especializados, veiculos regionais.</li>
+    </ul>
+
+    <div class="info-footer">
+      PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas<br>
+      Sebrae Nacional — Observatorio Setorial Territorial<br>
+      Fonte: Google News RSS (news.google.com)
+    </div>
+  </div>
+</div>
+
+<script>function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n)}
+function toggleReformaInfoModal(){document.getElementById('reformaInfoModal').classList.toggle('active')}</script>
 </body>
 </html>
