@@ -35,17 +35,17 @@
 }
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);transition:background .3s,color .3s;line-height:1.6;min-height:100vh}
 
-.header{background:linear-gradient(45deg,var(--atlantico),var(--azul-sebrae));padding:2rem 2rem 1.8rem;border-bottom:2px solid rgba(6,182,212,.2);position:relative;overflow:hidden}
-.header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(6,182,212,.08),transparent 70%);pointer-events:none}
-.header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;position:relative;z-index:1}
-.header-brand{display:flex;align-items:center;gap:1rem}
-.header-logo{width:52px;height:52px;background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.25);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
-.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-.5px;color:#ffffff}
-.header h1 span{background:linear-gradient(135deg,var(--cyan),#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.header-sub{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:.2rem}
+.header{background:var(--surface);padding:12px 24px;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.header::before{display:none}
+.header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:1rem;position:relative;z-index:1}
+.header-brand{display:flex;align-items:center;gap:.8rem}
+.header-logo{width:40px;height:40px;background:var(--accent);border:none;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.header h1{font-size:1.2rem;font-weight:700;letter-spacing:-.5px;color:var(--text-accent)}
+.header h1 span{color:var(--text-accent);background:none;-webkit-background-clip:unset;-webkit-text-fill-color:unset}
+.header-sub{font-size:.72rem;color:var(--text-muted);margin-top:.1rem}
 .nav-btns{display:flex;gap:.5rem;align-items:center}
-.nav-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:8px;font-size:.75rem;font-weight:600;text-decoration:none;border:1px solid var(--border);color:var(--text-accent);transition:all .2s}
-.nav-btn:hover{background:var(--highlight-bg)}
+.nav-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:8px;font-size:.75rem;font-weight:600;text-decoration:none;border:1px solid var(--border);color:var(--text-muted);transition:all .2s}
+.nav-btn:hover{background:var(--surface2);border-color:var(--accent);color:var(--accent)}
 .nav-btn svg{width:14px;height:14px}
 
 .stats-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:1.5rem;position:relative;z-index:1}
@@ -54,7 +54,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
 .stat-box .lbl{font-size:.6rem;font-weight:500;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
 
 .main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
-.intro{background:rgba(6,182,212,.04);border:1px solid rgba(6,182,212,.1);border-radius:var(--radius);padding:1.3rem 1.5rem;margin-bottom:2rem;font-size:.85rem;color:var(--secondary);line-height:1.8}
+.intro{background:var(--highlight-bg);border:1px solid var(--accent-ring);border-radius:var(--radius);padding:1.3rem 1.5rem;margin-bottom:2rem;font-size:.85rem;color:var(--secondary);line-height:1.8}
 .intro strong{color:var(--text)}
 
 .section-title{font-size:.95rem;font-weight:700;margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);color:var(--text);display:flex;align-items:center;gap:8px}
@@ -69,7 +69,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
 .tool-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;overflow:hidden;transition:border-color .2s}
 .tool-card.open{border-color:var(--border-accent)}
 .tool-header{display:flex;align-items:center;gap:1rem;padding:1.2rem 1.5rem;cursor:pointer;transition:background .2s;user-select:none}
-.tool-header:hover{background:rgba(16,185,129,.03)}
+.tool-header:hover{background:var(--highlight-bg)}
 .tool-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
 .tool-info{flex:1}
 .tool-name{font-size:.9rem;font-weight:700}
@@ -80,7 +80,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
 .tag-static{background:rgba(168,85,247,.15);color:var(--purple)}
 .tag-pipeline{background:rgba(245,158,11,.15);color:var(--amber)}
 .tag-chartjs{background:rgba(16,185,129,.15);color:var(--emerald)}
-.tag-single{background:rgba(6,182,212,.15);color:var(--cyan)}
+.tag-single{background:var(--accent-light);color:var(--accent)}
 .tag-multi{background:rgba(244,114,182,.15);color:var(--pink)}
 .tool-arrow{color:var(--muted);font-size:1.1rem;transition:transform .2s;flex-shrink:0}
 .tool-card.open .tool-arrow{transform:rotate(90deg)}
@@ -90,38 +90,39 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
 
 .doc-section{margin-bottom:1.5rem}
 .doc-section:last-child{margin-bottom:0}
-.doc-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--cyan);margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
+.doc-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
 .doc-content{font-size:.8rem;color:var(--secondary);line-height:1.7}
 .doc-content ul{margin:.4rem 0 0 1.2rem}
 .doc-content li{margin-bottom:.3rem}
-.doc-content code{background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-size:.75rem;font-family:'Consolas','Monaco',monospace;color:var(--text-accent)}
-.doc-content a{color:var(--cyan);text-decoration:none}
+.doc-content code{background:var(--accent-light);padding:1px 6px;border-radius:4px;font-size:.75rem;font-family:'Consolas','Monaco',monospace;color:var(--text-accent)}
+.doc-content a{color:var(--accent);text-decoration:none}
 .doc-content a:hover{text-decoration:underline}
 
 .step-list{counter-reset:steps}
 .step-list li{counter-increment:steps;list-style:none;position:relative;padding-left:2rem;margin-bottom:.6rem}
-.step-list li::before{content:counter(steps);position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:rgba(6,182,212,.15);color:var(--cyan);font-size:.65rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.step-list li::before{content:counter(steps);position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:var(--accent-light);color:var(--accent);font-size:.65rem;font-weight:700;display:flex;align-items:center;justify-content:center}
 
 .warn-box{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:8px;padding:.7rem 1rem;font-size:.75rem;color:var(--amber);margin-top:.6rem;line-height:1.5}
 
 .api-table{width:100%;border-collapse:collapse;margin-top:.5rem;font-size:.75rem}
 .api-table th{text-align:left;padding:6px 10px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-weight:600;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px}
 .api-table td{padding:6px 10px;border:1px solid var(--border);color:var(--secondary);vertical-align:top}
-.api-table td code{background:rgba(255,255,255,.06);padding:1px 4px;border-radius:3px;font-size:.7rem;color:var(--text-accent)}
+.api-table td code{background:var(--accent-light);padding:1px 4px;border-radius:3px;font-size:.7rem;color:var(--text-accent)}
 
 .footer{text-align:center;padding:1.5rem;border-top:1px solid var(--border);color:var(--text-muted);font-size:.68rem;margin-top:2rem}
 
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:var(--scrollbar-track)}
-::-webkit-scrollbar-thumb{background:rgba(6,182,212,.25);border-radius:3px}
+::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:3px}
 @media(max-width:700px){
-  .header{padding:1.2rem 1rem}
+  .header{padding:12px 16px}
+  .header-top{flex-wrap:wrap}
   .main{padding:1rem}
   .stats-bar{grid-template-columns:repeat(2,1fr)}
   .prereq-grid{grid-template-columns:1fr}
 }
-.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s;}
-.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#ffffff;background:rgba(255,255,255,.1);}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid var(--border);border-radius:8px;cursor:pointer;color:var(--text-muted);transition:all .2s;}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent);background:var(--surface2);}
 .theme-toggle svg{width:18px;height:18px;}
 .icon-sun{display:none;}
 [data-theme="dark"] .icon-sun{display:block;}
@@ -151,11 +152,11 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
     </div>
   </div>
   <div class="stats-bar">
-    <div class="stat-box"><div class="val" style="color:var(--cyan)">13</div><div class="lbl">Ferramentas</div></div>
+    <div class="stat-box"><div class="val" style="color:var(--accent)">13</div><div class="lbl">Ferramentas</div></div>
     <div class="stat-box"><div class="val" style="color:var(--accent)">14</div><div class="lbl">APIs Externas</div></div>
     <div class="stat-box"><div class="val" style="color:var(--amber)">6</div><div class="lbl">Pipelines</div></div>
     <div class="stat-box"><div class="val" style="color:var(--accent)">1</div><div class="lbl">Lib (Chart.js)</div></div>
-    <div class="stat-box"><div class="val" style="color:var(--purple)">100%</div><div class="lbl">HTML Standalone</div></div>
+    <div class="stat-box"><div class="val" style="color:var(--accent)">100%</div><div class="lbl">HTML Standalone</div></div>
   </div>
 </div>
 
@@ -170,8 +171,8 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
     <h3>Stack Base para Todas as Ferramentas</h3>
     <div class="prereq-grid">
       <div class="prereq-item"><strong>Servidor Web</strong><span>Qualquer servidor HTTP estatico (GitHub Pages, GitLab Pages, Nginx, Apache, ou <code>python -m http.server</code>)</span></div>
-      <div class="prereq-item"><strong>Chart.js 4.4.4</strong><span>Biblioteca de graficos via CDN (<code>cdn.jsdelivr.net</code>). Usada em 10 das 12 ferramentas</span></div>
-      <div class="prereq-item"><strong>Google Fonts (Inter)</strong><span>Fonte padrao PIPPA. Carregada via CDN. Fallback: system-ui, Segoe UI</span></div>
+      <div class="prereq-item"><strong>Chart.js 4.4.4</strong><span>Biblioteca de graficos via CDN (<code>cdn.jsdelivr.net</code>). Usada na maioria das ferramentas</span></div>
+      <div class="prereq-item"><strong>Google Fonts (Figtree + Plus Jakarta Sans)</strong><span>Fontes padrao PIPPA: Figtree (corpo) e Plus Jakarta Sans (titulos). Carregadas via CDN</span></div>
       <div class="prereq-item"><strong>Python 3.10+</strong><span>Necessario apenas para ferramentas com pipeline de dados (Emendas, Legislativo, Indicadores). Libs: <code>pandas, requests</code></span></div>
       <div class="prereq-item"><strong>Navegador Moderno</strong><span>Chrome 90+, Firefox 88+, Edge 90+. Suporte a ES2020, fetch(), CSS Grid, backdrop-filter</span></div>
       <div class="prereq-item"><strong>Git</strong><span>Para clonar repositorios e deploy via GitHub/GitLab Pages. Repositorio principal: <code>github.com/julioenders/pippa-sebrae</code></span></div>
@@ -180,14 +181,14 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
 
   <div class="section-title">📦 Design System PIPPA</div>
   <div class="prereq">
-    <h3>Padrao Visual Aplicado em Todas as Ferramentas</h3>
+    <h3>Brandbook Sebrae — Padrao Visual PIPPA</h3>
     <div class="prereq-grid">
-      <div class="prereq-item"><strong>Background</strong><span><code>#0b1120</code> (fundo) / <code>#111827</code> (cards)</span></div>
-      <div class="prereq-item"><strong>Cor Primaria</strong><span><code>#10b981</code> (emerald) com variantes <code>#34d399</code> e <code>#6ee7b7</code></span></div>
-      <div class="prereq-item"><strong>Tipografia</strong><span>Inter 400/500/600/700/800 via Google Fonts CDN</span></div>
-      <div class="prereq-item"><strong>Textos</strong><span>Primario <code>#e2e8f0</code> / Secundario <code>#94a3b8</code> / Mudo <code>#64748b</code></span></div>
-      <div class="prereq-item"><strong>Bordas</strong><span><code>rgba(148,163,184,.12)</code> / Radius: 12px (cards), 8-10px (botoes)</span></div>
-      <div class="prereq-item"><strong>Arquitetura</strong><span>Arquivo HTML unico, self-contained (CSS + JS inline), sem build tools</span></div>
+      <div class="prereq-item"><strong>Cor Primaria</strong><span><code>#2a4fda</code> (Azul Sebrae). Dark mode accent: <code>#65b7fb</code> (Ceu)</span></div>
+      <div class="prereq-item"><strong>Tipografia</strong><span>Figtree (corpo, 300-700) + Plus Jakarta Sans (titulos, 600-800) via Google Fonts</span></div>
+      <div class="prereq-item"><strong>Background Light</strong><span><code>#eff3ee</code> (fundo) / <code>#ffffff</code> (surface) / <code>#f5f7f4</code> (surface2)</span></div>
+      <div class="prereq-item"><strong>Background Dark</strong><span><code>#080f1e</code> (fundo) / <code>#0f1a2e</code> (surface) / <code>#162038</code> (surface2)</span></div>
+      <div class="prereq-item"><strong>Textos</strong><span>Light: <code>#1a1a1a</code> / <code>#6b7280</code>. Dark: <code>#eff3ee</code> / <code>#8b9dc3</code></span></div>
+      <div class="prereq-item"><strong>Arquitetura</strong><span>HTML standalone (CSS + JS inline), tema light/dark com CSS variables, sem build tools</span></div>
     </div>
   </div>
 
@@ -252,7 +253,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
         <div class="doc-label">📚 Dependencias</div>
         <div class="doc-content">
           <ul>
-            <li>Google Fonts (Inter) via CDN — unica dependencia externa</li>
+            <li>Google Fonts (Figtree + Plus Jakarta Sans) via CDN — unica dependencia externa</li>
             <li>Sem Chart.js, sem frameworks, sem build tools</li>
           </ul>
         </div>
@@ -412,7 +413,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
         <div class="doc-content">
           <ul>
             <li>Chart.js 4.4.4 (CDN jsDelivr)</li>
-            <li>Google Fonts (Inter)</li>
+            <li>Google Fonts (Figtree + Plus Jakarta Sans)</li>
             <li>Sem dependencias Python — dashboard puramente client-side</li>
           </ul>
         </div>
@@ -708,9 +709,9 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
         <div class="doc-content">
           <ul>
             <li>Arquivo unico: <code>pippa-orcamento/index.html</code> (~85 KB)</li>
-            <li>4 abas analiticas: Descritiva, Diagnostica, Preditiva, Prescritiva</li>
-            <li>Dados embarcados como JSON inline (<code>const DATA</code>): orcamento (15 acoes, R$ 68.75M LOA), execucao (45 series mensais), metas (12 alvos fisicos)</li>
-            <li>Pipeline referenciado mas ausente: <code>orcamento_upp_2027.xlsx</code> + <code>atualizar_dashboard.py</code></li>
+            <li>5 abas analiticas: Descritiva, Diagnostica, Preditiva, Prescritiva, Aprovado</li>
+            <li>Dados embarcados como JSON inline: <code>const DATA</code> (orcamento, execucao, metas) e <code>const DATA_APROVADO</code> (dados reais da proposta aprovada pela Presidencia)</li>
+            <li>Aba Aprovado: dados reais da planilha de projetos e acoes 2027 (4 nucleos, R$ 58,74M)</li>
           </ul>
         </div>
       </div>
@@ -729,7 +730,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
       <div class="doc-section">
         <div class="doc-label">⚠️ Problemas Conhecidos</div>
         <div class="doc-content">
-          <div class="warn-box">Os dados atuais sao simulados (declarado no modal info). O pipeline de atualizacao (<code>atualizar_dashboard.py</code>) esta referenciado mas nao existe no repositorio. Necessario criar o script para conectar com dados reais do SIOP/SIAFI.</div>
+          <div class="warn-box">As abas Descritiva a Prescritiva usam dados simulados para demonstracao da estrutura analitica. A aba Aprovado contem dados reais da proposta orcamentaria 2027 aprovada pela Presidencia do Sebrae. Os filtros de nucleo e projeto interagem com todos os graficos e tabelas da aba Aprovado.</div>
         </div>
       </div>
     </div>
