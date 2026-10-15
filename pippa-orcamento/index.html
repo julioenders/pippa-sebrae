@@ -1,104 +1,173 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PIPPA Orçamento — Inteligência Orçamentária UPP 2027</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-<script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
-:root {
-  --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;
-  --font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif;
-  --bg: #0f172a; --surface: #1e293b; --surface2: #334155;
-  --text: #e2e8f0; --text2: #94a3b8; --accent: #3b82f6;
-  --accent2: #8b5cf6; --green: #22c55e; --red: #ef4444;
-  --yellow: #eab308; --orange: #f97316; --cyan: #06b6d4;
-  --radius: 12px; --shadow: 0 4px 24px rgba(0,0,0,.4);
-  --chart-grid:rgba(139,157,195,.12);--chart-text:#8b9dc3;--chart-label:#eff3ee;--chart-ref:rgba(139,157,195,.25);
+:root, [data-theme="light"] {
+  color-scheme: light;
+  --bg: #eff3ee;
+  --surface: #ffffff;
+  --surface2: #e2e8e1;
+  --text: #111111;
+  --text2: #5a6570;
+  --accent: #2a4fda;
+  --accent2: #8f85f4;
+  --green: #61b466;
+  --red: #e0565d;
+  --yellow: #f39d72;
+  --orange: #f39d72;
+  --cyan: #65b7fb;
+  --status-green: #2d7a32;
+  --status-red: #c03a40;
+  --status-yellow: #a05828;
+  --status-cyan: #0a7a9e;
+  --radius: 8px;
+  --shadow: 0 2px 16px rgba(11,37,116,.07);
+  --border: rgba(11,37,116,.09);
+  --header-from: #2a4fda;
+  --header-to: #0b2574;
+  --chart-grid: rgba(0,0,0,.07);
+  --chart-label: #64748b;
+  --chart-strong: #1e293b;
+  --chart-ideal: rgba(0,0,0,.12);
+  --chart-muted-bg: rgba(0,0,0,.04);
 }
-[data-theme="light"] {
-  --chart-grid:rgba(0,0,0,.06);--chart-text:#6b7280;--chart-label:#1a1a1a;--chart-ref:rgba(0,0,0,.15);
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #060e22;
+  --surface: #0b2574;
+  --surface2: #163088;
+  --text: #eff3ee;
+  --text2: #8ba3cc;
+  --status-green: #61b466;
+  --status-red: #e0565d;
+  --status-yellow: #f39d72;
+  --status-cyan: #65b7fb;
+  --shadow: 0 4px 24px rgba(0,0,0,.5);
+  --border: rgba(101,183,251,.1);
+  --header-from: #0b2574;
+  --header-to: #061545;
+  --chart-grid: rgba(255,255,255,.06);
+  --chart-label: #8ba3cc;
+  --chart-strong: #eff3ee;
+  --chart-ideal: rgba(255,255,255,.15);
+  --chart-muted-bg: rgba(255,255,255,.06);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100vh; }
+body {
+  background:var(--bg); color:var(--text);
+  font-family:'Figtree','Plus Jakarta Sans',system-ui,sans-serif;
+  min-height:100vh;
+  transition: background-color .35s ease, color .35s ease;
+}
+h1,h2,h3,.section-title,.kpi-value,.modal-title {
+  font-family:'Plus Jakarta Sans','Figtree',system-ui,sans-serif;
+}
 a { color:var(--accent); text-decoration:none; }
 
 .header {
-  background:linear-gradient(135deg,#1e3a5f 0%,#0f172a 100%);
+  background:linear-gradient(45deg, var(--header-from), var(--header-to));
   padding:1.2rem 2rem; display:flex; align-items:center; gap:1.5rem;
-  border-bottom:2px solid var(--accent); position:sticky; top:0; z-index:100;
+  border-bottom:none; position:sticky; top:0; z-index:100;
+  color:#fff; overflow:hidden;
+  transition: background .35s ease;
 }
-.header-brand { display:flex; align-items:center; gap:.8rem; }
+.header::after {
+  content:''; position:absolute; right:-20px; top:0; bottom:0; width:180px;
+  background:rgba(255,255,255,.04);
+  transform:skewX(-12.3deg);
+  pointer-events:none;
+}
+.header::before {
+  content:''; position:absolute; right:120px; top:0; bottom:0; width:60px;
+  background:rgba(255,255,255,.025);
+  transform:skewX(-12.3deg);
+  pointer-events:none;
+}
+.header-brand { display:flex; align-items:center; gap:.8rem; z-index:1; }
 .header-logo {
-  width:44px; height:44px; background:var(--accent); border-radius:10px;
-  display:flex; align-items:center; justify-content:center; font-size:1.4rem; font-weight:800; color:#fff;
+  width:42px; height:42px; background:rgba(255,255,255,.15);
+  border-radius:8px; display:flex; align-items:center; justify-content:center;
+  backdrop-filter:blur(4px);
 }
-.header h1 { font-size:1.3rem; font-weight:700; letter-spacing:-.5px; }
-.header h1 span { color:var(--accent); }
-.header-sub { font-size:.75rem; color:var(--text2); margin-top:2px; }
-.header-controls { margin-left:auto; display:flex; align-items:center; gap:10px; }
-.header-meta { font-size:.75rem; color:var(--text2); }
-.header-badge {
-  display:inline-block; padding:3px 10px; border-radius:20px;
-  font-size:.7rem; font-weight:600; margin-top:4px;
-}
-.badge-ok { background:rgba(34,197,94,.15); color:var(--green); }
-.badge-warn { background:rgba(234,179,8,.15); color:var(--yellow); }
-.badge-danger { background:rgba(239,68,68,.15); color:var(--red); }
+.header-logo svg { width:28px; height:28px; color:#fff; }
+.header h1 { font-size:1.3rem; font-weight:800; letter-spacing:-.5px; color:#fff; }
+.header h1 span { color:#65b7fb; }
+.header-sub { font-size:.72rem; color:rgba(255,255,255,.65); margin-top:2px; font-weight:400; }
+.header-controls { margin-left:auto; display:flex; align-items:center; gap:8px; z-index:1; }
 
 .info-btn {
-  background:transparent; border:1px solid rgba(255,255,255,.15); color:var(--text2);
+  background:transparent; border:1px solid rgba(255,255,255,.2); color:rgba(255,255,255,.7);
   width:32px; height:32px; border-radius:50%; font-size:16px; cursor:pointer;
   display:flex; align-items:center; justify-content:center; transition:all .2s; flex-shrink:0;
 }
-.info-btn:hover { border-color:var(--accent); color:var(--accent); }
-.pippa-home-btn {
-  display:flex; align-items:center; gap:6px; background:rgba(15,23,42,.85);
-  border:1px solid rgba(16,185,129,.3); color:var(--text); padding:7px 14px;
-  border-radius:8px; font-size:11.5px; font-weight:600; cursor:pointer;
-  text-decoration:none; transition:all .2s;
+.info-btn:hover { border-color:rgba(255,255,255,.5); color:#fff; }
+
+.theme-toggle {
+  background:transparent; border:1px solid rgba(255,255,255,.2); color:rgba(255,255,255,.7);
+  width:32px; height:32px; border-radius:50%; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:all .2s; flex-shrink:0;
 }
-.pippa-home-btn:hover { background:rgba(16,185,129,.15); border-color:var(--text-accent); color:#fff; }
+.theme-toggle:hover { border-color:rgba(255,255,255,.5); color:#fff; }
+.theme-toggle svg { width:16px; height:16px; }
+.theme-toggle .icon-sun { display:none; }
+.theme-toggle .icon-moon { display:block; }
+[data-theme="dark"] .theme-toggle .icon-sun { display:block; }
+[data-theme="dark"] .theme-toggle .icon-moon { display:none; }
+
+.pippa-home-btn {
+  display:flex; align-items:center; gap:6px;
+  background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.85); padding:7px 14px; border-radius:8px;
+  font-size:11.5px; font-weight:600; cursor:pointer; text-decoration:none; transition:all .2s;
+}
+.pippa-home-btn:hover { background:rgba(255,255,255,.18); border-color:rgba(255,255,255,.35); color:#fff; }
 .pippa-home-btn svg { width:13px; height:13px; }
+
 .btn-export {
-  display:flex; align-items:center; gap:6px; background:var(--accent);
-  color:#fff; border:none; padding:8px 16px; border-radius:8px;
+  display:flex; align-items:center; gap:6px; background:rgba(255,255,255,.15);
+  color:#fff; border:1px solid rgba(255,255,255,.2); padding:8px 16px; border-radius:8px;
   font-size:.75rem; font-weight:600; cursor:pointer; transition:all .2s;
 }
-.btn-export:hover { background:#2563eb; transform:translateY(-1px); }
+.btn-export:hover { background:rgba(255,255,255,.25); transform:translateY(-1px); }
+
 .thermometer {
   display:flex; align-items:center; gap:6px; font-size:.72rem;
   padding:4px 12px; border-radius:20px; font-weight:600;
 }
-.thermo-green { background:rgba(34,197,94,.15); color:var(--green); }
-.thermo-yellow { background:rgba(234,179,8,.15); color:var(--yellow); }
-.thermo-orange { background:rgba(249,115,22,.15); color:var(--orange); }
-.thermo-red { background:rgba(239,68,68,.15); color:var(--red); }
+.thermo-green { background:rgba(97,180,102,.15); color:#61b466; }
+.thermo-yellow { background:rgba(243,157,114,.15); color:#f39d72; }
+.thermo-orange { background:rgba(243,157,114,.15); color:#f39d72; }
+.thermo-red { background:rgba(224,86,93,.15); color:#e0565d; }
 
 .modal-backdrop {
-  position:fixed; inset:0; background:rgba(15,23,42,.88); z-index:200;
+  position:fixed; inset:0; background:rgba(6,14,34,.85); z-index:200;
   display:flex; align-items:center; justify-content:center;
   opacity:0; pointer-events:none; transition:opacity .3s;
 }
 .modal-backdrop.active { opacity:1; pointer-events:all; }
 .modal {
-  background:var(--surface); border:1px solid rgba(255,255,255,.1);
+  background:var(--surface); border:1px solid var(--border);
   border-radius:12px; padding:24px; max-width:680px; width:90%;
-  max-height:85vh; overflow-y:auto;
+  max-height:85vh; overflow-y:auto; box-shadow:var(--shadow);
+  transition: background-color .35s ease, border-color .35s ease;
 }
-.modal-title { font-size:1.1rem; font-weight:700; margin-bottom:16px; }
+.modal-title { font-size:1.1rem; font-weight:800; margin-bottom:16px; }
 .modal-content {
-  font-size:.82rem; line-height:1.7; background:var(--surface2);
+  font-size:.82rem; line-height:1.7; background:var(--bg);
   padding:16px; border-radius:8px; max-height:55vh; overflow-y:auto;
+  transition: background-color .35s ease;
 }
 .modal-actions { display:flex; gap:10px; margin-top:16px; justify-content:flex-end; }
 .modal-actions button {
   padding:8px 18px; border-radius:8px; font-size:.8rem; font-weight:600; cursor:pointer;
-  border:1px solid rgba(255,255,255,.15); background:var(--surface2); color:var(--text);
+  border:1px solid var(--border); background:var(--surface2); color:var(--text);
   transition:all .2s;
 }
 .modal-actions button:hover { border-color:var(--accent); color:var(--accent); }
@@ -111,27 +180,34 @@ a { color:var(--accent); text-decoration:none; }
 
 .controls {
   display:flex; gap:.8rem; padding:.8rem 2rem;
-  background:var(--surface); border-bottom:1px solid var(--surface2);
-  flex-wrap:wrap; align-items:center;
+  background:var(--surface); border-bottom:1px solid var(--border);
+  flex-wrap:wrap; align-items:center; box-shadow:0 1px 4px rgba(0,0,0,.04);
+  transition: background-color .35s ease, border-color .35s ease;
 }
 .filter-group { display:flex; align-items:center; gap:.5rem; }
-.filter-group label { font-size:.75rem; color:var(--text2); font-weight:600; text-transform:uppercase; letter-spacing:.5px; }
-.filter-group select {
-  background:var(--surface2); color:var(--text); border:1px solid rgba(255,255,255,.1);
-  padding:6px 12px; border-radius:8px; font-size:.8rem; cursor:pointer;
+.filter-group label {
+  font-size:.72rem; color:var(--text2); font-weight:600;
+  text-transform:uppercase; letter-spacing:.5px;
 }
-.filter-group select:focus { outline:none; border-color:var(--accent); }
+.filter-group select {
+  background:var(--bg); color:var(--text); border:1px solid var(--border);
+  padding:6px 12px; border-radius:8px; font-size:.8rem; cursor:pointer;
+  font-family:'Figtree',system-ui,sans-serif;
+  transition: background-color .35s ease, border-color .35s ease, color .35s ease;
+}
+.filter-group select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(42,79,218,.12); }
 
 .tabs {
   display:flex; gap:0; padding:0 2rem; background:var(--surface);
-  border-bottom:2px solid var(--surface2);
+  border-bottom:2px solid var(--border);
+  transition: background-color .35s ease, border-color .35s ease;
 }
 .tab {
   padding:.7rem 1.4rem; font-size:.8rem; font-weight:600; color:var(--text2);
   cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px;
   transition:all .2s; letter-spacing:.3px;
 }
-.tab:hover { color:var(--text); background:var(--surface); }
+.tab:hover { color:var(--text); background:rgba(42,79,218,.04); }
 .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
 .tab-icon { margin-right:6px; }
 
@@ -143,6 +219,12 @@ a { color:var(--accent); text-decoration:none; }
 .kpi {
   background:var(--surface); border-radius:var(--radius); padding:1.2rem;
   border:1px solid var(--border); position:relative; overflow:hidden;
+  box-shadow:var(--shadow);
+  transition: background-color .35s ease, border-color .35s ease, box-shadow .35s ease;
+}
+.kpi::after {
+  content:''; position:absolute; top:-20%; right:-8px; width:36px; height:140%;
+  background:var(--accent); opacity:.04; transform:skewX(-12.3deg); pointer-events:none;
 }
 .kpi::before {
   content:''; position:absolute; top:0; left:0; width:4px; height:100%;
@@ -155,7 +237,7 @@ a { color:var(--accent); text-decoration:none; }
 .kpi.kpi-purple::before { background:var(--accent2); }
 .kpi.kpi-cyan::before { background:var(--cyan); }
 .kpi-label { font-size:.7rem; color:var(--text2); text-transform:uppercase; letter-spacing:.5px; font-weight:600; }
-.kpi-value { font-size:1.6rem; font-weight:700; margin:4px 0; }
+.kpi-value { font-size:1.6rem; font-weight:800; margin:4px 0; }
 .kpi-detail { font-size:.72rem; color:var(--text2); }
 .kpi-bar { height:4px; background:var(--surface2); border-radius:2px; margin-top:8px; }
 .kpi-bar-fill { height:100%; border-radius:2px; transition:width .6s ease; }
@@ -164,9 +246,14 @@ a { color:var(--accent); text-decoration:none; }
 .chart-grid.full { grid-template-columns:1fr; }
 .chart-box {
   background:var(--surface); border-radius:var(--radius); padding:1.2rem;
-  border:1px solid var(--border);
+  border:1px solid var(--border); box-shadow:var(--shadow);
+  transition: background-color .35s ease, border-color .35s ease, box-shadow .35s ease;
 }
-.chart-title { font-size:.85rem; font-weight:600; margin-bottom:1rem; display:flex; align-items:center; gap:.5rem; }
+.chart-title {
+  font-size:.85rem; font-weight:700; margin-bottom:1rem;
+  display:flex; align-items:center; gap:.5rem;
+  font-family:'Plus Jakarta Sans','Figtree',system-ui,sans-serif;
+}
 .chart-title .dot { width:8px; height:8px; border-radius:50%; }
 .chart-canvas { position:relative; width:100%; }
 
@@ -178,9 +265,13 @@ a { color:var(--accent); text-decoration:none; }
   background:var(--surface2); padding:10px 12px; text-align:left;
   font-weight:600; color:var(--text2); text-transform:uppercase;
   font-size:.68rem; letter-spacing:.5px; position:sticky; top:0;
+  transition: background-color .35s ease;
 }
-.data-table td { padding:8px 12px; border-bottom:1px solid rgba(255,255,255,.04); }
-.data-table tr:hover td { background:rgba(255,255,255,.02); }
+.data-table td {
+  padding:8px 12px; border-bottom:1px solid var(--border);
+  transition: border-color .35s ease;
+}
+.data-table tr:hover td { background:rgba(42,79,218,.03); }
 .data-table .num { text-align:right; font-variant-numeric:tabular-nums; }
 .data-table .pct-cell { min-width:100px; }
 .pct-bar { height:6px; background:var(--surface2); border-radius:3px; }
@@ -190,37 +281,50 @@ a { color:var(--accent); text-decoration:none; }
 .alert-item {
   display:flex; align-items:flex-start; gap:.8rem; padding:.8rem 1rem;
   border-radius:8px; font-size:.8rem;
+  transition: background-color .35s ease;
 }
-.alert-item.critical { background:rgba(239,68,68,.08); border-left:3px solid var(--red); }
-.alert-item.warning { background:rgba(234,179,8,.08); border-left:3px solid var(--yellow); }
-.alert-item.info { background:rgba(59,130,246,.08); border-left:3px solid var(--accent); }
-.alert-item.success { background:rgba(34,197,94,.08); border-left:3px solid var(--green); }
+.alert-item.critical { background:rgba(224,86,93,.08); border-left:3px solid var(--red); }
+.alert-item.warning { background:rgba(243,157,114,.08); border-left:3px solid var(--yellow); }
+.alert-item.info { background:rgba(42,79,218,.06); border-left:3px solid var(--accent); }
+.alert-item.success { background:rgba(97,180,102,.08); border-left:3px solid var(--green); }
 .alert-icon { font-size:1.1rem; flex-shrink:0; margin-top:1px; }
 .alert-text { flex:1; }
-.alert-title { font-weight:600; margin-bottom:2px; }
+.alert-title { font-weight:700; margin-bottom:2px; }
 .alert-desc { color:var(--text2); font-size:.74rem; }
 
 .rec-card {
   background:var(--surface); border-radius:var(--radius); padding:1.2rem;
-  border:1px solid var(--border); margin-bottom:.8rem;
+  border:1px solid var(--border); margin-bottom:.8rem; box-shadow:var(--shadow);
+  transition: background-color .35s ease, border-color .35s ease, box-shadow .35s ease;
 }
 .rec-header { display:flex; align-items:center; gap:.6rem; margin-bottom:.6rem; }
 .rec-priority {
   padding:2px 8px; border-radius:12px; font-size:.65rem; font-weight:700;
   text-transform:uppercase; letter-spacing:.5px;
 }
-.rec-priority.high { background:rgba(239,68,68,.15); color:var(--red); }
-.rec-priority.medium { background:rgba(234,179,8,.15); color:var(--yellow); }
-.rec-priority.low { background:rgba(34,197,94,.15); color:var(--green); }
-.rec-title { font-weight:600; font-size:.85rem; }
+.rec-priority.high { background:rgba(224,86,93,.12); color:var(--status-red); }
+.rec-priority.medium { background:rgba(243,157,114,.12); color:var(--status-yellow); }
+.rec-priority.low { background:rgba(97,180,102,.12); color:var(--status-green); }
+.rec-title { font-weight:700; font-size:.85rem; }
 .rec-body { font-size:.78rem; color:var(--text2); line-height:1.5; }
-.rec-metric { margin-top:.5rem; font-size:.72rem; color:var(--cyan); font-weight:600; }
+.rec-metric { margin-top:.5rem; font-size:.72rem; color:var(--status-cyan); font-weight:600; }
 
-.section-title { font-size:1rem; font-weight:700; margin:1.5rem 0 1rem; display:flex; align-items:center; gap:.5rem; }
+.section-title {
+  font-size:1rem; font-weight:800; margin:1.5rem 0 1rem;
+  display:flex; align-items:center; gap:.5rem;
+}
 
-.table-wrapper { border-radius:var(--radius); overflow:auto; max-height:500px; border:1px solid var(--border); }
+.table-wrapper {
+  border-radius:var(--radius); overflow:auto; max-height:500px;
+  border:1px solid var(--border);
+  transition: border-color .35s ease;
+}
 
-.footer { text-align:center; padding:2rem; font-size:.7rem; color:var(--text2); }
+.footer {
+  text-align:center; padding:2rem; font-size:.7rem; color:var(--text2);
+  border-top:1px solid var(--border);
+  transition: border-color .35s ease;
+}
 
 @media(max-width:900px) {
   .chart-grid { grid-template-columns:1fr; }
@@ -232,20 +336,20 @@ a { color:var(--accent); text-decoration:none; }
 }
 @media(max-width:600px) {
   .kpi-row { grid-template-columns:1fr; }
+  .header-sub { display:none; }
 }
-.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s;}
-.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#ffffff;background:rgba(255,255,255,.1);}
-.theme-toggle svg{width:18px;height:18px;}
-.icon-sun{display:none;}
-[data-theme="dark"] .icon-sun{display:block;}
-[data-theme="dark"] .icon-moon{display:none;}
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-brand">
-    <div class="header-logo">$</div>
+    <div class="header-logo">
+      <svg viewBox="0 0 36 36" fill="none">
+        <rect x="8" y="4" width="7" height="28" rx="2" fill="currentColor" transform="rotate(-12.3 11.5 18)"/>
+        <rect x="21" y="4" width="7" height="28" rx="2" fill="currentColor" transform="rotate(-12.3 24.5 18)"/>
+      </svg>
+    </div>
     <div>
       <h1><span>PIPPA</span> Orçamento</h1>
       <div class="header-sub">Plataforma de Inteligência em Políticas Públicas Aplicadas — Inteligência Orçamentária UPP 2027</div>
@@ -253,7 +357,11 @@ a { color:var(--accent); text-decoration:none; }
     <button class="info-btn" onclick="openInfoModal()" title="Sobre o Dashboard">&#8505;</button>
     <div class="thermometer" id="thermometer"></div>
   </div>
-  <div class="header-controls" style="margin-left:auto;display:flex;align-items:center;gap:10px;">
+  <div class="header-controls">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
     <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
     <button class="btn-export" onclick="exportWhatsApp()">&#128172; Exportar WhatsApp</button>
   </div>
@@ -333,7 +441,7 @@ a { color:var(--accent); text-decoration:none; }
   <div class="chart-grid full" style="margin-top:1rem">
     <div class="chart-box">
       <div class="chart-title"><span class="dot" style="background:var(--red)"></span>Funil de Execução (Empenhado → Liquidado → Pago)</div>
-      <div class="chart-canvas"><canvas id="chartFunnel"></canvas></div>
+      <div class="chart-canvas"><canvas id="chartFunnel" height="190"></canvas></div>
     </div>
   </div>
   <div class="section-title" style="margin-top:1.5rem">&#x1F3AF; Metas Físicas — Atingimento</div>
@@ -389,7 +497,7 @@ a { color:var(--accent); text-decoration:none; }
     <div class="modal-title">&#9432; Sobre o PIPPA Orçamento</div>
     <div class="modal-content" style="text-align:left">
 
-      <p style="color:var(--yellow);font-size:.78rem;padding:10px;background:rgba(234,179,8,.08);border-radius:8px;border:1px solid rgba(234,179,8,.2);margin-bottom:16px"><strong>Dados sintéticos para validação.</strong> Este dashboard foi construído a partir da estrutura orçamentária real da UPP 2027 (R$ 68,75 mi), porém os dados de execução mensal (Empenhado, Liquidado, Pago) e metas físicas foram simulados para fins de prototipagem e validação do layout. A atualização com dados reais será feita mensalmente via planilha Excel.</p>
+      <p style="color:var(--status-yellow);font-size:.78rem;padding:10px;background:rgba(243,157,114,.08);border-radius:8px;border:1px solid rgba(243,157,114,.2);margin-bottom:16px"><strong>Dados sintéticos para validação.</strong> Este dashboard foi construído a partir da estrutura orçamentária real da UPP 2027 (R$ 68,75 mi), porém os dados de execução mensal (Empenhado, Liquidado, Pago) e metas físicas foram simulados para fins de prototipagem e validação do layout. A atualização com dados reais será feita mensalmente via planilha Excel.</p>
 
       <div style="font-size:.9rem;font-weight:700;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--accent)">O que é</div>
       <p style="margin-bottom:12px">Ferramenta de inteligência orçamentária da <strong>UPP — Unidade de Políticas Públicas</strong> do Sebrae Nacional. Acompanha a execução orçamentária 2027 em quatro camadas analíticas.</p>
@@ -478,40 +586,40 @@ a { color:var(--accent); text-decoration:none; }
       <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
         <strong style="color:var(--accent)">Termômetro (header)</strong><br>
         <span style="color:var(--text2);font-size:.78rem">Compara o percentual pago acumulado com o esperado para o mês (linear). Razão pago/esperado:</span><br>
-        <span style="color:#22c55e;font-size:.78rem;font-weight:600">&#x25CF; Saudável</span><span style="color:var(--text2);font-size:.78rem"> — ≥ 90% do ritmo linear</span><br>
-        <span style="color:#eab308;font-size:.78rem;font-weight:600">&#x25CF; Moderado</span><span style="color:var(--text2);font-size:.78rem"> — 70% a 89%</span><br>
-        <span style="color:#f97316;font-size:.78rem;font-weight:600">&#x25CF; Atenção</span><span style="color:var(--text2);font-size:.78rem"> — 50% a 69%</span><br>
-        <span style="color:#ef4444;font-size:.78rem;font-weight:600">&#x25CF; Crítico</span><span style="color:var(--text2);font-size:.78rem"> — &lt; 50%</span>
+        <span style="color:var(--status-green);font-size:.78rem;font-weight:600">&#x25CF; Saudável</span><span style="color:var(--text2);font-size:.78rem"> — ≥ 90% do ritmo linear</span><br>
+        <span style="color:var(--status-yellow);font-size:.78rem;font-weight:600">&#x25CF; Moderado</span><span style="color:var(--text2);font-size:.78rem"> — 70% a 89%</span><br>
+        <span style="color:var(--status-yellow);font-size:.78rem;font-weight:600">&#x25CF; Atenção</span><span style="color:var(--text2);font-size:.78rem"> — 50% a 69%</span><br>
+        <span style="color:var(--status-red);font-size:.78rem;font-weight:600">&#x25CF; Crítico</span><span style="color:var(--text2);font-size:.78rem"> — &lt; 50%</span>
       </div>
 
       <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
         <strong style="color:var(--accent)">Alertas de Execução (Diagnóstica)</strong><br>
         <span style="color:var(--text2);font-size:.78rem">Gerados automaticamente por ação orçamentária, comparando execução acumulada com o previsto linear para o mês:</span><br>
-        <span style="color:#ef4444;font-size:.78rem;font-weight:600">&#x1F534; Crítico</span><span style="color:var(--text2);font-size:.78rem"> — Empenho &lt; 50% do esperado em ações &gt; R$ 500 mil</span><br>
-        <span style="color:#eab308;font-size:.78rem;font-weight:600">&#x1F7E1; Atenção</span><span style="color:var(--text2);font-size:.78rem"> — Empenho &lt; 70% do esperado em ações &gt; R$ 200 mil</span><br>
-        <span style="color:#f97316;font-size:.78rem;font-weight:600">&#x1F7E0; Restos a pagar</span><span style="color:var(--text2);font-size:.78rem"> — Pagamento &lt; 60% do empenhado quando diferença &gt; R$ 200 mil</span><br>
-        <span style="color:#3b82f6;font-size:.78rem;font-weight:600">&#x1F535; Meta física</span><span style="color:var(--text2);font-size:.78rem"> — Atingimento &lt; 60% do esperado para o período</span><br>
-        <span style="color:#22c55e;font-size:.78rem;font-weight:600">&#x2705; Sem alertas</span><span style="color:var(--text2);font-size:.78rem"> — Todas as ações dentro dos parâmetros</span>
+        <span style="color:var(--status-red);font-size:.78rem;font-weight:600">&#x1F534; Crítico</span><span style="color:var(--text2);font-size:.78rem"> — Empenho &lt; 50% do esperado em ações &gt; R$ 500 mil</span><br>
+        <span style="color:var(--status-yellow);font-size:.78rem;font-weight:600">&#x1F7E1; Atenção</span><span style="color:var(--text2);font-size:.78rem"> — Empenho &lt; 70% do esperado em ações &gt; R$ 200 mil</span><br>
+        <span style="color:var(--status-yellow);font-size:.78rem;font-weight:600">&#x1F7E0; Restos a pagar</span><span style="color:var(--text2);font-size:.78rem"> — Pagamento &lt; 60% do empenhado quando diferença &gt; R$ 200 mil</span><br>
+        <span style="color:var(--accent);font-size:.78rem;font-weight:600">&#x1F535; Meta física</span><span style="color:var(--text2);font-size:.78rem"> — Atingimento &lt; 60% do esperado para o período</span><br>
+        <span style="color:var(--status-green);font-size:.78rem;font-weight:600">&#x2705; Sem alertas</span><span style="color:var(--text2);font-size:.78rem"> — Todas as ações dentro dos parâmetros</span>
       </div>
 
       <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:6px">
         <strong style="color:var(--accent)">Recomendações (Prescritiva)</strong><br>
         <span style="color:var(--text2);font-size:.78rem">Priorizadas automaticamente com base nos gaps identificados:</span><br>
-        <span style="color:#ef4444;font-size:.78rem;font-weight:600">ALTA</span><span style="color:var(--text2);font-size:.78rem"> — Execução &lt; 50% do esperado em ações &gt; R$ 1 mi, ou meta física &lt; 60%</span><br>
-        <span style="color:#eab308;font-size:.78rem;font-weight:600">MÉDIA</span><span style="color:var(--text2);font-size:.78rem"> — Taxa de liquidação &lt; 65% do empenhado (gargalo de atesto/documentação)</span><br>
-        <span style="color:#22c55e;font-size:.78rem;font-weight:600">BAIXA</span><span style="color:var(--text2);font-size:.78rem"> — Execução acima de 130% do ritmo (possibilidade de remanejamento)</span>
+        <span style="color:var(--status-red);font-size:.78rem;font-weight:600">ALTA</span><span style="color:var(--text2);font-size:.78rem"> — Execução &lt; 50% do esperado em ações &gt; R$ 1 mi, ou meta física &lt; 60%</span><br>
+        <span style="color:var(--status-yellow);font-size:.78rem;font-weight:600">MÉDIA</span><span style="color:var(--text2);font-size:.78rem"> — Taxa de liquidação &lt; 65% do empenhado (gargalo de atesto/documentação)</span><br>
+        <span style="color:var(--status-green);font-size:.78rem;font-weight:600">BAIXA</span><span style="color:var(--text2);font-size:.78rem"> — Execução acima de 130% do ritmo (possibilidade de remanejamento)</span>
       </div>
 
       <div style="background:var(--surface);border-radius:8px;padding:10px;margin-bottom:12px">
         <strong style="color:var(--accent)">Risco de Inexecução (Preditiva)</strong><br>
         <span style="color:var(--text2);font-size:.78rem">Projeta a execução anual com base na média mensal acumulada:</span><br>
-        <span style="color:#22c55e;font-size:.78rem;font-weight:600">Baixo</span><span style="color:var(--text2);font-size:.78rem"> — Projeção ≥ 90% do orçamento</span><br>
-        <span style="color:#eab308;font-size:.78rem;font-weight:600">Médio</span><span style="color:var(--text2);font-size:.78rem"> — Projeção entre 70% e 89%</span><br>
-        <span style="color:#ef4444;font-size:.78rem;font-weight:600">Alto</span><span style="color:var(--text2);font-size:.78rem"> — Projeção &lt; 70%</span>
+        <span style="color:var(--status-green);font-size:.78rem;font-weight:600">Baixo</span><span style="color:var(--text2);font-size:.78rem"> — Projeção ≥ 90% do orçamento</span><br>
+        <span style="color:var(--status-yellow);font-size:.78rem;font-weight:600">Médio</span><span style="color:var(--text2);font-size:.78rem"> — Projeção entre 70% e 89%</span><br>
+        <span style="color:var(--status-red);font-size:.78rem;font-weight:600">Alto</span><span style="color:var(--text2);font-size:.78rem"> — Projeção &lt; 70%</span>
       </div>
 
       <div style="font-size:.9rem;font-weight:700;margin:12px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)">Atualização</div>
-      <p style="font-size:.78rem;color:var(--text2)">Mensal, via planilha <code style="background:var(--surface);padding:2px 6px;border-radius:4px">orcamento_upp_2027.xlsx</code> + script <code style="background:var(--surface);padding:2px 6px;border-radius:4px">atualizar_dashboard.py</code>.</p>
+      <p style="font-size:.78rem;color:var(--text2)">Mensal, via planilha <code style="background:var(--surface2);padding:2px 6px;border-radius:4px">orcamento_upp_2027.xlsx</code> + script <code style="background:var(--surface2);padding:2px 6px;border-radius:4px">atualizar_dashboard.py</code>.</p>
     </div>
     <div class="modal-actions">
       <button onclick="closeInfoModal()">Fechar</button>
@@ -533,18 +641,57 @@ a { color:var(--accent); text-decoration:none; }
 <div class="toast" id="toast">Copiado!</div>
 
 <script>
-function chartTextColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim()||'#6b7280'}
-function chartLabelColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-label').trim()||'#1a1a1a'}
-function chartGridColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim()||'rgba(0,0,0,.06)'}
-function chartRefColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-ref').trim()||'rgba(0,0,0,.15)'}
-
+const html = document.documentElement;
 const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 const NUCLEO_COLORS = {
-  'Projetos Especiais':'#3b82f6',
-  'NAL — Núcleo de Assessoria Legislativa':'#8b5cf6',
-  'RelGov — Relacionamento Governamental':'#f97316',
-  'Gestão UPP':'#22c55e'
+  'Projetos Especiais':'#2a4fda',
+  'NAL — Núcleo de Assessoria Legislativa':'#8f85f4',
+  'RelGov — Relacionamento Governamental':'#f39d72',
+  'Gestão UPP':'#61b466'
 };
+const SEBRAE_PALETTE = ['#2a4fda','#8f85f4','#be64e3','#ff80c8','#e0565d','#f39d72','#fbec76','#cadf61','#90d275','#61b466','#9ff0bd','#65b7fb'];
+
+function tc() {
+  const dark = html.dataset.theme === 'dark';
+  return {
+    grid: dark ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.07)',
+    label: dark ? '#8ba3cc' : '#64748b',
+    strong: dark ? '#eff3ee' : '#1e293b',
+    ideal: dark ? 'rgba(255,255,255,.15)' : 'rgba(0,0,0,.12)',
+    mutedBg: dark ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.04)',
+    empenhado: '#8f85f4',
+    empBg: dark ? 'rgba(143,133,244,.15)' : 'rgba(143,133,244,.1)',
+    liquidado: '#65b7fb',
+    liqBg: dark ? 'rgba(101,183,251,.12)' : 'rgba(101,183,251,.08)',
+    pago: '#61b466',
+    pagBg: dark ? 'rgba(97,180,102,.12)' : 'rgba(97,180,102,.08)',
+    orcBar: dark ? 'rgba(255,255,255,.08)' : 'rgba(0,0,0,.06)',
+    empBar: dark ? 'rgba(143,133,244,.6)' : 'rgba(143,133,244,.7)',
+    pagBar: dark ? 'rgba(97,180,102,.6)' : 'rgba(97,180,102,.7)',
+    riskHigh: dark ? 'rgba(224,86,93,.7)' : 'rgba(224,86,93,.75)',
+    riskMed: dark ? 'rgba(243,157,114,.7)' : 'rgba(243,157,114,.75)',
+    riskLow: dark ? 'rgba(97,180,102,.7)' : 'rgba(97,180,102,.75)',
+    barPos: dark ? 'rgba(97,180,102,.6)' : 'rgba(97,180,102,.7)',
+    barNeg: dark ? 'rgba(224,86,93,.6)' : 'rgba(224,86,93,.7)',
+    base: dark ? 'rgba(42,79,218,.5)' : 'rgba(42,79,218,.6)',
+    acelerado: dark ? 'rgba(97,180,102,.5)' : 'rgba(97,180,102,.6)',
+    meta100: dark ? 'rgba(255,255,255,.2)' : 'rgba(0,0,0,.15)',
+  };
+}
+
+function toggleTheme() {
+  const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+  html.dataset.theme = next;
+  localStorage.setItem('pippa-orcamento-theme', next);
+  updateChartDefaults();
+  renderAll();
+}
+
+function updateChartDefaults() {
+  const c = tc();
+  Chart.defaults.color = c.label;
+  Chart.defaults.font.family = "'Figtree','Plus Jakarta Sans',system-ui,sans-serif";
+}
 
 const DATA = {"orcamento":[{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Comunidades empreendedoras de aprendizagem","loa":6219397.7,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Sensibilizar gestores públicos","loa":0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Simplificar e desonerar o dia a dia do empreendedor","loa":3570662.66,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Abertura de oportunidades para MPE junto ao governo","loa":12170000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas e cadastramento","loa":300000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Avaliar políticas públicas voltadas ao empreendedorismo","loa":1500000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Promover jornadas formativas para a rede de PP","loa":1000000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Articular agendas legislativas para competitividade MPE","loa":2730250.32,"credito":0.0,"remanejamento":0.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Parlamento + Empreendedor","loa":1354000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Laboratórios e observatórios de políticas públicas","loa":2015000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de Políticas Públicas","acao":"Impulsionar ecossistemas empreendedores com parceiros públicos","loa":36069830.66,"credito":0.0,"remanejamento":0.0},{"nucleo":"Gestão UPP","projeto":"Gestão de Viagens UPP","acao":"Viagens Colaboradores","loa":1300000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Gestão UPP","projeto":"Bodyshop","acao":"Bodyshop — contrato compartilhado","loa":221662.44,"credito":0.0,"remanejamento":0.0},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Licitações — Brindes","loa":200000.0,"credito":0.0,"remanejamento":0.0},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Compra direta / impressões","loa":100000.0,"credito":0.0,"remanejamento":0.0}],"execucao":[{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Comunidades empreendedoras de aprendizagem","tipo":"Empenhado","meses":[332648.65,312588.88,526926.2,356790.65,395588.93,556425.81,658316.38,569629.3,732280.96,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Comunidades empreendedoras de aprendizagem","tipo":"Liquidado","meses":[234934.01,276365.39,380300.92,269255.45,296576.74,420162.78,461891.03,447194.67,574217.12,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Comunidades empreendedoras de aprendizagem","tipo":"Pago","meses":[199577.68,254755.25,333123.05,239896.9,271954.7,380695.98,436508.94,370271.07,468959.82,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Sensibilizar gestores públicos","tipo":"Empenhado","meses":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Sensibilizar gestores públicos","tipo":"Liquidado","meses":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Sensibilizar gestores públicos","tipo":"Pago","meses":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Simplificar e desonerar o dia a dia do empreendedor","tipo":"Empenhado","meses":[142533.39,240274.32,312752.62,311906.93,309063.49,269926.21,283580.54,317742.03,292486.83,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Simplificar e desonerar o dia a dia do empreendedor","tipo":"Liquidado","meses":[129972.43,212025.98,248523.74,266565.0,270783.8,208476.69,205666.89,251400.05,224262.65,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em Políticas Públicas","acao":"Simplificar e desonerar o dia a dia do empreendedor","tipo":"Pago","meses":[118102.14,190085.75,223514.12,254598.17,218860.57,169775.61,174824.1,217871.47,217220.32,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Abertura de oportunidades para MPE junto ao governo","tipo":"Empenhado","meses":[653539.77,791247.13,1073036.43,997003.33,876771.46,941211.53,1325518.06,961243.34,1029182.52,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Abertura de oportunidades para MPE junto ao governo","tipo":"Liquidado","meses":[557000.67,586195.93,922811.26,907983.87,620776.17,708492.94,1032140.44,892646.04,783883.94,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Abertura de oportunidades para MPE junto ao governo","tipo":"Pago","meses":[462758.92,508995.09,830761.72,853214.27,531869.57,687042.43,947483.21,787843.44,706315.7,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas e cadastramento","tipo":"Empenhado","meses":[13220.56,16619.75,21351.22,18108.55,24027.0,32761.59,32460.72,27271.38,30776.33,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas e cadastramento","tipo":"Liquidado","meses":[11186.53,12545.09,15431.11,15516.52,17200.49,27266.77,22815.68,22750.95,22401.72,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas e cadastramento","tipo":"Pago","meses":[10757.06,12288.63,12475.76,14625.47,14941.92,26579.49,21212.42,19293.45,19674.48,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Avaliar políticas públicas voltadas ao empreendedorismo","tipo":"Empenhado","meses":[73264.64,77148.27,128170.85,120315.91,141406.93,133241.96,104464.03,145729.1,170919.44,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Avaliar políticas públicas voltadas ao empreendedorismo","tipo":"Liquidado","meses":[68755.49,63658.63,117613.37,102538.34,118052.83,93288.42,97389.16,113213.81,160106.63,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Avaliar políticas públicas voltadas ao empreendedorismo","tipo":"Pago","meses":[65843.94,52973.99,100408.9,84851.61,110987.69,80073.94,93315.37,91751.47,130553.76,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Promover jornadas formativas para a rede de PP","tipo":"Empenhado","meses":[49649.76,66086.84,72597.21,72117.67,92913.79,109162.78,92472.23,76586.9,82427.08,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Promover jornadas formativas para a rede de PP","tipo":"Liquidado","meses":[35613.93,48382.03,55628.64,54300.97,69712.08,94149.57,67527.94,64875.01,59161.9,0.0,0.0,0.0]},{"nucleo":"Projetos Especiais","projeto":"Gestão do Programa Nacional Movimenta","acao":"Promover jornadas formativas para a rede de PP","tipo":"Pago","meses":[33366.99,42844.75,53238.72,48711.95,59681.14,82744.11,56753.55,54587.18,54050.22,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Articular agendas legislativas para competitividade MPE","tipo":"Empenhado","meses":[118011.1,125090.99,165760.47,212042.48,262501.85,230661.07,278938.69,181836.7,308964.62,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Articular agendas legislativas para competitividade MPE","tipo":"Liquidado","meses":[109320.17,95006.75,121515.35,173486.32,196247.03,185888.53,242213.94,145588.52,235481.73,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Articular agendas legislativas para competitividade MPE","tipo":"Pago","meses":[104371.72,87445.73,117674.56,163290.79,160421.66,164337.44,236679.29,125362.56,196447.72,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Parlamento + Empreendedor","tipo":"Empenhado","meses":[65960.57,69102.77,113236.53,126901.07,136887.54,117624.42,96726.32,99586.87,124763.12,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Parlamento + Empreendedor","tipo":"Liquidado","meses":[53129.29,64321.99,94844.8,115353.95,124865.24,88622.57,76872.59,89231.6,117193.67,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Parlamento + Empreendedor","tipo":"Pago","meses":[45167.23,56588.15,76739.49,112403.11,103630.16,77295.47,75131.85,78693.48,114753.24,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Laboratórios e observatórios de políticas públicas","tipo":"Empenhado","meses":[103559.33,105594.02,145740.41,157485.67,139155.29,148616.01,160253.31,146609.33,185305.16,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Laboratórios e observatórios de políticas públicas","tipo":"Liquidado","meses":[91091.0,99488.29,129270.85,130037.9,130833.07,126139.14,116980.37,124417.04,156752.99,0.0,0.0,0.0]},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa para o Ambiente de Negócios","acao":"Laboratórios e observatórios de políticas públicas","tipo":"Pago","meses":[75410.91,89962.53,104746.85,123989.78,106553.08,116242.04,112330.6,113404.73,140152.99,0.0,0.0,0.0]},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de Políticas Públicas","acao":"Impulsionar ecossistemas empreendedores com parceiros públicos","tipo":"Empenhado","meses":[2195486.06,1829161.48,2299447.97,2127051.14,3751407.34,2785583.5,3933410.93,3507407.72,4298799.45,0.0,0.0,0.0]},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de Políticas Públicas","acao":"Impulsionar ecossistemas empreendedores com parceiros públicos","tipo":"Liquidado","meses":[1648952.3,1461402.09,1791371.84,1732634.99,2694692.84,2599826.43,3116763.12,3072085.75,3711987.87,0.0,0.0,0.0]},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de Políticas Públicas","acao":"Impulsionar ecossistemas empreendedores com parceiros públicos","tipo":"Pago","meses":[1531735.74,1345811.38,1675533.87,1697500.27,2259143.64,2492078.06,2581909.21,2795911.38,2974817.37,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Gestão de Viagens UPP","acao":"Viagens Colaboradores","tipo":"Empenhado","meses":[75305.88,92476.1,73990.61,102610.45,115604.56,136803.51,114613.06,123018.96,139610.01,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Gestão de Viagens UPP","acao":"Viagens Colaboradores","tipo":"Liquidado","meses":[58350.36,67837.95,62026.77,90235.95,88552.62,124699.95,88156.93,105707.53,116982.03,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Gestão de Viagens UPP","acao":"Viagens Colaboradores","tipo":"Pago","meses":[53647.91,55679.84,52662.13,75495.68,78629.04,101831.69,70581.81,89550.34,102591.33,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Bodyshop","acao":"Bodyshop — contrato compartilhado","tipo":"Empenhado","meses":[8365.93,15541.77,16348.83,15030.86,21803.3,16966.47,24221.68,15281.35,26300.59,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Bodyshop","acao":"Bodyshop — contrato compartilhado","tipo":"Liquidado","meses":[6013.52,12999.1,12049.47,13899.72,20162.19,12312.54,19415.97,14249.4,23741.36,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Bodyshop","acao":"Bodyshop — contrato compartilhado","tipo":"Pago","meses":[5766.72,12352.1,9916.0,13111.63,16892.16,11578.97,17701.91,13617.14,22759.77,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Licitações — Brindes","tipo":"Empenhado","meses":[7623.93,14179.76,16367.81,12060.72,14353.61,15795.42,13966.92,19702.94,20522.53,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Licitações — Brindes","tipo":"Liquidado","meses":[6740.63,12769.71,12549.22,11072.24,12977.77,14197.5,10451.2,18554.7,16416.38,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Licitações — Brindes","tipo":"Pago","meses":[5795.55,12201.86,11817.95,10568.97,11457.49,11939.63,8978.5,15775.99,16032.35,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Compra direta / impressões","tipo":"Empenhado","meses":[5090.54,7205.34,6252.69,8357.04,8380.93,7676.91,11117.22,9341.46,7522.79,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Compra direta / impressões","tipo":"Liquidado","meses":[4758.68,5365.39,4546.34,6505.28,6673.72,6734.16,9278.58,8105.18,6515.18,0.0,0.0,0.0]},{"nucleo":"Gestão UPP","projeto":"Produção e Disseminação de Conteúdos Estratégicos","acao":"Compra direta / impressões","tipo":"Pago","meses":[3905.74,5221.9,3992.69,5914.07,6031.62,5389.38,8624.41,7015.52,5599.38,0.0,0.0,0.0]}],"metas":[{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em PP","acao":"Comunidades empreendedoras","indicador":"Comunidades criadas","unidade":"unidade","meta":15.0,"realizado":9.0},{"nucleo":"Projetos Especiais","projeto":"Entrega de Valor em PP","acao":"Sensibilizar gestores públicos","indicador":"Gestores sensibilizados","unidade":"pessoas","meta":500.0,"realizado":320.0},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Oportunidades para MPE","indicador":"Editais monitorados","unidade":"unidade","meta":2000.0,"realizado":1450.0},{"nucleo":"Projetos Especiais","projeto":"Fomento a Compras Públicas","acao":"Conexão por plataformas","indicador":"MPE cadastradas","unidade":"empresas","meta":5000.0,"realizado":3800.0},{"nucleo":"Projetos Especiais","projeto":"Gestão Movimenta","acao":"Avaliar PP empreendedorismo","indicador":"Políticas avaliadas","unidade":"unidade","meta":12.0,"realizado":7.0},{"nucleo":"Projetos Especiais","projeto":"Gestão Movimenta","acao":"Jornadas formativas","indicador":"Jornadas realizadas","unidade":"evento","meta":8.0,"realizado":6.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa","acao":"Agendas legislativas","indicador":"Proposições monitoradas","unidade":"proposição","meta":300.0,"realizado":245.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa","acao":"Parlamento + Empreendedor","indicador":"Eventos realizados","unidade":"evento","meta":20.0,"realizado":14.0},{"nucleo":"NAL — Núcleo de Assessoria Legislativa","projeto":"Inteligência Legislativa","acao":"Laboratórios e observatórios","indicador":"Laboratórios implementados","unidade":"unidade","meta":4.0,"realizado":2.0},{"nucleo":"RelGov — Relacionamento Governamental","projeto":"Ecossistemas de PP","acao":"Ecossistemas empreendedores","indicador":"Parcerias firmadas","unidade":"parceria","meta":50.0,"realizado":38.0},{"nucleo":"Gestão UPP","projeto":"Viagens","acao":"Viagens","indicador":"Viagens realizadas","unidade":"viagem","meta":150.0,"realizado":98.0},{"nucleo":"Gestão UPP","projeto":"Conteúdos Estratégicos","acao":"Brindes e impressões","indicador":"Materiais produzidos","unidade":"lote","meta":30.0,"realizado":22.0}],"ano":2027,"unidade":"UPP — Unidade de Políticas Públicas","mes_atual":9};
 
@@ -552,6 +699,9 @@ let filteredOrc, filteredExec, filteredMetas, currentMes;
 let charts = {};
 
 function init() {
+  const saved = localStorage.getItem('pippa-orcamento-theme');
+  if (saved) html.dataset.theme = saved;
+  updateChartDefaults();
   currentMes = DATA.mes_atual;
   populateFilters();
   applyFilters();
@@ -586,7 +736,7 @@ function applyFilters() {
 
   filteredOrc = DATA.orcamento.filter(o => (!nucleo || o.nucleo===nucleo) && (!activeProjeto || o.projeto===activeProjeto));
   filteredExec = DATA.execucao.filter(e => (!nucleo || e.nucleo===nucleo) && (!activeProjeto || e.projeto===activeProjeto));
-  filteredMetas = DATA.metas.filter(m => (!nucleo || m.nucleo===nucleo) && (!activeProjeto || m.projeto===activeProjeto));
+  filteredMetas = DATA.metas.filter(m => (!nucleo || m.nucleo===nucleo));
 
   renderAll();
 }
@@ -609,6 +759,7 @@ function mesesTotals(rows, tipo) {
 }
 
 function renderAll() {
+  updateChartDefaults();
   renderHeader();
   renderKPIs();
   updateThermometer();
@@ -675,6 +826,7 @@ function renderDescritiva() {
 }
 
 function renderTimelineChart() {
+  const c = tc();
   const empM = mesesTotals(filteredExec,'Empenhado');
   const liqM = mesesTotals(filteredExec,'Liquidado');
   const pagM = mesesTotals(filteredExec,'Pago');
@@ -691,23 +843,24 @@ function renderTimelineChart() {
     data:{
       labels:MESES,
       datasets:[
-        {label:'Ideal (linear)',data:ideal,borderColor:chartRefColor(),borderDash:[5,5],pointRadius:0,fill:false,borderWidth:1.5},
-        {label:'Empenhado',data:empAcc,borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,.1)',fill:true,tension:.3,pointRadius:2},
-        {label:'Liquidado',data:liqAcc,borderColor:'#06b6d4',backgroundColor:'rgba(6,182,212,.08)',fill:true,tension:.3,pointRadius:2},
-        {label:'Pago',data:pagAcc,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.08)',fill:true,tension:.3,pointRadius:2},
+        {label:'Ideal (linear)',data:ideal,borderColor:c.ideal,borderDash:[5,5],pointRadius:0,fill:false,borderWidth:1.5},
+        {label:'Empenhado',data:empAcc,borderColor:c.empenhado,backgroundColor:c.empBg,fill:true,tension:.3,pointRadius:2},
+        {label:'Liquidado',data:liqAcc,borderColor:c.liquidado,backgroundColor:c.liqBg,fill:true,tension:.3,pointRadius:2},
+        {label:'Pago',data:pagAcc,borderColor:c.pago,backgroundColor:c.pagBg,fill:true,tension:.3,pointRadius:2},
       ]
     },
     options:{
-      responsive:true, plugins:{legend:{position:'bottom',labels:{color:chartTextColor(),boxWidth:12,padding:12,font:{size:11}}}},
+      responsive:true, plugins:{legend:{position:'bottom',labels:{color:c.label,boxWidth:12,padding:12,font:{size:11}}}},
       scales:{
-        x:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10}}},
-        y:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>fmt(v)}}
+        x:{grid:{color:c.grid},ticks:{color:c.label,font:{size:10}}},
+        y:{grid:{color:c.grid},ticks:{color:c.label,font:{size:10},callback:v=>fmt(v)}}
       }
     }
   });
 }
 
 function renderNucleosChart() {
+  const c = tc();
   const nucleos = [...new Set(filteredOrc.map(o=>o.nucleo))];
   const loaByN = nucleos.map(n=> filteredOrc.filter(o=>o.nucleo===n).reduce((s,o)=>s+o.loa,0));
   const empByN = nucleos.map(n=> sumMeses(filteredExec.filter(e=>e.nucleo===n),'Empenhado',currentMes));
@@ -720,17 +873,17 @@ function renderNucleosChart() {
     data:{
       labels:labels,
       datasets:[
-        {label:'Orçamento',data:loaByN,backgroundColor:chartGridColor(),borderRadius:4},
-        {label:'Empenhado',data:empByN,backgroundColor:'rgba(139,92,246,.6)',borderRadius:4},
-        {label:'Pago',data:pagByN,backgroundColor:'rgba(34,197,94,.6)',borderRadius:4},
+        {label:'Orçamento',data:loaByN,backgroundColor:c.orcBar,borderRadius:4},
+        {label:'Empenhado',data:empByN,backgroundColor:c.empBar,borderRadius:4},
+        {label:'Pago',data:pagByN,backgroundColor:c.pagBar,borderRadius:4},
       ]
     },
     options:{
       responsive:true, indexAxis:'y',
-      plugins:{legend:{position:'bottom',labels:{color:chartTextColor(),boxWidth:12,padding:12,font:{size:11}}}},
+      plugins:{legend:{position:'bottom',labels:{color:c.label,boxWidth:12,padding:12,font:{size:11}}}},
       scales:{
-        x:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>fmt(v)}},
-        y:{grid:{display:false},ticks:{color:chartLabelColor(),font:{size:10}}}
+        x:{grid:{color:c.grid},ticks:{color:c.label,font:{size:10},callback:v=>fmt(v)}},
+        y:{grid:{display:false},ticks:{color:c.strong,font:{size:10}}}
       }
     }
   });
@@ -832,6 +985,7 @@ function renderAlerts() {
 }
 
 function renderGapChart() {
+  const c = tc();
   const nucleos = [...new Set(filteredOrc.map(o=>o.nucleo))];
   const expected = currentMes/12;
   const labels = nucleos.map(n=> n.length>22 ? n.substring(0,20)+'...' : n);
@@ -845,29 +999,30 @@ function renderGapChart() {
     data:{
       labels:labels,
       datasets:[
-        {label:'Previsto (linear)',data:previsto,backgroundColor:chartGridColor(),borderRadius:4},
-        {label:'Realizado (Empenhado)',data:realizado,backgroundColor: nucleos.map(n=>NUCLEO_COLORS[n]||'#3b82f6'),borderRadius:4},
+        {label:'Previsto (linear)',data:previsto,backgroundColor:c.orcBar,borderRadius:4},
+        {label:'Realizado (Empenhado)',data:realizado,backgroundColor: nucleos.map(n=>NUCLEO_COLORS[n]||'#2a4fda'),borderRadius:4},
       ]
     },
     options:{
       responsive:true,
-      plugins:{legend:{position:'bottom',labels:{color:chartTextColor(),boxWidth:12,font:{size:11}}}},
+      plugins:{legend:{position:'bottom',labels:{color:c.label,boxWidth:12,font:{size:11}}}},
       scales:{
-        x:{grid:{display:false},ticks:{color:chartLabelColor(),font:{size:10}}},
-        y:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>fmt(v)}}
+        x:{grid:{display:false},ticks:{color:c.strong,font:{size:10}}},
+        y:{grid:{color:c.grid},ticks:{color:c.label,font:{size:10},callback:v=>fmt(v)}}
       }
     }
   });
 }
 
 function renderVelocityChart() {
+  const c = tc();
   const nucleos = [...new Set(filteredOrc.map(o=>o.nucleo))];
   const datasets = nucleos.map(n => {
     const mTotals = mesesTotals(filteredExec.filter(e=>e.nucleo===n),'Empenhado');
     return {
       label: n.length>20 ? n.substring(0,18)+'...' : n,
       data: mTotals.slice(0,currentMes),
-      borderColor: NUCLEO_COLORS[n]||'#3b82f6',
+      borderColor: NUCLEO_COLORS[n]||'#2a4fda',
       backgroundColor: 'transparent',
       tension:.3, pointRadius:3, borderWidth:2
     };
@@ -879,16 +1034,17 @@ function renderVelocityChart() {
     data:{labels:MESES.slice(0,currentMes), datasets},
     options:{
       responsive:true,
-      plugins:{legend:{position:'bottom',labels:{color:chartTextColor(),boxWidth:12,font:{size:11}}}},
+      plugins:{legend:{position:'bottom',labels:{color:c.label,boxWidth:12,font:{size:11}}}},
       scales:{
-        x:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10}}},
-        y:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>fmt(v)}}
+        x:{grid:{color:c.grid},ticks:{color:c.label,font:{size:10}}},
+        y:{grid:{color:c.grid},ticks:{color:c.label,font:{size:10},callback:v=>fmt(v)}}
       }
     }
   });
 }
 
 function renderFunnelChart() {
+  const c = tc();
   const nucleos = [...new Set(filteredOrc.map(o=>o.nucleo))];
   const labels = nucleos.map(n=> n.length>22 ? n.substring(0,20)+'...' : n);
 
@@ -902,18 +1058,17 @@ function renderFunnelChart() {
     data:{
       labels:labels,
       datasets:[
-        {label:'Empenhado',data:empByN,backgroundColor:'rgba(139,92,246,.5)',borderRadius:4},
-        {label:'Liquidado',data:liqByN,backgroundColor:'rgba(6,182,212,.5)',borderRadius:4},
-        {label:'Pago',data:pagByN,backgroundColor:'rgba(34,197,94,.5)',borderRadius:4},
+        {label:'Empenhado',data:empByN,backgroundColor:c.empBar,borderRadius:4},
+        {label:'Liquidado',data:liqByN,backgroundColor:'rgba(101,183,251,.55)',borderRadius:4},
+        {label:'Pago',data:pagByN,backgroundColor:c.pagBar,borderRadius:4},
       ]
     },
     options:{
       responsive:true,
-      aspectRatio:4,
-      plugins:{legend:{position:'bottom',labels:{color:chartTextColor(),boxWidth:12,font:{size:11}}}},
+      plugins:{legend:{position:'bottom',labels:{color:c.label,boxWidth:12,font:{size:11}}}},
       scales:{
-        x:{grid:{display:false},ticks:{color:chartLabelColor(),font:{size:10}}},
-        y:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>fmt(v)}}
+        x:{grid:{display:false},ticks:{color:c.strong,font:{size:10}}},
+        y:{grid:{color:c.grid},ticks:{color:c.label,font:{size:10},callback:v=>fmt(v)}}
       }
     }
   });
@@ -929,9 +1084,9 @@ function renderMetasTable() {
   filteredMetas.forEach(m => {
     const pctAt = m.meta>0 ? m.realizado/m.meta*100 : 0;
     const ratio = pctAt/100/expected;
-    const status = ratio>=0.9?'<span style="color:var(--green)">No ritmo</span>'
-                  :ratio>=0.7?'<span style="color:var(--yellow)">Atenção</span>'
-                  :'<span style="color:var(--red)">Em risco</span>';
+    const status = ratio>=0.9?'<span style="color:var(--status-green);font-weight:600">No ritmo</span>'
+                  :ratio>=0.7?'<span style="color:var(--status-yellow);font-weight:600">Atenção</span>'
+                  :'<span style="color:var(--status-red);font-weight:600">Em risco</span>';
     const barColor = ratio>=0.9?'var(--green)':ratio>=0.7?'var(--yellow)':'var(--red)';
 
     html += `<tr>
@@ -998,6 +1153,7 @@ function renderPreditiva() {
 }
 
 function renderProjectionChart(empM, pagM, totalLoa, avgEmp, avgPag) {
+  const c = tc();
   let empAcc=[], pagAcc=[], projEmpAcc=[], projPagAcc=[];
   let se=0, sp=0;
 
@@ -1013,25 +1169,26 @@ function renderProjectionChart(empM, pagM, totalLoa, avgEmp, avgPag) {
     data:{
       labels:MESES,
       datasets:[
-        {label:'Meta 100%',data:Array(12).fill(totalLoa),borderColor:chartRefColor(),borderDash:[4,4],pointRadius:0,borderWidth:1},
-        {label:'Empenhado (real)',data:empAcc,borderColor:'#8b5cf6',pointRadius:3,borderWidth:2.5,tension:.3},
-        {label:'Pago (real)',data:pagAcc,borderColor:'#22c55e',pointRadius:3,borderWidth:2.5,tension:.3},
-        {label:'Empenho (projeção)',data:projEmpAcc,borderColor:'#8b5cf6',borderDash:[6,4],pointRadius:2,borderWidth:2,tension:.3},
-        {label:'Pago (projeção)',data:projPagAcc,borderColor:'#22c55e',borderDash:[6,4],pointRadius:2,borderWidth:2,tension:.3},
+        {label:'Meta 100%',data:Array(12).fill(totalLoa),borderColor:c.ideal,borderDash:[4,4],pointRadius:0,borderWidth:1},
+        {label:'Empenhado (real)',data:empAcc,borderColor:c.empenhado,pointRadius:3,borderWidth:2.5,tension:.3},
+        {label:'Pago (real)',data:pagAcc,borderColor:c.pago,pointRadius:3,borderWidth:2.5,tension:.3},
+        {label:'Empenho (projeção)',data:projEmpAcc,borderColor:c.empenhado,borderDash:[6,4],pointRadius:2,borderWidth:2,tension:.3},
+        {label:'Pago (projeção)',data:projPagAcc,borderColor:c.pago,borderDash:[6,4],pointRadius:2,borderWidth:2,tension:.3},
       ]
     },
     options:{
       responsive:true, spanGaps:false,
-      plugins:{legend:{position:'bottom',labels:{color:chartTextColor(),boxWidth:12,font:{size:11}}}},
+      plugins:{legend:{position:'bottom',labels:{color:c.label,boxWidth:12,font:{size:11}}}},
       scales:{
-        x:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10}}},
-        y:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>fmt(v)}}
+        x:{grid:{color:c.grid},ticks:{color:c.label,font:{size:10}}},
+        y:{grid:{color:c.grid},ticks:{color:c.label,font:{size:10},callback:v=>fmt(v)}}
       }
     }
   });
 }
 
 function renderRiskChart() {
+  const c = tc();
   const nucleos = [...new Set(filteredOrc.map(o=>o.nucleo))];
   const expected = currentMes/12;
 
@@ -1043,7 +1200,7 @@ function renderRiskChart() {
     return Math.max(0, gap*100);
   });
 
-  const colors = riskData.map(r=> r>20?'rgba(239,68,68,.7)':r>10?'rgba(234,179,8,.7)':'rgba(34,197,94,.7)');
+  const colors = riskData.map(r=> r>20?c.riskHigh:r>10?c.riskMed:c.riskLow);
   const labels = nucleos.map(n=> n.length>22 ? n.substring(0,20)+'...' : n);
 
   if(charts.risk) charts.risk.destroy();
@@ -1057,8 +1214,8 @@ function renderRiskChart() {
       responsive:true, indexAxis:'y',
       plugins:{legend:{display:false}},
       scales:{
-        x:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>v+'%'},max:50},
-        y:{grid:{display:false},ticks:{color:chartLabelColor(),font:{size:10}}}
+        x:{grid:{color:c.grid},ticks:{color:c.label,font:{size:10},callback:v=>v+'%'},max:50},
+        y:{grid:{display:false},ticks:{color:c.strong,font:{size:10}}}
       }
     }
   });
@@ -1084,9 +1241,9 @@ function renderProjectionTable(avgEmp, avgPag) {
   </tr></thead><tbody>`;
 
   acoes.forEach(a => {
-    const risco = a.pctProj>=90?'<span style="color:var(--green)">Baixo</span>'
-                 :a.pctProj>=70?'<span style="color:var(--yellow)">Médio</span>'
-                 :'<span style="color:var(--red)">Alto</span>';
+    const risco = a.pctProj>=90?'<span style="color:var(--status-green);font-weight:600">Baixo</span>'
+                 :a.pctProj>=70?'<span style="color:var(--status-yellow);font-weight:600">Médio</span>'
+                 :'<span style="color:var(--status-red);font-weight:600">Alto</span>';
     const barColor = a.pctProj>=90?'var(--green)':a.pctProj>=70?'var(--yellow)':'var(--red)';
     html += `<tr>
       <td>${a.acao}</td><td class="num">${fmtN(a.loa)}</td><td class="num">${fmtN(a.empAcum)}</td>
@@ -1171,6 +1328,7 @@ function renderRecommendations() {
 }
 
 function renderReallocChart() {
+  const c = tc();
   const expected = currentMes/12;
   const acoes = filteredOrc.filter(o=>o.loa>500000).map(o => {
     const exec = filteredExec.filter(e=> e.acao===o.acao && e.nucleo===o.nucleo);
@@ -1183,7 +1341,7 @@ function renderReallocChart() {
   acoes.sort((a,b)=> a.gap - b.gap);
   const labels = acoes.map(a=>a.acao);
   const values = acoes.map(a=>a.gap);
-  const colors = values.map(v=> v>=0?'rgba(34,197,94,.6)':'rgba(239,68,68,.6)');
+  const colors = values.map(v=> v>=0?c.barPos:c.barNeg);
 
   if(charts.realloc) charts.realloc.destroy();
   charts.realloc = new Chart(document.getElementById('chartRealloc'), {
@@ -1197,14 +1355,15 @@ function renderReallocChart() {
       plugins:{legend:{display:false},
         tooltip:{callbacks:{label:ctx=>`${ctx.raw>0?'+':''}${ctx.raw.toFixed(1)}% vs. meta linear`}}},
       scales:{
-        x:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>(v>0?'+':'')+v+'%'}},
-        y:{grid:{display:false},ticks:{color:chartLabelColor(),font:{size:9}}}
+        x:{grid:{color:c.grid},ticks:{color:c.label,font:{size:10},callback:v=>(v>0?'+':'')+v+'%'}},
+        y:{grid:{display:false},ticks:{color:c.strong,font:{size:9}}}
       }
     }
   });
 }
 
 function renderImpactChart() {
+  const c = tc();
   const nucleos = [...new Set(filteredOrc.map(o=>o.nucleo))];
   const avgRest = 12-currentMes;
 
@@ -1225,17 +1384,17 @@ function renderImpactChart() {
     data:{
       labels:labels,
       datasets:[
-        {label:'Cenário Base',data:impactData.map(d=>d.base),backgroundColor:'rgba(59,130,246,.5)',borderRadius:4},
-        {label:'Cenário Acelerado (+30%)',data:impactData.map(d=>d.acelerado),backgroundColor:'rgba(34,197,94,.5)',borderRadius:4},
-        {label:'Meta 100%',data:impactData.map(()=>100),type:'line',borderColor:chartRefColor(),borderDash:[4,4],pointRadius:0,borderWidth:1.5},
+        {label:'Cenário Base',data:impactData.map(d=>d.base),backgroundColor:c.base,borderRadius:4},
+        {label:'Cenário Acelerado (+30%)',data:impactData.map(d=>d.acelerado),backgroundColor:c.acelerado,borderRadius:4},
+        {label:'Meta 100%',data:impactData.map(()=>100),type:'line',borderColor:c.meta100,borderDash:[4,4],pointRadius:0,borderWidth:1.5},
       ]
     },
     options:{
       responsive:true,
-      plugins:{legend:{position:'bottom',labels:{color:chartTextColor(),boxWidth:12,font:{size:11}}}},
+      plugins:{legend:{position:'bottom',labels:{color:c.label,boxWidth:12,font:{size:11}}}},
       scales:{
-        x:{grid:{display:false},ticks:{color:chartLabelColor(),font:{size:10}}},
-        y:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>v+'%'},max:120}
+        x:{grid:{display:false},ticks:{color:c.strong,font:{size:10}}},
+        y:{grid:{color:c.grid},ticks:{color:c.label,font:{size:10},callback:v=>v+'%'},max:120}
       }
     }
   });
@@ -1314,11 +1473,8 @@ function copyExport() {
   });
 }
 
-Chart.defaults.color = chartTextColor();
-Chart.defaults.font.family = "'Figtree','Segoe UI',system-ui,sans-serif";
 init();
 </script>
 
-<script>function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n)}</script>
 </body>
 </html>
