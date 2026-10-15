@@ -40,23 +40,23 @@
 }
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: #060e22;
-  --surface: #0b2574;
-  --surface2: #163088;
-  --text: #eff3ee;
-  --text2: #8ba3cc;
-  --status-green: #61b466;
-  --status-red: #e0565d;
-  --status-yellow: #f39d72;
-  --status-cyan: #65b7fb;
-  --shadow: 0 4px 24px rgba(0,0,0,.5);
-  --border: rgba(101,183,251,.1);
-  --header-from: #0b2574;
-  --header-to: #061545;
-  --chart-grid: rgba(255,255,255,.06);
-  --chart-label: #8ba3cc;
-  --chart-strong: #eff3ee;
-  --chart-ideal: rgba(255,255,255,.15);
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface2: #334155;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --status-green: #22c55e;
+  --status-red: #ef4444;
+  --status-yellow: #eab308;
+  --status-cyan: #06b6d4;
+  --shadow: 0 4px 24px rgba(0,0,0,.4);
+  --border: rgba(255,255,255,.06);
+  --header-from: #1e3a5f;
+  --header-to: #0f172a;
+  --chart-grid: rgba(255,255,255,.04);
+  --chart-label: #94a3b8;
+  --chart-strong: #e2e8f0;
+  --chart-ideal: rgba(255,255,255,.2);
   --chart-muted-bg: rgba(255,255,255,.06);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -655,8 +655,8 @@ function tc() {
   const dark = html.dataset.theme === 'dark';
   return {
     grid: dark ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.07)',
-    label: dark ? '#8ba3cc' : '#64748b',
-    strong: dark ? '#eff3ee' : '#1e293b',
+    label: dark ? '#94a3b8' : '#64748b',
+    strong: dark ? '#e2e8f0' : '#1e293b',
     ideal: dark ? 'rgba(255,255,255,.15)' : 'rgba(0,0,0,.12)',
     mutedBg: dark ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.04)',
     empenhado: '#8f85f4',
@@ -665,7 +665,7 @@ function tc() {
     liqBg: dark ? 'rgba(101,183,251,.12)' : 'rgba(101,183,251,.08)',
     pago: '#61b466',
     pagBg: dark ? 'rgba(97,180,102,.12)' : 'rgba(97,180,102,.08)',
-    orcBar: dark ? 'rgba(255,255,255,.08)' : 'rgba(0,0,0,.06)',
+    orcBar: dark ? 'rgba(255,255,255,.1)' : 'rgba(0,0,0,.06)',
     empBar: dark ? 'rgba(143,133,244,.6)' : 'rgba(143,133,244,.7)',
     pagBar: dark ? 'rgba(97,180,102,.6)' : 'rgba(97,180,102,.7)',
     riskHigh: dark ? 'rgba(224,86,93,.7)' : 'rgba(224,86,93,.75)',
