@@ -152,8 +152,8 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
     </div>
   </div>
   <div class="stats-bar">
-    <div class="stat-box"><div class="val" style="color:var(--accent)">13</div><div class="lbl">Ferramentas</div></div>
-    <div class="stat-box"><div class="val" style="color:var(--accent)">14</div><div class="lbl">APIs Externas</div></div>
+    <div class="stat-box"><div class="val" style="color:var(--accent)">20</div><div class="lbl">Ferramentas</div></div>
+    <div class="stat-box"><div class="val" style="color:var(--accent)">15</div><div class="lbl">APIs Externas</div></div>
     <div class="stat-box"><div class="val" style="color:var(--amber)">6</div><div class="lbl">Pipelines</div></div>
     <div class="stat-box"><div class="val" style="color:var(--accent)">1</div><div class="lbl">Lib (Chart.js)</div></div>
     <div class="stat-box"><div class="val" style="color:var(--accent)">100%</div><div class="lbl">HTML Standalone</div></div>
@@ -162,7 +162,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
 
 <div class="main">
   <div class="intro">
-    <strong>Este documento reune toda a informacao necessaria para que qualquer tecnico replique as ferramentas PIPPA.</strong> Cada ferramenta esta documentada com sua arquitetura, fontes de dados, dependencias, pipeline de dados e passo a passo de implantacao. O padrao PIPPA e de dashboards HTML standalone (arquivo unico, sem backend), com dados embarcados ou consumidos via APIs publicas.
+    <strong>Este documento reune toda a informacao necessaria para que qualquer tecnico replique as 20 ferramentas PIPPA.</strong> Cada ferramenta esta documentada com sua arquitetura, fontes de dados, dependencias, pipeline de dados e passo a passo de implantacao. O padrao PIPPA e de dashboards HTML standalone (arquivo unico, sem backend), com dados embarcados ou consumidos via APIs publicas.
   </div>
 
   <!-- Pre-requisitos -->
@@ -193,7 +193,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
   </div>
 
   <!-- Ferramentas -->
-  <div class="section-title">🔧 Ferramentas Documentadas (13)</div>
+  <div class="section-title">🔧 Ferramentas Documentadas (20)</div>
 
   <!-- 0. Portal PIPPA -->
   <div class="tool-card" id="portal">
@@ -1017,6 +1017,466 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
     </div>
   </div>
 
+  <!-- 13. Pauta Legislativa -->
+  <div class="tool-card" id="pauta">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(42,79,218,.08);color:var(--text-accent)">📅</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Pauta Legislativa</div>
+        <div class="tool-desc">Monitor em tempo real da pauta de votacoes e audiencias da Camara e Senado</div>
+        <div class="tool-tags">
+          <span class="tag tag-api">2 APIs</span>
+          <span class="tag tag-chartjs">Chart.js</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>pippa-pauta-legislativa/index.html</code> (~1.689 linhas)</li>
+            <li>100% client-side — todos os dados buscados em tempo real via APIs publicas</li>
+            <li>Classificacao heuristica de relevancia Sebrae em 3 niveis (Alta/Media/Institucional) e 6 eixos tematicos</li>
+            <li>Seletor de periodo (padrao: semana corrente) com fetch automatico ao carregar</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔗 Fontes de Dados</div>
+        <div class="doc-content">
+          <table class="api-table">
+            <thead><tr><th>Fonte</th><th>URL Base</th><th>Autenticacao</th><th>Dados</th></tr></thead>
+            <tbody>
+              <tr><td>Camara dos Deputados</td><td><code>dadosabertos.camara.leg.br/api/v2</code></td><td>Nenhuma</td><td>Eventos, pautas, proposicoes, tramitacoes</td></tr>
+              <tr><td>Senado Federal</td><td><code>legis.senado.leg.br/dadosabertos</code></td><td>Nenhuma</td><td>Agenda plenaria mensal, movimentacoes</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔑 Funcionalidades</div>
+        <div class="doc-content">
+          <ul>
+            <li><strong>4 graficos Chart.js:</strong> doughnut (casa/tipo/relevancia) + barras (eventos por dia)</li>
+            <li><strong>Filtros laterais:</strong> Casa, Tipo de Evento, Relevancia, Eixo Tematico, Situacao + busca textual</li>
+            <li><strong>Painel estrategico:</strong> KPIs de relevancia e destaque de itens prioritarios</li>
+            <li><strong>Tramitacao on-demand:</strong> consulta historico legislativo de cada proposicao</li>
+            <li><strong>Export WhatsApp:</strong> resumo formatado com top destaques</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar <code>index.html</code> para o servidor</li>
+            <li>Requer internet para buscar dados das APIs da Camara e Senado</li>
+            <li>Funciona imediatamente — sem pipeline, sem dados pre-embarcados</li>
+            <li>Para adaptar tematica: editar as keywords de classificacao de relevancia no JS</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">A agenda pode mudar ate o inicio da sessao. Nem todos os eventos da Camara possuem itens de pauta na API. A agenda do Senado pode nao incluir detalhes de comissoes. Fetch limitado a 100 itens por requisicao sem paginacao.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 14. Consultas Publicas -->
+  <div class="tool-card" id="consultas">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(42,79,218,.08);color:var(--text-accent)">🗣️</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Consultas Publicas</div>
+        <div class="tool-desc">Monitor de advocacy pre-normativo: audiencias publicas, seminarios e sessoes deliberativas</div>
+        <div class="tool-tags">
+          <span class="tag tag-api">2 APIs</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>pippa-consultas-publicas/index.html</code> (~667 linhas)</li>
+            <li>100% client-side — dados buscados em tempo real via "Consultar APIs"</li>
+            <li>Classificacao automatica de relevancia Sebrae via ~30 padroes de keywords (MPE, tributario, inovacao, etc.)</li>
+            <li>Agrupamento por status: Aberta / Futura / Encerrada com ordenacao por prioridade</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔗 Fontes de Dados</div>
+        <div class="doc-content">
+          <table class="api-table">
+            <thead><tr><th>Fonte</th><th>URL Base</th><th>Autenticacao</th><th>Dados</th></tr></thead>
+            <tbody>
+              <tr><td>Camara dos Deputados</td><td><code>dadosabertos.camara.leg.br/api/v2/eventos</code></td><td>Nenhuma</td><td>Audiencias publicas e seminarios (2 paginas)</td></tr>
+              <tr><td>Senado Federal</td><td><code>legis.senado.leg.br/dadosabertos/plenario/agenda</code></td><td>Nenhuma</td><td>Agenda plenaria (4 meses)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔑 Funcionalidades</div>
+        <div class="doc-content">
+          <ul>
+            <li><strong>Filtros laterais:</strong> status, relevancia e orgao + busca textual</li>
+            <li><strong>Export WhatsApp:</strong> resumo com top 5 destaques</li>
+            <li><strong>Modal de metodologia:</strong> explica fontes e limitacoes</li>
+            <li><strong>Tema light/dark:</strong> com persistencia em localStorage</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar <code>index.html</code> para o servidor</li>
+            <li>Clicar em "Consultar APIs" para buscar dados atualizados</li>
+            <li>Para adaptar: editar os ~30 padroes de keywords de classificacao</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">Chart.js e carregado via CDN mas nao e utilizado no codigo atual. Nao cobre agencias reguladoras (ANVISA, ANATEL, etc.). APIs publicas sem SLA.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 15. Credito e Fomento -->
+  <div class="tool-card" id="credito">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(20,184,166,.12);color:var(--teal)">💳</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Credito e Fomento</div>
+        <div class="tool-desc">Dashboard de 14 indicadores de mercado de credito para MPEs via Banco Central</div>
+        <div class="tool-tags">
+          <span class="tag tag-api">1 API</span>
+          <span class="tag tag-chartjs">Chart.js</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>pippa-credito-fomento/index.html</code> (~563 linhas)</li>
+            <li>100% client-side — todos os dados buscados via BCB SGS em tempo real</li>
+            <li>14 indicadores em 7 grupos: Taxas, Inflacao, Credito PJ, Inadimplencia, Taxas PJ, Concessoes, Spread</li>
+            <li>Janela de 24 meses por indicador</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔗 Fontes de Dados</div>
+        <div class="doc-content">
+          <table class="api-table">
+            <thead><tr><th>Fonte</th><th>URL Base</th><th>Autenticacao</th><th>Dados</th></tr></thead>
+            <tbody>
+              <tr><td>BCB SGS</td><td><code>api.bcb.gov.br/dados/serie/bcdata.sgs</code></td><td>Nenhuma</td><td>14 series temporais (Selic, IPCA, credito PJ, inadimplencia, spread, concessoes)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔑 Funcionalidades</div>
+        <div class="doc-content">
+          <ul>
+            <li><strong>4 KPIs:</strong> Selic, IPCA 12m, Credito PJ (R$ bi), Inadimplencia PJ</li>
+            <li><strong>2 graficos Chart.js:</strong> Selic historico (line) + Saldo de Credito PJ (bar)</li>
+            <li><strong>14 cards expandiveis:</strong> com tabela historica em ordem cronologica reversa</li>
+            <li><strong>Filtros laterais:</strong> por grupo + busca textual</li>
+            <li><strong>Export WhatsApp:</strong> compartilhamento de resumo</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar <code>index.html</code> para o servidor</li>
+            <li>Clicar em "Consultar APIs" para buscar dados do BCB</li>
+            <li>Fetch em lotes de 3 series simultaneas com lookback de 24 meses</li>
+            <li>Para adaptar: editar o array de series SGS com novos codigos de indicadores</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">Os dados sao PJ (todas as empresas) e nao especificos de MPE — reconhecido na metodologia. Sem logica de retry em caso de falha da API. A API do BCB permite requisicoes diretas do browser sem proxy CORS.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 16. Impacto -->
+  <div class="tool-card" id="impacto">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(42,79,218,.08);color:var(--text-accent)">📊</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Impacto</div>
+        <div class="tool-desc">Portfolio de evidencias consolidando cobertura de todas as ferramentas PIPPA por eixo estrategico</div>
+        <div class="tool-tags">
+          <span class="tag tag-static">Dados Dinamicos</span>
+          <span class="tag tag-chartjs">Chart.js</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>pippa-impacto/index.html</code> (~419 linhas)</li>
+            <li>Faz fetch do <code>../pippa-portal/index.html</code> e extrai o array <code>TOOLS</code> via regex para descobrir ferramentas automaticamente</li>
+            <li>Fallback: mapa hardcoded de 18 ferramentas caso o fetch falhe</li>
+            <li>Enriquecimento por eixo estrategico, APIs e indicadores via objeto <code>ENRICHMENT</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔑 Funcionalidades</div>
+        <div class="doc-content">
+          <ul>
+            <li><strong>4 KPIs:</strong> ferramentas ativas, eixos cobertos, APIs integradas, indicadores monitorados</li>
+            <li><strong>2 graficos Chart.js:</strong> doughnut (cobertura por eixo) + barras horizontais (ferramentas por macro-tema)</li>
+            <li><strong>Cards accordion:</strong> 18 ferramentas agrupadas em 6 eixos estrategicos (Orcamento, Legislativo, Politico, Territorial, Estrategia, Experimentacao)</li>
+            <li><strong>Modal de metodologia:</strong> explica a composicao do portfolio</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar <code>index.html</code> para o servidor</li>
+            <li>Garantir que <code>../pippa-portal/index.html</code> esteja acessivel para o fetch automatico</li>
+            <li>Caso o Portal nao esteja acessivel, o fallback interno carrega os dados</li>
+            <li>Para adicionar ferramentas: atualizar o objeto <code>ENRICHMENT</code> com eixo, APIs e indicadores</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">O parse do Portal usa regex fragil — reestruturacoes no Portal podem quebrar a extracao. Usa <code>new Function()</code> (equivalente a eval) para interpretar o array extraido. O fallback pode ficar defasado se ferramentas forem adicionadas ao Portal.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 17. Mindmap NAL -->
+  <div class="tool-card" id="mindmap">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(42,79,218,.08);color:var(--text-accent)">🧠</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Mindmap NAL</div>
+        <div class="tool-desc">Mapa mental interativo da estrutura organizacional do Nucleo de Assessoria Legislativa</div>
+        <div class="tool-tags">
+          <span class="tag tag-static">100% Estatico</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>pippa-mindmap-nal/index.html</code> (~596 linhas)</li>
+            <li>100% estatico — dados embarcados no objeto JS <code>DATA</code></li>
+            <li>Arvore hierarquica renderizada com algoritmo recursivo customizado</li>
+            <li>Conexoes desenhadas via SVG inline com curvas cubic bezier</li>
+            <li>Sem Chart.js, sem APIs, sem pipeline — vanilla JS puro</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔑 Funcionalidades</div>
+        <div class="doc-content">
+          <ul>
+            <li><strong>Layout bidirecional:</strong> ramos se dividem esquerda/direita a partir do no central NAL</li>
+            <li><strong>Expandir/colapsar:</strong> nos clicaveis com animacao (cubic-bezier)</li>
+            <li><strong>Pan e zoom:</strong> arrastar + scroll/pinch-to-zoom com indicador de porcentagem</li>
+            <li><strong>Legenda categorica:</strong> 4 frentes de trabalho (Estruturacao, Planejamento, Inteligencia, Incidencia) com cores distintas</li>
+            <li><strong>Toolbar:</strong> Expandir Tudo, Colapsar Tudo, Centralizar, link ao Portal</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar <code>index.html</code> para o servidor</li>
+            <li>Funciona imediatamente — sem dependencias externas alem do Google Fonts</li>
+            <li>Para adaptar: editar o objeto <code>DATA</code> com a estrutura hierarquica desejada</li>
+            <li>Cada no aceita: nome, tipo, cor, filhos (recursivo)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 18. Quem Somos -->
+  <div class="tool-card" id="quemsomos">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(42,79,218,.08);color:var(--text-accent)">👥</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Quem Somos</div>
+        <div class="tool-desc">Pagina institucional com missao, metodologia, modelo operacional e equipe da PIPPA</div>
+        <div class="tool-tags">
+          <span class="tag tag-static">100% Estatico</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo unico: <code>pippa-quem-somos/index.html</code> (~618 linhas) + diretorio <code>fotos/</code> com 7 fotos da equipe</li>
+            <li>100% estatico — conteudo editorial sem APIs ou dados dinamicos</li>
+            <li>Sem Chart.js, sem pipeline — vanilla HTML/CSS</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔑 Funcionalidades</div>
+        <div class="doc-content">
+          <ul>
+            <li><strong>Acronimo PIPPA:</strong> cards explicando P-I-PP-A</li>
+            <li><strong>3 pilares:</strong> Observatorio, Laboratorios, Advocacy com visualizacao de ciclo</li>
+            <li><strong>6 dimensoes metodologicas:</strong> Infraestrutura, Governanca, Inteligencia, Comunidade, Dados, Metodologia</li>
+            <li><strong>Jornada em 4 passos:</strong> Observar, Compreender, Aplicar, Transformar</li>
+            <li><strong>Equipe:</strong> secao com fotos e papeis (lideranca a operacoes)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar <code>index.html</code> e a pasta <code>fotos/</code> para o servidor</li>
+            <li>Funciona imediatamente — sem dependencias alem do Google Fonts</li>
+            <li>Para adaptar: editar conteudo editorial e substituir fotos da equipe</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">As variaveis CSS de tema (--bg, --accent) nao estao definidas neste arquivo — dependem do contexto do portal ou precisam ser adicionadas. O botao de toggle de tema esta estilizado mas ausente no markup HTML.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 19. Stakeholders -->
+  <div class="tool-card" id="stakeholders">
+    <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="tool-icon" style="background:rgba(244,114,182,.12);color:var(--pink)">🗺️</div>
+      <div class="tool-info">
+        <div class="tool-name">PIPPA Stakeholders (Mapa Parlamentar)</div>
+        <div class="tool-desc">CRM legislativo com score de alinhamento Sebrae e overlay de eleicoes 2026</div>
+        <div class="tool-tags">
+          <span class="tag tag-api">3 APIs</span>
+          <span class="tag tag-pipeline">Pipeline Python</span>
+          <span class="tag tag-single">HTML Unico</span>
+        </div>
+      </div>
+      <span class="tool-arrow">▸</span>
+    </div>
+    <div class="tool-body">
+      <div class="doc-section">
+        <div class="doc-label">📐 Arquitetura</div>
+        <div class="doc-content">
+          <ul>
+            <li>Arquivo principal: <code>pippa-stakeholders/index.html</code> (~2.306 linhas)</li>
+            <li>Dados buscados em tempo real via APIs + mapa de candidatos 2026 embarcado (~600 entradas inline)</li>
+            <li>Script offline: <code>build_eleicao_2026.py</code> (271 linhas) cruza resultados TSE com parlamentares atuais</li>
+            <li>Graficos SVG customizados (donuts e barras horizontais) — sem Chart.js</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔗 Fontes de Dados</div>
+        <div class="doc-content">
+          <table class="api-table">
+            <thead><tr><th>Fonte</th><th>URL Base</th><th>Autenticacao</th><th>Dados</th></tr></thead>
+            <tbody>
+              <tr><td>Camara dos Deputados</td><td><code>dadosabertos.camara.leg.br/api/v2</code></td><td>Nenhuma</td><td>Deputados, frentes, orgaos, membros, proposicoes, autores</td></tr>
+              <tr><td>Senado Federal</td><td><code>legis.senado.leg.br/dadosabertos</code></td><td>Nenhuma</td><td>Senadores, comissoes</td></tr>
+              <tr><td>TSE (Resultados Eleitorais)</td><td><code>resultados.tse.jus.br/oficial/ele2026</code></td><td>Nenhuma</td><td>Resultados eleicoes 2026 por cargo/UF</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🔑 Funcionalidades</div>
+        <div class="doc-content">
+          <ul>
+            <li><strong>Score de alinhamento Sebrae:</strong> 3 eixos — Frentes (40%), Comissoes (30%), Autorias Tematicas (30%) com pesos por keyword</li>
+            <li><strong>Overlay eleicoes 2026:</strong> cada parlamentar com tag de candidato/eleito/nao-eleito, cargo e analise de migracao</li>
+            <li><strong>Painel analitico:</strong> 3 donuts SVG (situacao geral, renovacao Camara, renovacao Senado) + barras por cargo/partido/UF</li>
+            <li><strong>Filtros:</strong> Casa, Partido, UF, Frentes, Comissoes, Eleicoes 2026 + busca textual</li>
+            <li><strong>Cards expandiveis:</strong> detalhes do parlamentar (nascimento, gabinete, telefone) carregados sob demanda</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚡ Pipeline de Dados</div>
+        <div class="doc-content">
+          <p><code>build_eleicao_2026.py</code> (stdlib puro, sem dependencias externas):</p>
+          <ul class="step-list">
+            <li>Busca resultados eleitorais 2026 da CDN do TSE por cargo e UF</li>
+            <li>Cruza candidatos com parlamentares atuais da Camara e Senado (nome normalizado)</li>
+            <li>Gera mapa <code>candidatos_2026.js</code> com status eleitoral de cada parlamentar</li>
+            <li>Dados sao incorporados inline no HTML principal</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">🚀 Passo a Passo de Replicacao</div>
+        <div class="doc-content">
+          <ul class="step-list">
+            <li>Copiar <code>index.html</code> para o servidor</li>
+            <li>Clicar em "Consultar APIs" para buscar dados atualizados de parlamentares</li>
+            <li>Para atualizar dados eleitorais: executar <code>python build_eleicao_2026.py</code> e incorporar resultado no HTML</li>
+            <li>APIs da Camara e Senado sao publicas e sem autenticacao</li>
+          </ul>
+        </div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-label">⚠️ Problemas Conhecidos</div>
+        <div class="doc-content">
+          <div class="warn-box">A API do Senado nao expoe frentes parlamentares — senadores recebem Nota Frentes = 0. Busca de autorias cobre apenas proposicoes da Camara desde 2023 — senadores recebem Nota Autorias = 0. A composicao de comissoes pode mudar durante a legislatura.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Sumario de APIs -->
   <div class="section-title" style="margin-top:2rem">🔗 Sumario de APIs Utilizadas</div>
   <div class="prereq">
@@ -1025,8 +1485,8 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
       <table class="api-table">
         <thead><tr><th>API</th><th>Autenticacao</th><th>Ferramentas que Usam</th><th>Tipo</th></tr></thead>
         <tbody>
-          <tr><td>Camara dos Deputados</td><td>Nenhuma</td><td>Emendas, Legislativo</td><td>REST JSON</td></tr>
-          <tr><td>Senado Federal</td><td>Nenhuma</td><td>Emendas, Legislativo</td><td>REST XML/JSON</td></tr>
+          <tr><td>Camara dos Deputados</td><td>Nenhuma</td><td>Emendas, Legislativo, Pauta Legislativa, Consultas Publicas, Stakeholders</td><td>REST JSON</td></tr>
+          <tr><td>Senado Federal</td><td>Nenhuma</td><td>Emendas, Legislativo, Pauta Legislativa, Consultas Publicas, Stakeholders</td><td>REST XML/JSON</td></tr>
           <tr><td>Portal da Transparencia (CGU)</td><td>Nenhuma</td><td>Emendas</td><td>CSV Download</td></tr>
           <tr><td>Tesouro Transparente</td><td>Nenhuma</td><td>Emendas</td><td>CKAN CSV</td></tr>
           <tr><td>PNCP</td><td>Nenhuma</td><td>Compras, Indicadores</td><td>REST JSON</td></tr>
@@ -1035,13 +1495,14 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
           <tr><td>Google News RSS</td><td>Nenhuma (proxy)</td><td>Reforma Tributaria</td><td>RSS via rss2json</td></tr>
           <tr><td>IBGE Agregados v3</td><td>Nenhuma</td><td>Raio-X, Indicadores</td><td>REST JSON</td></tr>
           <tr><td>IBGE Localidades v1</td><td>Nenhuma</td><td>Raio-X</td><td>REST JSON</td></tr>
-          <tr><td>BCB SGS</td><td>Nenhuma</td><td>Raio-X, Indicadores</td><td>REST JSON</td></tr>
+          <tr><td>BCB SGS</td><td>Nenhuma</td><td>Raio-X, Indicadores, Credito e Fomento</td><td>REST JSON</td></tr>
           <tr><td>REDESIM Gov</td><td>Nenhuma</td><td>Indicadores</td><td>REST JSON</td></tr>
           <tr><td>Observatorio OLAP (Tesseract)</td><td>Token API</td><td>Legislativo, Raio-X, Indicadores</td><td>REST JSON</td></tr>
           <tr><td>rss2json (proxy)</td><td>Nenhuma (free tier)</td><td>Reforma Tributaria</td><td>REST JSON</td></tr>
+          <tr><td>TSE (Resultados Eleitorais)</td><td>Nenhuma</td><td>Stakeholders</td><td>CDN JSON</td></tr>
         </tbody>
       </table>
-      <div class="warn-box" style="margin-top:.8rem"><strong>Nota:</strong> Apenas a API OLAP do Observatorio Sebrae requer autenticacao (token). Todas as demais sao APIs publicas abertas. Para replicacao em outro ambiente, solicitar token ao administrador da API Tesseract.</div>
+      <div class="warn-box" style="margin-top:.8rem"><strong>Nota:</strong> Apenas a API OLAP do Observatorio Sebrae requer autenticacao (token). Todas as demais 14 APIs sao publicas e abertas. Para replicacao em outro ambiente, solicitar token ao administrador da API Tesseract.</div>
     </div>
   </div>
 
