@@ -1488,6 +1488,18 @@
   </div>
 </div>
 
+<div class="info-modal-backdrop" id="pddeExportModal" onclick="if(event.target===this)closePddeExportModal()">
+  <div class="info-modal">
+    <button class="info-close" onclick="closePddeExportModal()">&times;</button>
+    <h2>Exportar PDDE para WhatsApp</h2>
+    <div id="pddeExportContent" style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;font-size:13px;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;font-family:'Segoe UI',sans-serif;"></div>
+    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">
+      <button class="btn btn-outline" onclick="closePddeExportModal()">Fechar</button>
+      <button class="btn" onclick="copyPddeExport()">Copiar</button>
+    </div>
+  </div>
+</div>
+
 <div class="info-modal-backdrop" id="infoModal" onclick="if(event.target===this)toggleInfoModal()">
   <div class="info-modal">
     <button class="info-close" onclick="toggleInfoModal()">&times;</button>
@@ -2470,6 +2482,72 @@ function copyExport() {
 }
 function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 function toggleInfoModal() { document.getElementById('infoModal').classList.toggle('active'); }
+
+let pddeExportText = '';
+function generatePddeExportText() {
+  const data = getPddeFiltered();
+  const byYear = pddeAggByYear(data);
+  const nivel = document.getElementById('pddeNivel').value;
+  const anoSel = document.getElementById('pddeAno').value;
+  const ufSel = document.getElementById('pddeUf').value;
+  const munSel = document.getElementById('pddeMun');
+  const regSel = document.getElementById('pddeRegiao').value;
+
+  const totalGeral = data.reduce((s, d) => s + d.total, 0);
+  const totalCusteio = data.reduce((s, d) => s + d.custeio, 0);
+  const totalCapital = data.reduce((s, d) => s + d.capital, 0);
+  const totalEscolas = data.reduce((s, d) => s + d.escolas, 0);
+  const pctCusteio = totalGeral > 0 ? (totalCusteio / totalGeral * 100).toFixed(1) : '0.0';
+  const pctCapital = totalGeral > 0 ? (totalCapital / totalGeral * 100).toFixed(1) : '0.0';
+
+  var filtros = [];
+  if (anoSel) filtros.push('Ano: ' + anoSel);
+  if (nivel === 'regiao' && regSel) filtros.push('Regiao: ' + (PDDE_REGIAO_NAMES[regSel] || regSel));
+  if (ufSel) filtros.push('UF: ' + ufSel + ' — ' + (PDDE_UF_NOME[ufSel] || ufSel));
+  if (munSel.value && munSel.selectedOptions[0]) filtros.push('Municipio: ' + munSel.selectedOptions[0].textContent);
+
+  var t = '🏫 *PIPPA — Analise do PDDE*\n';
+  t += '📅 Relatorio gerado em ' + new Date().toLocaleDateString('pt-BR') + '\n';
+  if (filtros.length) t += '🔍 Filtros: ' + filtros.join(' | ') + '\n';
+  t += '\n📊 *PANORAMA GERAL*\n';
+  t += '━━━━━━━━━━━━━━━━━━\n\n';
+  t += '💰 *Total Repassado:* ' + formatCurrency(totalGeral) + '\n';
+  t += '📘 *Custeio:* ' + formatCurrency(totalCusteio) + ' (' + pctCusteio + '%)\n';
+  t += '📦 *Capital:* ' + formatCurrency(totalCapital) + ' (' + pctCapital + '%)\n';
+  t += '🏫 *Escolas Atendidas:* ' + totalEscolas.toLocaleString('pt-BR') + '\n';
+
+  t += '\n📈 *EVOLUCAO POR ANO*\n\n';
+  byYear.forEach(d => {
+    t += '▸ *' + d.ano + ':* ' + formatCurrency(d.total) + ' — ' + d.escolas.toLocaleString('pt-BR') + ' escolas\n';
+  });
+
+  if (nivel === 'brasil' && !anoSel) {
+    const latestAno = Math.max(...byYear.map(d => d.ano));
+    const byReg = pddeAggByGroup(data.filter(d => d.ano === latestAno), d => PDDE_UF_REGIAO[d.uf], g => PDDE_REGIAO_NAMES[g]);
+    t += '\n🗺 *DISTRIBUICAO POR REGIAO (' + latestAno + ')*\n\n';
+    byReg.forEach(d => {
+      t += '▸ ' + d.name + ': ' + formatCurrency(d.total) + '\n';
+    });
+  }
+
+  t += '\n🔗 Fonte: Plataforma Antonieta de Barros — FNDE (fnde.gov.br)\n';
+  t += '📡 PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas | Sebrae Nacional';
+  return t;
+}
+
+function openPddeExportModal() {
+  const data = getPddeFiltered();
+  if (!data || data.length === 0) { showToast('Carregue os dados primeiro'); return; }
+  pddeExportText = generatePddeExportText();
+  document.getElementById('pddeExportContent').textContent = pddeExportText;
+  document.getElementById('pddeExportModal').classList.add('active');
+}
+function closePddeExportModal() { document.getElementById('pddeExportModal').classList.remove('active'); }
+function copyPddeExport() {
+  navigator.clipboard.writeText(pddeExportText).then(() => showToast('Copiado para WhatsApp!')).catch(() => {
+    const ta = document.createElement('textarea'); ta.value = pddeExportText; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('Copiado!');
+  });
+}
 
 // =====================================================
 // PDDE DASHBOARD — FNDE ANTONIETA DE BARROS ENGINE
