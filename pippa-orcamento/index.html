@@ -417,13 +417,7 @@ a { color:var(--accent); text-decoration:none; }
   </div>
   <div class="chart-grid full">
     <div class="chart-box">
-      <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Comparativo 2025 vs 2027</div>
-      <div class="chart-canvas"><canvas id="chartComparativo" height="200"></canvas></div>
-    </div>
-  </div>
-  <div class="chart-grid full">
-    <div class="chart-box">
-      <div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Detalhamento por Ação — Orçamento Aprovado</div>
+      <div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Detalhamento por Ação — Orçamento Aprovado 2027</div>
       <div class="table-wrapper" id="tableAprovado"></div>
     </div>
   </div>
@@ -730,9 +724,6 @@ const DATA = {"orcamento":[{"nucleo":"Projetos Especiais","projeto":"Entrega de 
 const DATA_APROVADO = {
   versao: "Versão 2",
   proposta2027: 58740790.44,
-  orcamento2025: 41438648,
-  diferenca: 17302142.44,
-  pctDiferenca: 29.46,
   nucleos: [
     {
       nome: "Projetos Especiais", tipo: "3 Projetos", total: 21210061,
@@ -872,34 +863,36 @@ function renderAll() {
 function renderAprovado() {
   const d = DATA_APROVADO;
   const c = tc();
+  const totalProjetos = d.nucleos.reduce((s,n)=>s+n.projetos.length,0);
+  const totalAcoes = d.nucleos.reduce((s,n)=>s+n.projetos.reduce((a,p)=>a+p.acoes.length,0),0);
 
   document.getElementById('kpiAprovado').innerHTML = `
     <div class="kpi kpi-blue">
       <div class="kpi-label">Proposta UPP 2027</div>
       <div class="kpi-value">${fmt(d.proposta2027)}</div>
-      <div class="kpi-detail">Aprovada pela Presidência</div>
-    </div>
-    <div class="kpi kpi-green">
-      <div class="kpi-label">Orçamento 2025</div>
-      <div class="kpi-value">${fmt(d.orcamento2025)}</div>
-      <div class="kpi-detail">Base de comparação</div>
+      <div class="kpi-detail">Aprovada pela Presidência do Sebrae</div>
     </div>
     <div class="kpi kpi-purple">
-      <div class="kpi-label">Variação 2025 → 2027</div>
-      <div class="kpi-value" style="color:var(--green)">+${fmt(d.diferenca)}</div>
-      <div class="kpi-detail">+${d.pctDiferenca.toFixed(1)}% de crescimento</div>
+      <div class="kpi-label">Núcleos</div>
+      <div class="kpi-value">${d.nucleos.length}</div>
+      <div class="kpi-detail">${totalProjetos} projetos · ${totalAcoes} ações</div>
+    </div>
+    <div class="kpi kpi-green">
+      <div class="kpi-label">Maior Núcleo</div>
+      <div class="kpi-value">${fmt(d.nucleos.reduce((a,n)=>n.total>a.total?n:a).total)}</div>
+      <div class="kpi-detail">${d.nucleos.reduce((a,n)=>n.total>a.total?n:a).nome} (${(d.nucleos.reduce((a,n)=>n.total>a.total?n:a).total/d.proposta2027*100).toFixed(1)}%)</div>
     </div>
     <div class="kpi kpi-cyan">
-      <div class="kpi-label">Núcleos / Projetos</div>
-      <div class="kpi-value">4 / ${d.nucleos.reduce((s,n)=>s+n.projetos.length,0)}</div>
-      <div class="kpi-detail">${d.nucleos.reduce((s,n)=>s+n.projetos.reduce((a,p)=>a+p.acoes.length,0),0)} ações orçamentárias</div>
+      <div class="kpi-label">Média por Projeto</div>
+      <div class="kpi-value">${fmt(d.proposta2027/totalProjetos)}</div>
+      <div class="kpi-detail">${d.versao} do documento</div>
     </div>
   `;
 
-  // Doughnut — composição por núcleo
   const nucLabels = d.nucleos.map(n=>n.nome);
   const nucValues = d.nucleos.map(n=>n.total);
   const nucColors = d.nucleos.map(n=> NUCLEO_COLORS[Object.keys(NUCLEO_COLORS).find(k=>k.includes(n.nome))] || SEBRAE_PALETTE[nucLabels.indexOf(n.nome)]);
+
   if(charts.nucPie) charts.nucPie.destroy();
   charts.nucPie = new Chart(document.getElementById('chartNucleoPie'),{
     type:'doughnut',
@@ -913,7 +906,6 @@ function renderAprovado() {
     }
   });
 
-  // Bar — orçamento por projeto
   const allProjs = [];
   d.nucleos.forEach(n=> n.projetos.forEach(p=> allProjs.push({ nome:p.nome, valor:p.total, nucleo:n.nome })));
   allProjs.sort((a,b)=>b.valor-a.valor);
@@ -933,32 +925,6 @@ function renderAprovado() {
     }
   });
 
-  // Comparativo 2025 vs 2027
-  const compLabels = d.nucleos.map(n=>n.nome);
-  const comp2025Pct = [50.24, 14.68, 31.27, 3.81];
-  const comp2025Values = comp2025Pct.map(p=> d.orcamento2025 * p/100);
-  const comp2027Values = d.nucleos.map(n=>n.total);
-  if(charts.comparativo) charts.comparativo.destroy();
-  charts.comparativo = new Chart(document.getElementById('chartComparativo'),{
-    type:'bar',
-    data:{
-      labels:compLabels,
-      datasets:[
-        { label:'Orçamento 2025 (estimado)', data:comp2025Values, backgroundColor:c.mutedBg, borderColor:c.ideal, borderWidth:1, borderRadius:4, barPercentage:.4, categoryPercentage:.6 },
-        { label:'Proposta 2027', data:comp2027Values, backgroundColor:nucColors, borderRadius:4, barPercentage:.4, categoryPercentage:.6 }
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ labels:{usePointStyle:true,pointStyle:'circle',font:{size:11}} } },
-      scales:{
-        x:{ grid:{display:false}, ticks:{color:c.label,font:{size:10}} },
-        y:{ grid:{color:c.grid}, ticks:{color:c.label,font:{size:10},callback:v=>v>=1e6?(v/1e6).toFixed(0)+'M':v} }
-      }
-    }
-  });
-
-  // Tabela detalhada
   let rows = '';
   d.nucleos.forEach(n=>{
     const pctNuc = (n.total/d.proposta2027*100).toFixed(1);
@@ -984,7 +950,6 @@ function renderAprovado() {
     </table>
   `;
 
-  // Notas
   document.getElementById('notasAprovado').innerHTML = d.notas.map((n,i)=>
     `<div style="background:var(--surface);border-radius:8px;padding:10px 14px;margin-bottom:8px;border-left:3px solid var(--accent)"><strong style="color:var(--accent)">Nota ${i+1}</strong> — ${n}</div>`
   ).join('');
