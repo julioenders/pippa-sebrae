@@ -3,147 +3,207 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<title>PIPPA — Plataforma de Inteligência em Políticas Públicas Aplicadas</title>
+<!-- Campuni: quando disponível, adicione @font-face e substitua 'Plus Jakarta Sans' por 'Campuni' em --font-heading -->
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:100vh;}
-
-/* ── Header Nav ──────────────────────────────── */
-.top-nav{position:sticky;top:0;z-index:100;background:rgba(11,17,32,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);padding:14px 48px;display:flex;align-items:center;justify-content:space-between;}
-.top-nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.top-nav-logo{font-size:18px;font-weight:800;background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;}
-.top-nav-sep{width:1px;height:16px;background:rgba(255,255,255,.12);}
-.top-nav-label{font-size:12px;color:#64748b;font-weight:500;}
-.top-nav-links{display:flex;align-items:center;gap:8px;}
-.top-nav-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#94a3b8;text-decoration:none;padding:8px 16px;border:1px solid rgba(255,255,255,.08);border-radius:8px;transition:all .2s;font-family:inherit;}
-.top-nav-link:hover{border-color:rgba(16,185,129,.3);color:#e2e8f0;background:rgba(16,185,129,.06);}
-.top-nav-link svg{width:14px;height:14px;}
-
-/* ── Hero ─────────────────────────────────────── */
-.hero{position:relative;padding:60px 48px 48px;text-align:center;overflow:hidden;}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(16,185,129,.12) 0%,transparent 70%);pointer-events:none;}
-.hero-label{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#10b981;margin-bottom:12px;}
-.hero-title{font-size:42px;font-weight:800;letter-spacing:-1.5px;background:linear-gradient(135deg,#10b981 0%,#34d399 40%,#6ee7b7 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
-.hero-subtitle{font-size:16px;color:#8b9dc3;font-weight:400;max-width:600px;margin:0 auto 28px;line-height:1.5;}
-.hero-stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;}
-.hero-stat{text-align:center;}
-.hero-stat-value{font-size:28px;font-weight:700;color:#e2e8f0;}
-.hero-stat-label{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
-
-/* ── Search ───────────────────────────────────── */
-.search-section{max-width:560px;margin:-8px auto 0;padding:0 48px 36px;position:relative;}
-.search-wrap{position:relative;}
-.search-wrap svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#64748b;pointer-events:none;}
-.search-input{width:100%;background:rgba(15,23,42,.8);border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:14px 16px 14px 44px;font-size:14px;font-family:inherit;color:#e2e8f0;outline:none;transition:border-color .2s,box-shadow .2s;backdrop-filter:blur(8px);}
-.search-input:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.1);}
-.search-input::placeholder{color:#475569;}
-
-/* ── Layout principal (sidebar + conteudo) ───── */
-.main-layout{display:flex;gap:28px;max-width:1320px;margin:0 auto;padding:0 48px 48px;}
-
-/* ── Sidebar (Perguntas) ─────────────────────── */
-.sidebar{width:320px;flex-shrink:0;position:sticky;top:24px;align-self:flex-start;}
-.sidebar-inner{background:rgba(17,24,39,.6);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:24px 20px;backdrop-filter:blur(8px);}
-.sidebar-label{font-size:11px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
-.sidebar-label svg{width:14px;height:14px;color:#10b981;}
-.sidebar-desc{font-size:12px;color:#64748b;margin-bottom:16px;line-height:1.5;}
-.questions-wrap{display:flex;flex-direction:column;gap:4px;}
-.q-group{border:1px solid rgba(255,255,255,.06);border-radius:10px;overflow:hidden;transition:border-color .2s;}
-.q-group.has-active{border-color:rgba(16,185,129,.25);}
-.q-group-header{display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(15,23,42,.6);cursor:pointer;transition:all .2s;user-select:none;}
-.q-group-header:hover{background:rgba(16,185,129,.06);}
-.q-group-icon{font-size:13px;flex-shrink:0;transition:transform .2s;}
-.q-group.open .q-group-icon{transform:rotate(90deg);}
-.q-group-name{flex:1;font-size:12px;font-weight:600;color:#cbd5e1;letter-spacing:.3px;}
-.q-group-badge{font-size:10px;font-weight:600;background:rgba(255,255,255,.06);color:#64748b;padding:2px 7px;border-radius:6px;flex-shrink:0;}
-.q-group.has-active .q-group-header{background:rgba(16,185,129,.08);}
-.q-group.has-active .q-group-name{color:#a7f3d0;}
-.q-group.has-active .q-group-badge{background:rgba(16,185,129,.2);color:#a7f3d0;}
-.q-group-body{display:none;padding:4px 8px 8px;gap:4px;flex-direction:column;}
-.q-group.open .q-group-body{display:flex;}
-.q-group-body.two-col{display:none;flex-direction:row;flex-wrap:wrap;gap:4px;}
-.q-group.open .q-group-body.two-col{display:flex;}
-.q-group-body.two-col .q-chip{width:calc(50% - 2px);}
-.q-chip{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 10px;font-size:11.5px;color:#94a3b8;cursor:pointer;transition:all .25s;line-height:1.35;text-align:left;font-family:inherit;width:100%;}
-.q-chip:hover{border-color:rgba(16,185,129,.3);color:#e2e8f0;background:rgba(16,185,129,.06);}
-.q-chip.active{border-color:#10b981;color:#a7f3d0;background:rgba(16,185,129,.12);box-shadow:0 0 0 2px rgba(16,185,129,.1);}
-.q-chip .q-icon{font-size:10px;opacity:.6;flex-shrink:0;}
-.q-chip .q-text{flex:1;}
-.q-chip .q-count{font-size:9px;font-weight:600;background:rgba(255,255,255,.06);color:#64748b;padding:2px 5px;border-radius:5px;min-width:16px;text-align:center;flex-shrink:0;}
-.q-chip.active .q-count{background:rgba(16,185,129,.2);color:#a7f3d0;}
-.clear-filter{display:none;align-items:center;justify-content:center;gap:5px;width:100%;margin-top:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:9px 14px;font-size:12px;color:#fca5a5;cursor:pointer;transition:all .2s;font-family:inherit;}
-.clear-filter:hover{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.35);color:#fecaca;}
-.clear-filter svg{width:12px;height:12px;}
-.sidebar-stats{display:flex;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06);}
-.sidebar-stat{flex:1;text-align:center;}
-.sidebar-stat-val{font-size:20px;font-weight:700;color:#e2e8f0;}
-.sidebar-stat-lbl{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
-
-/* ── Grid (conteudo principal) ───────────────── */
-.grid-section{flex:1;min-width:0;}
-.grid-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-.grid-header h2{font-size:14px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;}
-.grid-count{font-size:13px;color:#475569;}
-.grid-count span{color:#10b981;font-weight:600;}
-
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;}
-
-/* ── Card ─────────────────────────────────────── */
-.card{position:relative;background:#111827;border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;transition:all .3s ease;cursor:pointer;}
-.card:hover{border-color:rgba(16,185,129,.25);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.4);}
-.card.expanded{border-color:rgba(16,185,129,.35);}
-.card.hidden{display:none;}
-
-.card-accent{position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;}
-
-.card-top{padding:24px 24px 20px 28px;display:flex;align-items:flex-start;gap:16px;}
-.card-emoji{font-size:28px;line-height:1;flex-shrink:0;margin-top:2px;}
-.card-body{flex:1;min-width:0;}
-.card-name{font-size:16px;font-weight:700;color:#e2e8f0;margin-bottom:4px;line-height:1.3;}
-.card-desc-short{font-size:13px;color:#8b9dc3;line-height:1.5;}
-
-.card-arrow{width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:#475569;transition:all .3s;flex-shrink:0;margin-top:4px;}
-.card:hover .card-arrow{color:#10b981;}
-.card.expanded .card-arrow{transform:rotate(180deg);color:#10b981;}
-
-/* ── Card expanded ────────────────────────────── */
-.card-expand{max-height:0;overflow:hidden;transition:max-height .4s ease;}
-.card.expanded .card-expand{max-height:800px;}
-.card-expand-inner{padding:0 24px 24px 28px;border-top:1px solid rgba(255,255,255,.04);margin-top:0;padding-top:20px;}
-
-.expand-section{margin-bottom:16px;}
-.expand-label{font-size:10px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;}
-.expand-text{font-size:13px;color:#94a3b8;line-height:1.7;}
-
-.tags{display:flex;flex-wrap:wrap;gap:6px;}
-.tag{font-size:11px;color:#94a3b8;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);padding:4px 10px;border-radius:6px;transition:all .2s;}
-.tag:hover{border-color:rgba(16,185,129,.3);color:#e2e8f0;}
-
-.highlight-box{background:rgba(16,185,129,.06);border-left:3px solid #10b981;border-radius:0 8px 8px 0;padding:14px 16px;font-size:13px;color:#94a3b8;line-height:1.7;}
-
-.card-btn{display:inline-flex;align-items:center;gap:8px;background:#0f3d2b;color:#a7f3d0;border:1px solid rgba(16,185,129,.25);padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;margin-top:8px;}
-.card-btn:hover{background:#145e35;border-color:#10b981;color:#fff;transform:translateY(-1px);}
-.card-btn svg{width:14px;height:14px;}
-
-/* ── Footer ───────────────────────────────────── */
-.footer{text-align:center;padding:32px 48px;border-top:1px solid rgba(255,255,255,.04);font-size:11px;color:#334155;}
-.footer span{color:#475569;}
-
-/* ── Responsive ───────────────────────────────── */
-@media(max-width:768px){
-.hero{padding:40px 24px 32px;}
-.hero-title{font-size:28px;}
-.search-section{padding:0 24px 28px;}
-.main-layout{flex-direction:column;padding:0 16px 32px;gap:20px;}
-.sidebar{width:100%;position:static;}
-.cards{grid-template-columns:1fr;}
+/* ══ Design Tokens — Brandbook Sebrae ═══════════ */
+:root {
+  --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;--preto:#000000;
+  --font-heading:'Plus Jakarta Sans',sans-serif;
+  --font-body:'Figtree',sans-serif;
+  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-6:24px;--sp-8:32px;--sp-12:48px;--sp-16:64px;
+  --radius-sm:4px;--radius-md:8px;--radius-lg:12px;
+  /* Tema Claro */
+  --bg-page:#eff3ee;--bg-card:#ffffff;--bg-input:#ffffff;--bg-nav:rgba(255,255,255,.92);
+  --text-primary:#1a1a1a;--text-secondary:#374151;--text-muted:#6b7280;--text-accent:#2a4fda;
+  --border:rgba(0,0,0,.1);--border-hover:rgba(42,79,218,.35);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 4px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 24px rgba(0,0,0,.12);
+  --highlight-bg:rgba(42,79,218,.06);--chip-bg:#f5f7f4;--chip-border:rgba(0,0,0,.08);
+  --accent-ring:rgba(42,79,218,.12);--group-bg:#f0f2ef;--group-active-bg:rgba(42,79,218,.06);
+  --clear-bg:rgba(224,86,93,.08);--clear-border:rgba(224,86,93,.2);--clear-text:#c53030;
+  --btn-bg:#2a4fda;--btn-text:#ffffff;--btn-border:#2a4fda;--btn-hover-bg:#1e3fb8;
+  --scrollbar-track:#eff3ee;--scrollbar-thumb:rgba(42,79,218,.2);
+}
+[data-theme="dark"]{
+  --bg-page:#080f1e;--bg-card:#0f1a2e;--bg-input:rgba(15,26,46,.8);--bg-nav:rgba(8,15,30,.92);
+  --text-primary:#eff3ee;--text-secondary:#c8d6e5;--text-muted:#8b9dc3;--text-accent:#65b7fb;
+  --border:rgba(255,255,255,.08);--border-hover:rgba(101,183,251,.35);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 4px 12px rgba(0,0,0,.4);--shadow-lg:0 8px 24px rgba(0,0,0,.5);
+  --highlight-bg:rgba(101,183,251,.08);--chip-bg:rgba(15,26,46,.8);--chip-border:rgba(255,255,255,.08);
+  --accent-ring:rgba(101,183,251,.12);--group-bg:rgba(15,26,46,.6);--group-active-bg:rgba(101,183,251,.08);
+  --clear-bg:rgba(224,86,93,.12);--clear-border:rgba(224,86,93,.25);--clear-text:#fca5a5;
+  --btn-bg:rgba(42,79,218,.25);--btn-text:#65b7fb;--btn-border:rgba(101,183,251,.25);--btn-hover-bg:rgba(42,79,218,.4);
+  --scrollbar-track:#080f1e;--scrollbar-thumb:rgba(42,79,218,.3);
 }
 
+/* ══ Reset ══════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;}
+
+/* ══ Nav ════════════════════════════════════════ */
+.top-nav{position:sticky;top:0;z-index:100;background:var(--bg-nav);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:var(--sp-3) var(--sp-12);display:flex;align-items:center;justify-content:space-between;}
+.top-nav-brand{display:flex;align-items:center;gap:var(--sp-2);text-decoration:none;}
+.top-nav-logo{font-family:var(--font-heading);font-size:20px;font-weight:800;color:var(--azul-sebrae);letter-spacing:-1px;}
+[data-theme="dark"] .top-nav-logo{color:var(--ceu);}
+.top-nav-sep{width:1px;height:16px;background:var(--border);}
+.top-nav-label{font-size:12px;color:var(--text-muted);font-weight:500;}
+.top-nav-links{display:flex;align-items:center;gap:var(--sp-2);}
+.top-nav-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);text-decoration:none;padding:var(--sp-2) var(--sp-4);border:1px solid var(--border);border-radius:var(--radius-md);transition:all .2s;font-family:var(--font-body);}
+.top-nav-link:hover{border-color:var(--border-hover);color:var(--text-accent);background:var(--highlight-bg);}
+.top-nav-link svg{width:14px;height:14px;}
+
+/* ══ Theme Toggle ═══════════════════════════════ */
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid var(--border);border-radius:var(--radius-md);cursor:pointer;color:var(--text-muted);transition:all .2s;}
+.theme-toggle:hover{border-color:var(--border-hover);color:var(--text-accent);background:var(--highlight-bg);}
+.theme-toggle svg{width:18px;height:18px;}
+.icon-sun{display:none;}
+[data-theme="dark"] .icon-sun{display:block;}
+[data-theme="dark"] .icon-moon{display:none;}
+
+/* ══ Hero (Gradiente 45° Atlântico → Azul Sebrae, Barras 77.7°) ══ */
+.hero{position:relative;background:linear-gradient(45deg,var(--atlantico),var(--azul-sebrae));padding:var(--sp-16) var(--sp-12) var(--sp-12);text-align:center;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-30px;right:12%;width:4px;height:140px;background:rgba(101,183,251,.25);transform:rotate(77.7deg);pointer-events:none;}
+.hero::after{content:'';position:absolute;top:-10px;right:calc(12% + 20px);width:3px;height:100px;background:rgba(101,183,251,.15);transform:rotate(77.7deg);pointer-events:none;}
+.hero-label{font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--ceu);margin-bottom:var(--sp-3);}
+.hero-title{font-family:var(--font-heading);font-size:48px;font-weight:800;letter-spacing:-2px;color:#ffffff;margin-bottom:var(--sp-2);}
+.hero-subtitle{font-size:16px;color:rgba(255,255,255,.75);font-weight:400;max-width:600px;margin:0 auto var(--sp-8);line-height:1.6;}
+.hero-stats{display:flex;justify-content:center;gap:var(--sp-8);flex-wrap:wrap;}
+.hero-stat{text-align:center;}
+.hero-stat-value{font-family:var(--font-heading);font-size:32px;font-weight:700;color:#ffffff;}
+.hero-stat-label{font-size:11px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1px;margin-top:var(--sp-1);}
+
+/* ══ Search ═════════════════════════════════════ */
+.search-section{max-width:560px;margin:-8px auto 0;padding:0 var(--sp-12) var(--sp-8);position:relative;}
+.search-wrap{position:relative;}
+.search-wrap svg{position:absolute;left:var(--sp-4);top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-muted);pointer-events:none;}
+.search-input{width:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px var(--sp-4) 14px 44px;font-size:14px;font-family:var(--font-body);color:var(--text-primary);outline:none;transition:border-color .2s,box-shadow .2s;box-shadow:var(--shadow-sm);}
+.search-input:focus{border-color:var(--text-accent);box-shadow:0 0 0 3px var(--accent-ring);}
+.search-input::placeholder{color:var(--text-muted);}
+
+/* ══ Layout ═════════════════════════════════════ */
+.main-layout{display:flex;gap:var(--sp-6);max-width:1320px;margin:0 auto;padding:var(--sp-6) var(--sp-12) var(--sp-12);}
+
+/* ══ Sidebar ════════════════════════════════════ */
+.sidebar{width:320px;flex-shrink:0;position:sticky;top:80px;align-self:flex-start;max-height:calc(100vh - 104px);overflow-y:auto;}
+.sidebar-inner{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--sp-6) var(--sp-4);box-shadow:var(--shadow-sm);}
+.sidebar-label{font-family:var(--font-heading);font-size:12px;font-weight:700;color:var(--text-accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;display:flex;align-items:center;gap:var(--sp-2);}
+.sidebar-label svg{width:14px;height:14px;color:var(--text-accent);}
+.sidebar-desc{font-size:12px;color:var(--text-muted);margin-bottom:var(--sp-4);line-height:1.5;}
+
+/* Sidebar — Groups */
+.questions-wrap{display:flex;flex-direction:column;gap:var(--sp-1);}
+.q-group{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;transition:border-color .2s;}
+.q-group.has-active{border-color:var(--border-hover);}
+.q-group-header{display:flex;align-items:center;gap:var(--sp-2);padding:10px var(--sp-3);background:var(--group-bg);cursor:pointer;transition:all .2s;user-select:none;}
+.q-group-header:hover{background:var(--highlight-bg);}
+.q-group-icon{font-size:13px;flex-shrink:0;transition:transform .2s;color:var(--text-muted);}
+.q-group.open .q-group-icon{transform:rotate(90deg);}
+.q-group-name{flex:1;font-size:12px;font-weight:600;color:var(--text-secondary);letter-spacing:.3px;}
+.q-group-badge{font-size:10px;font-weight:600;background:var(--chip-bg);color:var(--text-muted);padding:2px 7px;border-radius:6px;flex-shrink:0;}
+.q-group.has-active .q-group-header{background:var(--group-active-bg);}
+.q-group.has-active .q-group-name{color:var(--text-accent);}
+.q-group.has-active .q-group-badge{background:var(--accent-ring);color:var(--text-accent);}
+.q-group-body{display:none;padding:var(--sp-1) var(--sp-2) var(--sp-2);gap:var(--sp-1);flex-direction:column;}
+.q-group.open .q-group-body{display:flex;}
+.q-group-body.two-col{display:none;flex-direction:row;flex-wrap:wrap;gap:var(--sp-1);}
+.q-group.open .q-group-body.two-col{display:flex;}
+.q-group-body.two-col .q-chip{width:calc(50% - 2px);}
+
+/* Sidebar — Chips */
+.q-chip{display:flex;align-items:center;gap:6px;background:var(--chip-bg);border:1px solid var(--chip-border);border-radius:var(--radius-md);padding:var(--sp-2) 10px;font-size:11.5px;color:var(--text-muted);cursor:pointer;transition:all .25s;line-height:1.35;text-align:left;font-family:var(--font-body);width:100%;}
+.q-chip:hover{border-color:var(--border-hover);color:var(--text-primary);background:var(--highlight-bg);}
+.q-chip.active{border-color:var(--text-accent);color:var(--text-accent);background:var(--highlight-bg);box-shadow:0 0 0 2px var(--accent-ring);}
+.q-chip .q-icon{font-size:10px;opacity:.6;flex-shrink:0;}
+.q-chip .q-text{flex:1;}
+.q-chip .q-count{font-size:9px;font-weight:600;background:var(--chip-bg);color:var(--text-muted);padding:2px 5px;border-radius:5px;min-width:16px;text-align:center;flex-shrink:0;}
+.q-chip.active .q-count{background:var(--accent-ring);color:var(--text-accent);}
+
+/* Sidebar — Controls */
+.clear-filter{display:none;align-items:center;justify-content:center;gap:5px;width:100%;margin-top:var(--sp-2);background:var(--clear-bg);border:1px solid var(--clear-border);border-radius:var(--radius-md);padding:9px 14px;font-size:12px;color:var(--clear-text);cursor:pointer;transition:all .2s;font-family:var(--font-body);}
+.clear-filter:hover{opacity:.85;}
+.clear-filter svg{width:12px;height:12px;}
+.sidebar-stats{display:flex;gap:var(--sp-3);margin-top:var(--sp-4);padding-top:14px;border-top:1px solid var(--border);}
+.sidebar-stat{flex:1;text-align:center;}
+.sidebar-stat-val{font-family:var(--font-heading);font-size:20px;font-weight:700;color:var(--text-primary);}
+.sidebar-stat-lbl{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+
+/* ══ Grid ═══════════════════════════════════════ */
+.grid-section{flex:1;min-width:0;}
+.grid-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-4);}
+.grid-header h2{font-family:var(--font-heading);font-size:14px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;}
+.grid-count{font-size:13px;color:var(--text-muted);}
+.grid-count span{color:var(--text-accent);font-weight:600;}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:var(--sp-4);}
+
+/* ══ Card ═══════════════════════════════════════ */
+.card{position:relative;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:all .3s ease;cursor:pointer;box-shadow:var(--shadow-sm);}
+.card:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.card.expanded{border-color:var(--border-hover);}
+.card.hidden{display:none;}
+.card-accent{position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;}
+.card-top{padding:var(--sp-6) var(--sp-6) var(--sp-4) 28px;display:flex;align-items:flex-start;gap:var(--sp-4);}
+.card-emoji{font-size:28px;line-height:1;flex-shrink:0;margin-top:2px;}
+.card-body{flex:1;min-width:0;}
+.card-name{font-family:var(--font-heading);font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:var(--sp-1);line-height:1.3;}
+.card-desc-short{font-size:13px;color:var(--text-muted);line-height:1.5;}
+.card-arrow{width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all .3s;flex-shrink:0;margin-top:var(--sp-1);}
+.card:hover .card-arrow{color:var(--text-accent);}
+.card.expanded .card-arrow{transform:rotate(180deg);color:var(--text-accent);}
+
+/* Card — Expanded */
+.card-expand{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+.card.expanded .card-expand{max-height:800px;}
+.card-expand-inner{padding:0 var(--sp-6) var(--sp-6) 28px;border-top:1px solid var(--border);padding-top:var(--sp-4);}
+.expand-section{margin-bottom:var(--sp-4);}
+.expand-label{font-family:var(--font-heading);font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:var(--sp-2);}
+.expand-text{font-size:13px;color:var(--text-secondary);line-height:1.7;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{font-size:11px;color:var(--text-secondary);background:var(--highlight-bg);border:1px solid var(--accent-ring);padding:var(--sp-1) 10px;border-radius:6px;transition:all .2s;}
+.tag:hover{border-color:var(--border-hover);color:var(--text-accent);}
+.highlight-box{background:var(--highlight-bg);border-left:3px solid var(--text-accent);border-radius:0 var(--radius-md) var(--radius-md) 0;padding:14px var(--sp-4);font-size:13px;color:var(--text-secondary);line-height:1.7;}
+.card-btn{display:inline-flex;align-items:center;gap:var(--sp-2);background:var(--btn-bg);color:var(--btn-text);border:1px solid var(--btn-border);padding:10px var(--sp-6);border-radius:var(--radius-md);font-size:13px;font-weight:600;font-family:var(--font-body);cursor:pointer;transition:all .2s;text-decoration:none;margin-top:var(--sp-2);}
+.card-btn:hover{background:var(--btn-hover-bg);color:#ffffff;transform:translateY(-1px);}
+.card-btn svg{width:14px;height:14px;}
+
+/* ══ Footer ═════════════════════════════════════ */
+.footer{text-align:center;padding:var(--sp-8) var(--sp-12);border-top:1px solid var(--border);font-size:11px;color:var(--text-muted);}
+.footer span{color:var(--text-muted);}
+
+/* ══ Responsive ═════════════════════════════════ */
+@media(max-width:1024px){
+  .top-nav-label{font-size:11px;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .sidebar{width:280px;}
+  .cards{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));}
+  .main-layout{padding:var(--sp-4) var(--sp-6) var(--sp-8);}
+  .hero{padding:var(--sp-12) var(--sp-6) var(--sp-8);}
+}
+@media(max-width:768px){
+  .top-nav{padding:var(--sp-2) var(--sp-4);}
+  .top-nav-label{display:none;}
+  .hero{padding:40px var(--sp-6) var(--sp-8);}
+  .hero-title{font-size:32px;}
+  .hero-stats{gap:var(--sp-4);}
+  .hero-stat-value{font-size:24px;}
+  .hero::before,.hero::after{display:none;}
+  .search-section{padding:0 var(--sp-4) var(--sp-6);}
+  .main-layout{flex-direction:column;padding:0 var(--sp-4) var(--sp-8);gap:var(--sp-4);}
+  .sidebar{width:100%;position:static;max-height:none;}
+  .cards{grid-template-columns:1fr;}
+  .footer{padding:var(--sp-6) var(--sp-4);}
+}
+
+/* ══ Scrollbar ══════════════════════════════════ */
 ::-webkit-scrollbar{width:6px;}
-::-webkit-scrollbar-track{background:#0b1120;}
-::-webkit-scrollbar-thumb{background:rgba(16,185,129,.2);border-radius:3px;}
-::-webkit-scrollbar-thumb:hover{background:rgba(16,185,129,.4);}
+::-webkit-scrollbar-track{background:var(--scrollbar-track);}
+::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--text-accent);}
+
+/* ══ Acessibilidade ═════════════════════════════ */
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+:focus-visible{outline:2px solid var(--text-accent);outline-offset:2px;}
 </style>
 </head>
 <body>
@@ -159,18 +219,22 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Quem Somos
     </a>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema claro/escuro">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
   </div>
 </nav>
 
 <section class="hero">
   <div class="hero-label">SEBRAE Nacional</div>
   <h1 class="hero-title">PIPPA</h1>
-  <p class="hero-subtitle">Plataforma de Inteligencia em Politicas Publicas Aplicadas — ferramentas de monitoramento legislativo, orcamentario e territorial.</p>
+  <p class="hero-subtitle">Plataforma de Inteligência em Políticas Públicas Aplicadas — ferramentas de monitoramento legislativo, orçamentário e territorial.</p>
   <div class="hero-stats">
     <div class="hero-stat"><div class="hero-stat-value" id="statTotal">19</div><div class="hero-stat-label">Ferramentas</div></div>
     <div class="hero-stat"><div class="hero-stat-value">19</div><div class="hero-stat-label">Dashboards</div></div>
     <div class="hero-stat"><div class="hero-stat-value">23</div><div class="hero-stat-label">Fontes de Dados</div></div>
-    <div class="hero-stat"><div class="hero-stat-value">58</div><div class="hero-stat-label">Cubos Analiticos</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">58</div><div class="hero-stat-label">Cubos Analíticos</div></div>
   </div>
 </section>
 
@@ -187,12 +251,12 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
   <div class="sidebar-inner">
     <div class="sidebar-label">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      O que voce precisa?
+      O que você precisa?
     </div>
     <div class="sidebar-desc">Selecione uma necessidade para filtrar as ferramentas.</div>
     <div class="questions-wrap" id="questionsWrap"></div>
     <div class="sidebar-stats">
-      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">19</div><div class="sidebar-stat-lbl">Visiveis</div></div>
+      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">19</div><div class="sidebar-stat-lbl">Visíveis</div></div>
       <div class="sidebar-stat"><div class="sidebar-stat-val">19</div><div class="sidebar-stat-lbl">Total</div></div>
     </div>
   </div>
@@ -200,7 +264,7 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
 
 <section class="grid-section">
   <div class="grid-header">
-    <h2>Ferramentas Disponiveis</h2>
+    <h2>Ferramentas Disponíveis</h2>
     <div class="grid-count">Exibindo <span id="showCount">19</span> de 19</div>
   </div>
   <div class="cards" id="cardsGrid"></div>
@@ -209,16 +273,18 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#c8d6e5;min-height:
 </div>
 
 <footer class="footer">
-  PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas <span>|</span> SEBRAE Nacional <span>|</span> <span id="footerDate"></span>
+  PIPPA — Plataforma de Inteligência em Políticas Públicas Aplicadas <span>|</span> SEBRAE Nacional <span>|</span> <span id="footerDate"></span>
 </footer>
 
 <script>
+function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n)}
+
 const TOOLS = [
   {
     id: "emendas",
     nome: "PIPPA Emendas Parlamentares",
     subtitulo: "Inteligencia em Emendas Federais",
-    accent: "#4f8cff",
+    accent: "#8f85f4",
     icon: "🏛️",
     url: "../pippa-emendas/output/pippa_emendas_completo.html",
     descricao: "Painel de inteligencia sobre emendas parlamentares federais (2015-2026). Consolida dados de todas as modalidades (individual, bancada, comissao, relator) cruzando Portal da Transparencia (CGU), Tesouro Transparente e APIs da Camara e Senado para identificar autores, partidos e taxas de execucao orcamentaria por estado e municipio.",
@@ -229,7 +295,7 @@ const TOOLS = [
     id: "compras",
     nome: "PIPPA Compras Publicas",
     subtitulo: "Radar de Oportunidades para MPEs",
-    accent: "#10b981",
+    accent: "#61b466",
     icon: "📋",
     url: "../pippa-compras-dashboard/index.html",
     descricao: "Radar de oportunidades para micro e pequenas empresas (MPEs) em compras governamentais. Busca licitacoes abertas em tempo real na API do PNCP em 5 modalidades (pregao eletronico, dispensa, concorrencia, inexigibilidade, credenciamento), classificando automaticamente cada oportunidade por tipo MPE (exclusiva ate R$80k, cota 25%, ou aberta) e nivel de urgencia.",
@@ -240,7 +306,7 @@ const TOOLS = [
     id: "legislativo",
     nome: "PIPPA Legislativo",
     subtitulo: "Monitoramento Legislativo",
-    accent: "#a855f7",
+    accent: "#be64e3",
     icon: "⚖️",
     url: "../pippa-legislativo/index.html",
     descricao: "Hub de inteligencia legislativa com duas ferramentas: o Radar Legislativo que classifica proposicoes por prioridade (P0-P4) e o Monitor de Pauta que acompanha em tempo real as votacoes agendadas na Camara e no Senado.",
@@ -251,7 +317,7 @@ const TOOLS = [
     id: "pesquisas",
     nome: "PIPPA Analise Eleitoral 2026",
     subtitulo: "Pesquisas e Resultados Oficiais",
-    accent: "#f472b6",
+    accent: "#ff80c8",
     icon: "🗳️",
     url: "../pippa-pesquisas-eleitorais/index.html",
     descricao: "Inteligencia eleitoral completa para as eleicoes 2026. Agrega pesquisas de todos os institutos (Datafolha, Quaest, Atlas Intel, Real Time Big Data) com ponderacao inteligente e exibe resultados oficiais do TSE em tempo real — presidente, governadores, senadores, deputados federais e estaduais.",
@@ -262,7 +328,7 @@ const TOOLS = [
     id: "reforma",
     nome: "PIPPA Reforma Tributaria",
     subtitulo: "Monitor de Impactos em MPEs",
-    accent: "#f59e0b",
+    accent: "#f39d72",
     icon: "💰",
     url: "../pippa-reforma-dashboard/index.html",
     descricao: "Dashboard de monitoramento de noticias sobre a Reforma Tributaria brasileira. Busca noticias via Google News, classifica por tema (IBS, CBS, Seletivo) e nivel de impacto em pequenas empresas, e categoriza cada item como fato, proposta ou expectativa com indicadores de credibilidade.",
@@ -273,7 +339,7 @@ const TOOLS = [
     id: "prototipo",
     nome: "PIPPA - Prototipo Paraiba",
     subtitulo: "Plataforma Completa em Producao",
-    accent: "#10b981",
+    accent: "#2a4fda",
     icon: "🚀",
     url: "https://pippa.sebrae.com.br/",
     descricao: "Versao em producao da PIPPA implantada no SEBRAE Paraiba. Plataforma completa de inteligencia territorial com dados socioeconomicos, demograficos e empresariais integrados — o produto final que estas ferramentas alimentam.",
@@ -284,7 +350,7 @@ const TOOLS = [
     id: "catalogo",
     nome: "Qual e a sua Estrategia?",
     subtitulo: "Catalogo de Fontes do Observatorio",
-    accent: "#3b82f6",
+    accent: "#65b7fb",
     icon: "🎯",
     url: "../catalogo-fontes/output/catalogo_fontes_observatorio.html",
     descricao: "Catalogo interativo das fontes de dados disponiveis no Observatorio SEBRAE. Navegue por 17 fontes e 58 cubos de dados organizados por perguntas norteadoras sobre problemas publicos — de demografia a comercio exterior, de saude a empreendedorismo.",
@@ -295,7 +361,7 @@ const TOOLS = [
     id: "mindmap",
     nome: "Mapa Mental — NAL",
     subtitulo: "Modelo Mental do Nucleo de Assessoria Legislativa",
-    accent: "#14b8a6",
+    accent: "#90d275",
     icon: "🧠",
     url: "../pippa-mindmap-nal/index.html",
     descricao: "Mapa mental interativo do Nucleo de Assessoria Legislativa (NAL) da Unidade de Politicas Publicas do SEBRAE Nacional. Visualize todas as frentes de atuacao — foresight estrategico, producao de inteligencia (PIPPA), incidencia legislativa, planejamento, capacitacao e comunicacao — com navegacao expandivel e zoom.",
@@ -306,7 +372,7 @@ const TOOLS = [
     id: "orcamento",
     nome: "PIPPA Orçamento",
     subtitulo: "Inteligência Orçamentária UPP 2027",
-    accent: "#06b6d4",
+    accent: "#65b7fb",
     icon: "💲",
     url: "../pippa-orcamento/index.html",
     descricao: "Ferramenta de inteligência orçamentária da UPP — Unidade de Políticas Públicas do Sebrae Nacional. Acompanha a execução orçamentária 2027 em quatro camadas analíticas: descritiva (KPIs e evolução), diagnóstica (alertas e gap analysis), preditiva (projeções e risco de inexecução) e prescritiva (recomendações e remanejamento).",
@@ -317,7 +383,7 @@ const TOOLS = [
     id: "regulatorio",
     nome: "PIPPA Regulatório (Versão-Teste)",
     subtitulo: "Monitor do Diário Oficial da União",
-    accent: "#ef4444",
+    accent: "#e0565d",
     icon: "📰",
     url: "../pippa-regulatorio/output/regulatorio_dou_20260928.html",
     descricao: "Monitor em tempo real do Diário Oficial da União (DOU) com classificação automática de impacto em micro e pequenas empresas. Consulta a API da Imprensa Nacional, aplica heurística de 3 eixos (relevância direta MPE, alcance setorial e potência normativa) e apresenta normas agrupadas por nível de impacto com justificativa transparente do score.",
@@ -328,7 +394,7 @@ const TOOLS = [
     id: "transformalab",
     nome: "TransformaLab — PIPPA",
     subtitulo: "Plataforma de Experimentacao em Politicas Publicas",
-    accent: "#10b981",
+    accent: "#9ff0bd",
     icon: "🔬",
     url: "../pippa-transformalab/index.html",
     descricao: "Plataforma de experimentacao baseada em evidencias para transformar o ambiente de negocios. Integra o ecossistema Observatorio-Laboratorio-Advocacy com 3 modelos de laboratorio (Lab Design & Experimentacao, Lab Pro-Negocios, Insight Lab), framework de 6 etapas com gates de decisao, e Hub TransformaLab com 27 laboratorios estaduais.",
@@ -339,7 +405,7 @@ const TOOLS = [
     id: "indicadores",
     nome: "PIPPA Indicadores — Ambiente de Negócios",
     subtitulo: "6 Temas de Indicadores Compostos",
-    accent: "#22c55e",
+    accent: "#cadf61",
     icon: "📊",
     url: "https://julioenders.github.io/indicadores-ambiente-negocios/dashboard/index.html",
     descricao: "Painel de indicadores compostos de ambiente de negocios para municipios brasileiros. Cobre 6 temas — Burocracia e Formalizacao, Compras Publicas, Sobrevivencia e Emprego, Inclusao e Diversidade, Credito e Financiamento e Microempreendedor Individual (MEI) — com sub-indicadores cruzando dados do Observatorio Sebrae (OLAP) com APIs publicas (REDESIM Gov, PNCP, BCB SGS, IBGE SIDRA, IBGE Localidades). Cada tema possui dashboard interativo.",
@@ -350,7 +416,7 @@ const TOOLS = [
     id: "raioxmunicipal",
     nome: "Raio-X Municipal",
     subtitulo: "Diagnostico Completo por Municipio",
-    accent: "#f59e0b",
+    accent: "#f2afab",
     icon: "🔍",
     url: "https://julioenders.github.io/pippa-raio-x/",
     descricao: "Relatorio-diagnostico que cruza ~20 cubos OLAP do Observatorio Sebrae com APIs publicas (IBGE, BCB, CAGED, INEP, ANS, ANATEL) para gerar um panorama completo de qualquer municipio brasileiro. Cobre tecido empresarial (RF), complexidade economica (ECI/RCA), emprego formal (CAGED), PIB e VAB, infraestrutura financeira (ESTBAN), educacao (IDEB), saude, conectividade (IBC) e presenca Sebrae — tudo filtrado por codigo IBGE.",
@@ -361,7 +427,7 @@ const TOOLS = [
     id: "atuacaoupp",
     nome: "Atuação UPP 2026",
     subtitulo: "Entregas Estratégicas da Unidade de Políticas Públicas",
-    accent: "#14b8a6",
+    accent: "#2a4fda",
     icon: "🏛️",
     url: "../pippa-atuacao-upp/index.html",
     descricao: "Portal de entregas estratégicas dos 3 núcleos da Unidade de Políticas Públicas (abril a outubro de 2026): NAL — Assessoria Legislativa (PLP 108, articulação parlamentar, Reforma Tributária, Novo Simples); Projetos Especiais — Movimenta (164 ações), Pró-Catadores (22 estados), Contrata+Brasil (Painel 360), Compras Sustentáveis, Oficinas de Transformação; RelGov — Relacionamento Governamental (18 entregas, ACTs, Defesa de Causa, economia criativa).",
@@ -372,7 +438,7 @@ const TOOLS = [
     id: "projeto2027",
     nome: "Projeto de Implantação Nacional 2027",
     subtitulo: "Escopo, Roadmap e Governança Ágil",
-    accent: "#06b6d4",
+    accent: "#8f85f4",
     icon: "🚀",
     url: "../pippa-projeto-2027/index.html",
     descricao: "Documento de escopo completo para a implantação nacional da PIPPA em 2027. Estruturado em gestão ágil (Scrum), cobre os 3 eixos da plataforma (Nacional, Estadual e Aplicada) com 15 epics, 69 features, 17 sprints, 4 releases trimestrais e orçamento de R$ 2.015.000. Inclui radar de maturidade do observatório com 6 dimensões, OKRs, matriz RACI, gestão de riscos, glossário interativo e linha do tempo de marcos críticos.",
@@ -383,7 +449,7 @@ const TOOLS = [
     id: "stakeholders",
     nome: "PIPPA Stakeholders (Versão-Teste)",
     subtitulo: "Mapa Parlamentar — CRM Legislativo",
-    accent: "#f59e0b",
+    accent: "#f39d72",
     icon: "👥",
     url: "../pippa-stakeholders/index.html",
     descricao: "CRM visual de parlamentares relevantes para MPEs. Mapeia deputados e senadores com perfil de atuacao, frentes parlamentares (Empreendedorismo, Simples, Desburocratizacao), composicao de comissoes-chave (CDEICS, CAE, CFT) e dados de gabinete via APIs da Camara e do Senado.",
@@ -394,7 +460,7 @@ const TOOLS = [
     id: "credito",
     nome: "PIPPA Credito e Fomento (Versão-Teste)",
     subtitulo: "Radar de Oportunidades para MPEs",
-    accent: "#22c55e",
+    accent: "#90d275",
     icon: "💳",
     url: "../pippa-credito-fomento/index.html",
     descricao: "Radar de indicadores de credito e fomento para MPEs via BCB SGS. Monitora Selic, IPCA, saldo de credito PJ, inadimplencia, taxas medias de juros, concessoes e spread — 14 series do Banco Central com historico de 24 meses e graficos interativos.",
@@ -405,7 +471,7 @@ const TOOLS = [
     id: "consultas",
     nome: "PIPPA Consultas Publicas (Versão-Teste)",
     subtitulo: "Monitor de Participacao Social",
-    accent: "#06b6d4",
+    accent: "#be64e3",
     icon: "📢",
     url: "../pippa-consultas-publicas/index.html",
     descricao: "Monitor de audiencias e consultas publicas da Camara e do Senado onde o SEBRAE pode incidir antes das normas serem publicadas. Busca eventos de audiencia publica, seminarios e reunioes deliberativas, classificando automaticamente a relevancia para MPEs.",
@@ -416,7 +482,7 @@ const TOOLS = [
     id: "impacto",
     nome: "PIPPA Impacto (Versão-Teste)",
     subtitulo: "Portfolio de Evidencias — Prestacao de Contas",
-    accent: "#f472b6",
+    accent: "#ff80c8",
     icon: "📊",
     url: "../pippa-impacto/index.html",
     descricao: "Dashboard consolidado de resultados do ecossistema PIPPA. Mapeia todas as ferramentas ativas, eixos de atuacao, APIs integradas e indicadores monitorados — visao de portfolio para prestacao de contas da UPP.",
@@ -481,7 +547,6 @@ const MACRO_TEMAS = [
 ];
 
 let activeQuestion = null;
-
 let activeMacro = null;
 
 function renderQuestions() {
@@ -523,9 +588,7 @@ function toggleMacro(key, ferramentas) {
   activeMacro = key;
   activeQuestion = null;
   document.querySelectorAll(".q-chip").forEach(c => c.classList.remove("active"));
-  document.querySelectorAll(".q-group").forEach(g => {
-    g.classList.remove("has-active", "open");
-  });
+  document.querySelectorAll(".q-group").forEach(g => { g.classList.remove("has-active", "open"); });
   const group = document.querySelector(`.q-group[data-macro="${key}"]`);
   if (group) group.classList.add("open", "has-active");
   document.getElementById("clearBtn").style.display = "inline-flex";
