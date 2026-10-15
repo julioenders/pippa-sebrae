@@ -945,6 +945,7 @@
         <div class="logo">Analise do PDDE</div>
         <div class="logo-sub">Programa Dinheiro Direto na Escola — Repasses por Escola, Municipio e UF</div>
       </div>
+      <button class="info-btn" onclick="togglePddeInfoModal()" title="Sobre o painel">i</button>
     </div>
     <div class="header-controls">
       <div id="pddeThermometer" class="thermometer thermo-green">Aguardando dados...</div>
@@ -1082,6 +1083,7 @@
         <div class="logo">Analise do PNAE</div>
         <div class="logo-sub">Programa Nacional de Alimentacao Escolar — Repasses, Alunos e Escolas Atendidas</div>
       </div>
+      <button class="info-btn" onclick="togglePnaeInfoModal()" title="Sobre o painel">i</button>
     </div>
     <div class="header-controls">
       <div id="pnaeThermometer" class="thermometer thermo-green">Aguardando dados...</div>
@@ -1208,6 +1210,7 @@
         <div class="logo">Execucao Orcamentaria Estadual</div>
         <div class="logo-sub">Empenhado, Liquidado e Pago — 27 UFs (RREO/SICONFI)</div>
       </div>
+      <button class="info-btn" onclick="toggleExecInfoModal()" title="Sobre o painel">i</button>
     </div>
     <div class="header-controls">
       <div id="execThermometer" class="thermometer thermo-green">Aguardando dados...</div>
@@ -1338,6 +1341,7 @@
         <div class="logo">Monitor PNCP — Contratacoes Publicas</div>
         <div class="logo-sub">Valores Estimados, Homologados e Economia — Historico de 5 Anos (PNCP)</div>
       </div>
+      <button class="info-btn" onclick="togglePncpMonInfoModal()" title="Sobre o painel">i</button>
     </div>
     <div class="header-controls">
       <div id="pncpMonThermometer" class="thermometer thermo-green">Aguardando dados...</div>
@@ -1536,6 +1540,173 @@
   </div>
 </div>
 
+<div class="info-modal-backdrop" id="pddeInfoModal" onclick="if(event.target===this)togglePddeInfoModal()">
+  <div class="info-modal">
+    <button class="info-close" onclick="togglePddeInfoModal()">&times;</button>
+    <h2>PDDE — Programa Dinheiro Direto na Escola</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">Painel de analise dos repasses financeiros do PDDE, programa do FNDE/MEC que transfere recursos diretamente as escolas publicas de educacao basica.</p>
+
+    <h3>Fonte de Dados</h3>
+    <ul>
+      <li>Plataforma Antonieta de Barros — FNDE (fnde.gov.br), sistema oficial de consulta de repasses do governo federal.</li>
+      <li>Dados historicos de 2018 a 2026, abrangendo todas as 27 unidades federativas.</li>
+    </ul>
+
+    <h3>O que o PDDE Financia</h3>
+    <ul>
+      <li><strong>Custeio:</strong> Material de consumo, manutencao, conservacao, pequenos reparos, agua, energia, servicos.</li>
+      <li><strong>Capital:</strong> Equipamentos e material permanente — mobiliario, computadores, materiais didaticos duraveis.</li>
+    </ul>
+
+    <h3>Indicadores</h3>
+    <ul>
+      <li><strong>Total Repassado:</strong> Soma dos recursos de custeio + capital transferidos.</li>
+      <li><strong>Escolas Atendidas:</strong> Quantidade de unidades escolares beneficiadas.</li>
+      <li><strong>Composicao:</strong> Proporcao entre custeio e capital no total repassado.</li>
+    </ul>
+
+    <div class="info-footer">
+      PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas<br>
+      Sebrae Nacional — Observatorio Setorial Territorial<br>
+      Fonte: Plataforma Antonieta de Barros — FNDE (fnde.gov.br)
+    </div>
+  </div>
+</div>
+
+<div class="info-modal-backdrop" id="pnaeInfoModal" onclick="if(event.target===this)togglePnaeInfoModal()">
+  <div class="info-modal">
+    <button class="info-close" onclick="togglePnaeInfoModal()">&times;</button>
+    <h2>PNAE — Programa Nacional de Alimentacao Escolar</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">Painel de analise dos repasses do PNAE, programa do FNDE/MEC que financia a alimentacao escolar de alunos de toda a educacao basica em escolas publicas e filantrópicas.</p>
+
+    <h3>Fonte de Dados</h3>
+    <ul>
+      <li>Plataforma Antonieta de Barros — FNDE (fnde.gov.br), sistema oficial de consulta de repasses.</li>
+      <li>Dados historicos de 2009 a 2026, cobrindo todas as 27 unidades federativas.</li>
+    </ul>
+
+    <h3>O que o PNAE Financia</h3>
+    <ul>
+      <li>Aquisicao de generos alimenticios para a merenda escolar, com no minimo <strong>30% de compras da agricultura familiar</strong> (Lei 11.947/2009).</li>
+      <li>Os repasses sao proporcionais ao numero de alunos matriculados e ao numero de dias letivos.</li>
+    </ul>
+
+    <h3>Oportunidade para Pequenos Negocios</h3>
+    <ul>
+      <li>O PNAE e uma das maiores portas de entrada para MPEs e agricultores familiares no mercado de compras publicas.</li>
+      <li>Municipios com mais alunos recebem mais recursos — indicador estrategico para prospectar oportunidades locais.</li>
+    </ul>
+
+    <div class="info-footer">
+      PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas<br>
+      Sebrae Nacional — Observatorio Setorial Territorial<br>
+      Fonte: Plataforma Antonieta de Barros — FNDE (fnde.gov.br)
+    </div>
+  </div>
+</div>
+
+<div class="info-modal-backdrop" id="execInfoModal" onclick="if(event.target===this)toggleExecInfoModal()">
+  <div class="info-modal">
+    <button class="info-close" onclick="toggleExecInfoModal()">&times;</button>
+    <h2>Execucao Orcamentaria Estadual</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">Painel de analise da execucao orcamentaria dos 27 estados brasileiros, com base nos dados do RREO publicados no SICONFI/Tesouro Nacional.</p>
+
+    <h3>Fonte de Dados</h3>
+    <ul>
+      <li>RREO — Relatorio Resumido de Execucao Orcamentaria, publicado por cada estado no SICONFI (Tesouro Nacional).</li>
+      <li>Periodo: 2020 a 2025 (periodo 6 — ano completo) e 2026 (periodo 4 — parcial ate ago/2026).</li>
+    </ul>
+
+    <h3>Fases da Despesa Publica</h3>
+    <ul>
+      <li><strong>Empenhado:</strong> Valor comprometido pelo governo — reserva orcamentaria para uma despesa autorizada.</li>
+      <li><strong>Liquidado:</strong> Valor verificado — o servico foi prestado ou o bem entregue, e a obrigacao de pagamento foi reconhecida.</li>
+      <li><strong>Pago:</strong> Valor efetivamente desembolsado ao fornecedor ou prestador.</li>
+    </ul>
+
+    <h3>Indicadores</h3>
+    <ul>
+      <li><strong>Taxa de Execucao:</strong> Pago / Empenhado — mede a eficiencia do gasto publico estadual.</li>
+      <li>Taxa acima de 85% indica boa execucao; abaixo de 70% pode indicar represamento de pagamentos.</li>
+    </ul>
+
+    <div class="info-footer">
+      PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas<br>
+      Sebrae Nacional — Observatorio Setorial Territorial<br>
+      Fonte: SICONFI — Sistema de Informacoes Contabeis e Fiscais (Tesouro Nacional)
+    </div>
+  </div>
+</div>
+
+<div class="info-modal-backdrop" id="pncpMonInfoModal" onclick="if(event.target===this)togglePncpMonInfoModal()">
+  <div class="info-modal">
+    <button class="info-close" onclick="togglePncpMonInfoModal()">&times;</button>
+    <h2>Monitor PNCP — Contratacoes Publicas</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">Painel de monitoramento historico das contratacoes publicas registradas no Portal Nacional de Contratacoes Publicas (PNCP), cobrindo 5 anos de dados.</p>
+
+    <h3>Fonte de Dados</h3>
+    <ul>
+      <li>PNCP — Portal Nacional de Contratacoes Publicas (pncp.gov.br), mandatorio pela Lei 14.133/2021.</li>
+      <li>Dados coletados via script automatizado, abrangendo todas as esferas (federal, estadual e municipal).</li>
+    </ul>
+
+    <h3>Indicadores</h3>
+    <ul>
+      <li><strong>Valor Estimado:</strong> Valor de referencia da contratacao, estimado pelo orgao publico antes do certame.</li>
+      <li><strong>Valor Homologado:</strong> Valor final adjudicado ao vencedor — resultado efetivo da licitacao.</li>
+      <li><strong>Economia:</strong> Diferenca percentual entre estimado e homologado — mede a eficiencia do processo licitatorio.</li>
+      <li><strong>Quantidade:</strong> Numero total de contratacoes registradas no periodo.</li>
+    </ul>
+
+    <h3>Base Legal</h3>
+    <ul>
+      <li><strong>Lei 14.133/2021:</strong> Nova Lei de Licitacoes — obriga publicacao no PNCP de todas as contratacoes.</li>
+      <li>Cobertura crescente desde 2022, com adesao progressiva de estados e municipios.</li>
+    </ul>
+
+    <div class="info-footer">
+      PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas<br>
+      Sebrae Nacional — Observatorio Setorial Territorial<br>
+      Fonte: PNCP — Portal Nacional de Contratacoes Publicas (pncp.gov.br)
+    </div>
+  </div>
+</div>
+
+<div class="info-modal-backdrop" id="fornInfoModal" onclick="if(event.target===this)toggleFornInfoModal()">
+  <div class="info-modal">
+    <button class="info-close" onclick="toggleFornInfoModal()">&times;</button>
+    <h2>Fornecedores PNCP — Consulta sob Demanda</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">Consulta em tempo real os fornecedores vencedores de licitacoes no PNCP, identificando porte da empresa, valor homologado e economia gerada.</p>
+
+    <h3>Fonte de Dados</h3>
+    <ul>
+      <li>API do PNCP — Portal Nacional de Contratacoes Publicas (pncp.gov.br), consulta em tempo real.</li>
+      <li>Dados de 2026, com filtros por UF, municipio, mes e modalidade de contratacao.</li>
+    </ul>
+
+    <h3>Classificacao de Porte</h3>
+    <ul>
+      <li><strong>ME (Microempresa):</strong> Faturamento bruto anual ate R$ 360 mil (LC 123/2006).</li>
+      <li><strong>EPP (Empresa de Pequeno Porte):</strong> Faturamento bruto anual de R$ 360 mil a R$ 4,8 milhoes.</li>
+      <li><strong>MEI (Microempreendedor Individual):</strong> Faturamento bruto anual ate R$ 81 mil. Oportunidades restritas a servicos e alimentos.</li>
+      <li><strong>Demais:</strong> Empresas de medio e grande porte.</li>
+    </ul>
+
+    <h3>Dicas de Uso</h3>
+    <ul>
+      <li>Selecionar um municipio acelera muito a consulta e permite buscar ate 250 contratacoes.</li>
+      <li>E possivel selecionar multiplos meses para uma analise acumulada.</li>
+      <li>O tempo de resposta depende da velocidade da API do PNCP.</li>
+    </ul>
+
+    <div class="info-footer">
+      PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas<br>
+      Sebrae Nacional — Observatorio Setorial Territorial<br>
+      Fonte: PNCP — Portal Nacional de Contratacoes Publicas (pncp.gov.br)
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════════════════════════ -->
 <!-- VIEW 6 — FORNECEDORES PNCP                            -->
 <!-- ═══════════════════════════════════════════════════════ -->
@@ -1547,6 +1718,7 @@
         <div class="logo">Fornecedores PNCP — Consulta sob Demanda</div>
         <div class="logo-sub">Identifica fornecedores vencedores, porte (MPE/MEI/EPP) e valores adjudicados — 2026</div>
       </div>
+      <button class="info-btn" onclick="toggleFornInfoModal()" title="Sobre o painel">i</button>
     </div>
     <div class="header-controls">
       <select id="fornUf" class="select-input" style="width:120px;" onchange="carregarMunicipiosForn(this.value)">
@@ -2483,6 +2655,11 @@ function copyExport() {
 }
 function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 function toggleInfoModal() { document.getElementById('infoModal').classList.toggle('active'); }
+function togglePddeInfoModal() { document.getElementById('pddeInfoModal').classList.toggle('active'); }
+function togglePnaeInfoModal() { document.getElementById('pnaeInfoModal').classList.toggle('active'); }
+function toggleExecInfoModal() { document.getElementById('execInfoModal').classList.toggle('active'); }
+function togglePncpMonInfoModal() { document.getElementById('pncpMonInfoModal').classList.toggle('active'); }
+function toggleFornInfoModal() { document.getElementById('fornInfoModal').classList.toggle('active'); }
 
 let pddeExportText = '';
 function generatePddeExportText() {
