@@ -4,23 +4,47 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PIPPA — Mapa Mental NAL | SEBRAE Nacional</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <style>
+/* ══ Design Tokens — Brandbook Sebrae ═══════════ */
+:root {
+  --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;--preto:#000000;
+  --font-heading:'Plus Jakarta Sans',sans-serif;
+  --font-body:'Figtree',sans-serif;
+  /* Light theme */
+  --bg:#eff3ee;--surface:#ffffff;--text:#1a1a1a;--text-muted:#6b7280;--text-accent:#2a4fda;
+  --border:rgba(0,0,0,.1);--border-hover:rgba(42,79,218,.35);
+  --highlight-bg:rgba(42,79,218,.06);--shadow-md:0 4px 12px rgba(0,0,0,.08);
+  --bg-card:rgba(255,255,255,.85);
+  /* Mind map categorical */
+  --mm-verde:#10b981;--mm-azul:#4f8cff;--mm-amarelo:#f59e0b;--mm-roxo:#a855f7;--mm-vermelho:#ef4444;--mm-cinza:#64748b;
+  --mm-leaf-bg:rgba(0,0,0,.03);--mm-leaf-border:rgba(0,0,0,.08);
+  --mm-overlay:rgba(0,0,0,.06);
+}
+[data-theme="dark"]{
+  --bg:#080f1e;--surface:#0f1a2e;--text:#eff3ee;--text-muted:#8b9dc3;--text-accent:#65b7fb;
+  --border:rgba(255,255,255,.08);--border-hover:rgba(101,183,251,.35);
+  --highlight-bg:rgba(101,183,251,.08);--shadow-md:0 4px 12px rgba(0,0,0,.4);
+  --bg-card:rgba(15,26,46,.85);
+  --mm-leaf-bg:rgba(255,255,255,.03);--mm-leaf-border:rgba(255,255,255,.08);
+  --mm-overlay:rgba(255,255,255,.06);
+}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Inter',sans-serif;background:#0b1120;color:#e2e8f0;overflow:hidden;height:100vh;user-select:none;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);overflow:hidden;height:100vh;user-select:none;transition:background .3s,color .3s;}
 
-.header{background:rgba(17,24,39,.85);border-bottom:1px solid rgba(255,255,255,.06);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:200;backdrop-filter:blur(12px);}
+.header{background:var(--bg);border-bottom:1px solid var(--mm-overlay);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:200;backdrop-filter:blur(12px);}
 .header-left{display:flex;align-items:center;gap:16px;}
-.header-title{font-size:18px;font-weight:700;background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.header-sub{font-size:12px;color:#64748b;margin-top:1px;}
+.header-title{font-size:18px;font-weight:700;color:var(--ceu);background-clip:text;}
+.header-sub{font-size:.78rem;color:var(--text-muted);margin-top:.2rem}
 .header-controls{display:flex;align-items:center;gap:8px;}
-.ctrl-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:#94a3b8;padding:7px 14px;border-radius:8px;font-size:11.5px;font-family:inherit;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;}
-.ctrl-btn:hover{border-color:rgba(16,185,129,.35);color:#e2e8f0;background:rgba(16,185,129,.08);}
+.ctrl-btn{background:var(--highlight-bg);border:1px solid var(--border);color:var(--text-muted);padding:7px 14px;border-radius:8px;font-size:11.5px;font-family:inherit;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;}
+.ctrl-btn:hover{border-color:var(--border-hover);color:var(--text);background:var(--highlight-bg);}
 .ctrl-btn svg{width:13px;height:13px;}
-.zoom-label{font-size:11px;color:#475569;min-width:42px;text-align:center;}
+.zoom-label{font-size:11px;color:var(--text-muted);min-width:42px;text-align:center;}
 
-.pippa-home-btn{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
-.pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff;}
+.pippa-home-btn{display:flex;align-items:center;gap:6px;background:var(--bg-card);border:1px solid var(--border-hover);color:var(--text);padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
+.pippa-home-btn:hover{background:var(--highlight-bg);border-color:var(--text-accent);color:var(--text);}
 .pippa-home-btn svg{width:13px;height:13px;}
 
 .wrap{position:fixed;top:50px;left:0;right:0;bottom:0;overflow:hidden;cursor:grab;}
@@ -41,21 +65,27 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#e2e8f0;overflow:hi
 .mm-node.branch .node-label{font-size:12.5px;font-weight:600;}
 
 .mm-node.leaf{max-width:220px;padding:8px 12px;border-radius:8px;}
-.mm-node.leaf .node-label{font-size:11.5px;font-weight:400;color:#94a3b8;}
-.mm-node.leaf:hover .node-label{color:#e2e8f0;}
+.mm-node.leaf .node-label{font-size:11.5px;font-weight:400;color:var(--text-muted);}
+.mm-node.leaf:hover .node-label{color:var(--text);}
 
 .node-label{line-height:1.45;white-space:pre-line;}
-.node-info{font-size:10px;color:#64748b;margin-top:4px;font-style:italic;line-height:1.4;}
-.node-toggle{display:inline-block;font-size:9px;color:#475569;margin-left:4px;transition:transform .3s;}
+.node-info{font-size:10px;color:var(--text-muted);margin-top:4px;font-style:italic;line-height:1.4;}
+.node-toggle{display:inline-block;font-size:9px;color:var(--text-muted);margin-left:4px;transition:transform .3s;}
 .node-toggle.collapsed{transform:rotate(-90deg);}
 
-.legend{position:fixed;bottom:16px;left:16px;background:rgba(17,24,39,.85);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px 18px;backdrop-filter:blur(8px);z-index:100;font-size:11px;}
-.legend-title{font-size:10px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
-.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:5px;color:#8b9dc3;}
+.legend{position:fixed;bottom:16px;left:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;backdrop-filter:blur(8px);z-index:100;font-size:11px;}
+.legend-title{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:5px;color:var(--text-muted);}
 .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .legend-item:last-child{margin-bottom:0;}
 
-.hint{position:fixed;bottom:16px;right:16px;font-size:11px;color:#334155;z-index:100;}
+.hint{position:fixed;bottom:16px;right:16px;font-size:11px;color:var(--text-muted);z-index:100;}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid var(--border);border-radius:8px;cursor:pointer;color:var(--text-muted);transition:all .2s;}
+.theme-toggle:hover{border-color:var(--border-hover);color:var(--text);background:var(--highlight-bg);}
+.theme-toggle svg{width:18px;height:18px;}
+.icon-sun{display:none;}
+[data-theme="dark"] .icon-sun{display:block;}
+[data-theme="dark"] .icon-moon{display:none;}
 </style>
 </head>
 <body>
@@ -68,6 +98,7 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#e2e8f0;overflow:hi
     </div>
   </div>
   <div class="header-controls">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
     <button class="ctrl-btn" onclick="expandAll()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/></svg> Expandir</button>
     <button class="ctrl-btn" onclick="collapseAll()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/></svg> Recolher</button>
@@ -85,24 +116,38 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#e2e8f0;overflow:hi
 
 <div class="legend">
   <div class="legend-title">Frentes</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>NAL (Centro)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#4f8cff"></div>Estruturacão & Foresight</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Planejamento & Comunicacao</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div>Inteligencia & Experimentacao</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div>Incidencia Legislativa</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--mm-verde)"></div>NAL (Centro)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--mm-azul)"></div>Estruturacão & Foresight</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--mm-amarelo)"></div>Planejamento & Comunicacao</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--mm-roxo)"></div>Inteligencia & Experimentacao</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--mm-vermelho)"></div>Incidencia Legislativa</div>
 </div>
 
 <div class="hint">Arraste para mover · Scroll para zoom · Clique nos nos para expandir/recolher</div>
 
 <script>
+function cssVar(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
+function reloadColors(){
+  const s=getComputedStyle(document.documentElement);
+  MM.verde=s.getPropertyValue('--mm-verde').trim();
+  MM.azul=s.getPropertyValue('--mm-azul').trim();
+  MM.amarelo=s.getPropertyValue('--mm-amarelo').trim();
+  MM.roxo=s.getPropertyValue('--mm-roxo').trim();
+  MM.vermelho=s.getPropertyValue('--mm-vermelho').trim();
+  MM.cinza=s.getPropertyValue('--mm-cinza').trim();
+  MM.leafBg=s.getPropertyValue('--mm-leaf-bg').trim();
+  MM.leafBorder=s.getPropertyValue('--mm-leaf-border').trim();
+}
+const MM={verde:'',azul:'',amarelo:'',roxo:'',vermelho:'',cinza:'',leafBg:'',leafBorder:''};
+
 const DATA = {
   label: "Nucleo de Assessoria\nLegislativa (NAL)",
-  color: "#10b981",
+  colorKey: "verde",
   children: [
     {
       label: "Base Estruturante",
       info: "Equipe: Julio Enders e Murilo Terra",
-      color: "#4f8cff",
+      colorKey: "azul",
       side: "right",
       children: [{
         label: "Modelo de Atuacao da UPP",
@@ -119,7 +164,7 @@ const DATA = {
     {
       label: "Producao de Inteligencia\ne Experimentacao",
       info: "Gerar conhecimento, testar solucoes\ne identificar oportunidades\nEquipe: Julio Enders e Murilo Terra",
-      color: "#a855f7",
+      colorKey: "roxo",
       side: "right",
       children: [
         {
@@ -148,7 +193,7 @@ const DATA = {
     {
       label: "Incidencia e Priorizacao",
       info: "Converte evidencias em agenda e\npromove a incidencia institucional",
-      color: "#ef4444",
+      colorKey: "vermelho",
       side: "right",
       children: [{
         label: "Assessoria Legislativa",
@@ -166,12 +211,12 @@ const DATA = {
     {
       label: "Guia do Candidato a Presidente\ne Governador Empreendedor",
       info: "Equipe: Julia Marcal e Murilo Terra",
-      color: "#f59e0b",
+      colorKey: "amarelo",
       side: "right"
     },
     {
       label: "Foresight Estrategico",
-      color: "#4f8cff",
+      colorKey: "azul",
       side: "left",
       children: [
         { label: "Entendimento de contexto e\nmapeamento de tendencias" },
@@ -185,12 +230,12 @@ const DATA = {
     {
       label: "Ambiente de Negocio +20",
       info: "Equipe: Julia Marcal, Julio Enders\ne Murilo Terra",
-      color: "#f59e0b",
+      colorKey: "amarelo",
       side: "left"
     },
     {
       label: "Comunicacao e Engajamento\nde Publicos",
-      color: "#f59e0b",
+      colorKey: "amarelo",
       side: "left",
       children: [
         { label: "Conceito e narrativa do movimento" },
@@ -199,7 +244,7 @@ const DATA = {
     },
     {
       label: "Planejamento da UPP",
-      color: "#f59e0b",
+      colorKey: "amarelo",
       side: "left",
       children: [
         { label: "Atualizar objetivos das\ngerencia e nucleos" },
@@ -210,7 +255,7 @@ const DATA = {
     },
     {
       label: "Capacitacao de Equipes",
-      color: "#f59e0b",
+      colorKey: "amarelo",
       side: "left",
       children: [
         { label: "Capacitacao das equipes envolvidas" },
@@ -219,7 +264,7 @@ const DATA = {
     },
     {
       label: "Reestruturacao do NAL",
-      color: "#f59e0b",
+      colorKey: "amarelo",
       side: "left"
     }
   ]
@@ -255,6 +300,7 @@ function measureNodes() {
 }
 
 function init() {
+  reloadColors();
   root = JSON.parse(JSON.stringify(DATA));
   prepareTree(root, 0, null, null);
   createElements();
@@ -269,6 +315,7 @@ function prepareTree(node, level, parent, side) {
   node._collapsed = false;
   node.x = 0;
   node.y = 0;
+  if (node.colorKey) node.color = MM[node.colorKey] || MM.cinza;
   if (!node.color && parent) node.color = parent.color;
   allNodes.push(node);
   if (node.children) {
@@ -343,7 +390,7 @@ function createElements() {
   allNodes.forEach(node => {
     const div = document.createElement('div');
     div.className = nodeClasses(node);
-    const c = node.color || '#64748b';
+    const c = node.color || MM.cinza;
     if (node.level === 0) {
       div.style.background = `linear-gradient(135deg, ${hexToRgba(c,.18)}, ${hexToRgba(c,.08)})`;
       div.style.borderColor = hexToRgba(c,.6);
@@ -352,8 +399,8 @@ function createElements() {
       div.style.background = hexToRgba(c,.1);
       div.style.borderColor = hexToRgba(c,.3);
     } else {
-      div.style.background = 'rgba(255,255,255,.03)';
-      div.style.borderColor = 'rgba(255,255,255,.08)';
+      div.style.background = MM.leafBg;
+      div.style.borderColor = MM.leafBorder;
     }
 
     let html = `<span class="node-label">${node.label}</span>`;
@@ -422,7 +469,7 @@ function drawConnections() {
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('d', `M${x1},${y1} C${x1+dx},${y1} ${x2-dx},${y2} ${x2},${y2}`);
       path.setAttribute('class', 'conn');
-      path.setAttribute('stroke', hexToRgba(child.color || '#64748b', .35));
+      path.setAttribute('stroke', hexToRgba(child.color || MM.cinza, .35));
       svg.appendChild(path);
       draw(child);
     });
@@ -543,5 +590,6 @@ wrap.addEventListener('touchend', () => { dragging = false; });
 
 init();
 </script>
+<script>function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n);reloadColors();allNodes=[];init()}</script>
 </body>
 </html>

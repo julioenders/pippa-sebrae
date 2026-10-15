@@ -4,35 +4,60 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PIPPA | Legislativo</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0b1120;--surface:#111827;--border:rgba(148,163,184,.12);--text:#e2e8f0;--muted:#64748b;--secondary:#94a3b8;--purple:#a855f7;--purple-light:#c084fc;--blue:#4f8cff;--emerald:#10b981;--amber:#f59e0b;--cyan:#06b6d4;--pink:#f472b6;--radius:12px}
-body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+:root{
+  --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;
+  --font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif;
+  --bg:#eff3ee;--surface:#ffffff;--surface2:#f5f7f4;
+  --border:rgba(0,0,0,.1);--border-hover:rgba(42,79,218,.35);
+  --text:#1a1a1a;--text-muted:#6b7280;--text-accent:#2a4fda;
+  --accent:#2a4fda;--accent-hover:#1e3fb8;--accent-light:rgba(42,79,218,.08);
+  --emerald:#61b466;--purple:#be64e3;--blue:#2a4fda;--amber:#f39d72;--cyan:#65b7fb;--red:#e0565d;--pink:#ff80c8;--teal:#61b466;
+  --emerald-light:#9ff0bd;--purple-light:#be64e3;
+  --secondary:#6b7280;--muted:#6b7280;
+  --highlight-bg:rgba(42,79,218,.06);--accent-ring:rgba(42,79,218,.12);
+  --shadow:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 4px 12px rgba(0,0,0,.08);
+  --scrollbar-track:#eff3ee;--scrollbar-thumb:rgba(42,79,218,.2);
+  --radius:12px;
+}
+[data-theme="dark"]{
+  --bg:#080f1e;--surface:#0f1a2e;--surface2:#162038;
+  --border:rgba(255,255,255,.08);--border-hover:rgba(101,183,251,.35);
+  --text:#eff3ee;--text-muted:#8b9dc3;--text-accent:#65b7fb;
+  --accent:#65b7fb;--accent-hover:#90ccfd;--accent-light:rgba(101,183,251,.08);
+  --secondary:#8b9dc3;--muted:#8b9dc3;
+  --highlight-bg:rgba(101,183,251,.08);--accent-ring:rgba(101,183,251,.12);
+  --shadow:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 4px 12px rgba(0,0,0,.4);
+  --scrollbar-track:#080f1e;--scrollbar-thumb:rgba(42,79,218,.3);
+}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);transition:background .3s,color .3s;line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
 
-.header{background:linear-gradient(135deg,#0d1b2a 0%,var(--bg) 100%);padding:2rem 2rem 1.8rem;border-bottom:2px solid rgba(168,85,247,.2);position:relative;overflow:hidden}
-.header::before{content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse 80% 60%,rgba(168,85,247,.08),transparent 70%);pointer-events:none}
+.header{background:linear-gradient(45deg,var(--atlantico),var(--azul-sebrae));padding:2rem 2rem 1.8rem;border-bottom:2px solid var(--border);position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(42,79,218,.08),transparent 70%);pointer-events:none}
 .header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;position:relative;z-index:1}
 .header-brand{display:flex;align-items:center;gap:1rem}
-.header-logo{width:52px;height:52px;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.25);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px}
-.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-.5px}
-.header h1 span{background:linear-gradient(135deg,var(--purple),var(--purple-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.header-sub{font-size:.78rem;color:var(--muted);margin-top:.2rem}
+.header-logo{width:52px;height:52px;background:rgba(42,79,218,.12);border:1px solid rgba(42,79,218,.25);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px}
+.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-.5px;color:#ffffff}
+.header h1 span{color:#ffffff}
+.header-sub{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:.2rem}
 .header-controls{display:flex;gap:.5rem;align-items:center}
-.portal-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:8px;font-size:.75rem;font-weight:600;text-decoration:none;border:1px solid rgba(168,85,247,.3);color:var(--purple-light);transition:all .2s}
-.portal-btn:hover{background:rgba(168,85,247,.1)}
+.portal-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:8px;font-size:.75rem;font-weight:600;text-decoration:none;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85);transition:all .2s}
+.portal-btn:hover{background:rgba(255,255,255,.1);color:#ffffff}
 .portal-btn svg{width:14px;height:14px}
 
 .main{flex:1;max-width:1100px;margin:0 auto;padding:2rem 1.5rem;width:100%}
-.intro{background:rgba(168,85,247,.04);border:1px solid rgba(168,85,247,.1);border-radius:var(--radius);padding:1.3rem 1.5rem;margin-bottom:2rem;font-size:.85rem;color:var(--secondary);line-height:1.8}
+.intro{background:var(--highlight-bg);border:1px solid var(--accent-ring);border-radius:var(--radius);padding:1.3rem 1.5rem;margin-bottom:2rem;font-size:.85rem;color:var(--secondary);line-height:1.8}
 .intro strong{color:var(--text)}
 
-.section-title{font-size:.95rem;font-weight:700;margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+.section-title{font-size:.95rem;font-weight:700;margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);color:var(--text)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1rem;margin-bottom:2.5rem}
 
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 1.5rem 1.5rem 1.8rem;text-decoration:none;color:inherit;transition:all .25s;display:flex;gap:1.2rem;align-items:flex-start;position:relative;overflow:hidden}
 .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
-.card:hover{transform:translateY(-3px);border-color:rgba(168,85,247,.3);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.card:hover{transform:translateY(-3px);border-color:var(--border-hover);box-shadow:var(--shadow-md)}
 .card-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
 .card-body{flex:1}
 .card-body h3{font-size:.95rem;font-weight:700;margin-bottom:.25rem}
@@ -43,16 +68,22 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
 .card-arrow{position:absolute;right:1rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1.2rem;transition:all .2s}
 .card:hover .card-arrow{transform:translateY(-50%) translateX(4px);color:var(--purple-light)}
 
-.footer{text-align:center;padding:1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.68rem}
+.footer{text-align:center;padding:1.5rem;border-top:1px solid var(--border);color:var(--text-muted);font-size:.68rem}
 
 ::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(168,85,247,.25);border-radius:3px}
+::-webkit-scrollbar-track{background:var(--scrollbar-track)}
+::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:3px}
 @media(max-width:700px){
   .grid{grid-template-columns:1fr}
   .header{padding:1.2rem 1rem}
   .main{padding:1rem}
 }
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s;}
+.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#ffffff;background:rgba(255,255,255,.1);}
+.theme-toggle svg{width:18px;height:18px;}
+.icon-sun{display:none;}
+[data-theme="dark"] .icon-sun{display:block;}
+[data-theme="dark"] .icon-moon{display:none;}
 </style>
 </head>
 <body>
@@ -67,6 +98,7 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
       </div>
     </div>
     <div class="header-controls">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
       <a href="../pippa-portal/index.html" class="portal-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         Portal PIPPA
@@ -84,34 +116,34 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
 
   <div class="grid">
     <a href="../pippa-legislativo-dashboard/index.html" class="card" style="--c:var(--purple)">
-      <div class="card-icon" style="background:rgba(168,85,247,.12);color:var(--purple-light)">&#9878;&#65039;</div>
+      <div class="card-icon" style="background:rgba(42,79,218,.08);color:var(--text-accent)">&#9878;&#65039;</div>
       <div class="card-body">
-        <div class="card-sub" style="color:var(--purple-light)">Radar Legislativo</div>
+        <div class="card-sub" style="color:var(--accent)">Radar Legislativo</div>
         <h3>PIPPA Legislativo</h3>
         <p>Painel de monitoramento legislativo que consulta APIs da Camara e Senado, filtra proposicoes relevantes ao SEBRAE e aplica classificacao automatica de prioridade (P0-P4) com scoring numerico e briefing narrativo.</p>
         <div class="card-features">
-          <span class="card-feat" style="background:rgba(168,85,247,.1);color:var(--purple-light)">P0 a P4</span>
-          <span class="card-feat" style="background:rgba(168,85,247,.1);color:var(--purple-light)">Scoring</span>
-          <span class="card-feat" style="background:rgba(168,85,247,.1);color:var(--purple-light)">10 Criterios</span>
-          <span class="card-feat" style="background:rgba(168,85,247,.1);color:var(--purple-light)">Camara + Senado</span>
-          <span class="card-feat" style="background:rgba(168,85,247,.1);color:var(--purple-light)">WhatsApp</span>
+          <span class="card-feat" style="background:var(--highlight-bg);color:var(--purple-light)">P0 a P4</span>
+          <span class="card-feat" style="background:var(--highlight-bg);color:var(--purple-light)">Scoring</span>
+          <span class="card-feat" style="background:var(--highlight-bg);color:var(--purple-light)">10 Criterios</span>
+          <span class="card-feat" style="background:var(--highlight-bg);color:var(--purple-light)">Camara + Senado</span>
+          <span class="card-feat" style="background:var(--highlight-bg);color:var(--purple-light)">WhatsApp</span>
         </div>
       </div>
       <span class="card-arrow">&rsaquo;</span>
     </a>
 
     <a href="../pippa-pauta-legislativa/index.html" class="card" style="--c:var(--cyan)">
-      <div class="card-icon" style="background:rgba(6,182,212,.12);color:var(--cyan)">&#128203;</div>
+      <div class="card-icon" style="background:rgba(101,183,251,.08);color:var(--ceu)">&#128203;</div>
       <div class="card-body">
         <div class="card-sub" style="color:var(--cyan)">Pauta de Votacao</div>
         <h3>PIPPA Pauta Legislativa</h3>
         <p>Monitor em tempo real das pautas de votacao da Camara e do Senado. Identifica sessoes deliberativas e proposicoes agendadas, classificando automaticamente a relevancia para MPEs e o SEBRAE.</p>
         <div class="card-features">
-          <span class="card-feat" style="background:rgba(6,182,212,.1);color:var(--cyan)">Plenario</span>
-          <span class="card-feat" style="background:rgba(6,182,212,.1);color:var(--cyan)">Comissoes</span>
-          <span class="card-feat" style="background:rgba(6,182,212,.1);color:var(--cyan)">Audiencias</span>
-          <span class="card-feat" style="background:rgba(6,182,212,.1);color:var(--cyan)">Tempo Real</span>
-          <span class="card-feat" style="background:rgba(6,182,212,.1);color:var(--cyan)">Tramitacoes</span>
+          <span class="card-feat" style="background:rgba(101,183,251,.08);color:var(--ceu)">Plenario</span>
+          <span class="card-feat" style="background:rgba(101,183,251,.08);color:var(--ceu)">Comissoes</span>
+          <span class="card-feat" style="background:rgba(101,183,251,.08);color:var(--ceu)">Audiencias</span>
+          <span class="card-feat" style="background:rgba(101,183,251,.08);color:var(--ceu)">Tempo Real</span>
+          <span class="card-feat" style="background:rgba(101,183,251,.08);color:var(--ceu)">Tramitacoes</span>
         </div>
       </div>
       <span class="card-arrow">&rsaquo;</span>
@@ -121,5 +153,6 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
 
 <div class="footer">PIPPA — Unidade de Politicas Publicas | Sebrae Nacional | 2026</div>
 
+<script>function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n)}</script>
 </body>
 </html>

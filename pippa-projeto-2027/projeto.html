@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PIPPA — Projeto de Implantação Nacional 2027</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
     <style>
         :root {
             --bg-primary: #0b1120;
@@ -461,7 +462,13 @@
             td, th, li, .card-text, .okr-kr, .details-content { color: #333; }
             .tag { border: 1px solid #999; }
         }
-    </style>
+    .theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s;}
+.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#ffffff;background:rgba(255,255,255,.1);}
+.theme-toggle svg{width:18px;height:18px;}
+.icon-sun{display:none;}
+[data-theme="dark"] .icon-sun{display:block;}
+[data-theme="dark"] .icon-moon{display:none;}
+</style>
 </head>
 <body>
 
@@ -1885,7 +1892,13 @@
                             .radar-polygon { fill-opacity: 0.08; stroke-width: 2; transition: opacity .3s, fill-opacity .3s; }
                             .radar-polygon:hover { fill-opacity: 0.18; stroke-width: 2.5; }
                             .radar-dot { transition: opacity .3s; }
-                        </style>
+                        .theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s;}
+.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#ffffff;background:rgba(255,255,255,.1);}
+.theme-toggle svg{width:18px;height:18px;}
+.icon-sun{display:none;}
+[data-theme="dark"] .icon-sun{display:block;}
+[data-theme="dark"] .icon-moon{display:none;}
+</style>
                     </defs>
                 </svg>
             </div>
@@ -2514,5 +2527,6 @@ document.addEventListener('keydown', e => {
     });
 })();
 </script>
+<script>function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n)}</script>
 </body>
 </html>

@@ -4,35 +4,58 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PIPPA Eleicoes 2026 — Pesquisas e Resultados Eleitorais</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <style>
 
-:root {
-  --bg:#0f1117;--surface:#1a1d27;--surface2:#242836;--border:#2e3348;
-  --text:#e4e6ef;--text-muted:#8b8fa8;
-  --accent:#4f8cff;--accent-hover:#6ba0ff;
-  --success:#22c55e;--warning:#ffc542;--danger:#ff4d6a;
-  --orange:#ff8c42;--purple:#a855f7;--teal:#4ecdc4;
-  --radius:10px;--shadow:0 2px 12px rgba(0,0,0,0.3);
+:root{
+  --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;
+  --font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif;
+  --bg:#eff3ee;--surface:#ffffff;--surface2:#f5f7f4;
+  --border:rgba(0,0,0,.1);--border-hover:rgba(42,79,218,.35);
+  --text:#1a1a1a;--text-muted:#6b7280;--text-accent:#2a4fda;
+  --accent:#2a4fda;--accent-hover:#1e3fb8;--accent-light:rgba(42,79,218,.08);
+  --emerald:#61b466;--purple:#be64e3;--blue:#2a4fda;--amber:#f39d72;--cyan:#65b7fb;--red:#e0565d;--pink:#ff80c8;--teal:#61b466;
+  --secondary:#6b7280;--muted:#6b7280;--muted2:#64748b;
+  --highlight-bg:rgba(42,79,218,.06);--accent-ring:rgba(42,79,218,.12);
+  --shadow:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 4px 12px rgba(0,0,0,.08);
+  --scrollbar-track:#eff3ee;--scrollbar-thumb:rgba(42,79,218,.2);
+  --radius:12px;
+  --success:#22c55e;--warning:#ffc542;--danger:#ff4d6a;--orange:#ff8c42;
+  --chart-grid:rgba(0,0,0,.06);--chart-grid-strong:rgba(0,0,0,.1);
+}
+[data-theme="dark"]{
+  --bg:#080f1e;--surface:#0f1a2e;--surface2:#162038;
+  --border:rgba(255,255,255,.08);--border-hover:rgba(101,183,251,.35);
+  --text:#eff3ee;--text-muted:#8b9dc3;--text-accent:#65b7fb;
+  --accent:#65b7fb;--accent-hover:#90ccfd;--accent-light:rgba(101,183,251,.08);
+  --secondary:#8b9dc3;--muted:#8b9dc3;--muted2:#8b9dc3;
+  --highlight-bg:rgba(101,183,251,.08);--accent-ring:rgba(101,183,251,.12);
+  --shadow:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 4px 12px rgba(0,0,0,.4);
+  --scrollbar-track:#080f1e;--scrollbar-thumb:rgba(42,79,218,.3);
+  --chart-grid:rgba(139,157,195,.12);--chart-grid-strong:rgba(139,157,195,.2);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.header{background:linear-gradient(135deg,#1a1d27,#242836);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);transition:background .3s,color .3s;min-height:100vh}
+.header{background:linear-gradient(45deg,var(--atlantico),var(--azul-sebrae));border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .header-left{display:flex;align-items:center;gap:16px}
-.logo{font-size:22px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.5px}
-.logo-sub{font-size:13px;color:var(--text-muted)}
+.logo{font-size:22px;font-weight:700;color:#ffffff;letter-spacing:-0.5px}
+.logo-sub{font-size:13px;color:rgba(255,255,255,.6)}
 .header-controls{display:flex;align-items:center;gap:10px}
 .btn{background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
 .btn:hover{background:var(--accent-hover);transform:translateY(-1px)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
 .btn-outline:hover{border-color:var(--accent);color:var(--accent);background:transparent}
-.info-btn{background:transparent;border:1px solid var(--border);color:var(--text-muted);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
-.info-btn:hover{border-color:var(--accent);color:var(--accent)}
+.info-btn{background:transparent;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.info-btn:hover{border-color:rgba(255,255,255,.5);color:#ffffff}
 .thermometer{display:flex;align-items:center;gap:6px;font-size:12px;padding:4px 12px;border-radius:20px}
-.thermo-green{background:rgba(34,197,94,.15);color:#22c55e}
-.thermo-yellow{background:rgba(255,197,66,.15);color:#ffc542}
-.thermo-orange{background:rgba(255,140,66,.15);color:#ff8c42}
+.thermo-green{background:rgba(34,197,94,.15);color:var(--success)}
+.thermo-yellow{background:rgba(255,197,66,.15);color:var(--warning)}
+.thermo-orange{background:rgba(255,140,66,.15);color:var(--orange)}
 .cargo-bar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;justify-content:center;padding:0 24px;overflow-x:auto}
 .cargo-tab{padding:12px 22px;font-size:14px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap}
 .cargo-tab:hover{color:var(--text)}
@@ -103,10 +126,10 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .poll-cand-pct{font-size:15px;font-weight:700;min-width:45px;text-align:right}
 .poll-cand-party{font-size:11px;color:var(--text-muted);min-width:50px}
 .badge{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
-.badge-presencial{background:rgba(34,197,94,.15);color:#22c55e}
-.badge-telefonica{background:rgba(79,140,255,.15);color:#4f8cff}
-.badge-online{background:rgba(168,85,247,.15);color:#a855f7}
-.badge-mista{background:rgba(255,197,66,.15);color:#ffc542}
+.badge-presencial{background:rgba(34,197,94,.15);color:var(--success)}
+.badge-telefonica{background:rgba(79,140,255,.15);color:var(--accent)}
+.badge-online{background:rgba(168,85,247,.15);color:var(--purple)}
+.badge-mista{background:rgba(255,197,66,.15);color:var(--warning)}
 .agg-table{width:100%;border-collapse:collapse;font-size:13px}
 .agg-table th{background:var(--surface2);padding:10px 12px;text-align:left;font-weight:600;color:var(--text-muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;position:sticky;top:0}
 .agg-table td{padding:10px 12px;border-bottom:1px solid var(--border)}
@@ -146,8 +169,8 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .matchup-card .cand-pct{font-size:32px;font-weight:800}
 .matchup-vs{display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--text-muted);min-width:40px}
 
-    .pippa-home-btn{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
-    .pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff;}
+    .pippa-home-btn{display:flex;align-items:center;gap:6px;background:transparent;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85);padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
+    .pippa-home-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.5);color:#fff;}
     .pippa-home-btn svg{width:13px;height:13px;}
 
 /* -- View Switching -------------------------------------------------- */
@@ -156,7 +179,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 
 /* -- Landing Page ---------------------------------------------------- */
 .landing-header {
-  background: linear-gradient(135deg, #1a1d27, #242836);
+  background: linear-gradient(45deg, var(--atlantico), var(--azul-sebrae));
   border-bottom: 1px solid var(--border);
   padding: 20px 24px;
   display: flex;
@@ -166,14 +189,12 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .landing-header .logo {
   font-size: 22px;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--accent), var(--purple));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #ffffff;
   letter-spacing: -0.5px;
 }
 .landing-header .logo-sub {
   font-size: 13px;
-  color: var(--text-muted);
+  color: rgba(255,255,255,.6);
   font-weight: 400;
 }
 .landing-header-right {
@@ -193,9 +214,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .landing-title h1 {
   font-size: 1.6rem;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--accent), var(--purple));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text);
 }
 .landing-title p {
   font-size: .88rem;
@@ -266,18 +285,18 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 /* -- Back Button ----------------------------------------------------- */
 .back-btn {
   display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(15,17,23,.85);
-  border: 1px solid rgba(79,140,255,.3);
-  color: #93c5fd;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.25);
+  color: rgba(255,255,255,.85);
   padding: 7px 14px; border-radius: 8px;
   font-size: 11.5px; font-weight: 600; font-family: inherit;
   cursor: pointer; text-decoration: none; transition: all .2s;
 }
-.back-btn:hover { background: rgba(79,140,255,.15); border-color: var(--accent); color: #fff; }
+.back-btn:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.5); color: #fff; }
 
 /* -- Resultados TSE -------------------------------------------------- */
 .res-header {
-  background: linear-gradient(135deg, #1a1d27, #242836);
+  background: linear-gradient(45deg, var(--atlantico), var(--azul-sebrae));
   border-bottom: 1px solid var(--border);
   padding: 14px 24px;
   display: flex; align-items: center; justify-content: space-between;
@@ -336,10 +355,10 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
   font-size: 11px; font-weight: 600;
   text-transform: uppercase; letter-spacing: .3px; flex-shrink: 0;
 }
-.res-badge-eleito { background: rgba(34,197,94,.15); color: #22c55e; }
-.res-badge-2turno { background: rgba(255,197,66,.15); color: #ffc542; }
-.res-badge-naoeleito { background: rgba(100,116,139,.15); color: #64748b; }
-.res-badge-suplente { background: rgba(79,140,255,.15); color: #4f8cff; }
+.res-badge-eleito { background: rgba(34,197,94,.15); color: var(--success); }
+.res-badge-2turno { background: rgba(255,197,66,.15); color: var(--warning); }
+.res-badge-naoeleito { background: rgba(100,116,139,.15); color: var(--muted2); }
+.res-badge-suplente { background: rgba(79,140,255,.15); color: var(--accent); }
 .res-cargo-tabs {
   display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px;
 }
@@ -390,8 +409,8 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .kpi-card-election:hover .election-tooltip{visibility:visible;opacity:1}
 .election-tooltip a{color:var(--accent);text-decoration:none;font-weight:600}
 .election-tooltip a:hover{text-decoration:underline}
-.kpi-badge-done{display:inline-block;background:rgba(34,197,94,.15);color:#22c55e;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;margin-top:4px}
-.kpi-badge-soon{display:inline-block;background:rgba(255,197,66,.15);color:#ffc542;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;margin-top:4px}
+.kpi-badge-done{display:inline-block;background:rgba(34,197,94,.15);color:var(--success);font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;margin-top:4px}
+.kpi-badge-soon{display:inline-block;background:rgba(255,197,66,.15);color:var(--warning);font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;margin-top:4px}
 
 .landing-election-banner{background:linear-gradient(135deg,rgba(79,140,255,.08),rgba(168,85,247,.08));border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;display:flex;gap:20px;flex-wrap:wrap;align-items:center;justify-content:center}
 .landing-election-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 24px;text-align:center;min-width:200px;position:relative;transition:border-color .2s}
@@ -399,8 +418,8 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .landing-election-card .le-value{font-size:22px;font-weight:700}
 .landing-election-card .le-sub{font-size:11px;color:var(--text-muted);margin-top:4px}
 .landing-election-card .le-badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;margin-top:6px}
-.le-badge-done{background:rgba(34,197,94,.15);color:#22c55e}
-.le-badge-soon{background:rgba(255,197,66,.15);color:#ffc542}
+.le-badge-done{background:rgba(34,197,94,.15);color:var(--success)}
+.le-badge-soon{background:rgba(255,197,66,.15);color:var(--warning)}
 .landing-election-card .le-tooltip{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;font-size:12px;color:var(--text);line-height:1.5;width:280px;z-index:50;box-shadow:var(--shadow);transition:opacity .2s,visibility .2s}
 .landing-election-card .le-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--border)}
 .landing-election-card:hover .le-tooltip{visibility:visible;opacity:1}
@@ -408,7 +427,16 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .le-tooltip a{color:var(--accent);text-decoration:none;font-weight:600}
 .le-tooltip a:hover{text-decoration:underline}
 @media(max-width:600px){.landing-election-banner{flex-direction:column}.landing-election-card .le-tooltip,.kpi-card-election .election-tooltip{width:220px}}
-  </style>
+  .theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s;}
+.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#ffffff;background:rgba(255,255,255,.1);}
+.theme-toggle svg{width:18px;height:18px;}
+.icon-sun{display:none;}
+[data-theme="dark"] .icon-sun{display:block;}
+[data-theme="dark"] .icon-moon{display:none;}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--scrollbar-track)}
+::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:3px}
+</style>
 </head>
 <body>
 
@@ -422,6 +450,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <div class="logo-sub">Inteligencia Eleitoral — Pesquisas e Resultados</div>
     </div>
     <div class="landing-header-right">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
       <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
     </div>
   </header>
@@ -489,6 +518,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <div class="thermometer" id="thermometer">Carregando...</div>
     </div>
     <div class="header-controls">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
       <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
       <button class="btn btn-outline" id="btnFetch" onclick="fetchAPIs()">&#128269; Consultar APIs</button>
       <button class="btn" onclick="exportWhatsApp()">&#128172; Exportar WhatsApp</button>
@@ -674,7 +704,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
   </div>
 
   <div class="footer" style="text-align:center;">
-    <strong style="color:#e74c3c;">O Sebrae nao produz, encomenda nem endossa pesquisas eleitorais.</strong>
+    <strong style="color:var(--danger);">O Sebrae nao produz, encomenda nem endossa pesquisas eleitorais.</strong>
   </div>
 
   <div class="loading-overlay" id="loadingOverlay">
@@ -794,6 +824,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
       <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
       <button class="btn" id="btnFetchTSE" onclick="loadTSEData()">&#128269; Consultar TSE</button>
     </div>
@@ -925,6 +956,13 @@ let currentDar = 'dashboard';
 let activeFilters = {estado:[],instituto:[],candidato:[]};
 let chartInstances = {};
 let currentScenario = null;
+
+/* --- Chart.js CSS-var helpers ---------------------------------------- */
+function chartTextColor(){return getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()||'#8b8fa8'}
+function chartLabelColor(){return getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#e4e6ef'}
+function chartGridColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim()||'rgba(46,51,72,.27)'}
+function chartGridStrongColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-grid-strong').trim()||'rgba(46,51,72,.27)'}
+function cssVar(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim()}
 
 window.addEventListener('DOMContentLoaded', () => {
   updateCargoCounts();
@@ -1106,12 +1144,12 @@ function renderCandidateList(containerId, candidates) {
   el.innerHTML = candidates.map(function(c, i) {
     var pct = parseFloat(String(c.percentual).replace(',', '.')) || 0;
     var barW = (pct / maxPct * 100).toFixed(1);
-    var color = '#4f8cff';
+    var color = cssVar('--accent');
     var stLow = (c.status || '').toLowerCase();
-    if (stLow.indexOf('eleito') >= 0 && stLow.indexOf('nao') < 0 && stLow.indexOf('ão') < 0) color = '#22c55e';
-    else if (stLow.indexOf('2') >= 0 && stLow.indexOf('turno') >= 0) color = '#ffc542';
-    else if (stLow.indexOf('suplente') >= 0) color = '#4f8cff';
-    else if (i >= 3) color = '#64748b';
+    if (stLow.indexOf('eleito') >= 0 && stLow.indexOf('nao') < 0 && stLow.indexOf('ão') < 0) color = cssVar('--success');
+    else if (stLow.indexOf('2') >= 0 && stLow.indexOf('turno') >= 0) color = cssVar('--warning');
+    else if (stLow.indexOf('suplente') >= 0) color = cssVar('--accent');
+    else if (i >= 3) color = cssVar('--muted2');
     return '<div class="res-candidate">' +
       '<div class="res-cand-pos">' + (i + 1) + '</div>' +
       '<div class="res-cand-info">' +
@@ -1548,11 +1586,11 @@ function renderTrendChart(polls) {
     options:{
       responsive:true, maintainAspectRatio:false,
       scales:{
-        x:{type:'category', ticks:{color:'#8b8fa8',maxRotation:45,maxTicksLimit:15}, grid:{color:'#2e334822'}},
-        y:{beginAtZero:true, ticks:{color:'#8b8fa8',callback:v=>v+'%'}, grid:{color:'#2e334844'}},
+        x:{type:'category', ticks:{color:chartTextColor(),maxRotation:45,maxTicksLimit:15}, grid:{color:chartGridColor()}},
+        y:{beginAtZero:true, ticks:{color:chartTextColor(),callback:v=>v+'%'}, grid:{color:chartGridStrongColor()}},
       },
       plugins:{
-        legend:{labels:{color:'#e4e6ef',boxWidth:12,font:{size:11}}},
+        legend:{labels:{color:chartLabelColor(),boxWidth:12,font:{size:11}}},
         tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+'%'}},
       },
     },
@@ -1661,10 +1699,10 @@ function renderComparisonChart(polls) {
     options:{
       responsive:true, maintainAspectRatio:false,
       scales:{
-        x:{ticks:{color:'#e4e6ef'},grid:{display:false}},
-        y:{beginAtZero:true,ticks:{color:'#8b8fa8',callback:v=>v+'%'},grid:{color:'#2e334844'}},
+        x:{ticks:{color:chartLabelColor()},grid:{display:false}},
+        y:{beginAtZero:true,ticks:{color:chartTextColor(),callback:v=>v+'%'},grid:{color:chartGridStrongColor()}},
       },
-      plugins:{legend:{labels:{color:'#e4e6ef',boxWidth:12,font:{size:11}}}},
+      plugins:{legend:{labels:{color:chartLabelColor(),boxWidth:12,font:{size:11}}}},
     },
   });
 }
@@ -1829,15 +1867,15 @@ function renderDivergencia(polls) {
     });
     return devs.length ? +(devs.reduce((a,b)=>a+b,0)/devs.length).toFixed(1) : 0;
   });
-  const colors = deviations.map(d => d<2?'#22c55e':d<4?'#4f8cff':'#ff4d6a');
+  const colors = deviations.map(d => d<2?cssVar('--success'):d<4?cssVar('--accent'):cssVar('--danger'));
   chartInstances.divergence = new Chart(document.getElementById('chartDivergence'), {
     type:'bar',
     data:{labels:sources, datasets:[{label:'Desvio medio (pp)',data:deviations,backgroundColor:colors,borderRadius:4}]},
     options:{
       responsive:true, maintainAspectRatio:false,
       scales:{
-        x:{ticks:{color:'#e4e6ef',maxRotation:45},grid:{display:false}},
-        y:{beginAtZero:true,ticks:{color:'#8b8fa8',callback:v=>v+'pp'},grid:{color:'#2e334844'}},
+        x:{ticks:{color:chartLabelColor(),maxRotation:45},grid:{display:false}},
+        y:{beginAtZero:true,ticks:{color:chartTextColor(),callback:v=>v+'pp'},grid:{color:chartGridStrongColor()}},
       },
       plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'Desvio: '+ctx.parsed.y.toFixed(1)+'pp'}}},
     },
@@ -2082,7 +2120,7 @@ function renderSegundoTurno() {
     const party = recent[0].candidates.find(c => c.name === name)?.party || '';
     return {name, party, avg: Math.round(avg*10)/10};
   });
-  const colors = ['#4f8cff', '#ff4d6a'];
+  const colors = [cssVar('--accent'), cssVar('--danger')];
 
   const summary = document.getElementById('matchupSummary');
   summary.innerHTML =
@@ -2113,11 +2151,11 @@ function renderSegundoTurno() {
     options: {
       responsive: true, maintainAspectRatio: false,
       scales: {
-        x: {type:'category', ticks:{color:'#8b8fa8',maxRotation:45,maxTicksLimit:12}, grid:{color:'#2e334822'}},
-        y: {beginAtZero: false, ticks:{color:'#8b8fa8',callback:v=>v+'%'}, grid:{color:'#2e334844'}},
+        x: {type:'category', ticks:{color:chartTextColor(),maxRotation:45,maxTicksLimit:12}, grid:{color:chartGridColor()}},
+        y: {beginAtZero: false, ticks:{color:chartTextColor(),callback:v=>v+'%'}, grid:{color:chartGridStrongColor()}},
       },
       plugins: {
-        legend: {labels:{color:'#e4e6ef',boxWidth:12,font:{size:12}}},
+        legend: {labels:{color:chartLabelColor(),boxWidth:12,font:{size:12}}},
         tooltip: {callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+'%'}},
       },
     },
@@ -2150,5 +2188,6 @@ function selectScenario(key) {
 
 
 </script>
+<script>function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n)}</script>
 </body>
 </html>

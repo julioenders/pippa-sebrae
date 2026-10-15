@@ -6,18 +6,25 @@
 <title>PIPPA Orçamento — Inteligência Orçamentária UPP 2027</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
 :root {
+  --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;
+  --font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif;
   --bg: #0f172a; --surface: #1e293b; --surface2: #334155;
   --text: #e2e8f0; --text2: #94a3b8; --accent: #3b82f6;
   --accent2: #8b5cf6; --green: #22c55e; --red: #ef4444;
   --yellow: #eab308; --orange: #f97316; --cyan: #06b6d4;
   --radius: 12px; --shadow: 0 4px 24px rgba(0,0,0,.4);
+  --chart-grid:rgba(139,157,195,.12);--chart-text:#8b9dc3;--chart-label:#eff3ee;--chart-ref:rgba(139,157,195,.25);
+}
+[data-theme="light"] {
+  --chart-grid:rgba(0,0,0,.06);--chart-text:#6b7280;--chart-label:#1a1a1a;--chart-ref:rgba(0,0,0,.15);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--bg); color:var(--text); font-family:'Inter','Segoe UI',system-ui,sans-serif; min-height:100vh; }
+body { background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100vh; }
 a { color:var(--accent); text-decoration:none; }
 
 .header {
@@ -51,11 +58,11 @@ a { color:var(--accent); text-decoration:none; }
 .info-btn:hover { border-color:var(--accent); color:var(--accent); }
 .pippa-home-btn {
   display:flex; align-items:center; gap:6px; background:rgba(15,23,42,.85);
-  border:1px solid rgba(16,185,129,.3); color:#a7f3d0; padding:7px 14px;
+  border:1px solid rgba(16,185,129,.3); color:var(--text); padding:7px 14px;
   border-radius:8px; font-size:11.5px; font-weight:600; cursor:pointer;
   text-decoration:none; transition:all .2s;
 }
-.pippa-home-btn:hover { background:rgba(16,185,129,.15); border-color:#10b981; color:#fff; }
+.pippa-home-btn:hover { background:rgba(16,185,129,.15); border-color:var(--text-accent); color:#fff; }
 .pippa-home-btn svg { width:13px; height:13px; }
 .btn-export {
   display:flex; align-items:center; gap:6px; background:var(--accent);
@@ -124,7 +131,7 @@ a { color:var(--accent); text-decoration:none; }
   cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px;
   transition:all .2s; letter-spacing:.3px;
 }
-.tab:hover { color:var(--text); background:rgba(255,255,255,.03); }
+.tab:hover { color:var(--text); background:var(--surface); }
 .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
 .tab-icon { margin-right:6px; }
 
@@ -135,7 +142,7 @@ a { color:var(--accent); text-decoration:none; }
 .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; }
 .kpi {
   background:var(--surface); border-radius:var(--radius); padding:1.2rem;
-  border:1px solid rgba(255,255,255,.06); position:relative; overflow:hidden;
+  border:1px solid var(--border); position:relative; overflow:hidden;
 }
 .kpi::before {
   content:''; position:absolute; top:0; left:0; width:4px; height:100%;
@@ -157,7 +164,7 @@ a { color:var(--accent); text-decoration:none; }
 .chart-grid.full { grid-template-columns:1fr; }
 .chart-box {
   background:var(--surface); border-radius:var(--radius); padding:1.2rem;
-  border:1px solid rgba(255,255,255,.06);
+  border:1px solid var(--border);
 }
 .chart-title { font-size:.85rem; font-weight:600; margin-bottom:1rem; display:flex; align-items:center; gap:.5rem; }
 .chart-title .dot { width:8px; height:8px; border-radius:50%; }
@@ -195,7 +202,7 @@ a { color:var(--accent); text-decoration:none; }
 
 .rec-card {
   background:var(--surface); border-radius:var(--radius); padding:1.2rem;
-  border:1px solid rgba(255,255,255,.06); margin-bottom:.8rem;
+  border:1px solid var(--border); margin-bottom:.8rem;
 }
 .rec-header { display:flex; align-items:center; gap:.6rem; margin-bottom:.6rem; }
 .rec-priority {
@@ -211,7 +218,7 @@ a { color:var(--accent); text-decoration:none; }
 
 .section-title { font-size:1rem; font-weight:700; margin:1.5rem 0 1rem; display:flex; align-items:center; gap:.5rem; }
 
-.table-wrapper { border-radius:var(--radius); overflow:auto; max-height:500px; border:1px solid rgba(255,255,255,.06); }
+.table-wrapper { border-radius:var(--radius); overflow:auto; max-height:500px; border:1px solid var(--border); }
 
 .footer { text-align:center; padding:2rem; font-size:.7rem; color:var(--text2); }
 
@@ -226,6 +233,12 @@ a { color:var(--accent); text-decoration:none; }
 @media(max-width:600px) {
   .kpi-row { grid-template-columns:1fr; }
 }
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s;}
+.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#ffffff;background:rgba(255,255,255,.1);}
+.theme-toggle svg{width:18px;height:18px;}
+.icon-sun{display:none;}
+[data-theme="dark"] .icon-sun{display:block;}
+[data-theme="dark"] .icon-moon{display:none;}
 </style>
 </head>
 <body>
@@ -520,6 +533,11 @@ a { color:var(--accent); text-decoration:none; }
 <div class="toast" id="toast">Copiado!</div>
 
 <script>
+function chartTextColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim()||'#6b7280'}
+function chartLabelColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-label').trim()||'#1a1a1a'}
+function chartGridColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim()||'rgba(0,0,0,.06)'}
+function chartRefColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-ref').trim()||'rgba(0,0,0,.15)'}
+
 const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 const NUCLEO_COLORS = {
   'Projetos Especiais':'#3b82f6',
@@ -673,17 +691,17 @@ function renderTimelineChart() {
     data:{
       labels:MESES,
       datasets:[
-        {label:'Ideal (linear)',data:ideal,borderColor:'rgba(255,255,255,.2)',borderDash:[5,5],pointRadius:0,fill:false,borderWidth:1.5},
+        {label:'Ideal (linear)',data:ideal,borderColor:chartRefColor(),borderDash:[5,5],pointRadius:0,fill:false,borderWidth:1.5},
         {label:'Empenhado',data:empAcc,borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,.1)',fill:true,tension:.3,pointRadius:2},
         {label:'Liquidado',data:liqAcc,borderColor:'#06b6d4',backgroundColor:'rgba(6,182,212,.08)',fill:true,tension:.3,pointRadius:2},
         {label:'Pago',data:pagAcc,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.08)',fill:true,tension:.3,pointRadius:2},
       ]
     },
     options:{
-      responsive:true, plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',boxWidth:12,padding:12,font:{size:11}}}},
+      responsive:true, plugins:{legend:{position:'bottom',labels:{color:chartTextColor(),boxWidth:12,padding:12,font:{size:11}}}},
       scales:{
-        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10}}},
-        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmt(v)}}
+        x:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10}}},
+        y:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>fmt(v)}}
       }
     }
   });
@@ -702,17 +720,17 @@ function renderNucleosChart() {
     data:{
       labels:labels,
       datasets:[
-        {label:'Orçamento',data:loaByN,backgroundColor:'rgba(255,255,255,.1)',borderRadius:4},
+        {label:'Orçamento',data:loaByN,backgroundColor:chartGridColor(),borderRadius:4},
         {label:'Empenhado',data:empByN,backgroundColor:'rgba(139,92,246,.6)',borderRadius:4},
         {label:'Pago',data:pagByN,backgroundColor:'rgba(34,197,94,.6)',borderRadius:4},
       ]
     },
     options:{
       responsive:true, indexAxis:'y',
-      plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',boxWidth:12,padding:12,font:{size:11}}}},
+      plugins:{legend:{position:'bottom',labels:{color:chartTextColor(),boxWidth:12,padding:12,font:{size:11}}}},
       scales:{
-        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmt(v)}},
-        y:{grid:{display:false},ticks:{color:'#e2e8f0',font:{size:10}}}
+        x:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>fmt(v)}},
+        y:{grid:{display:false},ticks:{color:chartLabelColor(),font:{size:10}}}
       }
     }
   });
@@ -827,16 +845,16 @@ function renderGapChart() {
     data:{
       labels:labels,
       datasets:[
-        {label:'Previsto (linear)',data:previsto,backgroundColor:'rgba(255,255,255,.12)',borderRadius:4},
+        {label:'Previsto (linear)',data:previsto,backgroundColor:chartGridColor(),borderRadius:4},
         {label:'Realizado (Empenhado)',data:realizado,backgroundColor: nucleos.map(n=>NUCLEO_COLORS[n]||'#3b82f6'),borderRadius:4},
       ]
     },
     options:{
       responsive:true,
-      plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',boxWidth:12,font:{size:11}}}},
+      plugins:{legend:{position:'bottom',labels:{color:chartTextColor(),boxWidth:12,font:{size:11}}}},
       scales:{
-        x:{grid:{display:false},ticks:{color:'#e2e8f0',font:{size:10}}},
-        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmt(v)}}
+        x:{grid:{display:false},ticks:{color:chartLabelColor(),font:{size:10}}},
+        y:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>fmt(v)}}
       }
     }
   });
@@ -861,10 +879,10 @@ function renderVelocityChart() {
     data:{labels:MESES.slice(0,currentMes), datasets},
     options:{
       responsive:true,
-      plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',boxWidth:12,font:{size:11}}}},
+      plugins:{legend:{position:'bottom',labels:{color:chartTextColor(),boxWidth:12,font:{size:11}}}},
       scales:{
-        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10}}},
-        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmt(v)}}
+        x:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10}}},
+        y:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>fmt(v)}}
       }
     }
   });
@@ -892,10 +910,10 @@ function renderFunnelChart() {
     options:{
       responsive:true,
       aspectRatio:4,
-      plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',boxWidth:12,font:{size:11}}}},
+      plugins:{legend:{position:'bottom',labels:{color:chartTextColor(),boxWidth:12,font:{size:11}}}},
       scales:{
-        x:{grid:{display:false},ticks:{color:'#e2e8f0',font:{size:10}}},
-        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmt(v)}}
+        x:{grid:{display:false},ticks:{color:chartLabelColor(),font:{size:10}}},
+        y:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>fmt(v)}}
       }
     }
   });
@@ -995,7 +1013,7 @@ function renderProjectionChart(empM, pagM, totalLoa, avgEmp, avgPag) {
     data:{
       labels:MESES,
       datasets:[
-        {label:'Meta 100%',data:Array(12).fill(totalLoa),borderColor:'rgba(255,255,255,.15)',borderDash:[4,4],pointRadius:0,borderWidth:1},
+        {label:'Meta 100%',data:Array(12).fill(totalLoa),borderColor:chartRefColor(),borderDash:[4,4],pointRadius:0,borderWidth:1},
         {label:'Empenhado (real)',data:empAcc,borderColor:'#8b5cf6',pointRadius:3,borderWidth:2.5,tension:.3},
         {label:'Pago (real)',data:pagAcc,borderColor:'#22c55e',pointRadius:3,borderWidth:2.5,tension:.3},
         {label:'Empenho (projeção)',data:projEmpAcc,borderColor:'#8b5cf6',borderDash:[6,4],pointRadius:2,borderWidth:2,tension:.3},
@@ -1004,10 +1022,10 @@ function renderProjectionChart(empM, pagM, totalLoa, avgEmp, avgPag) {
     },
     options:{
       responsive:true, spanGaps:false,
-      plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',boxWidth:12,font:{size:11}}}},
+      plugins:{legend:{position:'bottom',labels:{color:chartTextColor(),boxWidth:12,font:{size:11}}}},
       scales:{
-        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10}}},
-        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmt(v)}}
+        x:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10}}},
+        y:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>fmt(v)}}
       }
     }
   });
@@ -1039,8 +1057,8 @@ function renderRiskChart() {
       responsive:true, indexAxis:'y',
       plugins:{legend:{display:false}},
       scales:{
-        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>v+'%'},max:50},
-        y:{grid:{display:false},ticks:{color:'#e2e8f0',font:{size:10}}}
+        x:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>v+'%'},max:50},
+        y:{grid:{display:false},ticks:{color:chartLabelColor(),font:{size:10}}}
       }
     }
   });
@@ -1179,8 +1197,8 @@ function renderReallocChart() {
       plugins:{legend:{display:false},
         tooltip:{callbacks:{label:ctx=>`${ctx.raw>0?'+':''}${ctx.raw.toFixed(1)}% vs. meta linear`}}},
       scales:{
-        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>(v>0?'+':'')+v+'%'}},
-        y:{grid:{display:false},ticks:{color:'#e2e8f0',font:{size:9}}}
+        x:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>(v>0?'+':'')+v+'%'}},
+        y:{grid:{display:false},ticks:{color:chartLabelColor(),font:{size:9}}}
       }
     }
   });
@@ -1209,15 +1227,15 @@ function renderImpactChart() {
       datasets:[
         {label:'Cenário Base',data:impactData.map(d=>d.base),backgroundColor:'rgba(59,130,246,.5)',borderRadius:4},
         {label:'Cenário Acelerado (+30%)',data:impactData.map(d=>d.acelerado),backgroundColor:'rgba(34,197,94,.5)',borderRadius:4},
-        {label:'Meta 100%',data:impactData.map(()=>100),type:'line',borderColor:'rgba(255,255,255,.3)',borderDash:[4,4],pointRadius:0,borderWidth:1.5},
+        {label:'Meta 100%',data:impactData.map(()=>100),type:'line',borderColor:chartRefColor(),borderDash:[4,4],pointRadius:0,borderWidth:1.5},
       ]
     },
     options:{
       responsive:true,
-      plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',boxWidth:12,font:{size:11}}}},
+      plugins:{legend:{position:'bottom',labels:{color:chartTextColor(),boxWidth:12,font:{size:11}}}},
       scales:{
-        x:{grid:{display:false},ticks:{color:'#e2e8f0',font:{size:10}}},
-        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>v+'%'},max:120}
+        x:{grid:{display:false},ticks:{color:chartLabelColor(),font:{size:10}}},
+        y:{grid:{color:chartGridColor()},ticks:{color:chartTextColor(),font:{size:10},callback:v=>v+'%'},max:120}
       }
     }
   });
@@ -1296,10 +1314,11 @@ function copyExport() {
   });
 }
 
-Chart.defaults.color = '#94a3b8';
-Chart.defaults.font.family = "'Segoe UI',system-ui,sans-serif";
+Chart.defaults.color = chartTextColor();
+Chart.defaults.font.family = "'Figtree','Segoe UI',system-ui,sans-serif";
 init();
 </script>
 
+<script>function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n)}</script>
 </body>
 </html>

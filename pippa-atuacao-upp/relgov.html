@@ -4,34 +4,52 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PIPPA | Atuacao UPP/RelGov 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#0b1120;--card:#111827;--card-hover:#1a2332;
-  --emerald:#10b981;--emerald-light:#34d399;--emerald-pale:#6ee7b7;
-  --blue:#4f8cff;--purple:#a855f7;--amber:#f59e0b;--cyan:#06b6d4;--pink:#f472b6;--red:#ef4444;--teal:#14b8a6;
-  --text-primary:#e2e8f0;--text-secondary:#94a3b8;--text-muted:#64748b;--text-dim:#475569;
-  --border:rgba(148,163,184,.12);--glass:rgba(17,24,39,.6);
-  --radius:12px;--radius-sm:8px;--radius-xs:6px;
+  --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;
+  --font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif;
+  --bg:#eff3ee;--surface:#ffffff;--surface2:#f5f7f4;
+  --border:rgba(0,0,0,.1);--border-hover:rgba(42,79,218,.35);
+  --text:#1a1a1a;--text-muted:#6b7280;--text-accent:#2a4fda;
+  --accent:#2a4fda;--accent-hover:#1e3fb8;--accent-light:rgba(42,79,218,.08);
+  --emerald:#61b466;--purple:#be64e3;--blue:#2a4fda;--amber:#f39d72;--cyan:#65b7fb;--red:#e0565d;--pink:#ff80c8;--teal:#61b466;
+  --emerald-light:#9ff0bd;--purple-light:#be64e3;
+  --secondary:#6b7280;--muted:#6b7280;
+  --highlight-bg:rgba(42,79,218,.06);--accent-ring:rgba(42,79,218,.12);
+  --shadow:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 4px 12px rgba(0,0,0,.08);
+  --scrollbar-track:#eff3ee;--scrollbar-thumb:rgba(42,79,218,.2);
+  --radius:12px;
+}
+[data-theme="dark"]{
+  --bg:#080f1e;--surface:#0f1a2e;--surface2:#162038;
+  --border:rgba(255,255,255,.08);--border-hover:rgba(101,183,251,.35);
+  --text:#eff3ee;--text-muted:#8b9dc3;--text-accent:#65b7fb;
+  --accent:#65b7fb;--accent-hover:#90ccfd;--accent-light:rgba(101,183,251,.08);
+  --secondary:#8b9dc3;--muted:#8b9dc3;
+  --highlight-bg:rgba(101,183,251,.08);--accent-ring:rgba(101,183,251,.12);
+  --shadow:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 4px 12px rgba(0,0,0,.4);
+  --scrollbar-track:#080f1e;--scrollbar-thumb:rgba(42,79,218,.3);
 }
 html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-height:1.6;overflow-x:hidden}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
 ::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-track{background:var(--scrollbar-track)}
 ::-webkit-scrollbar-thumb{background:var(--emerald);border-radius:3px}
 
 /* NAV */
-.nav{position:sticky;top:0;z-index:100;background:rgba(11,17,32,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav{position:sticky;top:0;z-index:100;background:var(--bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between}
 .nav-brand{font-weight:800;font-size:18px;background:linear-gradient(135deg,var(--emerald),var(--emerald-pale));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px}
 .nav-links{display:flex;gap:6px}
 .nav-links a{color:var(--text-secondary);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:var(--radius-xs);transition:.2s}
-.nav-links a:hover,.nav-links a.active{color:var(--emerald-light);background:rgba(16,185,129,.08)}
+.nav-links a:hover,.nav-links a.active{color:var(--text-accent);background:rgba(42,79,218,.08)}
 
 /* HERO */
 .hero{position:relative;text-align:center;padding:48px 32px 28px;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse 80% 60%,rgba(16,185,129,.12),transparent 70%);pointer-events:none}
-.hero-label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--emerald);background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);padding:6px 16px;border-radius:20px;margin-bottom:20px}
+.hero::before{content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse 80% 60%,rgba(42,79,218,.08),transparent 70%);pointer-events:none}
+.hero-label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--emerald);background:rgba(42,79,218,.08);border:1px solid rgba(16,185,129,.2);padding:6px 16px;border-radius:20px;margin-bottom:20px}
 .hero-title{font-size:clamp(28px,5vw,48px);font-weight:800;color:var(--text-primary);letter-spacing:-1.5px;line-height:1.1;margin-bottom:12px}
 .hero-title span{background:linear-gradient(135deg,var(--emerald),var(--emerald-light),var(--emerald-pale));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero-sub{font-size:14px;color:var(--text-secondary);max-width:680px;margin:0 auto 8px}
@@ -40,9 +58,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
 /* STAT TILES */
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:700px;margin:0 auto;padding:0 32px}
 .stat-tile{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 8px;text-align:center;transition:.3s;cursor:default}
-.stat-tile:hover{border-color:rgba(16,185,129,.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.stat-tile:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:var(--shadow-md)}
 .stat-value{font-size:26px;font-weight:700;color:var(--text-primary);line-height:1}
-.stat-value.emerald{color:var(--emerald-light)}
+.stat-value.emerald{color:var(--text-accent)}
 .stat-value.purple{color:var(--purple)}
 .stat-value.blue{color:var(--blue)}
 .stat-label{font-size:10px;font-weight:500;color:var(--text-secondary);margin-top:4px;letter-spacing:.3px;text-transform:uppercase}
@@ -59,7 +77,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:.3s;position:relative;overflow:hidden}
 .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
-.card:hover{border-color:rgba(148,163,184,.2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.card:hover{border-color:rgba(148,163,184,.2);transform:translateY(-2px);box-shadow:var(--shadow-md)}
 .card-number{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
 .card-title{font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
 .card-desc{font-size:13px;color:var(--text-secondary);line-height:1.6}
@@ -68,7 +86,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
 
 /* EXPAND SECTION */
 .expand-trigger{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;cursor:pointer;transition:.3s;width:100%;text-align:left}
-.expand-trigger:hover{border-color:rgba(16,185,129,.3);background:var(--card-hover)}
+.expand-trigger:hover{border-color:var(--border-hover);background:var(--card-hover)}
 .expand-trigger h3{font-size:15px;font-weight:600;color:var(--text-primary);flex:1}
 .expand-arrow{color:var(--text-muted);transition:.3s;font-size:18px}
 .expand-trigger.open .expand-arrow{transform:rotate(180deg);color:var(--emerald)}
@@ -100,6 +118,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
   .stat-value{font-size:24px}
   .stat-label{font-size:10px}
 }
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s;}
+.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#ffffff;background:rgba(255,255,255,.1);}
+.theme-toggle svg{width:18px;height:18px;}
+.icon-sun{display:none;}
+[data-theme="dark"] .icon-sun{display:block;}
+[data-theme="dark"] .icon-moon{display:none;}
 </style>
 </head>
 <body>
@@ -158,8 +182,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
       <div class="card-title">ACT com o Consorcio Amazonia Legal</div>
       <div class="card-desc">Conclusao da formalizacao e assinatura. Acoes conjuntas: desenvolvimento sustentavel, inovacao, melhoria do ambiente de negocios na regiao.</div>
       <div class="card-tags">
-        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
-        <span class="card-tag" style="color:var(--purple);border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.08)">ACT</span>
+        <span class="card-tag" style="color:var(--emerald);border-color:var(--border-hover);background:rgba(42,79,218,.08)">Concluido</span>
+        <span class="card-tag" style="color:var(--purple);border-color:var(--border-hover);background:rgba(168,85,247,.08)">ACT</span>
       </div>
     </div>
 
@@ -169,8 +193,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
       <div class="card-title">ACT com MGI/Secretaria de Governo Digital</div>
       <div class="card-desc">Formalizacao da parceria. Entregas: Estrategia Nacional de Governo Digital, com metodologia, guia de aplicacao e conteudos de apoio a estados e municipios.</div>
       <div class="card-tags">
-        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
-        <span class="card-tag" style="color:var(--purple);border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.08)">ACT</span>
+        <span class="card-tag" style="color:var(--emerald);border-color:var(--border-hover);background:rgba(42,79,218,.08)">Concluido</span>
+        <span class="card-tag" style="color:var(--purple);border-color:var(--border-hover);background:rgba(168,85,247,.08)">ACT</span>
       </div>
     </div>
 
@@ -180,7 +204,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
       <div class="card-title">Chamada Publica Sebrae/MDS</div>
       <div class="card-desc">Credenciamento de entidades publicas e privadas sem fins lucrativos para projetos de inclusao socioeconomica, empreendedorismo e geracao de renda.</div>
       <div class="card-tags">
-        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+        <span class="card-tag" style="color:var(--emerald);border-color:var(--border-hover);background:rgba(42,79,218,.08)">Concluido</span>
       </div>
     </div>
 
@@ -212,7 +236,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
 <div class="divider"></div>
 <section class="section" id="projetos">
   <div class="section-header reveal">
-    <div class="section-eyebrow" style="color:var(--blue)">Grupo 2</div>
+    <div class="section-eyebrow" style="color:var(--accent)">Grupo 2</div>
     <div class="section-title">Projetos Estrategicos</div>
     <div class="section-desc">Projetos de alto impacto em areas como empreendedorismo, economia criativa, clima, capacitacao e atualizacao de marcos regulatorios.</div>
   </div>
@@ -247,7 +271,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
       <div class="card-desc">Segunda fase da plataforma. Lancamento da Chamada Publica para Negocios Climaticos. Previsao: selecao de 3 iniciativas para COP 31.</div>
       <div class="card-tags">
         <span class="card-tag" style="color:var(--amber);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">Em andamento</span>
-        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">COP 31</span>
+        <span class="card-tag" style="color:var(--emerald);border-color:var(--border-hover);background:rgba(42,79,218,.08)">COP 31</span>
       </div>
     </div>
 
@@ -292,7 +316,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
       <div class="card-title">Agenda dos 20 anos da Lei Geral</div>
       <div class="card-desc">Metodologia de Defesa de Causa, site exclusivo, ambiente no DataSebrae, documento em Legal Design, conteudos sobre lacunas e oportunidades.</div>
       <div class="card-tags">
-        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+        <span class="card-tag" style="color:var(--emerald);border-color:var(--border-hover);background:rgba(42,79,218,.08)">Concluido</span>
       </div>
     </div>
 
@@ -302,7 +326,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
       <div class="card-title">Oficinas de Defesa de Causa</div>
       <div class="card-desc">3 oficinas para disseminacao da metodologia, com aplicacao pratica na agenda dos 20 anos.</div>
       <div class="card-tags">
-        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+        <span class="card-tag" style="color:var(--emerald);border-color:var(--border-hover);background:rgba(42,79,218,.08)">Concluido</span>
       </div>
     </div>
 
@@ -312,7 +336,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
       <div class="card-title">2o Encontro de Simplificacao do Sistema Sebrae</div>
       <div class="card-desc">Belo Horizonte. Integracao Redesim, evolucao de Reforma Tributaria, Novo Simples, planejamento rede 2027.</div>
       <div class="card-tags">
-        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+        <span class="card-tag" style="color:var(--emerald);border-color:var(--border-hover);background:rgba(42,79,218,.08)">Concluido</span>
       </div>
     </div>
 
@@ -346,7 +370,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
       <div class="card-title">Apresentacao institucional do RelGov</div>
       <div class="card-desc">Material consolidando papel do Nucleo, metodologia, projetos, carteira de parcerias e prioridades.</div>
       <div class="card-tags">
-        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+        <span class="card-tag" style="color:var(--emerald);border-color:var(--border-hover);background:rgba(42,79,218,.08)">Concluido</span>
       </div>
     </div>
 
@@ -356,7 +380,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
       <div class="card-title">Estrategia de atuacao do Sebrae em Politicas Publicas</div>
       <div class="card-desc">Elaboracao em resposta ao Acordao do TCU. Mandalas que sintetizam a atuacao institucional.</div>
       <div class="card-tags">
-        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+        <span class="card-tag" style="color:var(--emerald);border-color:var(--border-hover);background:rgba(42,79,218,.08)">Concluido</span>
         <span class="card-tag" style="color:var(--red);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08)">TCU</span>
       </div>
     </div>
@@ -367,7 +391,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
       <div class="card-title">Posicionamento e comunicacao da UPP</div>
       <div class="card-desc">Com Unidade de Comunicacao. Novo posicionamento, mensagens-chave, diretrizes planejamento comunicacao 2027.</div>
       <div class="card-tags">
-        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+        <span class="card-tag" style="color:var(--emerald);border-color:var(--border-hover);background:rgba(42,79,218,.08)">Concluido</span>
       </div>
     </div>
 
@@ -377,7 +401,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#c8d6e5;line-heig
       <div class="card-title">Representacoes institucionais</div>
       <div class="card-desc">Revisao e atualizacao das designacoes da UPP junto ao Poder Executivo. Redistribuicao de responsabilidades.</div>
       <div class="card-tags">
-        <span class="card-tag" style="color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Concluido</span>
+        <span class="card-tag" style="color:var(--emerald);border-color:var(--border-hover);background:rgba(42,79,218,.08)">Concluido</span>
       </div>
     </div>
 
@@ -518,5 +542,6 @@ window.addEventListener('scroll', () => {
   });
 });
 </script>
+<script>function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n)}</script>
 </body>
 </html>

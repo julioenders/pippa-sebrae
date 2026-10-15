@@ -21,6 +21,8 @@
   --btn-bg:#2a4fda;--btn-text:#ffffff;--btn-hover:#1e3fb8;
   --chart-grid:rgba(0,0,0,.06);--chart-text:#6b7280;
   --scrollbar-track:#eff3ee;--scrollbar-thumb:rgba(42,79,218,.2);
+  --cor-orcamento:#8f85f4;--cor-legislativo:#be64e3;--cor-politico:#ff80c8;--cor-territorial:#61b466;
+  --cor-experimentacao:#9ff0bd;--cor-nao-classificado:#f39d72;--cor-verde-claro:#90d275;--cor-vermelho:#e0565d;--cor-lima:#cadf61;--cor-rosa-claro:#f2afab;
 }
 [data-theme="dark"]{
   --bg-page:#080f1e;--bg-card:#0f1a2e;--bg-input:rgba(15,26,46,.8);--bg-nav:rgba(8,15,30,.92);
@@ -46,7 +48,7 @@ body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-pri
 .header-controls{display:flex;align-items:center;gap:var(--sp-2)}
 .btn{font-family:var(--font-body);padding:var(--sp-2) var(--sp-4);border-radius:var(--radius-md);font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
 .btn-primary{background:var(--btn-bg);color:var(--btn-text);border:1px solid var(--btn-bg)}
-.btn-primary:hover{background:var(--btn-hover);color:#fff}
+.btn-primary:hover{background:var(--btn-hover);color:var(--btn-text)}
 .info-btn{width:32px;height:32px;border-radius:50%;background:var(--highlight-bg);border:1px solid var(--accent-ring);color:var(--text-accent);font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
 .info-btn:hover{background:var(--accent-ring);transform:scale(1.1)}
 .theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:transparent;border:1px solid var(--border);border-radius:var(--radius-md);cursor:pointer;color:var(--text-muted);transition:all .2s}
@@ -149,10 +151,10 @@ body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-pri
   </div>
 
   <div class="kpi-row">
-    <div class="kpi"><div class="kpi-value" id="kpiFerramentas" style="color:#2a4fda">—</div><div class="kpi-label">Ferramentas Ativas</div></div>
-    <div class="kpi"><div class="kpi-value" id="kpiEixos" style="color:#be64e3">—</div><div class="kpi-label">Eixos Cobertos</div></div>
-    <div class="kpi"><div class="kpi-value" id="kpiAPIs" style="color:#65b7fb">—</div><div class="kpi-label">APIs Integradas</div></div>
-    <div class="kpi"><div class="kpi-value" id="kpiIndicadores" style="color:#61b466">—</div><div class="kpi-label">Indicadores Monitorados</div></div>
+    <div class="kpi"><div class="kpi-value" id="kpiFerramentas" style="color:var(--azul-sebrae)">—</div><div class="kpi-label">Ferramentas Ativas</div></div>
+    <div class="kpi"><div class="kpi-value" id="kpiEixos" style="color:var(--cor-legislativo)">—</div><div class="kpi-label">Eixos Cobertos</div></div>
+    <div class="kpi"><div class="kpi-value" id="kpiAPIs" style="color:var(--ceu)">—</div><div class="kpi-label">APIs Integradas</div></div>
+    <div class="kpi"><div class="kpi-value" id="kpiIndicadores" style="color:var(--cor-territorial)">—</div><div class="kpi-label">Indicadores Monitorados</div></div>
   </div>
 
   <div class="charts-row" id="chartsRow" style="display:none">
@@ -205,15 +207,20 @@ function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-the
 
 var chartEixos=null,chartMacro=null,lastEixos=null;
 
-var EIXO_CONFIG={
-  'Orçamento e Compras':{color:'#8f85f4',icon:'💰'},
-  'Legislativo e Regulatório':{color:'#be64e3',icon:'⚖️'},
-  'Político e Institucional':{color:'#ff80c8',icon:'🏛️'},
-  'Territorial e Indicadores':{color:'#61b466',icon:'🗺️'},
-  'Estratégia e Governança':{color:'#65b7fb',icon:'🎯'},
-  'Experimentação e Dados':{color:'#9ff0bd',icon:'🔬'},
-  'Não Classificado':{color:'#f39d72',icon:'📋'}
-};
+function cssV(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+
+var EIXO_CONFIG=(function(){
+  var v=cssV;
+  return {
+    'Orçamento e Compras':{color:v('--cor-orcamento'),icon:'💰'},
+    'Legislativo e Regulatório':{color:v('--cor-legislativo'),icon:'⚖️'},
+    'Político e Institucional':{color:v('--cor-politico'),icon:'🏛️'},
+    'Territorial e Indicadores':{color:v('--cor-territorial'),icon:'🗺️'},
+    'Estratégia e Governança':{color:v('--ceu'),icon:'🎯'},
+    'Experimentação e Dados':{color:v('--cor-experimentacao'),icon:'🔬'},
+    'Não Classificado':{color:v('--cor-nao-classificado'),icon:'📋'}
+  };
+})();
 
 var ENRICHMENT={
   emendas:{eixo:'Orçamento e Compras',apis:['Portal Transparência (CGU)','Tesouro Transparente','Câmara Emendas API','Senado API'],indicadores:['Emendas por modalidade','Execução orçamentária','Autores por UF','Partidos','Taxa de execução']},
@@ -261,29 +268,30 @@ async function loadPortfolio(){
   }catch(e){console.warn('Fetch portal falhou, usando dados locais:',e)}
 
   if(ferramentas.length===0){
+    var v=cssV;
     var FB={
-      emendas:{nome:'PIPPA Emendas Parlamentares',icon:'🏛️',color:'#8f85f4',url:'../pippa-emendas/output/pippa_emendas_completo.html',desc:'Inteligência em Emendas Federais'},
-      compras:{nome:'PIPPA Compras Públicas',icon:'📋',color:'#61b466',url:'../pippa-compras-dashboard/index.html',desc:'Radar de Oportunidades para MPEs'},
-      legislativo:{nome:'PIPPA Legislativo',icon:'⚖️',color:'#be64e3',url:'../pippa-legislativo/index.html',desc:'Monitoramento Legislativo'},
-      pesquisas:{nome:'PIPPA Análise Eleitoral 2026',icon:'🗳️',color:'#ff80c8',url:'../pippa-pesquisas-eleitorais/index.html',desc:'Pesquisas e Resultados Oficiais'},
-      reforma:{nome:'PIPPA Reforma Tributária',icon:'💰',color:'#f39d72',url:'../pippa-reforma-dashboard/index.html',desc:'Monitor de Impactos em MPEs'},
-      prototipo:{nome:'PIPPA — Protótipo Paraíba',icon:'🚀',color:'#2a4fda',url:'https://pippa.sebrae.com.br/',desc:'Plataforma Completa em Produção'},
-      catalogo:{nome:'Qual é a sua Estratégia?',icon:'🎯',color:'#65b7fb',url:'../catalogo-fontes/output/catalogo_fontes_observatorio.html',desc:'Catálogo de Fontes do Observatório'},
-      mindmap:{nome:'Mapa Mental — NAL',icon:'🧠',color:'#90d275',url:'../pippa-mindmap-nal/index.html',desc:'Modelo Mental do NAL'},
-      orcamento:{nome:'PIPPA Orçamento (Dados Sintéticos)',icon:'💲',color:'#65b7fb',url:'../pippa-orcamento/index.html',desc:'Inteligência Orçamentária UPP 2027'},
-      regulatorio:{nome:'PIPPA Regulatório (Versão-Teste)',icon:'📰',color:'#e0565d',url:'../pippa-regulatorio/output/regulatorio_dou_20260928.html',desc:'Monitor do Diário Oficial da União'},
-      transformalab:{nome:'TransformaLab — PIPPA (Dados Sintéticos)',icon:'🔬',color:'#9ff0bd',url:'../pippa-transformalab/index.html',desc:'Experimentação em Políticas Públicas'},
-      indicadores:{nome:'PIPPA Indicadores — Ambiente de Negócios',icon:'📊',color:'#cadf61',url:'https://julioenders.github.io/indicadores-ambiente-negocios/dashboard/index.html',desc:'6 Temas de Indicadores Compostos'},
-      raioxmunicipal:{nome:'Raio-X Municipal',icon:'🔍',color:'#f2afab',url:'https://julioenders.github.io/pippa-raio-x/',desc:'Diagnóstico Completo por Município'},
-      atuacaoupp:{nome:'Atuação UPP 2026',icon:'🏛️',color:'#2a4fda',url:'../pippa-atuacao-upp/index.html',desc:'Entregas Estratégicas da UPP'},
-      projeto2027:{nome:'Projeto de Implantação Nacional 2027',icon:'🚀',color:'#8f85f4',url:'../pippa-projeto-2027/index.html',desc:'Escopo, Roadmap e Governança Ágil'},
-      stakeholders:{nome:'PIPPA Stakeholders',icon:'👥',color:'#f39d72',url:'../pippa-stakeholders/index.html',desc:'Mapa Parlamentar — CRM Legislativo'},
-      credito:{nome:'PIPPA Crédito e Fomento (Versão-Teste)',icon:'💳',color:'#90d275',url:'../pippa-credito-fomento/index.html',desc:'Radar de Oportunidades para MPEs'},
-      consultas:{nome:'PIPPA Consultas Públicas (Versão-Teste)',icon:'📢',color:'#be64e3',url:'../pippa-consultas-publicas/index.html',desc:'Monitor de Participação Social'}
+      emendas:{nome:'PIPPA Emendas Parlamentares',icon:'🏛️',color:v('--cor-orcamento'),url:'../pippa-emendas/output/pippa_emendas_completo.html',desc:'Inteligência em Emendas Federais'},
+      compras:{nome:'PIPPA Compras Públicas',icon:'📋',color:v('--cor-territorial'),url:'../pippa-compras-dashboard/index.html',desc:'Radar de Oportunidades para MPEs'},
+      legislativo:{nome:'PIPPA Legislativo',icon:'⚖️',color:v('--cor-legislativo'),url:'../pippa-legislativo/index.html',desc:'Monitoramento Legislativo'},
+      pesquisas:{nome:'PIPPA Análise Eleitoral 2026',icon:'🗳️',color:v('--cor-politico'),url:'../pippa-pesquisas-eleitorais/index.html',desc:'Pesquisas e Resultados Oficiais'},
+      reforma:{nome:'PIPPA Reforma Tributária',icon:'💰',color:v('--cor-nao-classificado'),url:'../pippa-reforma-dashboard/index.html',desc:'Monitor de Impactos em MPEs'},
+      prototipo:{nome:'PIPPA — Protótipo Paraíba',icon:'🚀',color:v('--azul-sebrae'),url:'https://pippa.sebrae.com.br/',desc:'Plataforma Completa em Produção'},
+      catalogo:{nome:'Qual é a sua Estratégia?',icon:'🎯',color:v('--ceu'),url:'../catalogo-fontes/output/catalogo_fontes_observatorio.html',desc:'Catálogo de Fontes do Observatório'},
+      mindmap:{nome:'Mapa Mental — NAL',icon:'🧠',color:v('--cor-verde-claro'),url:'../pippa-mindmap-nal/index.html',desc:'Modelo Mental do NAL'},
+      orcamento:{nome:'PIPPA Orçamento (Dados Sintéticos)',icon:'💲',color:v('--ceu'),url:'../pippa-orcamento/index.html',desc:'Inteligência Orçamentária UPP 2027'},
+      regulatorio:{nome:'PIPPA Regulatório (Versão-Teste)',icon:'📰',color:v('--cor-vermelho'),url:'../pippa-regulatorio/output/regulatorio_dou_20260928.html',desc:'Monitor do Diário Oficial da União'},
+      transformalab:{nome:'TransformaLab — PIPPA (Dados Sintéticos)',icon:'🔬',color:v('--cor-experimentacao'),url:'../pippa-transformalab/index.html',desc:'Experimentação em Políticas Públicas'},
+      indicadores:{nome:'PIPPA Indicadores — Ambiente de Negócios',icon:'📊',color:v('--cor-lima'),url:'https://julioenders.github.io/indicadores-ambiente-negocios/dashboard/index.html',desc:'6 Temas de Indicadores Compostos'},
+      raioxmunicipal:{nome:'Raio-X Municipal',icon:'🔍',color:v('--cor-rosa-claro'),url:'https://julioenders.github.io/pippa-raio-x/',desc:'Diagnóstico Completo por Município'},
+      atuacaoupp:{nome:'Atuação UPP 2026',icon:'🏛️',color:v('--azul-sebrae'),url:'../pippa-atuacao-upp/index.html',desc:'Entregas Estratégicas da UPP'},
+      projeto2027:{nome:'Projeto de Implantação Nacional 2027',icon:'🚀',color:v('--cor-orcamento'),url:'../pippa-projeto-2027/index.html',desc:'Escopo, Roadmap e Governança Ágil'},
+      stakeholders:{nome:'PIPPA Stakeholders',icon:'👥',color:v('--cor-nao-classificado'),url:'../pippa-stakeholders/index.html',desc:'Mapa Parlamentar — CRM Legislativo'},
+      credito:{nome:'PIPPA Crédito e Fomento (Versão-Teste)',icon:'💳',color:v('--cor-verde-claro'),url:'../pippa-credito-fomento/index.html',desc:'Radar de Oportunidades para MPEs'},
+      consultas:{nome:'PIPPA Consultas Públicas (Versão-Teste)',icon:'📢',color:v('--cor-legislativo'),url:'../pippa-consultas-publicas/index.html',desc:'Monitor de Participação Social'}
     };
     Object.keys(ENRICHMENT).forEach(function(id){
       var enr=ENRICHMENT[id];
-      var fb=FB[id]||{nome:id,icon:'📋',color:'#2a4fda',url:'#',desc:''};
+      var fb=FB[id]||{nome:id,icon:'📋',color:v('--azul-sebrae'),url:'#',desc:''};
       ferramentas.push({id:id,nome:fb.nome,url:fb.url,color:fb.color,icon:fb.icon,descricao:fb.desc,eixo:enr.eixo,apis:enr.apis,indicadores:enr.indicadores});
     });
   }
@@ -319,9 +327,8 @@ function processData(ferramentas){
 function updateCharts(eixos){
   if(typeof Chart==='undefined')return;
   document.getElementById('chartsRow').style.display='grid';
-  var isDark=document.documentElement.getAttribute('data-theme')==='dark';
-  var textColor=isDark?'#8b9dc3':'#6b7280';
-  var gridColor=isDark?'rgba(139,157,195,.12)':'rgba(0,0,0,.06)';
+  var textColor=cssV('--chart-text');
+  var gridColor=cssV('--chart-grid');
 
   var eixoLabels=Object.keys(eixos);
   var eixoCounts=eixoLabels.map(function(e){return eixos[e].length});

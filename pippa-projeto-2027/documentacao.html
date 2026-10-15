@@ -4,27 +4,52 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PIPPA | Documentacao Tecnica de Replicacao</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0b1120;--surface:#111827;--surface2:#1e293b;--border:rgba(148,163,184,.12);--border-accent:rgba(16,185,129,.25);--text:#e2e8f0;--muted:#64748b;--secondary:#94a3b8;--emerald:#10b981;--emerald-light:#34d399;--blue:#4f8cff;--purple:#a855f7;--amber:#f59e0b;--cyan:#06b6d4;--red:#ef4444;--teal:#14b8a6;--pink:#f472b6;--radius:12px}
-body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+:root{
+  --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;
+  --font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif;
+  --bg:#eff3ee;--surface:#ffffff;--surface2:#f5f7f4;
+  --border:rgba(0,0,0,.1);--border-hover:rgba(42,79,218,.35);
+  --text:#1a1a1a;--text-muted:#6b7280;--text-accent:#2a4fda;
+  --accent:#2a4fda;--accent-hover:#1e3fb8;--accent-light:rgba(42,79,218,.08);
+  --emerald:#61b466;--purple:#be64e3;--blue:#2a4fda;--amber:#f39d72;--cyan:#65b7fb;--red:#e0565d;--pink:#ff80c8;--teal:#61b466;
+  --emerald-light:#9ff0bd;--purple-light:#be64e3;
+  --secondary:#6b7280;--muted:#6b7280;
+  --highlight-bg:rgba(42,79,218,.06);--accent-ring:rgba(42,79,218,.12);
+  --shadow:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 4px 12px rgba(0,0,0,.08);
+  --scrollbar-track:#eff3ee;--scrollbar-thumb:rgba(42,79,218,.2);
+  --radius:12px;
+}
+[data-theme="dark"]{
+  --bg:#080f1e;--surface:#0f1a2e;--surface2:#162038;
+  --border:rgba(255,255,255,.08);--border-hover:rgba(101,183,251,.35);
+  --text:#eff3ee;--text-muted:#8b9dc3;--text-accent:#65b7fb;
+  --accent:#65b7fb;--accent-hover:#90ccfd;--accent-light:rgba(101,183,251,.08);
+  --secondary:#8b9dc3;--muted:#8b9dc3;
+  --highlight-bg:rgba(101,183,251,.08);--accent-ring:rgba(101,183,251,.12);
+  --shadow:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 4px 12px rgba(0,0,0,.4);
+  --scrollbar-track:#080f1e;--scrollbar-thumb:rgba(42,79,218,.3);
+}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);transition:background .3s,color .3s;line-height:1.6;min-height:100vh}
 
-.header{background:linear-gradient(135deg,#0d1b2a 0%,var(--bg) 100%);padding:2rem 2rem 1.8rem;border-bottom:2px solid rgba(6,182,212,.2);position:relative;overflow:hidden}
+.header{background:linear-gradient(45deg,var(--atlantico),var(--azul-sebrae));padding:2rem 2rem 1.8rem;border-bottom:2px solid rgba(6,182,212,.2);position:relative;overflow:hidden}
 .header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(6,182,212,.08),transparent 70%);pointer-events:none}
 .header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;position:relative;z-index:1}
 .header-brand{display:flex;align-items:center;gap:1rem}
 .header-logo{width:52px;height:52px;background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.25);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
-.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-.5px}
+.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-.5px;color:#ffffff}
 .header h1 span{background:linear-gradient(135deg,var(--cyan),#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.header-sub{font-size:.78rem;color:var(--muted);margin-top:.2rem}
+.header-sub{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:.2rem}
 .nav-btns{display:flex;gap:.5rem;align-items:center}
-.nav-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:8px;font-size:.75rem;font-weight:600;text-decoration:none;border:1px solid rgba(16,185,129,.3);color:var(--emerald-light);transition:all .2s}
-.nav-btn:hover{background:rgba(16,185,129,.1)}
+.nav-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:8px;font-size:.75rem;font-weight:600;text-decoration:none;border:1px solid var(--border);color:var(--text-accent);transition:all .2s}
+.nav-btn:hover{background:var(--highlight-bg)}
 .nav-btn svg{width:14px;height:14px}
 
 .stats-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:1.5rem;position:relative;z-index:1}
-.stat-box{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-align:center}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-align:center}
 .stat-box .val{font-size:1.5rem;font-weight:800;line-height:1}
 .stat-box .lbl{font-size:.6rem;font-weight:500;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
 
@@ -32,7 +57,7 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
 .intro{background:rgba(6,182,212,.04);border:1px solid rgba(6,182,212,.1);border-radius:var(--radius);padding:1.3rem 1.5rem;margin-bottom:2rem;font-size:.85rem;color:var(--secondary);line-height:1.8}
 .intro strong{color:var(--text)}
 
-.section-title{font-size:.95rem;font-weight:700;margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.section-title{font-size:.95rem;font-weight:700;margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);color:var(--text);display:flex;align-items:center;gap:8px}
 
 .prereq{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:2rem}
 .prereq h3{font-size:.85rem;font-weight:700;margin-bottom:.8rem;color:var(--amber)}
@@ -69,7 +94,7 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
 .doc-content{font-size:.8rem;color:var(--secondary);line-height:1.7}
 .doc-content ul{margin:.4rem 0 0 1.2rem}
 .doc-content li{margin-bottom:.3rem}
-.doc-content code{background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-size:.75rem;font-family:'Consolas','Monaco',monospace;color:var(--emerald-light)}
+.doc-content code{background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-size:.75rem;font-family:'Consolas','Monaco',monospace;color:var(--text-accent)}
 .doc-content a{color:var(--cyan);text-decoration:none}
 .doc-content a:hover{text-decoration:underline}
 
@@ -80,14 +105,14 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
 .warn-box{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:8px;padding:.7rem 1rem;font-size:.75rem;color:var(--amber);margin-top:.6rem;line-height:1.5}
 
 .api-table{width:100%;border-collapse:collapse;margin-top:.5rem;font-size:.75rem}
-.api-table th{text-align:left;padding:6px 10px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--text);font-weight:600;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px}
+.api-table th{text-align:left;padding:6px 10px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-weight:600;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px}
 .api-table td{padding:6px 10px;border:1px solid var(--border);color:var(--secondary);vertical-align:top}
-.api-table td code{background:rgba(255,255,255,.06);padding:1px 4px;border-radius:3px;font-size:.7rem;color:var(--emerald-light)}
+.api-table td code{background:rgba(255,255,255,.06);padding:1px 4px;border-radius:3px;font-size:.7rem;color:var(--text-accent)}
 
-.footer{text-align:center;padding:1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.68rem;margin-top:2rem}
+.footer{text-align:center;padding:1.5rem;border-top:1px solid var(--border);color:var(--text-muted);font-size:.68rem;margin-top:2rem}
 
 ::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-track{background:var(--scrollbar-track)}
 ::-webkit-scrollbar-thumb{background:rgba(6,182,212,.25);border-radius:3px}
 @media(max-width:700px){
   .header{padding:1.2rem 1rem}
@@ -95,6 +120,12 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
   .stats-bar{grid-template-columns:repeat(2,1fr)}
   .prereq-grid{grid-template-columns:1fr}
 }
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s;}
+.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#ffffff;background:rgba(255,255,255,.1);}
+.theme-toggle svg{width:18px;height:18px;}
+.icon-sun{display:none;}
+[data-theme="dark"] .icon-sun{display:block;}
+[data-theme="dark"] .icon-moon{display:none;}
 </style>
 </head>
 <body>
@@ -121,9 +152,9 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
   </div>
   <div class="stats-bar">
     <div class="stat-box"><div class="val" style="color:var(--cyan)">13</div><div class="lbl">Ferramentas</div></div>
-    <div class="stat-box"><div class="val" style="color:var(--blue)">14</div><div class="lbl">APIs Externas</div></div>
+    <div class="stat-box"><div class="val" style="color:var(--accent)">14</div><div class="lbl">APIs Externas</div></div>
     <div class="stat-box"><div class="val" style="color:var(--amber)">6</div><div class="lbl">Pipelines</div></div>
-    <div class="stat-box"><div class="val" style="color:var(--emerald-light)">1</div><div class="lbl">Lib (Chart.js)</div></div>
+    <div class="stat-box"><div class="val" style="color:var(--accent)">1</div><div class="lbl">Lib (Chart.js)</div></div>
     <div class="stat-box"><div class="val" style="color:var(--purple)">100%</div><div class="lbl">HTML Standalone</div></div>
   </div>
 </div>
@@ -166,7 +197,7 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
   <!-- 0. Portal PIPPA -->
   <div class="tool-card" id="portal">
     <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
-      <div class="tool-icon" style="background:rgba(16,185,129,.12);color:var(--emerald-light)">🏠</div>
+      <div class="tool-icon" style="background:rgba(42,79,218,.08);color:var(--text-accent)">🏠</div>
       <div class="tool-info">
         <div class="tool-name">Portal PIPPA</div>
         <div class="tool-desc">Hub central de acesso a todas as ferramentas do observatorio com filtro por perguntas norteadoras</div>
@@ -251,7 +282,7 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
   <!-- 1. Emendas -->
   <div class="tool-card" id="emendas">
     <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
-      <div class="tool-icon" style="background:rgba(16,185,129,.12);color:var(--emerald-light)">💰</div>
+      <div class="tool-icon" style="background:rgba(42,79,218,.08);color:var(--text-accent)">💰</div>
       <div class="tool-info">
         <div class="tool-name">PIPPA Emendas Parlamentares</div>
         <div class="tool-desc">Painel de inteligencia sobre execucao de emendas parlamentares federais</div>
@@ -339,7 +370,7 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
   <!-- 2. Compras -->
   <div class="tool-card" id="compras">
     <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
-      <div class="tool-icon" style="background:rgba(79,140,255,.12);color:var(--blue)">🏛️</div>
+      <div class="tool-icon" style="background:rgba(42,79,218,.08);color:var(--text-accent)">🏛️</div>
       <div class="tool-info">
         <div class="tool-name">PIPPA Compras Publicas</div>
         <div class="tool-desc">Radar de oportunidades de licitacoes para micro e pequenas empresas</div>
@@ -421,7 +452,7 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
   <!-- 3. Legislativo -->
   <div class="tool-card" id="legislativo">
     <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
-      <div class="tool-icon" style="background:rgba(168,85,247,.12);color:var(--purple)">⚖️</div>
+      <div class="tool-icon" style="background:rgba(42,79,218,.08);color:var(--purple)">⚖️</div>
       <div class="tool-info">
         <div class="tool-name">PIPPA Legislativo</div>
         <div class="tool-desc">Monitor de proposicoes legislativas com impacto em pequenas empresas</div>
@@ -619,7 +650,7 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
   <!-- 6. Catalogo de Fontes -->
   <div class="tool-card" id="catalogo">
     <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
-      <div class="tool-icon" style="background:rgba(6,182,212,.12);color:var(--cyan)">📚</div>
+      <div class="tool-icon" style="background:rgba(101,183,251,.08);color:var(--ceu)">📚</div>
       <div class="tool-info">
         <div class="tool-name">Catalogo de Fontes de Dados</div>
         <div class="tool-desc">Catalogo interativo das fontes e cubos analiticos do observatorio</div>
@@ -766,7 +797,7 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
   <!-- 9. TransformaLab -->
   <div class="tool-card" id="transformalab">
     <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
-      <div class="tool-icon" style="background:rgba(168,85,247,.12);color:var(--purple)">🔬</div>
+      <div class="tool-icon" style="background:rgba(42,79,218,.08);color:var(--purple)">🔬</div>
       <div class="tool-info">
         <div class="tool-name">PIPPA TransformaLab</div>
         <div class="tool-desc">Plataforma de laboratorios de experimentacao em politicas publicas</div>
@@ -814,7 +845,7 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
   <!-- 10. Indicadores -->
   <div class="tool-card" id="indicadores">
     <div class="tool-header" onclick="this.parentElement.classList.toggle('open')">
-      <div class="tool-icon" style="background:rgba(16,185,129,.12);color:var(--emerald-light)">🌐</div>
+      <div class="tool-icon" style="background:rgba(42,79,218,.08);color:var(--text-accent)">🌐</div>
       <div class="tool-info">
         <div class="tool-name">Indicadores Ambiente de Negocios</div>
         <div class="tool-desc">5 dashboards tematicos com dados de APIs publicas sobre ambiente de negocios</div>
@@ -1038,5 +1069,6 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
 
 <div class="footer">PIPPA — Documentacao Tecnica de Replicacao | Unidade de Politicas Publicas | Sebrae Nacional | 2027</div>
 
+<script>function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n)}</script>
 </body>
 </html>

@@ -4,55 +4,101 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TransformaLab — PIPPA - Plataforma de Inteligencia em Politicas Publicas Aplicadas | Plataforma de Experimentação</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <style>
+    /* ── Light theme (default) ── */
     :root {
+      --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;
+      --font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif;
+      --bg: #f5f6fa;
+      --surface: #ffffff;
+      --surface2: #f0f1f5;
+      --border: #d8dae5;
+      --text: #1a1d2e;
+      --text-muted: #6b7194;
+      --accent: #2a4fda;
+      --accent-hover: #1e3fb8;
+      --accent-dim: rgba(42,79,218,.10);
+      --accent-ring: rgba(42,79,218,.08);
+      --blue: #2a4fda;
+      --purple: #7c3aed;
+      --orange: #e6890d;
+      --pink: #db2777;
+      --red: #dc2626;
+      --cyan: #0891b2;
+      --lime: #65a30d;
+      --elegibilidade: #2a4fda;
+      --descoberta: #7c3aed;
+      --prototipagem: #e6890d;
+      --piloto: #16a34a;
+      --recomendacao: #0891b2;
+      --institucionalizacao: #db2777;
+      --lab-design: #7c3aed;
+      --lab-pro: #2a4fda;
+      --insight-lab: #e6890d;
+      --success: #16a34a;
+      --highlight-bg: rgba(42,79,218,.06);
+      --chart-text: #6b7194;
+      --chart-grid: rgba(107,113,148,.15);
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(0,0,0,.08);
+    }
+
+    /* ── Dark theme ── */
+    [data-theme="dark"] {
       --bg: #0f1117;
       --surface: #1a1d27;
       --surface2: #242836;
       --border: #2e3348;
       --text: #e4e6ef;
       --text-muted: #8b8fa8;
-      --accent: #10b981;
-      --accent-hover: #34d399;
-      --accent-dim: rgba(16,185,129,.15);
-      --blue: #4f8cff;
-      --purple: #a855f7;
-      --orange: #f59e0b;
+      --accent: #65b7fb;
+      --accent-hover: #8ecafc;
+      --accent-dim: rgba(101,183,251,.12);
+      --accent-ring: rgba(101,183,251,.08);
+      --blue: #65b7fb;
+      --purple: #a78bfa;
+      --orange: #fbbf24;
       --pink: #f472b6;
       --red: #ef4444;
-      --cyan: #06b6d4;
-      --lime: #84cc16;
-      --elegibilidade: #4f8cff;
-      --descoberta: #a855f7;
-      --prototipagem: #f59e0b;
-      --piloto: #10b981;
-      --recomendacao: #06b6d4;
+      --cyan: #22d3ee;
+      --lime: #a3e635;
+      --elegibilidade: #65b7fb;
+      --descoberta: #a78bfa;
+      --prototipagem: #fbbf24;
+      --piloto: #4ade80;
+      --recomendacao: #22d3ee;
       --institucionalizacao: #f472b6;
-      --lab-design: #a855f7;
-      --lab-pro: #4f8cff;
-      --insight-lab: #f59e0b;
-      --success: #22c55e;
-      --radius: 10px;
-      --shadow: 0 2px 12px rgba(0,0,0,0.3);
+      --lab-design: #a78bfa;
+      --lab-pro: #65b7fb;
+      --insight-lab: #fbbf24;
+      --success: #4ade80;
+      --highlight-bg: rgba(101,183,251,.06);
+      --chart-text: #8b8fa8;
+      --chart-grid: rgba(46,51,72,.33);
+      --shadow: 0 2px 12px rgba(0,0,0,.3);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: var(--font-body);
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
     }
 
-    .pippa-home-btn{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
-    .pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff;}
+    .pippa-home-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85);padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
+    .pippa-home-btn:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.5);color:#fff;}
     .pippa-home-btn svg{width:13px;height:13px;}
 
     /* Header */
     .header {
-      background: linear-gradient(135deg, #1a1d27 0%, #242836 100%);
+      background: linear-gradient(45deg, var(--atlantico), var(--azul-sebrae));
       border-bottom: 1px solid var(--border);
       padding: 16px 24px;
       display: flex;
@@ -68,15 +114,13 @@
     .logo {
       font-size: 22px;
       font-weight: 700;
-      background: linear-gradient(135deg, #10b981, #a855f7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #ffffff;
       letter-spacing: -0.5px;
     }
 
     .logo-sub {
       font-size: 13px;
-      color: var(--text-muted);
+      color: rgba(255,255,255,.6);
       font-weight: 400;
     }
 
@@ -111,7 +155,7 @@
 
     /* Hero */
     .hero {
-      background: linear-gradient(135deg, rgba(16,185,129,.08) 0%, rgba(168,85,247,.08) 100%);
+      background: linear-gradient(135deg, var(--accent-ring) 0%, var(--highlight-bg) 100%);
       border-bottom: 1px solid var(--border);
       padding: 40px 24px;
       text-align: center;
@@ -128,16 +172,17 @@
       font-size: 12px;
       font-weight: 600;
       margin-bottom: 16px;
-      border: 1px solid rgba(16,185,129,.2);
+      border: 1px solid var(--border);
     }
 
     .hero h1 {
       font-size: 28px;
       font-weight: 700;
       margin-bottom: 8px;
-      background: linear-gradient(135deg, #e4e6ef, #a7f3d0);
+      background: linear-gradient(135deg, var(--text), var(--accent));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .hero p {
@@ -200,7 +245,7 @@
     .action-card:hover {
       border-color: var(--accent);
       transform: translateY(-2px);
-      box-shadow: 0 4px 20px rgba(16,185,129,.15);
+      box-shadow: 0 4px 20px var(--accent-dim);
     }
 
     .action-card .ac-icon {
@@ -264,7 +309,7 @@
 
     .btn {
       background: var(--accent);
-      color: #fff;
+      color: #ffffff;
       border: none;
       padding: 8px 20px;
       border-radius: var(--radius);
@@ -384,7 +429,7 @@
 
     .journey-step:hover .step-circle {
       transform: scale(1.15);
-      box-shadow: 0 0 20px rgba(16,185,129,.3);
+      box-shadow: 0 0 20px var(--accent-dim);
     }
 
     .journey-step .step-gate {
@@ -465,7 +510,7 @@
 
     .exp-item:hover {
       border-color: var(--accent);
-      background: rgba(16,185,129,.05);
+      background: var(--highlight-bg);
     }
 
     .exp-badge {
@@ -478,11 +523,11 @@
       white-space: nowrap;
     }
 
-    .exp-badge.piloto { background: rgba(16,185,129,.15); color: var(--accent); }
-    .exp-badge.prototipo { background: rgba(168,85,247,.15); color: var(--purple); }
-    .exp-badge.descoberta { background: rgba(79,140,255,.15); color: var(--blue); }
-    .exp-badge.recomendacao { background: rgba(6,182,212,.15); color: var(--cyan); }
-    .exp-badge.institucionalizado { background: rgba(244,114,182,.15); color: var(--pink); }
+    .exp-badge.piloto { background: var(--accent-dim); color: var(--piloto); }
+    .exp-badge.prototipo { background: var(--highlight-bg); color: var(--purple); }
+    .exp-badge.descoberta { background: var(--accent-ring); color: var(--blue); }
+    .exp-badge.recomendacao { background: var(--accent-ring); color: var(--cyan); }
+    .exp-badge.institucionalizado { background: var(--highlight-bg); color: var(--pink); }
 
     .exp-info { flex: 1; }
     .exp-info h4 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
@@ -528,9 +573,9 @@
       text-transform: uppercase;
     }
 
-    .call-status.aberta { background: rgba(34,197,94,.15); color: var(--success); }
-    .call-status.encerrada { background: rgba(139,143,168,.15); color: var(--text-muted); }
-    .call-status.avaliacao { background: rgba(245,158,11,.15); color: var(--orange); }
+    .call-status.aberta { background: var(--accent-dim); color: var(--success); }
+    .call-status.encerrada { background: var(--highlight-bg); color: var(--text-muted); }
+    .call-status.avaliacao { background: var(--highlight-bg); color: var(--orange); }
 
     .call-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
 
@@ -577,7 +622,7 @@
 
     .lab-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 20px rgba(0,0,0,.3);
+      box-shadow: var(--shadow);
     }
 
     .lab-card .lab-icon {
@@ -629,7 +674,7 @@
     }
 
     .results-table tr:hover td {
-      background: rgba(16,185,129,.03);
+      background: var(--highlight-bg);
     }
 
     .impact-bar {
@@ -669,7 +714,7 @@
     .territory-cell:hover {
       transform: scale(1.2);
       z-index: 2;
-      border-color: #fff;
+      border-color: var(--text);
     }
 
     .territory-cell.active { opacity: 1; }
@@ -683,7 +728,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0,0,0,.7);
+      background: rgba(0,0,0,.5);
       z-index: 500;
       align-items: center;
       justify-content: center;
@@ -854,13 +899,14 @@
     .forum-badge { font-size: 10px; background: var(--accent-dim); color: var(--accent); padding: 2px 8px; border-radius: 10px; font-weight: 600; }
 
     /* Info modal button */
-    .info-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .info-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .info-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); background: transparent; color: rgba(255,255,255,.85); font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .info-btn:hover { border-color: rgba(255,255,255,.5); color: #ffffff; }
 
-    .info-modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(15,17,23,0.8); z-index: 600; align-items: center; justify-content: center; }
+    .info-modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 600; align-items: center; justify-content: center; }
+    [data-theme="dark"] .info-modal-backdrop { background: rgba(15,17,23,0.8); }
     .info-modal-backdrop.active { display: flex; }
     .info-modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; max-width: 640px; width: 92%; max-height: 82vh; overflow-y: auto; }
-    .info-modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; background: linear-gradient(135deg, #10b981, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .info-modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; background: linear-gradient(135deg, var(--accent), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .info-modal h3 { font-size: 13px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 16px; margin-bottom: 8px; }
     .info-modal ul { list-style: none; padding: 0; }
     .info-modal li { font-size: 13px; color: var(--text-muted); padding: 4px 0; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
@@ -868,12 +914,19 @@
     .info-modal .info-footer { margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.6; }
     .info-modal .info-close { float: right; background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0 4px; }
     .info-modal .info-close:hover { color: var(--text); }
-    .info-warning { background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.2); border-radius: 8px; padding: 12px 16px; margin-top: 16px; font-size: 12px; color: var(--orange); line-height: 1.5; }
+    .info-warning { background: var(--highlight-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin-top: 16px; font-size: 12px; color: var(--orange); line-height: 1.5; }
 
     /* Animate */
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .animate-in { animation: fadeIn 0.4s ease-out; }
-  </style>
+  .theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s;}
+.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#ffffff;background:rgba(255,255,255,.1);}
+.theme-toggle svg{width:18px;height:18px;}
+.icon-sun{display:block;}
+.icon-moon{display:none;}
+[data-theme="dark"] .icon-sun{display:none;}
+[data-theme="dark"] .icon-moon{display:block;}
+</style>
 </head>
 <body>
 
@@ -885,8 +938,10 @@
       <div class="logo-sub">PIPPA - Plataforma de Inteligencia em Politicas Publicas Aplicadas &mdash; Plataforma de Experimentacao</div>
     </div>
     <button class="info-btn" onclick="toggleInfoModal()" title="Sobre o painel">i</button>
+    <button class="info-btn" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp" style="font-size:16px">📤</button>
   </div>
   <div class="header-controls">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
     <span style="font-size:12px;color:var(--text-muted);">Dados sinteticos | Set/2026</span>
   </div>
@@ -922,22 +977,22 @@
     <!-- Action Cards -->
     <div class="action-cards animate-in">
       <div class="action-card" onclick="switchTab('chamadas')">
-        <div class="ac-icon" style="background:rgba(16,185,129,.12);color:var(--accent);">&#128221;</div>
+        <div class="ac-icon" style="background:var(--accent-ring);color:var(--accent);">&#128221;</div>
         <h3>Submeter Desafio</h3>
         <p>Proponha um desafio regulatorio para experimentacao</p>
       </div>
       <div class="action-card" onclick="switchTab('experimentos')">
-        <div class="ac-icon" style="background:rgba(79,140,255,.12);color:var(--blue);">&#128300;</div>
+        <div class="ac-icon" style="background:var(--accent-ring);color:var(--accent);">&#128300;</div>
         <h3>Participar de Piloto</h3>
         <p>Contribua com um experimento ativo em seu territorio</p>
       </div>
       <div class="action-card" onclick="switchTab('experimentos')">
-        <div class="ac-icon" style="background:rgba(168,85,247,.12);color:var(--purple);">&#128161;</div>
+        <div class="ac-icon" style="background:var(--highlight-bg);color:var(--purple);">&#128161;</div>
         <h3>Ver Experimentos Ativos</h3>
         <p>Acompanhe os 12 experimentos em andamento</p>
       </div>
       <div class="action-card" onclick="switchTab('resultados')">
-        <div class="ac-icon" style="background:rgba(245,158,11,.12);color:var(--orange);">&#128218;</div>
+        <div class="ac-icon" style="background:var(--highlight-bg);color:var(--orange);">&#128218;</div>
         <h3>Biblioteca de Aprendizados</h3>
         <p>Acesse resultados e evidencias de experimentos</p>
       </div>
@@ -1718,7 +1773,7 @@ function showEtapaDetail(etapa){
 function renderLabCards(){
   document.getElementById('labCards').innerHTML = LAB_MODELS.map(lab => `
     <div class="lab-card ${lab.cls}" onclick="showLabDetail('${lab.nome}')">
-      <div class="lab-icon" style="background:${lab.color}22;color:${lab.color};">${lab.icon}</div>
+      <div class="lab-icon" style="background:var(--accent-ring);color:${lab.color};">${lab.icon}</div>
       <h3>${lab.nome}</h3>
       <div class="lab-desc">${lab.desc}</div>
       <div class="lab-stat"><span>Experimentos</span><span style="color:${lab.color};">${EXPERIMENTOS.filter(e=>e.lab===lab.nome).length}</span></div>
@@ -1749,22 +1804,84 @@ function showLabDetail(labNome){
 }
 
 // ============================================================
+// CHART HELPERS — theme-aware colors
+// ============================================================
+
+function cssVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue('--' + name).trim();
+}
+
+function cssVarAlpha(name, alpha) {
+  const hex = cssVar(name);
+  if (!hex || hex.charAt(0) !== '#') return 'rgba(0,0,0,' + alpha + ')';
+  const r = parseInt(hex.slice(1,3), 16);
+  const g = parseInt(hex.slice(3,5), 16);
+  const b = parseInt(hex.slice(5,7), 16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+}
+
+function chartOpts(yLabel) {
+  const ct = cssVar('chart-text');
+  const cg = cssVar('chart-grid') || cssVarAlpha('border', 0.33);
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true, position: 'bottom', labels: { color: ct, font: { size: 11 }, padding: 14 } }
+    },
+    scales: {
+      x: { ticks: { color: ct, font: { size: 11 } }, grid: { color: cg } },
+      y: { beginAtZero: true, ticks: { color: ct, font: { size: 11 } }, grid: { color: cg }, title: yLabel ? { display: true, text: yLabel, color: ct, font: { size: 11 } } : { display: false } }
+    }
+  };
+}
+
+function radarOpts(showLegend) {
+  const ct = cssVar('chart-text');
+  const cg = cssVar('chart-grid') || cssVarAlpha('border', 0.33);
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      r: {
+        beginAtZero: true,
+        max: 100,
+        ticks: { color: ct, font: { size: 10 }, backdropColor: 'transparent' },
+        grid: { color: cg },
+        pointLabels: { color: ct, font: { size: 11 } },
+        angleLines: { color: cg }
+      }
+    },
+    plugins: { legend: showLegend ? { position: 'bottom', labels: { color: ct, font: { size: 11 }, padding: 14 } } : { display: false } }
+  };
+}
+
+function doughnutOpts() {
+  const ct = cssVar('chart-text');
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { color: ct, font: { size: 11 }, padding: 14 } } },
+    cutout: '55%'
+  };
+}
+
+// ============================================================
 // CHARTS — VISAO GERAL
 // ============================================================
 
 function renderOverviewCharts(){
   // Etapas bar chart
   const etapaCounts = ETAPAS.map(et => EXPERIMENTOS.filter(e => e.etapa === et.nome).length);
+  const etapaVarNames = ['elegibilidade','descoberta','prototipagem','piloto','recomendacao','institucionalizacao'];
   charts.etapas = new Chart(document.getElementById('chartEtapas'), {
     type: 'bar',
     data: {
       labels: ETAPAS.map(e => e.nome),
       datasets: [{
         data: etapaCounts,
-        backgroundColor: ETAPAS.map(e => e.cor.replace('var(--','').replace(')',''))
-          .map(v => getComputedStyle(document.documentElement).getPropertyValue('--'+v).trim() + '99'),
-        borderColor: ETAPAS.map(e => e.cor.replace('var(--','').replace(')',''))
-          .map(v => getComputedStyle(document.documentElement).getPropertyValue('--'+v).trim()),
+        backgroundColor: etapaVarNames.map(n => cssVarAlpha(n, 0.6)),
+        borderColor: etapaVarNames.map(n => cssVar(n)),
         borderWidth: 1,
         borderRadius: 6
       }]
@@ -1779,19 +1896,12 @@ function renderOverviewCharts(){
       labels: LAB_MODELS.map(l => l.nome),
       datasets: [{
         data: LAB_MODELS.map(l => EXPERIMENTOS.filter(e => e.lab === l.nome).length),
-        backgroundColor: ['#a855f799','#4f8cff99','#f59e0b99'],
-        borderColor: ['#a855f7','#4f8cff','#f59e0b'],
+        backgroundColor: [cssVarAlpha('lab-design',0.6), cssVarAlpha('lab-pro',0.6), cssVarAlpha('insight-lab',0.6)],
+        borderColor: [cssVar('lab-design'), cssVar('lab-pro'), cssVar('insight-lab')],
         borderWidth: 2
       }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'bottom', labels: { color: '#8b8fa8', font: { size: 11 }, padding: 16 } }
-      },
-      cutout: '60%'
-    }
+    options: doughnutOpts()
   });
 
   // Timeline
@@ -1806,22 +1916,22 @@ function renderOverviewCharts(){
         {
           label: 'Acumulado',
           data: cumulative,
-          borderColor: '#10b981',
-          backgroundColor: 'rgba(16,185,129,.1)',
+          borderColor: cssVar('accent'),
+          backgroundColor: cssVarAlpha('accent', 0.08),
           fill: true,
           tension: 0.4,
           pointRadius: 4,
-          pointBackgroundColor: '#10b981'
+          pointBackgroundColor: cssVar('accent')
         },
         {
           label: 'Novos/mes',
           data: newPerMonth,
-          borderColor: '#4f8cff',
-          backgroundColor: 'rgba(79,140,255,.1)',
+          borderColor: cssVar('blue'),
+          backgroundColor: cssVarAlpha('blue', 0.1),
           fill: true,
           tension: 0.4,
           pointRadius: 4,
-          pointBackgroundColor: '#4f8cff'
+          pointBackgroundColor: cssVar('blue')
         }
       ]
     },
@@ -1836,42 +1946,14 @@ function renderOverviewCharts(){
       datasets: [{
         label: 'Media dos Experimentos',
         data: [82, 65, 78, 71, 58, 74],
-        borderColor: '#10b981',
-        backgroundColor: 'rgba(16,185,129,.15)',
-        pointBackgroundColor: '#10b981',
+        borderColor: cssVar('accent'),
+        backgroundColor: cssVarAlpha('accent', 0.15),
+        pointBackgroundColor: cssVar('accent'),
         pointRadius: 4
       }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        r: {
-          beginAtZero: true,
-          max: 100,
-          ticks: { color: '#8b8fa8', font: { size: 10 }, backdropColor: 'transparent' },
-          grid: { color: '#2e334855' },
-          pointLabels: { color: '#8b8fa8', font: { size: 11 } },
-          angleLines: { color: '#2e334855' }
-        }
-      },
-      plugins: { legend: { display: false } }
-    }
+    options: radarOpts(false)
   });
-}
-
-function chartOpts(yLabel){
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: true, position: 'bottom', labels: { color: '#8b8fa8', font: { size: 11 }, padding: 14 } }
-    },
-    scales: {
-      x: { ticks: { color: '#8b8fa8', font: { size: 11 } }, grid: { color: '#2e334833' } },
-      y: { beginAtZero: true, ticks: { color: '#8b8fa8', font: { size: 11 } }, grid: { color: '#2e334833' }, title: yLabel ? { display: true, text: yLabel, color: '#8b8fa8', font: { size: 11 } } : { display: false } }
-    }
-  };
 }
 
 // ============================================================
@@ -2009,14 +2091,16 @@ function showExpDetail(id){
 
   if(hasResults){
     setTimeout(() => {
+      const ct = cssVar('chart-text');
+      const cg = cssVar('chart-grid') || cssVarAlpha('border', 0.33);
       new Chart(document.getElementById('modalChart'), {
         type: 'bar',
         data: {
           labels: ['Antes','Depois'],
           datasets: [{
             data: [e.antes, e.depois],
-            backgroundColor: ['#ef444499','#10b98199'],
-            borderColor: ['#ef4444','#10b981'],
+            backgroundColor: [cssVarAlpha('red',0.6), cssVarAlpha('success',0.6)],
+            borderColor: [cssVar('red'), cssVar('success')],
             borderWidth: 2,
             borderRadius: 8
           }]
@@ -2026,8 +2110,8 @@ function showExpDetail(id){
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: {
-            x: { ticks: { color: '#8b8fa8' }, grid: { display: false } },
-            y: { beginAtZero: true, ticks: { color: '#8b8fa8' }, grid: { color: '#2e334833' }, title: { display: true, text: e.indicador + ' (' + e.unidade + ')', color: '#8b8fa8', font: { size: 11 } } }
+            x: { ticks: { color: ct }, grid: { display: false } },
+            y: { beginAtZero: true, ticks: { color: ct }, grid: { color: cg }, title: { display: true, text: e.indicador + ' (' + e.unidade + ')', color: ct, font: { size: 11 } } }
           }
         }
       });
@@ -2061,17 +2145,12 @@ function renderChamadas(){
       labels: ['Abertas','Em Avaliacao','Encerradas'],
       datasets: [{
         data: statusCounts,
-        backgroundColor: ['#22c55e99','#f59e0b99','#8b8fa899'],
-        borderColor: ['#22c55e','#f59e0b','#8b8fa8'],
+        backgroundColor: [cssVarAlpha('success',0.6), cssVarAlpha('orange',0.6), cssVarAlpha('text-muted',0.6)],
+        borderColor: [cssVar('success'), cssVar('orange'), cssVar('text-muted')],
         borderWidth: 2
       }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom', labels: { color: '#8b8fa8', font: { size: 11 }, padding: 14 } } },
-      cutout: '55%'
-    }
+    options: doughnutOpts()
   });
 }
 
@@ -2111,17 +2190,18 @@ function renderTerritories(){
   const filtered = getFilteredUFs();
   const filteredUFSet = new Set(filtered.map(u => u.uf));
 
-  // Grid
-  const matColors = {
-    'Avancado': 'var(--accent)',
-    'Intermediario': 'var(--blue)',
-    'Inicial': 'var(--orange)',
-    'Planejamento': 'var(--border)'
+  // Grid — map maturidade to CSS var names
+  const matVarNames = {
+    'Avancado': 'accent',
+    'Intermediario': 'blue',
+    'Inicial': 'orange',
+    'Planejamento': 'border'
   };
 
   document.getElementById('territoryGrid').innerHTML = ufData.map(u => {
     const isActive = filteredUFSet.has(u.uf);
-    return `<div class="territory-cell ${isActive ? 'active' : 'inactive'}" style="background:${matColors[u.maturidade]}33;color:${matColors[u.maturidade]};" title="${u.nome} (${u.maturidade})" onclick="showTerritoryDetail('${u.uf}')">${u.uf}</div>`;
+    const vn = matVarNames[u.maturidade] || 'border';
+    return `<div class="territory-cell ${isActive ? 'active' : 'inactive'}" style="background:${cssVarAlpha(vn,0.2)};color:var(--${vn});" title="${u.nome} (${u.maturidade})" onclick="showTerritoryDetail('${u.uf}')">${u.uf}</div>`;
   }).join('');
 
   // Table
@@ -2140,7 +2220,7 @@ function renderTerritories(){
   // Chart Regiao
   if(charts.regiao) charts.regiao.destroy();
   const regioes = ['Norte','Nordeste','Centro-Oeste','Sudeste','Sul'];
-  const regColors = ['#06b6d4','#f59e0b','#a855f7','#4f8cff','#10b981'];
+  const regVarNames = ['cyan','orange','purple','blue','accent'];
   charts.regiao = new Chart(document.getElementById('chartRegiao'), {
     type: 'bar',
     data: {
@@ -2148,8 +2228,8 @@ function renderTerritories(){
       datasets: [{
         label: 'Experimentos',
         data: regioes.map(r => filtered.filter(u => u.regiao === r).reduce((s,u) => s + u.experimentos, 0)),
-        backgroundColor: regColors.map(c => c + '99'),
-        borderColor: regColors,
+        backgroundColor: regVarNames.map(n => cssVarAlpha(n, 0.6)),
+        borderColor: regVarNames.map(n => cssVar(n)),
         borderWidth: 1,
         borderRadius: 6
       }]
@@ -2210,16 +2290,16 @@ function renderResults(){
         {
           label: 'Antes',
           data: filtered.map(r => r.antes),
-          backgroundColor: '#ef444466',
-          borderColor: '#ef4444',
+          backgroundColor: cssVarAlpha('red', 0.4),
+          borderColor: cssVar('red'),
           borderWidth: 1,
           borderRadius: 4
         },
         {
           label: 'Depois',
           data: filtered.map(r => r.depois),
-          backgroundColor: '#10b98166',
-          borderColor: '#10b981',
+          backgroundColor: cssVarAlpha('success', 0.4),
+          borderColor: cssVar('success'),
           borderWidth: 1,
           borderRadius: 4
         }
@@ -2237,17 +2317,12 @@ function renderResults(){
       labels: ['Alto Impacto','Medio Impacto','Baixo Impacto'],
       datasets: [{
         data: impactCounts,
-        backgroundColor: ['#10b98199','#f59e0b99','#4f8cff99'],
-        borderColor: ['#10b981','#f59e0b','#4f8cff'],
+        backgroundColor: [cssVarAlpha('success',0.6), cssVarAlpha('orange',0.6), cssVarAlpha('blue',0.6)],
+        borderColor: [cssVar('success'), cssVar('orange'), cssVar('blue')],
         borderWidth: 2
       }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom', labels: { color: '#8b8fa8', font: { size: 11 }, padding: 14 } } },
-      cutout: '55%'
-    }
+    options: doughnutOpts()
   });
 }
 
@@ -2280,36 +2355,22 @@ function renderHub(){
         {
           label: 'MA (referencia)',
           data: [90, 85, 78, 92, 88],
-          borderColor: '#10b981',
-          backgroundColor: 'rgba(16,185,129,.1)',
-          pointBackgroundColor: '#10b981',
+          borderColor: cssVar('accent'),
+          backgroundColor: cssVarAlpha('accent', 0.08),
+          pointBackgroundColor: cssVar('accent'),
           pointRadius: 4
         },
         {
           label: 'Media Nacional',
           data: [62, 55, 48, 58, 52],
-          borderColor: '#4f8cff',
-          backgroundColor: 'rgba(79,140,255,.1)',
-          pointBackgroundColor: '#4f8cff',
+          borderColor: cssVar('purple'),
+          backgroundColor: cssVarAlpha('purple', 0.1),
+          pointBackgroundColor: cssVar('purple'),
           pointRadius: 4
         }
       ]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        r: {
-          beginAtZero: true,
-          max: 100,
-          ticks: { color: '#8b8fa8', font: { size: 10 }, backdropColor: 'transparent' },
-          grid: { color: '#2e334855' },
-          pointLabels: { color: '#8b8fa8', font: { size: 11 } },
-          angleLines: { color: '#2e334855' }
-        }
-      },
-      plugins: { legend: { position: 'bottom', labels: { color: '#8b8fa8', font: { size: 11 }, padding: 14 } } }
-    }
+    options: radarOpts(true)
   });
 
   // Formacao
@@ -2322,22 +2383,22 @@ function renderHub(){
         {
           label: 'Agentes Formados',
           data: [24,48,72,105,132,156],
-          borderColor: '#a855f7',
-          backgroundColor: 'rgba(168,85,247,.1)',
+          borderColor: cssVar('purple'),
+          backgroundColor: cssVarAlpha('purple', 0.08),
           fill: true,
           tension: 0.4,
           pointRadius: 4,
-          pointBackgroundColor: '#a855f7'
+          pointBackgroundColor: cssVar('purple')
         },
         {
           label: 'Labs Ativos',
           data: [5,9,14,19,23,27],
-          borderColor: '#10b981',
-          backgroundColor: 'rgba(16,185,129,.1)',
+          borderColor: cssVar('accent'),
+          backgroundColor: cssVarAlpha('accent', 0.08),
           fill: true,
           tension: 0.4,
           pointRadius: 4,
-          pointBackgroundColor: '#10b981'
+          pointBackgroundColor: cssVar('accent')
         }
       ]
     },
@@ -2411,6 +2472,82 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal();
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', init);
+</script>
+<script>
+// Theme toggle with chart re-render
+function toggleTheme(){
+  var h=document.documentElement;
+  var cur=h.getAttribute('data-theme');
+  var n=(cur==='dark')?'light':'dark';
+  h.setAttribute('data-theme',n);
+  localStorage.setItem('pippa-theme',n);
+  rebuildAllCharts();
+}
+function rebuildAllCharts(){
+  Object.keys(charts).forEach(function(k){ if(charts[k] && charts[k].destroy) charts[k].destroy(); });
+  charts={};
+  renderOverviewCharts();
+  renderChamadas();
+  renderTerritories();
+  renderResults();
+  renderHub();
+}
+function exportWhatsApp(){
+  const activeTabEl = document.querySelector('.tab.active');
+  const activeTab = activeTabEl ? activeTabEl.dataset.tab : 'visao-geral';
+  const tabLabel = activeTabEl ? activeTabEl.textContent.trim() : 'Visão Geral';
+
+  const totalExp = EXPERIMENTOS.length;
+  const pilotos = EXPERIMENTOS.filter(e => e.etapa === 'Piloto');
+  const concluidos = RESULTADOS.filter(r => r.variacao !== null);
+  const ufsAtivos = new Set(EXPERIMENTOS.map(e => e.uf)).size;
+  const chamadasAbertas = CHAMADAS.filter(c => c.status === 'Aberta');
+  const participantes = EXPERIMENTOS.reduce((s,e) => s + e.participantes, 0);
+
+  let text = `*PIPPA — Plataforma de Inteligência em Políticas Públicas Aplicadas*\n`;
+  text += `*TransformaLab — Plataforma de Experimentação*\n`;
+  text += `Aba ativa: ${tabLabel}\n`;
+  text += `${totalExp} experimentos · ${pilotos.length} pilotos ativos · ${ufsAtivos} territórios · ${participantes.toLocaleString('pt-BR')} participantes\n\n`;
+
+  text += `*Painel Estratégico*\n`;
+  text += `• Chamadas abertas: ${chamadasAbertas.length} (${chamadasAbertas.map(c => c.tema).join(', ') || 'nenhuma'})\n`;
+  text += `• Resultados mensurados: ${concluidos.length} experimentos com antes/depois\n`;
+  const alto = concluidos.filter(r => r.impacto === 'Alto');
+  if (alto.length > 0) text += `• Alto impacto: ${alto.length} — ${alto.map(r => r.tema).join(', ')}\n`;
+
+  const etapas = {};
+  EXPERIMENTOS.forEach(e => { etapas[e.etapa] = (etapas[e.etapa] || 0) + 1; });
+  text += `• Etapas: ${Object.entries(etapas).map(([k,v]) => `${k} (${v})`).join(', ')}\n\n`;
+
+  if (concluidos.length > 0) {
+    text += `*Destaques de Resultados*\n`;
+    for (const r of concluidos.slice(0, 5)) {
+      const sinal = r.variacao > 0 ? '+' : '';
+      text += `• ${r.titulo} (${r.uf}): ${r.indicador} ${r.antes}${r.unidade} → ${r.depois}${r.unidade} (${sinal}${r.variacao}${r.unidade === '%' ? 'pp' : '%'})\n`;
+    }
+    text += `\n`;
+  }
+
+  if (pilotos.length > 0) {
+    text += `*Pilotos em Andamento*\n`;
+    for (const p of pilotos) {
+      text += `• ${p.titulo} (${p.uf}) — ${p.tema}, ${p.participantes} participantes\n`;
+    }
+    text += `\n`;
+  }
+
+  text += `_Fonte: PIPPA TransformaLab · Dados sintéticos | Set/2026_\n`;
+  text += `_Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}_`;
+
+  const url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text);
+  window.open(url, '_blank');
+}
+
+// Restore saved theme on load
+(function(){
+  var saved=localStorage.getItem('pippa-theme');
+  if(saved==='dark') document.documentElement.setAttribute('data-theme','dark');
+})();
 </script>
 </body>
 </html>

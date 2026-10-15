@@ -4,26 +4,69 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PIPPA Stakeholders — Mapa Parlamentar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <style>
-:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#242836;--border:#2e3348;--text:#e4e6ef;--text2:#c4c7d4;--text3:#8b8fa8;--accent:#f59e0b;--accent2:#fbbf24;--purple:#a855f7;--blue:#4f8cff;--emerald:#22c55e;--red:#ef4444;--cyan:#06b6d4;--pink:#f472b6;--camara:#4f8cff;--senado:#a855f7;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.3)}
+:root{
+  --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;
+  --font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif;
+  --bg:#eff3ee;--surface:#ffffff;--surface2:#f5f7f4;
+  --border:rgba(0,0,0,.1);--border-hover:rgba(42,79,218,.35);
+  --text:#1a1a1a;--text-muted:#6b7280;--text-accent:#2a4fda;
+  --accent:#2a4fda;--accent-hover:#1e3fb8;--accent-light:rgba(42,79,218,.08);
+  --emerald:#61b466;--purple:#be64e3;--blue:#2a4fda;--amber:#f39d72;--cyan:#65b7fb;--red:#e0565d;--pink:#ff80c8;--teal:#61b466;
+  --emerald-light:#9ff0bd;--purple-light:#be64e3;
+  --text2:#374151;--text3:#6b7280;
+  --secondary:#6b7280;--muted:#6b7280;
+  --accent2:#1e3fb8;--camara:#4f8cff;--senado:#2a4fda;
+  --highlight-bg:rgba(42,79,218,.06);--accent-ring:rgba(42,79,218,.12);
+  --chart-grid:rgba(0,0,0,.06);
+  --emerald-tint:rgba(97,180,102,.15);--blue-tint:rgba(42,79,218,.15);--purple-tint:rgba(190,100,227,.15);
+  --red-tint:rgba(224,86,93,.15);--cyan-tint:rgba(101,183,251,.15);--amber-tint:rgba(243,157,114,.12);
+  --backdrop:rgba(15,17,23,.85);--modal-backdrop:rgba(0,0,0,.6);
+  --shadow:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 4px 12px rgba(0,0,0,.08);
+  --scrollbar-track:#eff3ee;--scrollbar-thumb:rgba(42,79,218,.2);
+  --header-bg:linear-gradient(45deg,var(--atlantico),var(--azul-sebrae));
+  --radius:12px;
+}
+[data-theme="dark"]{
+  --bg:#080f1e;--surface:#0f1a2e;--surface2:#162038;
+  --border:rgba(255,255,255,.08);--border-hover:rgba(101,183,251,.35);
+  --text:#eff3ee;--text-muted:#8b9dc3;--text-accent:#65b7fb;
+  --accent:#65b7fb;--accent-hover:#90ccfd;--accent-light:rgba(101,183,251,.08);
+  --text2:#a5b4d4;--text3:#8b9dc3;
+  --secondary:#8b9dc3;--muted:#8b9dc3;
+  --accent2:#90ccfd;--camara:#4f8cff;--senado:#65b7fb;
+  --highlight-bg:rgba(101,183,251,.08);--accent-ring:rgba(101,183,251,.12);
+  --chart-grid:rgba(255,255,255,.06);
+  --emerald-tint:rgba(97,180,102,.15);--blue-tint:rgba(101,183,251,.15);--purple-tint:rgba(190,100,227,.15);
+  --red-tint:rgba(224,86,93,.15);--cyan-tint:rgba(101,183,251,.15);--amber-tint:rgba(243,157,114,.12);
+  --backdrop:rgba(15,17,23,.85);--modal-backdrop:rgba(0,0,0,.6);
+  --shadow:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 4px 12px rgba(0,0,0,.4);
+  --scrollbar-track:#080f1e;--scrollbar-thumb:rgba(42,79,218,.3);
+  --header-bg:linear-gradient(45deg,#0b2574,#1e3fb8);
+}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);transition:background .3s,color .3s;min-height:100vh}
 
-.header{background:linear-gradient(135deg,#1a1d27,#242836);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header{background:var(--header-bg);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .header-left{display:flex;align-items:center;gap:16px}
-.logo{font-size:22px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
-.logo-sub{font-size:13px;color:var(--text3);font-weight:400}
+.logo{font-size:22px;font-weight:700;color:#ffffff;letter-spacing:-.5px}
+.logo-sub{font-size:13px;color:rgba(255,255,255,.6);font-weight:400}
 .header-controls{display:flex;align-items:center;gap:12px}
 .btn{padding:8px 16px;border-radius:var(--radius);font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
-.btn-primary{background:var(--accent);color:#000}
-.btn-primary:hover{background:var(--accent2)}
+.btn-primary{background:var(--accent);color:#fff}
+[data-theme="dark"] .btn-primary{color:#080f1e}
+.btn-primary:hover{background:var(--accent-hover)}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
 .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
-.btn-back{background:transparent;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:6px 12px;text-decoration:none;border-radius:var(--radius);display:inline-flex;align-items:center;gap:4px}
-.btn-back:hover{border-color:var(--accent);color:var(--accent)}
-.info-btn{background:transparent;border:1px solid var(--border);color:var(--text3);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
-.info-btn:hover{border-color:var(--accent);color:var(--accent)}
-.methodology-backdrop{display:none;position:fixed;inset:0;background:rgba(15,17,23,.85);z-index:300;align-items:flex-start;justify-content:center;padding-top:40px;overflow-y:auto}
+.btn-back{background:transparent;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85);font-size:11px;padding:6px 12px;text-decoration:none;border-radius:var(--radius);display:inline-flex;align-items:center;gap:4px}
+.btn-back:hover{border-color:rgba(255,255,255,.5);color:#ffffff}
+.info-btn{background:transparent;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.info-btn:hover{border-color:rgba(255,255,255,.5);color:#ffffff}
+.methodology-backdrop{display:none;position:fixed;inset:0;background:var(--backdrop);z-index:300;align-items:flex-start;justify-content:center;padding-top:40px;overflow-y:auto}
 .methodology-backdrop.active{display:flex}
 .methodology-modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;max-width:820px;width:92%;margin-bottom:40px}
 .methodology-modal h2{font-size:20px;margin-bottom:20px;color:var(--accent)}
@@ -39,7 +82,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .filter-group{display:flex;flex-direction:column;gap:4px}
 .filter-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;color:var(--text2);cursor:pointer;text-align:left;transition:all .15s}
 .filter-btn:hover{border-color:var(--accent)}
-.filter-btn.active{background:rgba(245,158,11,.1);border-color:var(--accent);color:var(--accent)}
+.filter-btn.active{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
 .filter-count{float:right;font-size:10px;color:var(--text3);background:var(--bg);padding:1px 6px;border-radius:4px}
 .sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);text-align:center;line-height:1.6}
 
@@ -58,7 +101,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .search-box:focus{outline:none;border-color:var(--accent)}
 
 .parl-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;transition:all .2s}
-.parl-card:hover{border-color:rgba(245,158,11,.3)}
+.parl-card:hover{border-color:var(--border-hover)}
 .parl-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}
 .parl-photo{width:48px;height:48px;border-radius:50%;background:var(--surface2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text3);overflow:hidden;flex-shrink:0}
 .parl-photo img{width:100%;height:100%;object-fit:cover}
@@ -66,8 +109,8 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .parl-name{font-size:14px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .parl-meta{font-size:11px;color:var(--text3)}
 .parl-casa{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px}
-.casa-camara{background:rgba(79,140,255,.12);color:var(--camara)}
-.casa-senado{background:rgba(168,85,247,.12);color:var(--senado)}
+.casa-camara{background:var(--blue-tint);color:var(--camara)}
+.casa-senado{background:var(--accent-light);color:var(--senado)}
 .parl-partido{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:var(--surface2);color:var(--text2);margin-left:4px}
 .parl-expand{color:var(--text3);font-size:12px;transition:transform .2s}
 .parl-card.expanded .parl-expand{transform:rotate(180deg)}
@@ -79,16 +122,16 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .detail-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);display:block;margin-bottom:2px}
 .detail-value{font-size:12px;color:var(--text)}
 
-.frente-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;margin:2px;background:rgba(245,158,11,.1);color:var(--accent)}
-.comissao-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;margin:2px;background:rgba(79,140,255,.1);color:var(--blue)}
-.orgao-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;margin:2px;background:rgba(34,197,94,.1);color:var(--emerald)}
+.frente-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;margin:2px;background:var(--accent-light);color:var(--accent)}
+.comissao-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;margin:2px;background:var(--blue-tint);color:var(--blue)}
+.orgao-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;margin:2px;background:var(--emerald-tint);color:var(--emerald)}
 .elec-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;margin:2px}
-.elec-presidente{background:rgba(239,68,68,.15);color:var(--red)}
-.elec-governador{background:rgba(168,85,247,.15);color:var(--purple)}
-.elec-senador{background:rgba(6,182,212,.15);color:var(--cyan)}
-.elec-deputado{background:rgba(245,158,11,.15);color:var(--accent)}
-.elec-eleito{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;margin:2px;background:rgba(34,197,94,.15);color:var(--emerald);border:1px solid rgba(34,197,94,.25)}
-.elec-nao-eleito{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;margin:2px;background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.elec-presidente{background:var(--red-tint);color:var(--red)}
+.elec-governador{background:var(--purple-tint);color:var(--purple)}
+.elec-senador{background:var(--cyan-tint);color:var(--cyan)}
+.elec-deputado{background:var(--accent-light);color:var(--accent)}
+.elec-eleito{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;margin:2px;background:var(--emerald-tint);color:var(--emerald);border:1px solid var(--emerald)}
+.elec-nao-eleito{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;margin:2px;background:var(--red-tint);color:var(--red);border:1px solid var(--red)}
 
 .analytics-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;overflow:hidden}
 .analytics-toggle{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;cursor:pointer;user-select:none}
@@ -140,7 +183,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 20px;font-size:12px;color:var(--text);opacity:0;transform:translateY(10px);transition:all .3s;z-index:999;pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
 
-.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center}
+.modal-backdrop{display:none;position:fixed;inset:0;background:var(--modal-backdrop);z-index:200;align-items:center;justify-content:center}
 .modal-backdrop.show{display:flex}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;max-width:700px;width:90%;max-height:80vh;overflow-y:auto}
 .modal-title{font-size:16px;font-weight:700;margin-bottom:16px}
@@ -163,15 +206,24 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
 
 .score-badge{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;font-size:15px;font-weight:800;flex-shrink:0;border:2px solid}
-.score-alto{background:rgba(34,197,94,.12);border-color:var(--emerald);color:var(--emerald)}
-.score-medio{background:rgba(245,158,11,.12);border-color:var(--accent);color:var(--accent)}
-.score-baixo{background:rgba(139,143,168,.12);border-color:var(--text3);color:var(--text3)}
+.score-alto{background:var(--emerald-tint);border-color:var(--emerald);color:var(--emerald)}
+.score-medio{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+.score-baixo{background:var(--highlight-bg);border-color:var(--text3);color:var(--text3)}
 .score-bar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;flex:1;min-width:100px}
 .score-fill{height:100%;border-radius:3px;transition:width .4s}
 .score-breakdown{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap}
 .score-axis{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:4px}
 .score-axis-val{font-weight:700;color:var(--text2)}
 .score-rank{font-size:11px;font-weight:800;color:var(--text3);min-width:28px;text-align:right}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s}
+.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#fff;background:rgba(255,255,255,.1)}
+.theme-toggle svg{width:18px;height:18px;}
+.icon-sun{display:none;}
+[data-theme="dark"] .icon-sun{display:block;}
+[data-theme="dark"] .icon-moon{display:none;}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--scrollbar-track)}
+::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:3px}
 </style>
 </head>
 <body>
@@ -186,10 +238,12 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
     <button class="info-btn" onclick="showMethodology()" title="Sobre este painel">&#8505;</button>
   </div>
   <div class="header-controls">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     <select id="selLegislatura" class="btn btn-outline" style="padding:6px 12px;font-size:12px;background:var(--surface)">
       <option value="57">57a Legislatura (2023-2027)</option>
     </select>
     <button class="btn btn-primary" onclick="fetchData()">&#128269; Consultar APIs</button>
+    <button class="btn btn-outline" onclick="exportWhatsApp()" title="Compartilhar resumo via WhatsApp">&#128172; WhatsApp</button>
   </div>
 </div>
 
@@ -369,11 +423,11 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <p style="margin:0 0 8px"><strong style="color:var(--text);font-size:14px">1.</strong> Calcular cada eixo separadamente (resultado de 0 a 100 cada):</p>
       <ul style="margin:0 0 12px">
         <li><strong style="color:var(--emerald)">Nota Frentes</strong> = pontuacao das frentes parlamentares (detalhes abaixo)</li>
-        <li><strong style="color:var(--blue)">Nota Comissoes</strong> = pontuacao das comissoes (detalhes abaixo)</li>
+        <li><strong style="color:var(--accent)">Nota Comissoes</strong> = pontuacao das comissoes (detalhes abaixo)</li>
         <li><strong style="color:var(--purple)">Nota Autorias</strong> = pontuacao de autorias tematicas (detalhes abaixo)</li>
       </ul>
       <p style="margin:0 0 8px"><strong style="color:var(--text);font-size:14px">2.</strong> Aplicar os pesos e somar:</p>
-      <p style="margin:0 0 8px;padding:8px 12px;background:rgba(255,255,255,.05);border-radius:6px;font-family:monospace;font-size:13px"><strong>Score Final = (Nota Frentes &times; 0,40) + (Nota Comissoes &times; 0,30) + (Nota Autorias &times; 0,30)</strong></p>
+      <p style="margin:0 0 8px;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:13px"><strong>Score Final = (Nota Frentes &times; 0,40) + (Nota Comissoes &times; 0,30) + (Nota Autorias &times; 0,30)</strong></p>
       <p style="margin:0 0 8px"><strong style="color:var(--text);font-size:14px">3.</strong> Classificar na faixa:</p>
       <ul style="margin:0">
         <li><strong style="color:var(--emerald)">Alto (&ge;50)</strong> — atuacao consistente em pautas MPE</li>
@@ -393,29 +447,29 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
         <li>Cada frente Tier 3 = <strong>5 pontos</strong></li>
       </ul>
       <p style="margin:0 0 8px"><strong>Passo 4:</strong> Limitar a 100 (teto).</p>
-      <p style="margin:0;padding:8px 12px;background:rgba(255,255,255,.05);border-radius:6px;font-family:monospace;font-size:12px"><strong>Nota Frentes = min(100, frentes_T1 &times; 20 + frentes_T2 &times; 12 + frentes_T3 &times; 5)</strong></p>
+      <p style="margin:0;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:12px"><strong>Nota Frentes = min(100, frentes_T1 &times; 20 + frentes_T2 &times; 12 + frentes_T3 &times; 5)</strong></p>
     </div>
     <p style="margin-top:8px"><strong>Exemplo:</strong> Deputado participa de 2 frentes Tier 1, 1 frente Tier 2 e 3 frentes Tier 3 &rarr; (2 &times; 20) + (1 &times; 12) + (3 &times; 5) = 40 + 12 + 15 = <strong>67</strong></p>
 
     <p style="margin-top:12px"><strong>Keywords Tier 1</strong> — temas centrais MPE/MEI (20 pts/frente):</p>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
-      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">empreendedorismo</span>
-      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">micro e pequen*</span>
-      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">microempresa</span>
-      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">pequena empresa</span>
-      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">simples nacional</span>
-      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">mei</span>
-      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">microempreendedor</span>
+      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">empreendedorismo</span>
+      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">micro e pequen*</span>
+      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">microempresa</span>
+      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">pequena empresa</span>
+      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">simples nacional</span>
+      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">mei</span>
+      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">microempreendedor</span>
     </div>
     <p><strong>Keywords Tier 2</strong> — temas de apoio (12 pts/frente):</p>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">desburocratiz*</span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">inovacao</span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">startup</span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">cooperativ*</span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">credito</span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">livre iniciativa</span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">fomento</span>
+      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">desburocratiz*</span>
+      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">inovacao</span>
+      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">startup</span>
+      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">cooperativ*</span>
+      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">credito</span>
+      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">livre iniciativa</span>
+      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">fomento</span>
     </div>
     <p><strong>Keywords Tier 3</strong> — temas amplos do ecossistema (5 pts/frente):</p>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
@@ -429,7 +483,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <span class="comissao-tag">desenvolvimento regional</span>
     </div>
 
-    <h3 style="color:var(--blue)">Eixo 2 — Comissoes Estrategicas (peso: 30%)</h3>
+    <h3 style="color:var(--accent)">Eixo 2 — Comissoes Estrategicas (peso: 30%)</h3>
     <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:12px">
       <p style="margin:0 0 8px"><strong>Passo 1:</strong> Listar as comissoes do parlamentar (Camara: via API de orgaos; Senado: via API /senador/{id}/comissoes).</p>
       <p style="margin:0 0 8px"><strong>Passo 2:</strong> Para cada comissao, verificar se a sigla aparece na lista Tier 1 ou Tier 2 abaixo.</p>
@@ -439,25 +493,25 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
         <li>Cada comissao Tier 2 = <strong>18 pontos</strong></li>
       </ul>
       <p style="margin:0 0 8px"><strong>Passo 4:</strong> Limitar a 100 (teto).</p>
-      <p style="margin:0;padding:8px 12px;background:rgba(255,255,255,.05);border-radius:6px;font-family:monospace;font-size:12px"><strong>Nota Comissoes = min(100, comissoes_T1 &times; 35 + comissoes_T2 &times; 18)</strong></p>
+      <p style="margin:0;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:12px"><strong>Nota Comissoes = min(100, comissoes_T1 &times; 35 + comissoes_T2 &times; 18)</strong></p>
     </div>
     <p style="margin-top:8px"><strong>Exemplo:</strong> Deputado na CDEICS (Tier 1) e na CE (Tier 2) &rarr; (1 &times; 35) + (1 &times; 18) = <strong>53</strong></p>
 
     <p style="margin-top:12px"><strong>Comissoes Tier 1</strong> — diretamente ligadas a MPEs (35 pts/comissao):</p>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
-      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">CDEICS <span style="font-size:10px;opacity:.7">Camara</span></span>
-      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">CFT <span style="font-size:10px;opacity:.7">Camara</span></span>
-      <span class="comissao-tag" style="background:rgba(80,200,120,.15);color:var(--emerald)">CAE <span style="font-size:10px;opacity:.7">Senado</span></span>
+      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">CDEICS <span style="font-size:10px;opacity:.7">Camara</span></span>
+      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">CFT <span style="font-size:10px;opacity:.7">Camara</span></span>
+      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">CAE <span style="font-size:10px;opacity:.7">Senado</span></span>
     </div>
     <p><strong>Comissoes Tier 2</strong> — apoio ao ecossistema (18 pts/comissao):</p>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CCTCI <span style="font-size:10px;opacity:.7">Camara</span></span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CAPADR <span style="font-size:10px;opacity:.7">Camara</span></span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CE <span style="font-size:10px;opacity:.7">Camara</span></span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CI <span style="font-size:10px;opacity:.7">Senado</span></span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CDR <span style="font-size:10px;opacity:.7">Senado</span></span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CAS <span style="font-size:10px;opacity:.7">Senado</span></span>
-      <span class="comissao-tag" style="background:rgba(47,128,237,.15);color:var(--blue)">CCT <span style="font-size:10px;opacity:.7">Senado</span></span>
+      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">CCTCI <span style="font-size:10px;opacity:.7">Camara</span></span>
+      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">CAPADR <span style="font-size:10px;opacity:.7">Camara</span></span>
+      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">CE <span style="font-size:10px;opacity:.7">Camara</span></span>
+      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">CI <span style="font-size:10px;opacity:.7">Senado</span></span>
+      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">CDR <span style="font-size:10px;opacity:.7">Senado</span></span>
+      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">CAS <span style="font-size:10px;opacity:.7">Senado</span></span>
+      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">CCT <span style="font-size:10px;opacity:.7">Senado</span></span>
     </div>
 
     <h3 style="color:var(--purple)">Eixo 3 — Autorias Tematicas (peso: 30%)</h3>
@@ -467,28 +521,28 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <p style="margin:0 0 8px"><strong>Passo 3:</strong> Para cada proposicao filtrada, consultar /proposicoes/{id}/autores e identificar o deputado autor.</p>
       <p style="margin:0 0 8px"><strong>Passo 4:</strong> Contar quantas autorias tematicas cada deputado acumulou.</p>
       <p style="margin:0 0 8px"><strong>Passo 5:</strong> Normalizar: dividir a contagem do parlamentar pela maior contagem entre todos, e multiplicar por 100.</p>
-      <p style="margin:0;padding:8px 12px;background:rgba(255,255,255,.05);border-radius:6px;font-family:monospace;font-size:12px"><strong>Nota Autorias = min(100, (autorias_parlamentar / maior_contagem) &times; 100)</strong></p>
+      <p style="margin:0;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:12px"><strong>Nota Autorias = min(100, (autorias_parlamentar / maior_contagem) &times; 100)</strong></p>
     </div>
     <p style="margin-top:8px"><strong>Exemplo:</strong> Deputado A tem 8 autorias, e o maximo encontrado entre todos e 20 &rarr; (8 / 20) &times; 100 = <strong>40</strong>. Deputado B tem 20 autorias &rarr; (20 / 20) &times; 100 = <strong>100</strong>.</p>
 
     <p style="margin-top:12px"><strong>Keywords de filtragem de ementas:</strong></p>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">microempresa</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">pequena empresa</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">pequeno porte</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">simples nacional</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">mei</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">microempreendedor</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">empreendedorismo</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">desburocratiza*</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">sebrae</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">pronampe</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">redesim</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">startup</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">cooperativa</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">credito produtivo</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">microcredito</span>
-      <span class="comissao-tag" style="background:rgba(160,90,255,.15);color:var(--purple)">fomento</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">microempresa</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">pequena empresa</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">pequeno porte</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">simples nacional</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">mei</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">microempreendedor</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">empreendedorismo</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">desburocratiza*</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">sebrae</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">pronampe</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">redesim</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">startup</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">cooperativa</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">credito produtivo</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">microcredito</span>
+      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">fomento</span>
     </div>
 
     <h3>Exemplo Completo</h3>
@@ -499,7 +553,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
         <li>Nota Comissoes = min(100, 1&times;35) = <strong>35</strong></li>
         <li>Nota Autorias = min(100, 8/20 &times; 100) = <strong>40</strong></li>
       </ul>
-      <p style="margin:0;padding:8px 12px;background:rgba(255,255,255,.05);border-radius:6px;font-family:monospace;font-size:13px">Score Final = (52 &times; 0,40) + (35 &times; 0,30) + (40 &times; 0,30) = 20,8 + 10,5 + 12,0 = <strong style="color:var(--emerald)">43 (Medio)</strong></p>
+      <p style="margin:0;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:13px">Score Final = (52 &times; 0,40) + (35 &times; 0,30) + (40 &times; 0,30) = 20,8 + 10,5 + 12,0 = <strong style="color:var(--emerald)">43 (Medio)</strong></p>
     </div>
 
     <h3>Fontes de Dados</h3>
@@ -1512,7 +1566,7 @@ function renderAnalytics() {
 
   var leg1 = legendItem('var(--emerald)', 'Eleitos', eleitos.length, pctEleito)
            + legendItem('var(--red)', 'Nao eleitos', naoEleitos.length, pctNaoEleito)
-           + legendItem('#2e3348', 'Nao candidatos', naoCands.length, pctNaoCand);
+           + legendItem('var(--text3)', 'Nao candidatos', naoCands.length, pctNaoCand);
 
   // Donut 2: Renovacao da Camara
   var depsCamara = data.filter(function(p){ return p.casa === 'camara'; });
@@ -1533,7 +1587,7 @@ function renderAnalytics() {
   var leg2 = legendItem('var(--emerald)', 'Reeleitos Dep.Fed.', depsReeleitos, (depsReeleitos/depsT*100).toFixed(1))
            + legendItem('var(--red)', 'Nao reeleitos', depsNaoReeleitos, (depsNaoReeleitos/depsT*100).toFixed(1))
            + legendItem('var(--purple)', 'Migraram de cargo', depsMigraram, (depsMigraram/depsT*100).toFixed(1))
-           + legendItem('#2e3348', 'Nao candidatos', depsNaoCand, (depsNaoCand/depsT*100).toFixed(1));
+           + legendItem('var(--text3)', 'Nao candidatos', depsNaoCand, (depsNaoCand/depsT*100).toFixed(1));
 
   // Donut 3: Renovacao do Senado
   var senSenado = data.filter(function(p){ return p.casa === 'senado'; });
@@ -1555,7 +1609,7 @@ function renderAnalytics() {
   var leg3 = legendItem('var(--emerald)', 'Reeleitos Senador', senReeleitos, (senReeleitos/senT*100).toFixed(1))
            + legendItem('var(--red)', 'Nao reeleitos', senNaoReeleitos, (senNaoReeleitos/senT*100).toFixed(1))
            + legendItem('var(--purple)', 'Migraram de cargo', senMigraram, (senMigraram/senT*100).toFixed(1))
-           + legendItem('#2e3348', 'Nao candidatos', senNaoCand, (senNaoCand/senT*100).toFixed(1));
+           + legendItem('var(--text3)', 'Nao candidatos', senNaoCand, (senNaoCand/senT*100).toFixed(1));
 
   // --- HBar: Resultado por Cargo ---
   var cargos = {};
@@ -2138,12 +2192,12 @@ function renderScoreRanking() {
     if (p.eleicao2026) {
       var elColor = p.eleicao2026.eleito ? 'var(--emerald)' : 'var(--red)';
       var elIcon = p.eleicao2026.eleito ? '&#10003;' : '&#10007;';
-      html += '<span style="font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(255,255,255,.06);color:' + elColor + '">' + elIcon + ' ' + (p.eleicao2026.eleito ? 'Eleito' : 'Nao eleito') + ' — ' + escapeHtml(p.eleicao2026.cargo) + '</span>';
+      html += '<span style="font-size:10px;padding:1px 6px;border-radius:4px;background:var(--highlight-bg);color:' + elColor + '">' + elIcon + ' ' + (p.eleicao2026.eleito ? 'Eleito' : 'Nao eleito') + ' — ' + escapeHtml(p.eleicao2026.cargo) + '</span>';
     }
     html += '</div>';
     html += '<div class="score-breakdown">';
     html += '<span class="score-axis">Frentes: <span class="score-axis-val" style="color:var(--emerald)">' + p.scoreFrentes + '</span></span>';
-    html += '<span class="score-axis">Comissoes: <span class="score-axis-val" style="color:var(--blue)">' + p.scoreComissoes + '</span></span>';
+    html += '<span class="score-axis">Comissoes: <span class="score-axis-val" style="color:var(--accent)">' + p.scoreComissoes + '</span></span>';
     html += '<span class="score-axis">Autorias: <span class="score-axis-val" style="color:var(--purple)">' + p.scoreAutorias.toFixed(0) + '</span></span>';
     if (p.autorias > 0) html += '<span class="score-axis">(' + p.autorias + ' PLs)</span>';
     html += '</div>';
@@ -2161,7 +2215,7 @@ function renderScoreRanking() {
     html += '<div class="detail-grid">';
     html += '<div class="detail-item"><span class="detail-label">Score Total</span><span class="detail-value" style="font-size:18px;font-weight:800;color:' + scoreColor + '">' + p.score + '/100</span></div>';
     html += '<div class="detail-item"><span class="detail-label">Frentes (40%)</span><span class="detail-value" style="color:var(--emerald)">' + p.scoreFrentes + '/100</span></div>';
-    html += '<div class="detail-item"><span class="detail-label">Comissoes (30%)</span><span class="detail-value" style="color:var(--blue)">' + p.scoreComissoes + '/100</span></div>';
+    html += '<div class="detail-item"><span class="detail-label">Comissoes (30%)</span><span class="detail-value" style="color:var(--accent)">' + p.scoreComissoes + '/100</span></div>';
     html += '<div class="detail-item"><span class="detail-label">Autorias (30%)</span><span class="detail-value" style="color:var(--purple)">' + p.scoreAutorias.toFixed(0) + '/100' + (p.autorias > 0 ? ' (' + p.autorias + ' PLs)' : '') + '</span></div>';
     if (p.eleicao2026) {
       var elColor2 = p.eleicao2026.eleito ? 'var(--emerald)' : 'var(--red)';
@@ -2197,6 +2251,56 @@ function renderScoreRanking() {
 
   container.innerHTML = html;
 }
+
+function exportWhatsApp() {
+  if (allParlamentares.length === 0) {
+    showToast('Consulte as APIs antes de exportar');
+    return;
+  }
+  var total = filteredParlamentares.length;
+  var deps = filteredParlamentares.filter(function(p){ return p.casa === 'camara'; }).length;
+  var sens = filteredParlamentares.filter(function(p){ return p.casa === 'senado'; }).length;
+  var cands = filteredParlamentares.filter(function(p){ return !!p.eleicao2026; }).length;
+  var eleitos = filteredParlamentares.filter(function(p){ return p.eleicao2026 && p.eleicao2026.eleito; }).length;
+  var frentes = allFrentes.length;
+
+  var msg = '*PIPPA Stakeholders — Resumo*\n';
+  msg += '_Mapa Parlamentar — CRM Legislativo_\n\n';
+  msg += '📊 *Numeros Gerais*\n';
+  msg += '• Parlamentares: ' + total + '\n';
+  msg += '• Deputados: ' + deps + '\n';
+  msg += '• Senadores: ' + sens + '\n';
+  msg += '• Frentes Relevantes: ' + frentes + '\n\n';
+  msg += '🗳️ *Eleicoes 2026*\n';
+  msg += '• Candidatos: ' + cands + '\n';
+  msg += '• Eleitos: ' + eleitos + '\n';
+
+  if (scoreComputed && parlScores.length > 0) {
+    var alto = parlScores.filter(function(p){ return p.faixa === 'alto'; }).length;
+    var medio = parlScores.filter(function(p){ return p.faixa === 'medio'; }).length;
+    var baixo = parlScores.filter(function(p){ return p.faixa === 'baixo'; }).length;
+    msg += '\n🎯 *Alinhamento SEBRAE*\n';
+    msg += '• Alto: ' + alto + '\n';
+    msg += '• Medio: ' + medio + '\n';
+    msg += '• Baixo: ' + baixo + '\n';
+
+    var top5 = parlScores.slice(0, 5);
+    if (top5.length > 0) {
+      msg += '\n🏆 *Top 5 Score*\n';
+      top5.forEach(function(p, i) {
+        msg += (i + 1) + '. ' + p.nome + ' (' + p.partido + '-' + p.uf + ') — ' + p.score + ' pts\n';
+      });
+    }
+  }
+
+  msg += '\n_Fonte: PIPPA — Sebrae Nacional_';
+  msg += '\n_Dados: APIs Camara, Senado e TSE_';
+
+  var url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg);
+  window.open(url, '_blank');
+  showToast('Resumo preparado para WhatsApp');
+}
 </script>
+<script>function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n)}</script>
 </body>
 </html>
