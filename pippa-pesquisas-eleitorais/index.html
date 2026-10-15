@@ -179,22 +179,26 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
 
 /* -- Landing Page ---------------------------------------------------- */
 .landing-header {
-  background: linear-gradient(45deg, var(--atlantico), var(--azul-sebrae));
+  background: var(--surface);
   border-bottom: 1px solid var(--border);
-  padding: 20px 24px;
+  box-shadow: var(--shadow);
+  padding: 12px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 16px;
 }
 .landing-header .logo {
+  font-family: var(--font-heading);
   font-size: 22px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-accent);
   letter-spacing: -0.5px;
 }
 .landing-header .logo-sub {
   font-size: 13px;
-  color: rgba(255,255,255,.6);
+  color: var(--text-muted);
   font-weight: 400;
 }
 .landing-header-right {
