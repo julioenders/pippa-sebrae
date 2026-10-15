@@ -280,7 +280,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
     <span style="color:var(--text-muted);font-size:13px">a</span>
     <input type="date" id="dateInputFim" class="date-input" title="Data fim">
     <button class="btn" id="btnFetch" onclick="fetchPauta()">Consultar APIs</button>
-    <button class="btn btn-outline" onclick="exportWhatsApp()">Exportar WhatsApp</button>
+    <button class="btn btn-outline" onclick="exportWhatsApp()">📤 WhatsApp</button>
   </div>
 </header>
 
@@ -530,17 +530,6 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
     </div>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('methodologyModal')">Fechar</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-backdrop" id="exportModal" onclick="if(event.target===this)closeModal(this.id)">
-  <div class="modal">
-    <div class="modal-title">Exportar para WhatsApp</div>
-    <pre class="modal-content" id="exportContent" style="white-space:pre-wrap;font-family:inherit"></pre>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('exportModal')">Fechar</button>
-      <button class="btn" onclick="copyExport()">&#128203; Copiar</button>
     </div>
   </div>
 </div>
@@ -1485,15 +1474,7 @@ function exportWhatsApp() {
   text += '\n---\n_Fonte: APIs da Camara e Senado_\n';
   text += '_PIPPA — Sebrae Nacional — Observatorio Setorial Territorial_';
 
-  document.getElementById('exportContent').textContent = text;
-  openModal('exportModal');
-}
-
-function copyExport() {
-  var text = document.getElementById('exportContent').textContent;
-  navigator.clipboard.writeText(text).then(function(){
-    showToast('Copiado para a area de transferencia!');
-  });
+  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
 }
 
 // =====================================================
