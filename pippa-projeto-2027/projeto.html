@@ -8,38 +8,31 @@
 <script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
     <style>
         :root {
-            --bg-primary: #0b1120;
-            --bg-card: #111827;
-            --bg-card-hover: #1a2332;
-            --bg-surface: #0f172a;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --emerald: #10b981;
-            --emerald-dim: rgba(16, 185, 129, 0.15);
-            --emerald-glow: rgba(16, 185, 129, 0.3);
-            --blue: #3b82f6;
-            --blue-dim: rgba(59, 130, 246, 0.15);
-            --purple: #a855f7;
-            --purple-dim: rgba(168, 85, 247, 0.15);
-            --amber: #f59e0b;
-            --amber-dim: rgba(245, 158, 11, 0.15);
-            --pink: #f472b6;
-            --pink-dim: rgba(244, 114, 182, 0.15);
-            --cyan: #06b6d4;
-            --cyan-dim: rgba(6, 182, 212, 0.15);
-            --red: #ef4444;
-            --red-dim: rgba(239, 68, 68, 0.15);
-            --teal: #14b8a6;
-            --teal-dim: rgba(20, 184, 166, 0.15);
-            --border: rgba(148, 163, 184, 0.1);
-            --border-accent: rgba(16, 185, 129, 0.3);
+            --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;
+            --font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif;
+            --bg-primary:#071a5c;--bg-card:#0b2574;--bg-card-hover:#0f2f88;--bg-surface:#091e60;
+            --text-primary:#eff3ee;--text-secondary:#a8c4e0;--text-muted:#7a9bc0;
+            --emerald:#2a4fda;--emerald-dim:rgba(42,79,218,.15);--emerald-glow:rgba(42,79,218,.3);
+            --blue:#65b7fb;--blue-dim:rgba(101,183,251,.15);
+            --purple:#be64e3;--purple-dim:rgba(190,100,227,.15);
+            --amber:#f39d72;--amber-dim:rgba(243,157,114,.15);
+            --pink:#ff80c8;--pink-dim:rgba(255,128,200,.15);
+            --cyan:#65b7fb;--cyan-dim:rgba(101,183,251,.15);
+            --red:#e0565d;--red-dim:rgba(224,86,93,.15);
+            --teal:#90d275;--teal-dim:rgba(144,210,117,.15);
+            --border:rgba(101,183,251,.1);--border-accent:rgba(42,79,218,.3);
+        }
+        [data-theme="light"] {
+            --bg-primary:#eff3ee;--bg-card:#ffffff;--bg-card-hover:#f5f7f4;--bg-surface:#e5eae4;
+            --text-primary:#000000;--text-secondary:#4a5568;--text-muted:#6b7280;
+            --emerald:#2a4fda;--emerald-dim:rgba(42,79,218,.08);--emerald-glow:rgba(42,79,218,.15);
+            --border:rgba(42,79,218,.08);--border-accent:rgba(42,79,218,.2);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: 'Figtree', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.6;
@@ -51,19 +44,19 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(11, 17, 32, 0.92);
+            background: var(--bg-card);
             backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border);
-            padding: 0 2rem;
-            height: 56px;
+            padding: 0 1.5rem;
+            height: 52px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-        .nav-brand { display: flex; align-items: center; gap: .75rem; text-decoration: none; }
+        .nav-brand { display: flex; align-items: center; gap: .6rem; text-decoration: none; }
         .nav-logo {
             width: 32px; height: 32px; border-radius: 8px;
-            background: linear-gradient(135deg, var(--emerald), #059669);
+            background: var(--emerald);
             display: flex; align-items: center; justify-content: center;
             font-weight: 800; font-size: 14px; color: #fff;
         }
@@ -71,7 +64,7 @@
         .nav-subtitle { font-size: 11px; color: var(--text-muted); }
         .nav-links { display: flex; gap: 1.5rem; }
         .nav-links a {
-            color: var(--text-secondary); text-decoration: none; font-size: 13px; font-weight: 500;
+            color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500;
             transition: color .2s;
         }
         .nav-links a:hover { color: var(--emerald); }
@@ -81,7 +74,7 @@
         .hero {
             text-align: center;
             padding: 4rem 2rem 3rem;
-            background: linear-gradient(180deg, rgba(16,185,129,0.06) 0%, transparent 100%);
+            background: linear-gradient(180deg, rgba(42,79,218,0.06) 0%, transparent 100%);
         }
         .hero-badge {
             display: inline-flex; align-items: center; gap: .5rem;
@@ -186,7 +179,7 @@
             color: var(--text-secondary); vertical-align: top;
         }
         tr:last-child td { border-bottom: none; }
-        tr:hover td { background: rgba(16, 185, 129, 0.03); }
+        tr:hover td { background: rgba(42, 79, 218, 0.03); }
         td strong { color: var(--text-primary); }
         td.num { text-align: right; font-variant-numeric: tabular-nums; }
         .total-row td { font-weight: 700; color: var(--emerald); background: var(--emerald-dim); }
@@ -241,9 +234,9 @@
         }
         .risk-header { background: var(--bg-surface); color: var(--text-muted); font-weight: 700; font-size: 11px; text-transform: uppercase; }
         .risk-label { background: var(--bg-surface); color: var(--text-secondary); font-weight: 600; text-align: right; padding-right: 1rem; }
-        .risk-low { background: rgba(16, 185, 129, 0.1); color: var(--emerald); }
-        .risk-med { background: rgba(245, 158, 11, 0.1); color: var(--amber); }
-        .risk-high { background: rgba(239, 68, 68, 0.1); color: var(--red); }
+        .risk-low { background: rgba(42, 79, 218, 0.1); color: var(--emerald); }
+        .risk-med { background: rgba(243, 157, 114, 0.1); color: var(--amber); }
+        .risk-high { background: rgba(224, 86, 93, 0.1); color: var(--red); }
 
         /* FLOW DIAGRAM */
         .flow { display: flex; align-items: center; justify-content: center; gap: .5rem; flex-wrap: wrap; margin: 1.5rem 0; }
@@ -345,14 +338,14 @@
         .glossary-fab {
             position: fixed; bottom: 2rem; right: 2rem; z-index: 200;
             width: 48px; height: 48px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--emerald), #059669);
+            background: linear-gradient(45deg, var(--emerald), #2345c0);
             border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 4px 20px rgba(42, 79, 218, 0.4);
             transition: transform .2s, box-shadow .2s;
-            font-family: 'Inter', serif; font-size: 20px; font-weight: 800; color: #fff;
+            font-family: 'Figtree', serif; font-size: 20px; font-weight: 800; color: #fff;
             font-style: italic;
         }
-        .glossary-fab:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(16, 185, 129, 0.5); }
+        .glossary-fab:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(42, 79, 218, 0.5); }
 
         /* MODAL */
         .modal-overlay {
@@ -397,7 +390,7 @@
         .modal-search {
             width: 100%; padding: .6rem 1rem; border-radius: 8px;
             border: 1px solid var(--border); background: var(--bg-surface);
-            color: var(--text-primary); font-size: 13px; font-family: 'Inter', sans-serif;
+            color: var(--text-primary); font-size: 13px; font-family: 'Figtree', sans-serif;
             margin-bottom: 1rem; outline: none; transition: border-color .2s;
         }
         .modal-search:focus { border-color: var(--emerald); }
@@ -462,12 +455,11 @@
             td, th, li, .card-text, .okr-kr, .details-content { color: #333; }
             .tag { border: 1px solid #999; }
         }
-    .theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s;}
-.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#ffffff;background:rgba(255,255,255,.1);}
-.theme-toggle svg{width:18px;height:18px;}
-.icon-sun{display:none;}
-[data-theme="dark"] .icon-sun{display:block;}
-[data-theme="dark"] .icon-moon{display:none;}
+    .theme-toggle{background:transparent;border:1px solid var(--border);color:var(--text-muted);width:34px;height:34px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.theme-toggle:hover{border-color:var(--emerald);color:var(--emerald);background:var(--bg-surface)}
+.icon-moon{display:none}
+[data-theme="light"] .icon-sun{display:none}
+[data-theme="light"] .icon-moon{display:block}
 </style>
 </head>
 <body>
@@ -485,6 +477,10 @@
         <a href="../pippa-portal/index.html">Portal</a>
         <a href="../pippa-quem-somos/index.html">Quem Somos</a>
         <a href="#" class="active">Projeto 2027</a>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
     </div>
 </nav>
 
@@ -554,7 +550,7 @@
 <!-- MARCOS CRÍTICOS -->
 <section class="section" id="marcos" style="margin-bottom: 2rem;">
     <div class="section-header">
-        <div class="section-num" style="background: linear-gradient(135deg, var(--cyan), #0891b2);">⏱</div>
+        <div class="section-num" style="background: linear-gradient(45deg, var(--cyan), #0891b2);">⏱</div>
         <div>
             <div class="section-title">Marcos Críticos — 2027</div>
             <div class="section-subtitle">Linha do tempo com entregas-chave e gates de aprovação</div>
@@ -645,7 +641,7 @@
 <!-- ===== SECTION 1: VISÃO ===== -->
 <section class="section" id="visao">
     <div class="section-header">
-        <div class="section-num" style="background: linear-gradient(135deg, var(--emerald), #059669);">01</div>
+        <div class="section-num" style="background: linear-gradient(45deg, var(--emerald), #2345c0);">01</div>
         <div>
             <div class="section-title">Visão do Produto</div>
             <div class="section-subtitle">Product Vision Statement</div>
@@ -680,7 +676,7 @@
 <!-- ===== SECTION 2: OKRs ===== -->
 <section class="section" id="okrs">
     <div class="section-header">
-        <div class="section-num" style="background: linear-gradient(135deg, var(--blue), #2563eb);">02</div>
+        <div class="section-num" style="background: linear-gradient(45deg, var(--blue), #2563eb);">02</div>
         <div>
             <div class="section-title">Objetivos Estratégicos (OKRs)</div>
             <div class="section-subtitle">Alinhados ao PE 2035 — Missão B: Governo e Estado Empreendedor</div>
@@ -719,7 +715,7 @@
 <!-- ===== SECTION 3: ARQUITETURA ===== -->
 <section class="section" id="arquitetura">
     <div class="section-header">
-        <div class="section-num" style="background: linear-gradient(135deg, var(--purple), #7c3aed);">03</div>
+        <div class="section-num" style="background: linear-gradient(45deg, var(--purple), #7c3aed);">03</div>
         <div>
             <div class="section-title">Arquitetura da Plataforma</div>
             <div class="section-subtitle">Modelo triangular: OPP + LPP + Advocacy (Cartilha LPP)</div>
@@ -838,7 +834,7 @@
 <!-- ===== SECTION 4: STACK ===== -->
 <section class="section" id="stack">
     <div class="section-header">
-        <div class="section-num" style="background: linear-gradient(135deg, var(--cyan), #0891b2);">04</div>
+        <div class="section-num" style="background: linear-gradient(45deg, var(--cyan), #0891b2);">04</div>
         <div>
             <div class="section-title">Stack Tecnológica</div>
             <div class="section-subtitle">Infraestrutura disponível no Sebrae</div>
@@ -903,7 +899,7 @@
 <!-- ===== SECTION 5: BACKLOG ===== -->
 <section class="section" id="backlog">
     <div class="section-header">
-        <div class="section-num" style="background: linear-gradient(135deg, var(--amber), #d97706);">05</div>
+        <div class="section-num" style="background: linear-gradient(45deg, var(--amber), #d97706);">05</div>
         <div>
             <div class="section-title">Product Backlog — Epics e Features</div>
             <div class="section-subtitle">Organizado por eixo e prioridade (MoSCoW)</div>
@@ -1159,7 +1155,7 @@
 <!-- ===== SECTION 6: EQUIPE ===== -->
 <section class="section" id="equipe">
     <div class="section-header">
-        <div class="section-num" style="background: linear-gradient(135deg, var(--pink), #db2777);">06</div>
+        <div class="section-num" style="background: linear-gradient(45deg, var(--pink), #db2777);">06</div>
         <div>
             <div class="section-title">Equipe e Papéis Ágeis</div>
             <div class="section-subtitle">Scrum adaptado — ARP 027/2025 + equipe interna</div>
@@ -1305,7 +1301,7 @@
 <!-- ===== SECTION 7: ROADMAP ===== -->
 <section class="section" id="roadmap">
     <div class="section-header">
-        <div class="section-num" style="background: linear-gradient(135deg, var(--teal), #0d9488);">07</div>
+        <div class="section-num" style="background: linear-gradient(45deg, var(--teal), #0d9488);">07</div>
         <div>
             <div class="section-title">Roadmap de Releases</div>
             <div class="section-subtitle">4 releases trimestrais — cada release é um incremento entregável</div>
@@ -1431,7 +1427,7 @@
 <!-- ===== SECTION 8: GOVERNANÇA ===== -->
 <section class="section" id="governanca">
     <div class="section-header">
-        <div class="section-num" style="background: linear-gradient(135deg, var(--emerald), #059669);">08</div>
+        <div class="section-num" style="background: linear-gradient(45deg, var(--emerald), #2345c0);">08</div>
         <div>
             <div class="section-title">Governança Ágil</div>
             <div class="section-subtitle">Cerimônias, cadência, Definition of Done, métricas</div>
@@ -1554,7 +1550,7 @@
 <!-- ===== SECTION 9: ORÇAMENTO ===== -->
 <section class="section" id="orcamento">
     <div class="section-header">
-        <div class="section-num" style="background: linear-gradient(135deg, var(--amber), #d97706);">09</div>
+        <div class="section-num" style="background: linear-gradient(45deg, var(--amber), #d97706);">09</div>
         <div>
             <div class="section-title">Orçamento Detalhado</div>
             <div class="section-subtitle">R$ 2.015.000,00 — UPP 2027</div>
@@ -1583,7 +1579,7 @@
                     <td>176h/mês × R$ 75,00/h — Design system, interfaces, templates</td>
                     <td class="num">13.200,00</td><td class="num">12</td><td class="num"><strong>158.400,00</strong></td><td class="num">7,9%</td>
                 </tr>
-                <tr style="background: rgba(16,185,129,0.05);">
+                <tr style="background: rgba(42,79,218,0.05);">
                     <td colspan="2"><strong>Subtotal Equipe Externa</strong></td>
                     <td class="num"><strong>58.657,28</strong></td><td class="num">12</td><td class="num"><strong>703.887,36</strong></td><td class="num"><strong>34,9%</strong></td>
                 </tr>
@@ -1604,7 +1600,7 @@
                     <td>Domínios pippa.sebrae.com.br, CDN, SSL, DNS</td>
                     <td class="num">1.500,00</td><td class="num">12</td><td class="num"><strong>18.000,00</strong></td><td class="num">0,9%</td>
                 </tr>
-                <tr style="background: rgba(59,130,246,0.05);">
+                <tr style="background: rgba(101,183,251,0.05);">
                     <td colspan="2"><strong>Subtotal Infraestrutura</strong></td>
                     <td class="num"><strong>15.000,00</strong></td><td class="num">12</td><td class="num"><strong>180.000,00</strong></td><td class="num"><strong>8,9%</strong></td>
                 </tr>
@@ -1620,7 +1616,7 @@
                     <td>Implantação estadual, TransformaLabs (viagens, materiais)</td>
                     <td class="num">—</td><td class="num">—</td><td class="num"><strong>70.000,00</strong></td><td class="num">3,5%</td>
                 </tr>
-                <tr style="background: rgba(168,85,247,0.05);">
+                <tr style="background: rgba(190,100,227,0.05);">
                     <td colspan="2"><strong>Subtotal Capacitação</strong></td>
                     <td class="num">—</td><td class="num">—</td><td class="num"><strong>150.000,00</strong></td><td class="num"><strong>7,4%</strong></td>
                 </tr>
@@ -1636,7 +1632,7 @@
                     <td>Workshops de experimentação com estados piloto</td>
                     <td class="num">—</td><td class="num">—</td><td class="num"><strong>60.000,00</strong></td><td class="num">3,0%</td>
                 </tr>
-                <tr style="background: rgba(245,158,11,0.05);">
+                <tr style="background: rgba(243,157,114,0.05);">
                     <td colspan="2"><strong>Subtotal Eventos</strong></td>
                     <td class="num">—</td><td class="num">—</td><td class="num"><strong>120.000,00</strong></td><td class="num"><strong>6,0%</strong></td>
                 </tr>
@@ -1682,7 +1678,7 @@
 <!-- ===== SECTION 10: RISCOS ===== -->
 <section class="section" id="riscos">
     <div class="section-header">
-        <div class="section-num" style="background: linear-gradient(135deg, var(--red), #dc2626);">10</div>
+        <div class="section-num" style="background: linear-gradient(45deg, var(--red), #dc2626);">10</div>
         <div>
             <div class="section-title">Gestão de Riscos</div>
             <div class="section-subtitle">Matriz probabilidade × impacto com mitigações</div>
@@ -1767,7 +1763,7 @@
 <!-- ===== SECTION 11: SUCESSO ===== -->
 <section class="section" id="sucesso">
     <div class="section-header">
-        <div class="section-num" style="background: linear-gradient(135deg, var(--emerald), #059669);">11</div>
+        <div class="section-num" style="background: linear-gradient(45deg, var(--emerald), #2345c0);">11</div>
         <div>
             <div class="section-title">Critérios de Sucesso</div>
             <div class="section-subtitle">KPIs de resultado — o que significa "PIPPA implantada"</div>
@@ -1829,7 +1825,7 @@
 <!-- ===== SECTION 12: RADAR DE MATURIDADE ===== -->
 <section class="section" id="maturidade">
     <div class="section-header">
-        <div class="section-num" style="background: linear-gradient(135deg, var(--cyan), #0891b2);">12</div>
+        <div class="section-num" style="background: linear-gradient(45deg, var(--cyan), #0891b2);">12</div>
         <div>
             <div class="section-title">Radar de Maturidade do Observatório</div>
             <div class="section-subtitle">6 dimensões de maturidade de OI — evolução planejada ao longo de 2027</div>
@@ -1885,19 +1881,13 @@
                 <svg id="radarChart" viewBox="0 0 420 420" style="width: 100%; max-width: 420px;">
                     <defs>
                         <style>
-                            .radar-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; fill: #94a3b8; }
-                            .radar-label-value { font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700; }
-                            .radar-grid { stroke: rgba(148,163,184,0.12); stroke-width: 1; fill: none; }
-                            .radar-axis { stroke: rgba(148,163,184,0.08); stroke-width: 1; }
+                            .radar-label { font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; fill: #a8c4e0; }
+                            .radar-label-value { font-family: 'Figtree', sans-serif; font-size: 9px; font-weight: 700; }
+                            .radar-grid { stroke: rgba(101,183,251,0.12); stroke-width: 1; fill: none; }
+                            .radar-axis { stroke: rgba(101,183,251,0.08); stroke-width: 1; }
                             .radar-polygon { fill-opacity: 0.08; stroke-width: 2; transition: opacity .3s, fill-opacity .3s; }
                             .radar-polygon:hover { fill-opacity: 0.18; stroke-width: 2.5; }
                             .radar-dot { transition: opacity .3s; }
-                        .theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s;}
-.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#ffffff;background:rgba(255,255,255,.1);}
-.theme-toggle svg{width:18px;height:18px;}
-.icon-sun{display:none;}
-[data-theme="dark"] .icon-sun{display:block;}
-[data-theme="dark"] .icon-moon{display:none;}
 </style>
                     </defs>
                 </svg>
@@ -1907,20 +1897,20 @@
             <div style="flex: 1; min-width: 300px;">
                 <!-- Legend -->
                 <div style="display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem;">
-                    <button class="radar-legend-btn" data-release="atual" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-surface); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: var(--text-secondary); transition: all .2s;">
-                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #64748b;"></span> Atual (Jan)
+                    <button class="radar-legend-btn" data-release="atual" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-surface); cursor: pointer; font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; color: var(--text-secondary); transition: all .2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #7a9bc0;"></span> Atual (Jan)
                     </button>
-                    <button class="radar-legend-btn active" data-release="r1" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid rgba(16,185,129,0.3); background: rgba(16,185,129,0.1); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: #10b981; transition: all .2s;">
-                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></span> R1 (Mar)
+                    <button class="radar-legend-btn active" data-release="r1" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid rgba(42,79,218,0.3); background: rgba(42,79,218,0.1); cursor: pointer; font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; color: #2a4fda; transition: all .2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #2a4fda;"></span> R1 (Mar)
                     </button>
-                    <button class="radar-legend-btn active" data-release="r2" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid rgba(59,130,246,0.3); background: rgba(59,130,246,0.1); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: #3b82f6; transition: all .2s;">
-                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #3b82f6;"></span> R2 (Jun)
+                    <button class="radar-legend-btn active" data-release="r2" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid rgba(101,183,251,0.3); background: rgba(101,183,251,0.1); cursor: pointer; font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; color: #65b7fb; transition: all .2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #65b7fb;"></span> R2 (Jun)
                     </button>
-                    <button class="radar-legend-btn active" data-release="r3" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid rgba(168,85,247,0.3); background: rgba(168,85,247,0.1); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: #a855f7; transition: all .2s;">
-                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #a855f7;"></span> R3 (Set)
+                    <button class="radar-legend-btn active" data-release="r3" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid rgba(190,100,227,0.3); background: rgba(190,100,227,0.1); cursor: pointer; font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; color: #be64e3; transition: all .2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #be64e3;"></span> R3 (Set)
                     </button>
-                    <button class="radar-legend-btn active" data-release="r4" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid rgba(245,158,11,0.3); background: rgba(245,158,11,0.1); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: #f59e0b; transition: all .2s;">
-                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #f59e0b;"></span> R4 (Dez)
+                    <button class="radar-legend-btn active" data-release="r4" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid rgba(243,157,114,0.3); background: rgba(243,157,114,0.1); cursor: pointer; font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; color: #f39d72; transition: all .2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #f39d72;"></span> R4 (Dez)
                     </button>
                 </div>
 
@@ -2062,7 +2052,7 @@
 <!-- ===== SECTION 13: METODOLOGIA ===== -->
 <section class="section" id="metodologia">
     <div class="section-header">
-        <div class="section-num" style="background: linear-gradient(135deg, var(--purple), #7c3aed);">13</div>
+        <div class="section-num" style="background: linear-gradient(45deg, var(--purple), #7c3aed);">13</div>
         <div>
             <div class="section-title">Base Metodológica</div>
             <div class="section-subtitle">Fundamentos que orientam toda a construção</div>
@@ -2393,21 +2383,21 @@ document.addEventListener('keydown', e => {
     const cx = 210, cy = 210, maxR = 155;
     const levels = 5;
     const dimensions = [
-        { name: 'Infraestrutura', color: '#10b981' },
-        { name: 'Dados', color: '#3b82f6' },
-        { name: 'Inteligência', color: '#a855f7' },
-        { name: 'Metodologia', color: '#f59e0b' },
-        { name: 'Comunidade', color: '#f472b6' },
-        { name: 'Governança', color: '#14b8a6' }
+        { name: 'Infraestrutura', color: '#2a4fda' },
+        { name: 'Dados', color: '#65b7fb' },
+        { name: 'Inteligência', color: '#be64e3' },
+        { name: 'Metodologia', color: '#f39d72' },
+        { name: 'Comunidade', color: '#ff80c8' },
+        { name: 'Governança', color: '#90d275' }
     ];
     const n = dimensions.length;
 
     const releases = {
-        atual: { label: 'Atual', color: '#64748b', values: [2, 3, 2, 3, 1, 1] },
-        r1:    { label: 'R1',    color: '#10b981', values: [3, 4, 2, 4, 1, 2] },
-        r2:    { label: 'R2',    color: '#3b82f6', values: [4, 4, 4, 4, 2, 3] },
-        r3:    { label: 'R3',    color: '#a855f7', values: [4, 5, 5, 5, 4, 4] },
-        r4:    { label: 'R4',    color: '#f59e0b', values: [5, 5, 5, 5, 5, 5] }
+        atual: { label: 'Atual', color: '#7a9bc0', values: [2, 3, 2, 3, 1, 1] },
+        r1:    { label: 'R1',    color: '#2a4fda', values: [3, 4, 2, 4, 1, 2] },
+        r2:    { label: 'R2',    color: '#65b7fb', values: [4, 4, 4, 4, 2, 3] },
+        r3:    { label: 'R3',    color: '#be64e3', values: [4, 5, 5, 5, 4, 4] },
+        r4:    { label: 'R4',    color: '#f39d72', values: [5, 5, 5, 5, 5, 5] }
     };
 
     function angleFor(i) {
@@ -2499,7 +2489,7 @@ document.addEventListener('keydown', e => {
             dot.setAttribute('cx', dx); dot.setAttribute('cy', dy);
             dot.setAttribute('r', key === 'r4' ? 4.5 : 3.5);
             dot.setAttribute('fill', rel.color);
-            dot.setAttribute('stroke', '#0b1120');
+            dot.setAttribute('stroke', '#071a5c');
             dot.setAttribute('stroke-width', 1.5);
             dot.setAttribute('class', 'radar-dot');
             dot.setAttribute('data-release', key);
