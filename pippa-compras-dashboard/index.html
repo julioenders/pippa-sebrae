@@ -181,18 +181,19 @@
     .back-btn {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       background: var(--highlight-bg);
       border: 1px solid var(--border);
       color: var(--text-accent);
-      padding: 7px 14px;
+      padding: 5px 10px;
       border-radius: 8px;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
       text-decoration: none;
       transition: all .2s;
+      white-space: nowrap;
     }
     .back-btn:hover { background: var(--accent-ring); border-color: var(--accent); color: var(--text-accent); }
 
@@ -205,33 +206,34 @@
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       box-shadow: var(--shadow);
-      padding: 12px 20px;
+      padding: 8px 16px;
       display: flex;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 10px 16px;
+      flex-wrap: nowrap;
+      gap: 8px;
       position: sticky;
       top: 0;
       z-index: 100;
     }
-    .header-left { display: flex; align-items: center; gap: 12px; margin-right: auto; }
+    .header-left { display: flex; align-items: center; gap: 8px; margin-right: auto; flex-shrink: 0; }
     .logo {
       font-family: var(--font-heading);
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 800;
       color: var(--text-accent);
       letter-spacing: -0.5px;
+      white-space: nowrap;
     }
-    .logo-sub { font-size: 13px; color: var(--text-muted); font-weight: 400; }
-    .header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .logo-sub { font-size: 11px; color: var(--text-muted); font-weight: 400; white-space: nowrap; }
+    .header-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 1; min-width: 0; }
 
     .select-input, .date-input {
       background: var(--surface2);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 8px 14px;
+      padding: 6px 10px;
       border-radius: var(--radius);
-      font-size: 14px;
+      font-size: 13px;
       outline: none;
       cursor: pointer;
       font-family: inherit;
@@ -242,10 +244,11 @@
       background: var(--accent);
       color: #fff;
       border: none;
-      padding: 8px 20px;
+      padding: 6px 14px;
       border-radius: var(--radius);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
+      white-space: nowrap;
       cursor: pointer;
       transition: all 0.2s;
       display: flex;
@@ -268,11 +271,12 @@
     .thermometer {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
+      gap: 6px;
+      padding: 4px 10px;
       border-radius: 20px;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 600;
+      white-space: nowrap;
     }
     .thermo-green { background: rgba(97,180,102,0.12); color: #22c55e; }
     .thermo-yellow { background: rgba(243,157,114,0.12); color: #f59e0b; }
@@ -445,7 +449,7 @@
     .toast { position: fixed; bottom: 24px; right: 24px; background: var(--azul-sebrae); color: #fff; padding: 10px 20px; border-radius: var(--radius); font-size: 13px; font-weight: 600; z-index: 400; opacity: 0; transform: translateY(10px); transition: all 0.3s; }
     .toast.show { opacity: 1; transform: translateY(0); }
 
-    .info-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .info-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .info-btn:hover { border-color: var(--text-accent); color: var(--text-accent); }
 
     .info-modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; align-items: center; justify-content: center; }
@@ -460,7 +464,8 @@
     .info-close { float: right; background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0 4px; }
     .info-close:hover { color: var(--text); }
 
-    .date-range { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); }
+    .date-range { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-muted); }
+    .date-range .date-input { width: 130px; padding: 5px 8px; font-size: 12px; }
 
     .mpe-note { margin-top: 16px; padding: 12px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--highlight-bg); font-size: 11px; color: var(--text-muted); line-height: 1.6; }
     .mpe-note-title { font-weight: 700; color: var(--text); margin-bottom: 8px; font-size: 11.5px; text-align: center; }
@@ -491,18 +496,13 @@
     .pdde-exec-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; transition: width .5s; }
 
     @media (max-width: 1024px) {
-      .header { padding: 10px 16px; }
-      .header-controls { gap: 6px; }
-      .logo { font-size: 18px; }
-      .btn { padding: 7px 14px; font-size: 13px; }
-      .select-input, .date-input { padding: 6px 10px; font-size: 13px; }
+      .header { flex-wrap: wrap; padding: 8px 12px; }
+      .header-left { margin-right: 0; width: 100%; }
+      .header-controls { width: 100%; flex-wrap: wrap; }
     }
     @media (max-width: 768px) {
       .layout { grid-template-columns: 1fr; }
       .sidebar { position: static; max-height: none; border-right: none; border-bottom: 1px solid var(--border); }
-      .header { padding: 10px 12px; gap: 8px; }
-      .header-left { margin-right: 0; width: 100%; }
-      .header-controls { width: 100%; }
       .kpi-bar { grid-template-columns: repeat(2, 1fr); }
       .charts-row { grid-template-columns: 1fr; }
       .charts-row-half { grid-template-columns: 1fr; }
@@ -514,7 +514,7 @@
     ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--text-accent); }
 
-    .theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:transparent;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;color:var(--text-muted);transition:all .2s}
+    .theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:transparent;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;color:var(--text-muted);transition:all .2s}
     .theme-toggle:hover{border-color:var(--accent);color:var(--text-accent);background:var(--highlight-bg)}
     .theme-toggle svg{width:16px;height:16px}
     .icon-sun{display:none}
@@ -623,7 +623,7 @@
         <span>a</span>
         <input type="date" id="dateTo" class="date-input" title="Data final">
       </div>
-      <select id="ufInput" class="select-input" title="Filtrar por UF" onchange="onUfChange()" style="width:80px;">
+      <select id="ufInput" class="select-input" title="Filtrar por UF" onchange="onUfChange()" style="width:70px;">
         <option value="">UF</option>
         <option value="AC">AC</option><option value="AL">AL</option><option value="AM">AM</option>
         <option value="AP">AP</option><option value="BA">BA</option><option value="CE">CE</option>
@@ -635,7 +635,7 @@
         <option value="RR">RR</option><option value="RS">RS</option><option value="SC">SC</option>
         <option value="SE">SE</option><option value="SP">SP</option><option value="TO">TO</option>
       </select>
-      <select id="munInput" class="select-input" title="Municipio" style="width:160px;">
+      <select id="munInput" class="select-input" title="Municipio" style="width:140px;">
         <option value="">Municipio</option>
       </select>
       <button class="btn" id="btnFetch" onclick="fetchData()">Buscar Licitacoes</button>
