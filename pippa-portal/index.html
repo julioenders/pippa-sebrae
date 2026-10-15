@@ -65,8 +65,7 @@ body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-pri
 
 /* ══ Hero (Gradiente 45° Atlântico → Azul Sebrae, Barras 77.7°) ══ */
 .hero{position:relative;background:linear-gradient(45deg,var(--atlantico),var(--azul-sebrae));padding:var(--sp-16) var(--sp-12) var(--sp-12);text-align:center;overflow:hidden;}
-.hero::before{content:'';position:absolute;top:-30px;right:12%;width:4px;height:140px;background:rgba(101,183,251,.25);transform:rotate(77.7deg);pointer-events:none;}
-.hero::after{content:'';position:absolute;top:-10px;right:calc(12% + 20px);width:3px;height:100px;background:rgba(101,183,251,.15);transform:rotate(77.7deg);pointer-events:none;}
+.hero::before,.hero::after{display:none;}
 .hero-label{font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--ceu);margin-bottom:var(--sp-3);}
 .hero-title{font-family:var(--font-heading);font-size:48px;font-weight:800;letter-spacing:-2px;color:#ffffff;margin-bottom:var(--sp-2);}
 .hero-subtitle{font-size:16px;color:rgba(255,255,255,.75);font-weight:400;max-width:600px;margin:0 auto var(--sp-8);line-height:1.6;}
@@ -187,7 +186,6 @@ body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-pri
   .hero-title{font-size:32px;}
   .hero-stats{gap:var(--sp-4);}
   .hero-stat-value{font-size:24px;}
-  .hero::before,.hero::after{display:none;}
   .search-section{padding:0 var(--sp-4) var(--sp-6);}
   .main-layout{flex-direction:column;padding:0 var(--sp-4) var(--sp-8);gap:var(--sp-4);}
   .sidebar{width:100%;position:static;max-height:none;}
@@ -235,6 +233,7 @@ body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-pri
     <div class="hero-stat"><div class="hero-stat-value">37</div><div class="hero-stat-label">Dashboards</div></div>
     <div class="hero-stat"><div class="hero-stat-value">23</div><div class="hero-stat-label">Fontes de Dados</div></div>
     <div class="hero-stat"><div class="hero-stat-value">58</div><div class="hero-stat-label">Cubos Analíticos</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">84</div><div class="hero-stat-label">Indicadores Monitorados</div></div>
   </div>
 </section>
 
@@ -435,15 +434,15 @@ const TOOLS = [
     destaque: "Visão consolidada de todas as entregas da UPP em 2026. Do NAL no Congresso Nacional (1.000+ proposições, 56 visitas a gabinetes) ao Programa Movimenta com 100% de adesão dos estados, passando pelo Contrata+Brasil (Painel 360 lançado pelo presidente), Pró-Catadores em 22 estados e 18 entregas de Relacionamento Governamental."
   },
   {
-    id: "regulatorio",
-    nome: "PIPPA Regulatório (Versão-Teste)",
-    subtitulo: "Monitor do Diário Oficial da União",
-    accent: "#e0565d",
-    icon: "📰",
-    url: "../pippa-regulatorio/output/regulatorio_dou_20260928.html",
-    descricao: "Monitor em tempo real do Diário Oficial da União (DOU) com classificação automática de impacto em micro e pequenas empresas. Consulta a API da Imprensa Nacional, aplica heurística de 3 eixos (relevância direta MPE, alcance setorial e potência normativa) e apresenta normas agrupadas por nível de impacto com justificativa transparente do score.",
-    features: ["Consulta ao vivo da API do DOU", "Classificação heurística v2 (3 eixos)", "Justificativa transparente de score", "Filtros por impacto, cadeia, tipo, órgão", "Gráficos de órgão, impacto e cadeias", "Timeline de 7 dias", "Agrupamento por nível de impacto", "Exportar WhatsApp"],
-    destaque: "Fase 1 — Coleta e classificação do DOU. Identifica automaticamente quais normas publicadas no Diário Oficial impactam MPEs, com score baseado em relevância direta (menções a MEI/ME/EPP, tributos, licitações), alcance setorial (cadeias produtivas) e potência normativa (tipo de ato como multiplicador)."
+    id: "impacto",
+    nome: "PIPPA Impacto",
+    subtitulo: "Portfolio de Evidencias — Prestacao de Contas",
+    accent: "#ff80c8",
+    icon: "📊",
+    url: "../pippa-impacto/index.html",
+    descricao: "Dashboard consolidado de resultados do ecossistema PIPPA. Mapeia todas as ferramentas ativas, eixos de atuacao, APIs integradas e indicadores monitorados — visao de portfolio para prestacao de contas da UPP.",
+    features: ["19 ferramentas mapeadas", "6 eixos de atuacao", "APIs integradas consolidadas", "Graficos de cobertura", "Links diretos para cada dashboard", "Prestacao de contas UPP"],
+    destaque: "Visao panoramica do impacto. Consolida todo o ecossistema PIPPA em um portfolio de evidencias — quantas ferramentas, APIs, indicadores e eixos o observatorio cobre para a UPP."
   },
   {
     id: "stakeholders",
@@ -479,15 +478,15 @@ const TOOLS = [
     destaque: "Incida antes que a norma saia. O monitor identifica audiencias publicas e consultas onde o SEBRAE pode se posicionar — complementando o Regulatorio que monitora normas ja publicadas."
   },
   {
-    id: "impacto",
-    nome: "PIPPA Impacto (Versão-Teste)",
-    subtitulo: "Portfolio de Evidencias — Prestacao de Contas",
-    accent: "#ff80c8",
-    icon: "📊",
-    url: "../pippa-impacto/index.html",
-    descricao: "Dashboard consolidado de resultados do ecossistema PIPPA. Mapeia todas as ferramentas ativas, eixos de atuacao, APIs integradas e indicadores monitorados — visao de portfolio para prestacao de contas da UPP.",
-    features: ["19 ferramentas mapeadas", "6 eixos de atuacao", "APIs integradas consolidadas", "Graficos de cobertura", "Links diretos para cada dashboard", "Prestacao de contas UPP"],
-    destaque: "Visao panoramica do impacto. Consolida todo o ecossistema PIPPA em um portfolio de evidencias — quantas ferramentas, APIs, indicadores e eixos o observatorio cobre para a UPP."
+    id: "regulatorio",
+    nome: "PIPPA Regulatório (Versão-Teste)",
+    subtitulo: "Monitor do Diário Oficial da União",
+    accent: "#e0565d",
+    icon: "📰",
+    url: "../pippa-regulatorio/output/regulatorio_dou_20260928.html",
+    descricao: "Monitor em tempo real do Diário Oficial da União (DOU) com classificação automática de impacto em micro e pequenas empresas. Consulta a API da Imprensa Nacional, aplica heurística de 3 eixos (relevância direta MPE, alcance setorial e potência normativa) e apresenta normas agrupadas por nível de impacto com justificativa transparente do score.",
+    features: ["Consulta ao vivo da API do DOU", "Classificação heurística v2 (3 eixos)", "Justificativa transparente de score", "Filtros por impacto, cadeia, tipo, órgão", "Gráficos de órgão, impacto e cadeias", "Timeline de 7 dias", "Agrupamento por nível de impacto", "Exportar WhatsApp"],
+    destaque: "Fase 1 — Coleta e classificação do DOU. Identifica automaticamente quais normas publicadas no Diário Oficial impactam MPEs, com score baseado em relevância direta (menções a MEI/ME/EPP, tributos, licitações), alcance setorial (cadeias produtivas) e potência normativa (tipo de ato como multiplicador)."
   }
 ];
 
