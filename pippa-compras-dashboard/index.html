@@ -2549,6 +2549,168 @@ function copyPddeExport() {
   });
 }
 
+// ── PNAE WhatsApp Export ────────────────────────────────────────
+function generatePnaeExportText() {
+  const data = getPnaeFiltered();
+  const byYear = pnaeAggByYear(data);
+  const nivel = document.getElementById('pnaeNivel').value;
+  const anoSel = document.getElementById('pnaeAno').value;
+  const ufSel = document.getElementById('pnaeUf').value;
+  const regSel = document.getElementById('pnaeRegiao').value;
+  const munSel = document.getElementById('pnaeMun');
+
+  const totalGeral = data.reduce((s, d) => s + d.valor, 0);
+  const totalAlunos = data.reduce((s, d) => s + d.alunos, 0);
+  const totalEscolas = data.reduce((s, d) => s + d.escolas, 0);
+  const perCapita = totalAlunos > 0 ? (totalGeral / totalAlunos) : 0;
+
+  var filtros = [];
+  if (anoSel) filtros.push('Ano: ' + anoSel);
+  if (nivel === 'regiao' && regSel) filtros.push('Regiao: ' + (PNAE_REGIAO_NAMES[regSel] || regSel));
+  if (ufSel) filtros.push('UF: ' + ufSel);
+  if (munSel && munSel.value && munSel.selectedOptions[0]) filtros.push('Municipio: ' + munSel.selectedOptions[0].textContent);
+
+  var t = '🍽 *PIPPA — Analise do PNAE*\n';
+  t += '📅 Relatorio gerado em ' + new Date().toLocaleDateString('pt-BR') + '\n';
+  if (filtros.length) t += '🔍 Filtros: ' + filtros.join(' | ') + '\n';
+  t += '\n📊 *PANORAMA GERAL*\n';
+  t += '━━━━━━━━━━━━━━━━━━\n\n';
+  t += '💰 *Total Repassado:* ' + formatCurrency(totalGeral) + '\n';
+  t += '👨‍🎓 *Alunos Atendidos:* ' + totalAlunos.toLocaleString('pt-BR') + '\n';
+  t += '🏫 *Escolas Atendidas:* ' + totalEscolas.toLocaleString('pt-BR') + '\n';
+  t += '💲 *Repasse por Aluno:* R$ ' + perCapita.toFixed(2).replace('.', ',') + '\n';
+
+  t += '\n📈 *EVOLUCAO POR ANO*\n\n';
+  byYear.forEach(d => {
+    t += '▸ *' + d.ano + ':* ' + formatCurrency(d.valor) + ' — ' + d.alunos.toLocaleString('pt-BR') + ' alunos, ' + d.escolas.toLocaleString('pt-BR') + ' escolas\n';
+  });
+
+  t += '\n🔗 Fonte: Plataforma Antonieta de Barros — FNDE (fnde.gov.br)\n';
+  t += '📡 PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas | Sebrae Nacional';
+  return t;
+}
+
+function openPnaeExportModal() {
+  if (typeof getPnaeFiltered !== 'function') { showToast('Carregue os dados primeiro'); return; }
+  const data = getPnaeFiltered();
+  if (!data || data.length === 0) { showToast('Carregue os dados primeiro'); return; }
+  const text = generatePnaeExportText();
+  document.getElementById('sharedExportContent').textContent = text;
+  document.getElementById('sharedExportModal').classList.add('active');
+  document.getElementById('sharedExportModal')._exportText = text;
+}
+
+// ── Execucao Orcamentaria WhatsApp Export ────────────────────────
+function generateExecExportText() {
+  const { filtered, nivel, regiao, uf } = getExecFiltered();
+  const byYear = aggregateByYear(filtered);
+  if (byYear.length === 0) return '';
+  const latest = byYear[byYear.length - 1];
+  const latestYear = latest.ano;
+  const taxa = latest.empenhado > 0 ? (latest.pago / latest.empenhado * 100) : 0;
+
+  let scopeLabel = 'Brasil';
+  if (regiao) scopeLabel = REGIAO_NAMES[regiao] || regiao;
+  if (uf) scopeLabel = uf;
+
+  var filtros = [];
+  const anoSel = document.getElementById('execAno').value;
+  if (anoSel) filtros.push('Ano: ' + anoSel);
+  if (regiao) filtros.push('Regiao: ' + (REGIAO_NAMES[regiao] || regiao));
+  if (uf) filtros.push('UF: ' + uf);
+
+  var t = '🏦 *PIPPA — Execucao Orcamentaria Estadual*\n';
+  t += '📅 Relatorio gerado em ' + new Date().toLocaleDateString('pt-BR') + '\n';
+  if (filtros.length) t += '🔍 Filtros: ' + filtros.join(' | ') + '\n';
+  t += '\n📊 *PANORAMA ' + latestYear + ' — ' + scopeLabel + '*\n';
+  t += '━━━━━━━━━━━━━━━━━━\n\n';
+  t += '📝 *Empenhado:* ' + formatCurrency(latest.empenhado) + '\n';
+  t += '✅ *Liquidado:* ' + formatCurrency(latest.liquidado) + '\n';
+  t += '💰 *Pago:* ' + formatCurrency(latest.pago) + '\n';
+  t += '📊 *Taxa de Execucao:* ' + taxa.toFixed(1) + '%\n';
+
+  t += '\n📈 *EVOLUCAO POR ANO*\n\n';
+  byYear.forEach(d => {
+    const tx = d.empenhado > 0 ? (d.pago / d.empenhado * 100).toFixed(1) : '0.0';
+    t += '▸ *' + d.ano + ':* Emp. ' + formatCurrency(d.empenhado) + ' | Pago ' + formatCurrency(d.pago) + ' (' + tx + '%)\n';
+  });
+
+  t += '\n🔗 Fonte: RREO/SICONFI — Tesouro Nacional\n';
+  t += '📡 PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas | Sebrae Nacional';
+  return t;
+}
+
+function openExecExportModal() {
+  if (typeof getExecFiltered !== 'function') { showToast('Carregue os dados primeiro'); return; }
+  const { filtered } = getExecFiltered();
+  if (!filtered || filtered.length === 0) { showToast('Carregue os dados primeiro'); return; }
+  const text = generateExecExportText();
+  document.getElementById('sharedExportContent').textContent = text;
+  document.getElementById('sharedExportModal').classList.add('active');
+  document.getElementById('sharedExportModal')._exportText = text;
+}
+
+// ── PNCP Monitor WhatsApp Export ────────────────────────────────
+function generatePncpMonExportText() {
+  const { filtered, nivel, regiao, uf, mun } = getPncpMonFiltered();
+  const byYear = pncpMonAggByYear(filtered);
+  if (byYear.length === 0) return '';
+  const latest = byYear[byYear.length - 1];
+  const latestYear = latest.ano;
+  const economia = latest.estimado > 0 ? ((1 - latest.homologado / latest.estimado) * 100) : 0;
+
+  let scopeLabel = 'Brasil';
+  if (regiao) scopeLabel = PNCP_MON_REGIAO_NAMES[regiao] || regiao;
+  if (uf) scopeLabel = uf;
+  if (mun) { const munSel = document.getElementById('pncpMonMun'); if (munSel.selectedOptions[0]) scopeLabel = munSel.selectedOptions[0].textContent; }
+
+  var filtros = [];
+  const anoSel = document.getElementById('pncpMonAno').value;
+  if (anoSel) filtros.push('Ano: ' + anoSel);
+  if (regiao) filtros.push('Regiao: ' + (PNCP_MON_REGIAO_NAMES[regiao] || regiao));
+  if (uf) filtros.push('UF: ' + uf);
+  if (mun && document.getElementById('pncpMonMun').selectedOptions[0]) filtros.push('Municipio: ' + document.getElementById('pncpMonMun').selectedOptions[0].textContent);
+
+  var t = '📊 *PIPPA — Monitor PNCP*\n';
+  t += '📅 Relatorio gerado em ' + new Date().toLocaleDateString('pt-BR') + '\n';
+  if (filtros.length) t += '🔍 Filtros: ' + filtros.join(' | ') + '\n';
+  t += '\n🏦 *PANORAMA ' + latestYear + ' — ' + scopeLabel + '*\n';
+  t += '━━━━━━━━━━━━━━━━━━\n\n';
+  t += '📝 *Contratacoes:* ' + latest.qtd.toLocaleString('pt-BR') + '\n';
+  t += '💰 *Valor Estimado:* ' + formatCurrency(latest.estimado) + '\n';
+  t += '✅ *Valor Homologado:* ' + formatCurrency(latest.homologado) + '\n';
+  t += '📉 *Economia:* ' + economia.toFixed(1) + '%\n';
+
+  t += '\n📈 *EVOLUCAO POR ANO*\n\n';
+  byYear.forEach(d => {
+    const eco = d.estimado > 0 ? ((1 - d.homologado / d.estimado) * 100).toFixed(1) : '0.0';
+    t += '▸ *' + d.ano + ':* ' + d.qtd.toLocaleString('pt-BR') + ' contratacoes | Est. ' + formatCurrency(d.estimado) + ' | Hom. ' + formatCurrency(d.homologado) + ' (' + eco + '% economia)\n';
+  });
+
+  t += '\n🔗 Fonte: PNCP — Portal Nacional de Contratacoes Publicas (pncp.gov.br)\n';
+  t += '📡 PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas | Sebrae Nacional';
+  return t;
+}
+
+function openPncpMonExportModal() {
+  if (typeof getPncpMonFiltered !== 'function' || PNCP_MONITOR_CACHE.length === 0) { showToast('Carregue os dados primeiro'); return; }
+  const { filtered } = getPncpMonFiltered();
+  if (!filtered || filtered.length === 0) { showToast('Carregue os dados primeiro'); return; }
+  const text = generatePncpMonExportText();
+  document.getElementById('sharedExportContent').textContent = text;
+  document.getElementById('sharedExportModal').classList.add('active');
+  document.getElementById('sharedExportModal')._exportText = text;
+}
+
+// ── Shared Export Modal ─────────────────────────────────────────
+function closeSharedExport() { document.getElementById('sharedExportModal').classList.remove('active'); }
+function copySharedExport() {
+  const text = document.getElementById('sharedExportModal')._exportText || '';
+  navigator.clipboard.writeText(text).then(() => showToast('Copiado para WhatsApp!')).catch(() => {
+    const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('Copiado!');
+  });
+}
+
 // =====================================================
 // PDDE DASHBOARD — FNDE ANTONIETA DE BARROS ENGINE
 // =====================================================
