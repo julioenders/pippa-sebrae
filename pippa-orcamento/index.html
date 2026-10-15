@@ -863,35 +863,48 @@ function renderAll() {
 function renderAprovado() {
   const d = DATA_APROVADO;
   const c = tc();
-  const totalProjetos = d.nucleos.reduce((s,n)=>s+n.projetos.length,0);
-  const totalAcoes = d.nucleos.reduce((s,n)=>s+n.projetos.reduce((a,p)=>a+p.acoes.length,0),0);
+  const filterNuc = document.getElementById('filterNucleo').value;
+  const filterProj = document.getElementById('filterProjeto').value;
+
+  const matchNuc = n => !filterNuc || filterNuc.includes(n.nome);
+  const filtNucleos = d.nucleos.filter(matchNuc).map(n => {
+    const projs = filterProj ? n.projetos.filter(p=>p.nome===filterProj) : n.projetos;
+    const total = projs.reduce((s,p)=>s+p.total,0);
+    return {...n, projetos:projs, total};
+  }).filter(n=>n.projetos.length>0);
+
+  const filtTotal = filtNucleos.reduce((s,n)=>s+n.total,0);
+  const filtProjCount = filtNucleos.reduce((s,n)=>s+n.projetos.length,0);
+  const filtAcaoCount = filtNucleos.reduce((s,n)=>s+n.projetos.reduce((a,p)=>a+p.acoes.length,0),0);
+  const isFiltered = filterNuc || filterProj;
+  const maior = filtNucleos.length>0 ? filtNucleos.reduce((a,n)=>n.total>a.total?n:a) : {total:0,nome:'-'};
 
   document.getElementById('kpiAprovado').innerHTML = `
     <div class="kpi kpi-blue">
-      <div class="kpi-label">Proposta UPP 2027</div>
-      <div class="kpi-value">${fmt(d.proposta2027)}</div>
-      <div class="kpi-detail">Aprovada pela Presidência do Sebrae</div>
+      <div class="kpi-label">${isFiltered?'Filtro Selecionado':'Proposta UPP 2027'}</div>
+      <div class="kpi-value">${fmt(filtTotal)}</div>
+      <div class="kpi-detail">${isFiltered?'de '+fmt(d.proposta2027)+' ('+( filtTotal/d.proposta2027*100).toFixed(1)+'%)':'Aprovada pela Presidência do Sebrae'}</div>
     </div>
     <div class="kpi kpi-purple">
       <div class="kpi-label">Núcleos</div>
-      <div class="kpi-value">${d.nucleos.length}</div>
-      <div class="kpi-detail">${totalProjetos} projetos · ${totalAcoes} ações</div>
+      <div class="kpi-value">${filtNucleos.length}</div>
+      <div class="kpi-detail">${filtProjCount} projeto${filtProjCount!==1?'s':''} · ${filtAcaoCount} ações</div>
     </div>
     <div class="kpi kpi-green">
-      <div class="kpi-label">Maior Núcleo</div>
-      <div class="kpi-value">${fmt(d.nucleos.reduce((a,n)=>n.total>a.total?n:a).total)}</div>
-      <div class="kpi-detail">${d.nucleos.reduce((a,n)=>n.total>a.total?n:a).nome} (${(d.nucleos.reduce((a,n)=>n.total>a.total?n:a).total/d.proposta2027*100).toFixed(1)}%)</div>
+      <div class="kpi-label">${filtNucleos.length>1?'Maior Núcleo':'Núcleo'}</div>
+      <div class="kpi-value">${fmt(maior.total)}</div>
+      <div class="kpi-detail">${maior.nome} (${filtTotal>0?(maior.total/filtTotal*100).toFixed(1):0}%)</div>
     </div>
     <div class="kpi kpi-cyan">
       <div class="kpi-label">Média por Projeto</div>
-      <div class="kpi-value">${fmt(d.proposta2027/totalProjetos)}</div>
+      <div class="kpi-value">${fmt(filtProjCount>0?filtTotal/filtProjCount:0)}</div>
       <div class="kpi-detail">${d.versao} do documento</div>
     </div>
   `;
 
-  const nucLabels = d.nucleos.map(n=>n.nome);
-  const nucValues = d.nucleos.map(n=>n.total);
-  const nucColors = d.nucleos.map(n=> NUCLEO_COLORS[Object.keys(NUCLEO_COLORS).find(k=>k.includes(n.nome))] || SEBRAE_PALETTE[nucLabels.indexOf(n.nome)]);
+  const nucLabels = filtNucleos.map(n=>n.nome);
+  const nucValues = filtNucleos.map(n=>n.total);
+  const nucColors = filtNucleos.map(n=> NUCLEO_COLORS[Object.keys(NUCLEO_COLORS).find(k=>k.includes(n.nome))] || SEBRAE_PALETTE[nucLabels.indexOf(n.nome)]);
 
   if(charts.nucPie) charts.nucPie.destroy();
   charts.nucPie = new Chart(document.getElementById('chartNucleoPie'),{
@@ -901,13 +914,13 @@ function renderAprovado() {
       responsive:true, maintainAspectRatio:false,
       plugins:{
         legend:{ position:'bottom', labels:{ padding:12, usePointStyle:true, pointStyle:'circle', font:{size:11} } },
-        tooltip:{ callbacks:{ label:ctx=> `${ctx.label}: ${fmt(ctx.raw)} (${(ctx.raw/d.proposta2027*100).toFixed(1)}%)` } }
+        tooltip:{ callbacks:{ label:ctx=> `${ctx.label}: ${fmt(ctx.raw)} (${(ctx.raw/filtTotal*100).toFixed(1)}%)` } }
       }
     }
   });
 
   const allProjs = [];
-  d.nucleos.forEach(n=> n.projetos.forEach(p=> allProjs.push({ nome:p.nome, valor:p.total, nucleo:n.nome })));
+  filtNucleos.forEach(n=> n.projetos.forEach(p=> allProjs.push({ nome:p.nome, valor:p.total, nucleo:n.nome })));
   allProjs.sort((a,b)=>b.valor-a.valor);
   const projLabels = allProjs.map(p=> p.nome.length>30 ? p.nome.substring(0,28)+'...' : p.nome);
   const projColors = allProjs.map(p=> NUCLEO_COLORS[Object.keys(NUCLEO_COLORS).find(k=>k.includes(p.nucleo))] || '#2a4fda');
@@ -926,17 +939,17 @@ function renderAprovado() {
   });
 
   let rows = '';
-  d.nucleos.forEach(n=>{
-    const pctNuc = (n.total/d.proposta2027*100).toFixed(1);
+  filtNucleos.forEach(n=>{
+    const pctNuc = filtTotal>0?(n.total/filtTotal*100).toFixed(1):'0';
     rows += `<tr style="background:var(--surface2)"><td colspan="3" style="font-weight:700;color:var(--accent)">${n.nome} <span style="font-weight:400;color:var(--text2);font-size:.72rem">(${n.tipo})</span></td><td style="font-weight:700;text-align:right">R$ ${fmtN(n.total)}</td><td style="text-align:center;font-weight:700">${pctNuc}%</td></tr>`;
     n.projetos.forEach(p=>{
-      rows += `<tr><td style="padding-left:1.5rem;font-weight:600;color:var(--text)" colspan="2">${p.nome}</td><td></td><td style="text-align:right;font-weight:600">R$ ${fmtN(p.total)}</td><td style="text-align:center">${(p.total/d.proposta2027*100).toFixed(1)}%</td></tr>`;
+      rows += `<tr><td style="padding-left:1.5rem;font-weight:600;color:var(--text)" colspan="2">${p.nome}</td><td></td><td style="text-align:right;font-weight:600">R$ ${fmtN(p.total)}</td><td style="text-align:center">${filtTotal>0?(p.total/filtTotal*100).toFixed(1):'0'}%</td></tr>`;
       p.acoes.forEach(a=>{
-        rows += `<tr><td></td><td colspan="2" style="padding-left:.5rem;color:var(--text2);font-size:.78rem">${a.nome}</td><td style="text-align:right;color:var(--text2);font-size:.78rem">R$ ${fmtN(a.valor)}</td><td style="text-align:center;color:var(--text2);font-size:.78rem">${(a.valor/d.proposta2027*100).toFixed(2)}%</td></tr>`;
+        rows += `<tr><td></td><td colspan="2" style="padding-left:.5rem;color:var(--text2);font-size:.78rem">${a.nome}</td><td style="text-align:right;color:var(--text2);font-size:.78rem">R$ ${fmtN(a.valor)}</td><td style="text-align:center;color:var(--text2);font-size:.78rem">${filtTotal>0?(a.valor/filtTotal*100).toFixed(2):'0'}%</td></tr>`;
       });
     });
   });
-  rows += `<tr style="background:var(--accent);color:#fff"><td colspan="3" style="font-weight:800;font-size:.9rem">TOTAL PROPOSTA UPP 2027</td><td style="text-align:right;font-weight:800;font-size:.9rem">R$ ${fmtN(d.proposta2027)}</td><td style="text-align:center;font-weight:800">100%</td></tr>`;
+  rows += `<tr style="background:var(--accent);color:#fff"><td colspan="3" style="font-weight:800;font-size:.9rem">TOTAL${isFiltered?' FILTRADO':' PROPOSTA UPP 2027'}</td><td style="text-align:right;font-weight:800;font-size:.9rem">R$ ${fmtN(filtTotal)}</td><td style="text-align:center;font-weight:800">100%</td></tr>`;
 
   document.getElementById('tableAprovado').innerHTML = `
     <table style="width:100%;border-collapse:collapse;font-size:.8rem">
