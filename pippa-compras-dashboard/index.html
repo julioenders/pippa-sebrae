@@ -205,15 +205,16 @@
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       box-shadow: var(--shadow);
-      padding: 16px 24px;
+      padding: 12px 20px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px 16px;
       position: sticky;
       top: 0;
       z-index: 100;
     }
-    .header-left { display: flex; align-items: center; gap: 16px; }
+    .header-left { display: flex; align-items: center; gap: 12px; margin-right: auto; }
     .logo {
       font-family: var(--font-heading);
       font-size: 22px;
@@ -222,7 +223,7 @@
       letter-spacing: -0.5px;
     }
     .logo-sub { font-size: 13px; color: var(--text-muted); font-weight: 400; }
-    .header-controls { display: flex; align-items: center; gap: 12px; }
+    .header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
     .select-input, .date-input {
       background: var(--surface2);
@@ -444,7 +445,7 @@
     .toast { position: fixed; bottom: 24px; right: 24px; background: var(--azul-sebrae); color: #fff; padding: 10px 20px; border-radius: var(--radius); font-size: 13px; font-weight: 600; z-index: 400; opacity: 0; transform: translateY(10px); transition: all 0.3s; }
     .toast.show { opacity: 1; transform: translateY(0); }
 
-    .info-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 10px; }
+    .info-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .info-btn:hover { border-color: var(--text-accent); color: var(--text-accent); }
 
     .info-modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; align-items: center; justify-content: center; }
@@ -489,10 +490,19 @@
     }
     .pdde-exec-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; transition: width .5s; }
 
+    @media (max-width: 1024px) {
+      .header { padding: 10px 16px; }
+      .header-controls { gap: 6px; }
+      .logo { font-size: 18px; }
+      .btn { padding: 7px 14px; font-size: 13px; }
+      .select-input, .date-input { padding: 6px 10px; font-size: 13px; }
+    }
     @media (max-width: 768px) {
       .layout { grid-template-columns: 1fr; }
       .sidebar { position: static; max-height: none; border-right: none; border-bottom: 1px solid var(--border); }
-      .header { flex-wrap: wrap; gap: 12px; }
+      .header { padding: 10px 12px; gap: 8px; }
+      .header-left { margin-right: 0; width: 100%; }
+      .header-controls { width: 100%; }
       .kpi-bar { grid-template-columns: repeat(2, 1fr); }
       .charts-row { grid-template-columns: 1fr; }
       .charts-row-half { grid-template-columns: 1fr; }
@@ -630,10 +640,6 @@
       </select>
       <button class="btn" id="btnFetch" onclick="fetchData()">Buscar Licitacoes</button>
       <button class="btn btn-outline" onclick="openExportModal()">Exportar WhatsApp</button>
-      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
-      <button class="btn btn-green" onclick="pncpMonLoaded=false;loadPncpMonitorData()">Carregar Dados</button>
-      <button class="btn btn-outline" onclick="openPncpMonExportModal()">Exportar WhatsApp</button>
-      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     </div>
   </header>
@@ -1358,6 +1364,9 @@
       <select id="pncpMonMun" class="select-input" onchange="renderPncpMonDashboard()" style="width:180px;display:none;">
         <option value="">Todos os Municipios</option>
       </select>
+      <button class="btn btn-green" onclick="pncpMonLoaded=false;loadPncpMonitorData()">Carregar Dados</button>
+      <button class="btn btn-outline" onclick="openPncpMonExportModal()">Exportar WhatsApp</button>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     </div>
   </header>
 
