@@ -243,7 +243,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
       <option value="57">57a Legislatura (2023-2027)</option>
     </select>
     <button class="btn btn-primary" onclick="fetchData()">&#128269; Consultar APIs</button>
-    <button class="btn btn-outline" onclick="exportWhatsApp()" title="Compartilhar resumo via WhatsApp">&#128172; WhatsApp</button>
+    <button class="btn btn-outline" onclick="exportWhatsApp()" title="Compartilhar resumo via WhatsApp">📤 WhatsApp</button>
   </div>
 </div>
 
@@ -2296,8 +2296,7 @@ function exportWhatsApp() {
   msg += '\n_Fonte: PIPPA — Sebrae Nacional_';
   msg += '\n_Dados: APIs Camara, Senado e TSE_';
 
-  var url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg);
-  window.open(url, '_blank');
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
   showToast('Resumo preparado para WhatsApp');
 }
 </script>

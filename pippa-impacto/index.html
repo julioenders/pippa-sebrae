@@ -137,6 +137,7 @@ body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-pri
   </div>
   <div class="header-controls">
     <button class="info-btn" onclick="showMethodology()" aria-label="Sobre este painel">&#8505;</button>
+    <button class="btn" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp" style="background:transparent;border:1px solid var(--border);color:var(--text-muted)">📤 WhatsApp</button>
     <button class="btn btn-primary" onclick="loadPortfolio()">&#128202; Consolidar Portfólio</button>
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema">
       <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -412,6 +413,25 @@ function renderPortfolio(eixos,ferramentas){
 function toggleEixo(uid){var c=document.getElementById('ec-'+uid);if(c)c.classList.toggle('expanded')}
 function showMethodology(){document.querySelector('.methodology-backdrop').classList.add('active')}
 function closeMethodology(){document.querySelector('.methodology-backdrop').classList.remove('active')}
+
+function exportWhatsApp(){
+  var ferramentas=document.getElementById('kpiFerramentas').textContent;
+  var eixos=document.getElementById('kpiEixos').textContent;
+  var apis=document.getElementById('kpiAPIs').textContent;
+  var indicadores=document.getElementById('kpiIndicadores').textContent;
+  var hoje=new Date().toLocaleDateString('pt-BR');
+  var msg='📊 *PIPPA Impacto — Portfólio de Evidências*\n';
+  msg+='📅 Relatório gerado em '+hoje+'\n\n';
+  msg+='*RESUMO*\n';
+  msg+='━━━━━━━━━━━━━━━━━━\n';
+  msg+='• Ferramentas Ativas: '+ferramentas+'\n';
+  msg+='• Eixos Cobertos: '+eixos+'\n';
+  msg+='• APIs Integradas: '+apis+'\n';
+  msg+='• Indicadores Monitorados: '+indicadores+'\n\n';
+  msg+='🔗 https://julioenders.github.io/pippa-sebrae/pippa-impacto/index.html\n';
+  msg+='📡 PIPPA — Sebrae Nacional';
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
 
 loadPortfolio();
 </script>

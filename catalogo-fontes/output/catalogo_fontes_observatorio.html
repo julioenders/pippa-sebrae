@@ -318,6 +318,7 @@ h1,h2,h3,.header-title,.sidebar-title {
       <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
     </button>
+    <button class="pippa-home-btn" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp">📤 WhatsApp</button>
     <a href="../../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
     <div><span>17</span> fontes &middot; <span>58</span> cubos de dados</div>
     <div>25 / 09 / 2026</div>
@@ -710,6 +711,23 @@ function updateStats(fontes, cubos) {
 
 renderQuestions();
 renderCards();
+
+function exportWhatsApp(){
+  var fontes=document.getElementById('statFontes').textContent;
+  var cubos=document.getElementById('statCubos').textContent;
+  var visiveis=document.getElementById('statVisiveis').textContent;
+  var hoje=new Date().toLocaleDateString('pt-BR');
+  var msg='📚 *PIPPA Catálogo de Fontes*\n';
+  msg+='📅 Relatório gerado em '+hoje+'\n\n';
+  msg+='*RESUMO*\n';
+  msg+='━━━━━━━━━━━━━━━━━━\n';
+  msg+='• Fontes: '+fontes+'\n';
+  msg+='• Cubos Analíticos: '+cubos+'\n';
+  msg+='• Fontes Visíveis: '+visiveis+'\n\n';
+  msg+='🔗 https://julioenders.github.io/pippa-sebrae/catalogo-fontes/output/catalogo_fontes_observatorio.html\n';
+  msg+='📡 PIPPA — Sebrae Nacional';
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
 </script>
 </body>
 </html>

@@ -791,7 +791,7 @@
       <span style="color:var(--text-muted);font-size:13px">a</span>
       <input type="date" id="dateInputFim" class="date-input" title="Data fim">
       <button class="btn" id="btnFetch" onclick="fetchData()">Monitorar Noticias</button>
-      <button class="btn btn-outline" onclick="exportWhatsApp()">Exportar WhatsApp</button>
+      <button class="btn btn-outline" onclick="exportWhatsApp()">📤 WhatsApp</button>
     </div>
   </header>
 
@@ -1003,16 +1003,6 @@
     <div class="loading-progress" id="loadingProgress"></div>
   </div>
 
-  <div class="modal-backdrop" id="exportModal">
-    <div class="modal">
-      <div class="modal-title">Exportar para WhatsApp</div>
-      <div class="modal-content" id="exportContent"></div>
-      <div class="modal-actions">
-        <button class="btn btn-outline" onclick="closeModal()">Fechar</button>
-        <button class="btn" onclick="copyExport()">Copiar</button>
-      </div>
-    </div>
-  </div>
 
   <div class="toast" id="toast">Copiado!</div>
 
@@ -1939,26 +1929,7 @@ function exportWhatsApp() {
   }
   text += `\nConteúdo gerado por Inteligência Artificial (IA)`;
 
-  document.getElementById('exportContent').textContent = text;
-  document.getElementById('exportModal').classList.add('active');
-}
-
-function closeModal() {
-  document.getElementById('exportModal').classList.remove('active');
-}
-
-function copyExport() {
-  const text = document.getElementById('exportContent').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('Copiado para a area de transferencia!');
-  }).catch(() => {
-    const range = document.createRange();
-    range.selectNode(document.getElementById('exportContent'));
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
-    document.execCommand('copy');
-    showToast('Copiado!');
-  });
+  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
 }
 
 function showToast(msg) {

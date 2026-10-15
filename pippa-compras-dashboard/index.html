@@ -639,7 +639,7 @@
         <option value="">Municipio</option>
       </select>
       <button class="btn" id="btnFetch" onclick="fetchData()">Buscar Licitacoes</button>
-      <button class="btn btn-outline" onclick="openExportModal()">Exportar WhatsApp</button>
+      <button class="btn btn-outline" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp">📤 WhatsApp</button>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     </div>
   </header>
@@ -973,7 +973,7 @@
       <select id="pddeMun" class="select-input" onchange="renderPddeDashboard()" style="width:200px;display:none;">
         <option value="">Todos os Municipios</option>
       </select>
-      <button class="btn btn-outline" onclick="openPddeExportModal()">Exportar WhatsApp</button>
+      <button class="btn btn-outline" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp">📤 WhatsApp</button>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     </div>
   </header>
@@ -1111,7 +1111,7 @@
       <select id="pnaeMun" class="select-input" onchange="renderPnaeDashboard()" style="width:200px;display:none;">
         <option value="">Todos os Municipios</option>
       </select>
-      <button class="btn btn-outline" onclick="openPnaeExportModal()">Exportar WhatsApp</button>
+      <button class="btn btn-outline" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp">📤 WhatsApp</button>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     </div>
   </header>
@@ -1234,7 +1234,7 @@
         <option value="">Todos</option>
       </select>
       <button class="btn btn-green" onclick="execLoaded=false;loadExecData()">Carregar Dados</button>
-      <button class="btn btn-outline" onclick="openExecExportModal()">Exportar WhatsApp</button>
+      <button class="btn btn-outline" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp">📤 WhatsApp</button>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     </div>
   </header>
@@ -1369,7 +1369,7 @@
         <option value="">Todos os Municipios</option>
       </select>
       <button class="btn btn-green" onclick="pncpMonLoaded=false;loadPncpMonitorData()">Carregar Dados</button>
-      <button class="btn btn-outline" onclick="openPncpMonExportModal()">Exportar WhatsApp</button>
+      <button class="btn btn-outline" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp">📤 WhatsApp</button>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     </div>
   </header>
@@ -1480,29 +1480,6 @@
   <button onclick="document.getElementById('errorToast').style.display='none'" style="background:none;border:none;color:#ef4444;margin-left:12px;cursor:pointer;font-size:16px;vertical-align:middle;">&times;</button>
 </div>
 
-<div class="info-modal-backdrop" id="exportModal" onclick="if(event.target===this)closeExportModal()">
-  <div class="info-modal">
-    <button class="info-close" onclick="closeExportModal()">&times;</button>
-    <h2>Exportar para WhatsApp</h2>
-    <div id="exportContent" style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;font-size:13px;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;font-family:'Segoe UI',sans-serif;"></div>
-    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">
-      <button class="btn btn-outline" onclick="closeExportModal()">Fechar</button>
-      <button class="btn" onclick="copyExport()">Copiar</button>
-    </div>
-  </div>
-</div>
-
-<div class="info-modal-backdrop" id="pddeExportModal" onclick="if(event.target===this)closePddeExportModal()">
-  <div class="info-modal">
-    <button class="info-close" onclick="closePddeExportModal()">&times;</button>
-    <h2>Exportar PDDE para WhatsApp</h2>
-    <div id="pddeExportContent" style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;font-size:13px;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;font-family:'Segoe UI',sans-serif;"></div>
-    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">
-      <button class="btn btn-outline" onclick="closePddeExportModal()">Fechar</button>
-      <button class="btn" onclick="copyPddeExport()">Copiar</button>
-    </div>
-  </div>
-</div>
 
 <div class="info-modal-backdrop" id="infoModal" onclick="if(event.target===this)toggleInfoModal()">
   <div class="info-modal">
@@ -1766,7 +1743,7 @@
         <option value="12">Credenciamento</option>
       </select>
       <button class="action-btn" onclick="consultarFornecedores()" style="background:var(--rose);color:#fff;border:none;padding:8px 18px;border-radius:var(--radius);cursor:pointer;font-weight:700;font-size:13px;">Consultar Fornecedores</button>
-      <button class="btn btn-outline" onclick="openFornExportModal()">Exportar WhatsApp</button>
+      <button class="btn btn-outline" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp">📤 WhatsApp</button>
     </div>
   </header>
 
@@ -1889,18 +1866,6 @@
 </div>
 
 
-<!-- Shared Export Modal for All Modules -->
-<div class="info-modal-backdrop" id="sharedExportModal" onclick="if(event.target===this)closeSharedExport()">
-  <div class="info-modal">
-    <button class="info-close" onclick="closeSharedExport()">&times;</button>
-    <h2>Exportar para WhatsApp</h2>
-    <div id="sharedExportContent" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;font-size:13px;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;"></div>
-    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">
-      <button class="btn btn-outline" onclick="closeSharedExport()">Fechar</button>
-      <button class="btn" onclick="copySharedExport()">Copiar</button>
-    </div>
-  </div>
-</div>
 
 <script>
 function chartTextColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim()||'#6b7280'}
@@ -2570,8 +2535,6 @@ function updateThermometer() {
 
 // ── WhatsApp Export ──────────────────────────────────────────────
 
-let exportText = '';
-
 function generateExportText() {
   var uf = document.getElementById("ufInput").value;
   var mun = document.getElementById("munInput").value;
@@ -2641,17 +2604,40 @@ function generateExportText() {
   return t;
 }
 
-function openExportModal() {
-  if (allItems.length === 0) { showToast('Busque licitacoes primeiro'); return; }
-  exportText = generateExportText();
-  document.getElementById('exportContent').textContent = exportText;
-  document.getElementById('exportModal').classList.add('active');
-}
-function closeExportModal() { document.getElementById('exportModal').classList.remove('active'); }
-function copyExport() {
-  navigator.clipboard.writeText(exportText).then(() => showToast('Copiado para WhatsApp!')).catch(() => {
-    const ta = document.createElement('textarea'); ta.value = exportText; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('Copiado!');
-  });
+function exportWhatsApp() {
+  var msg = '';
+  var activeView = document.querySelector('.view.active');
+  var viewId = activeView ? activeView.id : '';
+  if (viewId === 'viewCompras') {
+    if (allItems.length === 0) { showToast('Busque licitacoes primeiro'); return; }
+    msg = generateExportText();
+  } else if (viewId === 'viewPdde') {
+    var pddeData = typeof getPddeFiltered === 'function' ? getPddeFiltered() : null;
+    if (!pddeData || pddeData.length === 0) { showToast('Carregue os dados primeiro'); return; }
+    msg = generatePddeExportText();
+  } else if (viewId === 'viewPnae') {
+    var pnaeData = typeof getPnaeFiltered === 'function' ? getPnaeFiltered() : null;
+    if (!pnaeData || pnaeData.length === 0) { showToast('Carregue os dados primeiro'); return; }
+    msg = generatePnaeExportText();
+  } else if (viewId === 'viewExecucao') {
+    if (typeof getExecFiltered !== 'function') { showToast('Carregue os dados primeiro'); return; }
+    var execResult = getExecFiltered();
+    if (!execResult.filtered || execResult.filtered.length === 0) { showToast('Carregue os dados primeiro'); return; }
+    msg = generateExecExportText();
+  } else if (viewId === 'viewPncpMonitor') {
+    if (typeof getPncpMonFiltered !== 'function' || PNCP_MONITOR_CACHE.length === 0) { showToast('Carregue os dados primeiro'); return; }
+    var pncpResult = getPncpMonFiltered();
+    if (!pncpResult.filtered || pncpResult.filtered.length === 0) { showToast('Carregue os dados primeiro'); return; }
+    msg = generatePncpMonExportText();
+  } else if (viewId === 'viewFornecedores') {
+    if (!_fornLastData || _fornLastData.length === 0) { showToast('Consulte fornecedores primeiro'); return; }
+    msg = generateFornExportText();
+  } else {
+    showToast('Selecione uma aba com dados primeiro');
+    return;
+  }
+  if (!msg) { showToast('Sem dados para exportar'); return; }
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 function toggleInfoModal() { document.getElementById('infoModal').classList.toggle('active'); }
@@ -2661,7 +2647,6 @@ function toggleExecInfoModal() { document.getElementById('execInfoModal').classL
 function togglePncpMonInfoModal() { document.getElementById('pncpMonInfoModal').classList.toggle('active'); }
 function toggleFornInfoModal() { document.getElementById('fornInfoModal').classList.toggle('active'); }
 
-let pddeExportText = '';
 function generatePddeExportText() {
   const data = getPddeFiltered();
   const byYear = pddeAggByYear(data);
@@ -2713,20 +2698,6 @@ function generatePddeExportText() {
   return t;
 }
 
-function openPddeExportModal() {
-  const data = getPddeFiltered();
-  if (!data || data.length === 0) { showToast('Carregue os dados primeiro'); return; }
-  pddeExportText = generatePddeExportText();
-  document.getElementById('pddeExportContent').textContent = pddeExportText;
-  document.getElementById('pddeExportModal').classList.add('active');
-}
-function closePddeExportModal() { document.getElementById('pddeExportModal').classList.remove('active'); }
-function copyPddeExport() {
-  navigator.clipboard.writeText(pddeExportText).then(() => showToast('Copiado para WhatsApp!')).catch(() => {
-    const ta = document.createElement('textarea'); ta.value = pddeExportText; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('Copiado!');
-  });
-}
-
 // ── PNAE WhatsApp Export ────────────────────────────────────────
 function generatePnaeExportText() {
   const data = getPnaeFiltered();
@@ -2766,16 +2737,6 @@ function generatePnaeExportText() {
   t += '\n🔗 Fonte: Plataforma Antonieta de Barros — FNDE (fnde.gov.br)\n';
   t += '📡 PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas | Sebrae Nacional';
   return t;
-}
-
-function openPnaeExportModal() {
-  if (typeof getPnaeFiltered !== 'function') { showToast('Carregue os dados primeiro'); return; }
-  const data = getPnaeFiltered();
-  if (!data || data.length === 0) { showToast('Carregue os dados primeiro'); return; }
-  const text = generatePnaeExportText();
-  document.getElementById('sharedExportContent').textContent = text;
-  document.getElementById('sharedExportModal').classList.add('active');
-  document.getElementById('sharedExportModal')._exportText = text;
 }
 
 // ── Execucao Orcamentaria WhatsApp Export ────────────────────────
@@ -2818,16 +2779,6 @@ function generateExecExportText() {
   return t;
 }
 
-function openExecExportModal() {
-  if (typeof getExecFiltered !== 'function') { showToast('Carregue os dados primeiro'); return; }
-  const { filtered } = getExecFiltered();
-  if (!filtered || filtered.length === 0) { showToast('Carregue os dados primeiro'); return; }
-  const text = generateExecExportText();
-  document.getElementById('sharedExportContent').textContent = text;
-  document.getElementById('sharedExportModal').classList.add('active');
-  document.getElementById('sharedExportModal')._exportText = text;
-}
-
 // ── PNCP Monitor WhatsApp Export ────────────────────────────────
 function generatePncpMonExportText() {
   const { filtered, nivel, regiao, uf, mun } = getPncpMonFiltered();
@@ -2868,16 +2819,6 @@ function generatePncpMonExportText() {
   t += '\n🔗 Fonte: PNCP — Portal Nacional de Contratacoes Publicas (pncp.gov.br)\n';
   t += '📡 PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas | Sebrae Nacional';
   return t;
-}
-
-function openPncpMonExportModal() {
-  if (typeof getPncpMonFiltered !== 'function' || PNCP_MONITOR_CACHE.length === 0) { showToast('Carregue os dados primeiro'); return; }
-  const { filtered } = getPncpMonFiltered();
-  if (!filtered || filtered.length === 0) { showToast('Carregue os dados primeiro'); return; }
-  const text = generatePncpMonExportText();
-  document.getElementById('sharedExportContent').textContent = text;
-  document.getElementById('sharedExportModal').classList.add('active');
-  document.getElementById('sharedExportModal')._exportText = text;
 }
 
 // ── Fornecedores PNCP WhatsApp Export ───────────────────────────
@@ -2948,22 +2889,6 @@ function generateFornExportText() {
   return t;
 }
 
-function openFornExportModal() {
-  if (!_fornLastData || _fornLastData.length === 0) { showToast('Consulte fornecedores primeiro'); return; }
-  var text = generateFornExportText();
-  document.getElementById('sharedExportContent').textContent = text;
-  document.getElementById('sharedExportModal').classList.add('active');
-  document.getElementById('sharedExportModal')._exportText = text;
-}
-
-// ── Shared Export Modal ─────────────────────────────────────────
-function closeSharedExport() { document.getElementById('sharedExportModal').classList.remove('active'); }
-function copySharedExport() {
-  const text = document.getElementById('sharedExportModal')._exportText || '';
-  navigator.clipboard.writeText(text).then(() => showToast('Copiado para WhatsApp!')).catch(() => {
-    const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('Copiado!');
-  });
-}
 
 // =====================================================
 // PDDE DASHBOARD — FNDE ANTONIETA DE BARROS ENGINE

@@ -405,13 +405,6 @@
       background: var(--surface2); padding: 12px 16px; border-radius: 8px;
       font-family: 'Consolas', monospace; font-size: 13px; color: var(--accent); margin: 12px 0;
     }
-    .toast {
-      position: fixed; bottom: 24px; right: 24px; background: var(--success);
-      color: #fff; padding: 10px 20px; border-radius: var(--radius);
-      font-size: 13px; font-weight: 600; z-index: 400;
-      opacity: 0; transform: translateY(10px); transition: all 0.3s;
-    }
-    .toast.show { opacity: 1; transform: translateY(0); }
     .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
     .empty-state-icon { font-size: 48px; margin-bottom: 16px; }
     .empty-state-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
@@ -447,7 +440,7 @@
     <span style="color:var(--text-muted);font-size:13px">a</span>
     <input type="date" id="dateInputFim" class="date-input" title="Data fim">
     <button class="btn" id="btnFetch" onclick="fetchDOU()">Consultar DOU</button>
-    <button class="btn btn-outline" onclick="exportWhatsApp()">Exportar WhatsApp</button>
+    <button class="btn btn-outline" onclick="exportWhatsApp()">📤 WhatsApp</button>
   </div>
 </header>
 
@@ -722,20 +715,6 @@
   </div>
 </div>
 
-<!-- WhatsApp Export Modal -->
-<div class="modal-backdrop" id="whatsappModal" onclick="if(event.target===this)closeWhatsApp()">
-  <div class="modal">
-    <div class="modal-title">&#128172; Exportar para WhatsApp</div>
-    <div class="modal-content" id="whatsappContent"></div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeWhatsApp()">Fechar</button>
-      <button class="btn" onclick="copyWhatsApp()">&#128203; Copiar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Toast -->
-<div class="toast" id="toast">Copiado!</div>
 
 <script>
 let DATA = [];
@@ -1607,34 +1586,7 @@ function exportWhatsApp() {
 
   text += '_Gerado por PIPPA Regulatório v1.0_';
 
-  document.getElementById('whatsappContent').textContent = text;
-  document.getElementById('whatsappModal').classList.add('active');
-}
-
-function closeWhatsApp() {
-  document.getElementById('whatsappModal').classList.remove('active');
-}
-
-function copyWhatsApp() {
-  const text = document.getElementById('whatsappContent').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('Texto copiado!');
-  }).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast('Texto copiado!');
-  });
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
 }
 
 </script>
