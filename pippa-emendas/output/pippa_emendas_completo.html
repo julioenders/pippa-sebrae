@@ -1137,18 +1137,6 @@
     </div>
   </div>
 
-  <!-- Export Modal -->
-  <div class="info-modal-backdrop" id="exportModal" onclick="if(event.target===this)closeExportModal()">
-    <div class="info-modal">
-      <button class="info-close" onclick="closeExportModal()">&times;</button>
-      <h2>Exportar para WhatsApp</h2>
-      <div id="exportContent" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;font-size:13px;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;"></div>
-      <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">
-        <button class="btn btn-outline" onclick="closeExportModal()">Fechar</button>
-        <button class="btn" onclick="copyExport()">Copiar</button>
-      </div>
-    </div>
-  </div>
 
   <div class="toast" id="toast"></div>
 
@@ -2065,8 +2053,6 @@ function sortMunTable(col) {
 
 // ── Export / Modal ───────────────────────────────────────────
 
-let exportText = '';
-
 function toggleInfoModal() {
   document.getElementById('infoModal').classList.toggle('active');
 }
@@ -2116,25 +2102,7 @@ function openExportModal() {
   });
   t += '\n\u2139\ufe0f Dados: Portal da Transpar\u00eancia (CGU), C\u00e2mara dos Deputados e Senado Federal\n';
   t += '\ud83d\udce1 PIPPA \u2014 Plataforma de Intelig\u00eancia em Pol\u00edticas P\u00fablicas Aplicadas | Sebrae Nacional';
-  exportText = t;
-  document.getElementById('exportContent').textContent = t;
-  document.getElementById('exportModal').classList.add('active');
-}
-
-function closeExportModal() {
-  document.getElementById('exportModal').classList.remove('active');
-}
-
-function copyExport() {
-  navigator.clipboard.writeText(exportText).then(() => showToast('Copiado para WhatsApp!')).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = exportText;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast('Copiado!');
-  });
+  window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank');
 }
 
 function showToast(msg) {
