@@ -1563,7 +1563,7 @@ const KEYWORDS_CORE = [
   'contribuicao compulsoria','contribuicoes compulsorias',
   'lei 8029','lei no 8029',
   'servico social autonomo','servicos sociais autonomos',
-  'agenda legislativa 2026','agenda legislativa de 2026'
+  `agenda legislativa ${new Date().getFullYear()}`,`agenda legislativa de ${new Date().getFullYear()}`
 ];
 const KEYWORDS_CORE_SHORT = ['mei','mpe','epp','fampe'];
 
@@ -1600,9 +1600,11 @@ const EIXO_DEFINITIONS = [
     eixo: 'Inovacao e digital',
     keywords: [
       'inovacao empresarial','propriedade intelectual',
-      'inteligencia artificial','transformacao digital','digitalizacao',
       'automacao empresarial','modernizacao produtiva',
       'marco legal das startups','sandbox regulatorio'
+    ],
+    broadKeywords: [
+      'inteligencia artificial','transformacao digital','digitalizacao'
     ],
     shortKeywords: ['startups']
   },
@@ -1638,9 +1640,11 @@ const EIXO_DEFINITIONS = [
       'desburocratizacao','abertura de empresas','licenciamento',
       'obrigacoes acessorias','seguranca juridica','custos regulatorios',
       'reforma tributaria','regime diferenciado','beneficio fiscal',
-      'nota fiscal','registro empresarial','tributacao',
-      'ambiente de negocios','imposto seletivo','aliquota',
-      'empreendedorismo'
+      'nota fiscal','registro empresarial',
+      'ambiente de negocios','imposto seletivo'
+    ],
+    broadKeywords: [
+      'tributacao','aliquota','empreendedorismo'
     ],
     shortKeywords: ['ibs','cbs','cnpj']
   }
@@ -1666,10 +1670,10 @@ const KEYWORDS_INSTITUTIONAL_ENTITIES = [
 ];
 const GOV_CONTEXT_TERMS = [
   'contribuicao','orcamento','governanca','controle','auditoria',
-  'fiscalizacao','regime juridico','competencia','extincao',
-  'reorganizacao','receita','destinacao','gestao','contratacao',
-  'transparencia','prestacao de contas','obrigacao','despesa',
-  'vinculacao','alteracao','lei 8029','art 240'
+  'fiscalizacao','regime juridico','extincao',
+  'reorganizacao','destinacao',
+  'transparencia','prestacao de contas',
+  'vinculacao','lei 8029','art 240'
 ];
 
 // Social amplo sem vinculo com empreendedorismo (PDF criterion 5)
@@ -1774,8 +1778,9 @@ function normalize(text) {
   return text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }
 
-function classifyRelevance(ementa, sigla) {
-  const norm = normalize(ementa).replace(/º/g, 'o').replace(/ª/g, 'a');
+function classifyRelevance(ementa, sigla, indexacao) {
+  const ementaFull = indexacao ? ementa + ' ' + indexacao : ementa;
+  const norm = normalize(ementaFull).replace(/º/g, 'o').replace(/ª/g, 'a');
   const siglaUpper = (sigla || '').toUpperCase().replace(/[^A-Z]/g, '');
 
   // 1. Detect processual/symbolic (PDF: P3 or P4)
@@ -1784,7 +1789,7 @@ function classifyRelevance(ementa, sigla) {
 
   if (isProcessual) {
     return {
-      relevancia: 'Nula', prioridade: 'P4', eixo: 'Sem conexao',
+      relevancia: 'Nula', prioridade: 'P4', eixo: 'Sem conexao', eixoSecundario: null,
       impacto: 'Processual ou simbolico', papel: 'Arquivar',
       institucional: 'nao', score: 0,
       matchedPrimary: [], matchedSecondary: [], matchedInstitutional: [],
@@ -1800,22 +1805,34 @@ function classifyRelevance(ementa, sigla) {
   let matchedCorporativo = [];
   let allMatched = [];
 
+  const coreSet = new Set();
   for (const kw of KEYWORDS_CORE) {
-    if (matchesKeyword(norm, kw)) { matchedCore.push(kw); allMatched.push(kw); }
+    if (matchesKeyword(norm, kw)) { matchedCore.push(kw); allMatched.push(kw); coreSet.add(kw); }
   }
   for (const kw of KEYWORDS_CORE_SHORT) {
-    if (matchesKeyword(norm, kw)) { matchedCore.push(kw); allMatched.push(kw); }
+    if (matchesKeyword(norm, kw)) { matchedCore.push(kw); allMatched.push(kw); coreSet.add(kw); }
   }
+
+  const hasMpeContext = matchedCore.length > 0 ||
+    ['microempresa','empresa de pequeno porte','pequenos negocios','pequeno negocio','mei','mpe','epp'].some(t => matchesKeyword(norm, t));
 
   for (const def of EIXO_DEFINITIONS) {
     matchedEixoMap[def.eixo] = [];
     for (const kw of (def.keywords || [])) {
+      if (coreSet.has(kw)) continue;
       if (matchesKeyword(norm, kw)) {
         matchedEixoMap[def.eixo].push(kw);
         allMatched.push(kw);
       }
     }
+    for (const kw of (def.broadKeywords || [])) {
+      if (matchesKeyword(norm, kw) && hasMpeContext) {
+        matchedEixoMap[def.eixo].push(kw);
+        allMatched.push(kw);
+      }
+    }
     for (const kw of (def.shortKeywords || [])) {
+      if (coreSet.has(kw)) continue;
       if (matchesKeyword(norm, kw)) {
         matchedEixoMap[def.eixo].push(kw);
         allMatched.push(kw);
@@ -1859,13 +1876,17 @@ function classifyRelevance(ementa, sigla) {
 
   allMatched = [...new Set(allMatched)];
 
-  // 3. Eixo — first specific match wins, ordered by specificity (PDF criterion 4)
+  // 3. Eixo — primary by highest match count, secondary if exists (PDF criterion 4)
   let eixo = 'Sem conexao';
-  for (const def of EIXO_DEFINITIONS) {
-    if (matchedEixoMap[def.eixo].length > 0) {
-      eixo = def.eixo;
-      break;
-    }
+  let eixoSecundario = null;
+  const eixoRanked = EIXO_DEFINITIONS
+    .map(def => ({ eixo: def.eixo, count: matchedEixoMap[def.eixo].length }))
+    .filter(e => e.count > 0)
+    .sort((a, b) => b.count - a.count);
+
+  if (eixoRanked.length > 0) {
+    eixo = eixoRanked[0].eixo;
+    if (eixoRanked.length > 1) eixoSecundario = eixoRanked[1].eixo;
   }
   if (matchedCorporativo.length > 0 && matchedCore.length === 0 && eixo === 'Sem conexao') {
     eixo = 'Setorial/corporativa';
@@ -1874,7 +1895,7 @@ function classifyRelevance(ementa, sigla) {
   // 4. Institutional filter (PDF criterion 10)
   const institucional = matchedInstitutional.length > 0 ? 'sim' : 'nao';
 
-  // 5. Relevancia (PDF criterion 2)
+  // 5. Relevancia (PDF criterion 2) — deduplicated score
   const totalEixoMatches = Object.values(matchedEixoMap).reduce((s, a) => s + a.length, 0);
   let relevancia;
   if (institucional === 'sim' || matchedCore.length > 0) {
@@ -1941,7 +1962,9 @@ function classifyRelevance(ementa, sigla) {
 
   // Grau de impacto Siga Lei (criterion 5A)
   let grauSigaLei;
-  if (impacto === 'Direto MPE/MEI' && (relevancia === 'Central' || institucional === 'sim')) {
+  if (impacto === 'Direto Sebrae' && matchedCore.length > 0) {
+    grauSigaLei = 'Muito alto';
+  } else if (impacto === 'Direto MPE/MEI' && relevancia === 'Central') {
     grauSigaLei = 'Muito alto';
   } else if (impacto === 'Direto MPE/MEI' || impacto === 'Direto Sebrae') {
     grauSigaLei = 'Alto';
@@ -1957,7 +1980,7 @@ function classifyRelevance(ementa, sigla) {
   const posicionamento = 'Neutro / em analise';
 
   return {
-    relevancia, prioridade, eixo, impacto, papel, institucional, score,
+    relevancia, prioridade, eixo, eixoSecundario, impacto, papel, institucional, score,
     grauSigaLei, posicionamento,
     matchedPrimary: matchedCore,
     matchedSecondary: Object.values(matchedEixoMap).flat(),
@@ -2015,6 +2038,7 @@ async function fetchCamara(dateStart, dateEnd) {
           numero: prop.numero,
           ano: prop.ano,
           ementa: prop.ementa || '',
+          indexacao: prop.keywords || '',
           casa: 'Camara',
           uri: prop.uri,
           siglaTipo: prop.siglaTipo,
@@ -2421,7 +2445,7 @@ async function fetchData() {
       const isProposicao = TIPOS_PROPOSICAO.includes(siglaUpper);
 
       if (isProposicao) {
-        const classification = classifyRelevance(prop.ementa, prop.siglaTipo);
+        const classification = classifyRelevance(prop.ementa, prop.siglaTipo, prop.indexacao || '');
         allPropositions.push({
           ...prop,
           ...classification,
@@ -2610,7 +2634,7 @@ function applyFilters() {
     if (activeFilters.prioridade.length && !activeFilters.prioridade.includes(prop.prioridade)) return false;
     if (activeFilters.relevancia.length && !activeFilters.relevancia.includes(prop.relevancia)) return false;
     if (activeFilters.casa.length && !activeFilters.casa.includes(prop.casa)) return false;
-    if (activeFilters.eixo.length && !activeFilters.eixo.includes(prop.eixo)) return false;
+    if (activeFilters.eixo.length && !activeFilters.eixo.includes(prop.eixo) && !(prop.eixoSecundario && activeFilters.eixo.includes(prop.eixoSecundario))) return false;
     if (activeFilters.impacto.length && !activeFilters.impacto.includes(prop.impacto)) return false;
     if (activeFilters.papel.length && !activeFilters.papel.includes(prop.papel)) return false;
     if (activeFilters.institucional.length && !activeFilters.institucional.includes(prop.institucional)) return false;
@@ -2710,8 +2734,9 @@ function renderPropCard(prop) {
           <div class="prop-tags">
             <span class="prop-tag prop-tag-relevancia">${prop.relevancia}</span>
             <span class="prop-tag prop-tag-eixo">${prop.eixo}</span>
+            ${prop.eixoSecundario ? `<span class="prop-tag prop-tag-eixo" style="opacity:0.7">${prop.eixoSecundario}</span>` : ''}
             <span class="prop-tag" style="background:${prop.grauSigaLei === 'Muito alto' || prop.grauSigaLei === 'Alto' ? 'rgba(255,77,106,0.15);color:var(--p0)' : prop.grauSigaLei === 'Medio' ? 'rgba(255,197,66,0.15);color:var(--p2)' : 'rgba(139,143,168,0.15);color:var(--p4)'}">${prop.grauSigaLei}</span>
-            ${(prop.prioridade === 'P0' || prop.prioridade === 'P1') ? `<span class="prop-tag" style="background:rgba(79,141,255,0.15);color:var(--accent)">${prop.posicionamento}</span>` : ''}
+            ${(prop.prioridade === 'P0' || prop.prioridade === 'P1' || prop.prioridade === 'P2') ? `<span class="prop-tag" style="background:rgba(79,141,255,0.15);color:var(--accent)">${prop.posicionamento}</span>` : ''}
             ${keywords}
           </div>
         </div>
@@ -2897,6 +2922,7 @@ function renderPropCard(prop) {
             </div>
           </div>
           ${(prop.prioridade === 'P0' || prop.prioridade === 'P1') ? '<div style="margin:8px 0;padding:8px 12px;background:rgba(255,197,66,0.1);border-left:3px solid var(--p2);border-radius:4px;font-size:12px;color:var(--p2)">&#9888; Classificacao P0/P1 requer validacao humana antes de decisao institucional</div>' : ''}
+          ${prop.eixoSecundario ? `<div style="margin:8px 0;padding:8px 12px;background:rgba(79,141,255,0.08);border-left:3px solid var(--accent);border-radius:4px;font-size:12px;color:var(--accent)">Eixo secundario: ${prop.eixoSecundario}</div>` : ''}
           <button class="btn btn-save-class" onclick="saveClassification('${prop.id}')">Salvar Classificacao</button>
         </div>
       </div>
@@ -3240,7 +3266,7 @@ function exportWhatsApp() {
       text += `_Ementa:_ ${p.ementa.substring(0, 180).trim()}${p.ementa.length > 180 ? '...' : ''}\n`;
       if (p.autor) text += `_Autor(a):_ ${p.autor}${p.partido ? ' (' + p.partido + (p.uf ? '/' + p.uf : '') + ')' : ''}\n`;
       text += `_Prioridade:_ ${p.prioridade} | _Grau (Siga Lei):_ ${p.grauSigaLei}\n`;
-      text += `_Eixo:_ ${p.eixo} | _Impacto:_ ${p.impacto}\n`;
+      text += `_Eixo:_ ${p.eixo}${p.eixoSecundario ? ' / ' + p.eixoSecundario : ''} | _Impacto:_ ${p.impacto}\n`;
       text += `_Posicionamento Sebrae:_ ${p.posicionamento}\n`;
     }
     if (p0p1.length > 3) text += `\nOutras ${p0p1.length - 3} proposições prioritárias também foram registradas. `;
