@@ -421,14 +421,14 @@ const TOOLS = [
   },
   {
     id: "raioxmunicipal",
-    nome: "Raio-X Municipal",
-    subtitulo: "Diagnostico Completo por Municipio",
+    nome: "Raio-X Territorial",
+    subtitulo: "Diagnostico Socioeconomico em Tempo Real",
     accent: "#f2afab",
     icon: "🔍",
     url: "https://julioenders.github.io/pippa-raio-x/",
-    descricao: "Relatorio-diagnostico que cruza ~20 cubos OLAP do Observatorio Sebrae com APIs publicas (IBGE, BCB, CAGED, INEP, ANS, ANATEL) para gerar um panorama completo de qualquer municipio brasileiro. Cobre tecido empresarial (RF), complexidade economica (ECI/RCA), emprego formal (CAGED), PIB e VAB, infraestrutura financeira (ESTBAN), educacao (IDEB), saude, conectividade (IBC) e presenca Sebrae — tudo filtrado por codigo IBGE.",
-    features: ["~20 cubos OLAP cruzados", "Vocacoes territoriais (RCA)", "Complexidade economica (ECI)", "CAGED mensal", "PIB e composicao VAB", "Cobertura bancaria (ESTBAN)", "IDEB e censo escolar", "IBC conectividade (ANATEL)", "Benchmarking UF vs municipio", "Geracao automatica via Python"],
-    destaque: "Panorama completo de Porto de Pedras — AL: 9.520 habitantes, 756 empresas, forte vocacao turistica (RCA Alojamento 2.360), saldo emprego +190, IBC 37.1 e 20 setores especializados. Relatorio gerado automaticamente cruzando dados de 10 fontes oficiais."
+    descricao: "Dashboard interativo de diagnostico territorial com 4 niveis de navegacao (Brasil → Regiao → Estado → Municipio). Consulta APIs publicas em tempo real (IBGE Agregados, IBGE Localidades, Banco Central SGS) para apresentar populacao, PIB, VAB, empresas ativas (Receita Federal), emprego formal (CEMPRE), Selic, IPCA, credito e inadimplencia — com narrativa automatica e KPIs dinamicos por territorio selecionado.",
+    features: ["4 niveis: Brasil, Regiao, Estado, Municipio", "APIs em tempo real (IBGE + BCB)", "Populacao e estimativas IBGE", "PIB e composicao do VAB", "Empresas ativas (Receita Federal)", "Emprego formal (CEMPRE/IBGE)", "Selic, IPCA, credito e inadimplencia (BCB)", "Narrativa automatica por territorio", "KPIs dinamicos e graficos Chart.js", "Exportar WhatsApp"],
+    destaque: "Visao drill-down do Brasil ao municipio com dados oficiais em tempo real. Selecione qualquer territorio e receba um panorama completo com indicadores socioeconomicos, narrativa analitica e comparativos — tudo consultado ao vivo nas APIs do IBGE e Banco Central."
   },
   {
     id: "atuacaoupp",
