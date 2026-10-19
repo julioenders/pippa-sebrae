@@ -1,0 +1,40 @@
+name: Update Emendas Parlamentares
+
+on:
+  schedule:
+    - cron: '0 11 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-emendas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pandas requests pyarrow rapidfuzz
+
+      - name: Run pipeline
+        working-directory: pippa-emendas/scripts
+        run: python gerar_dashboard.py
+
+      - name: Commit updated dashboard
+        run: |
+          if git diff --quiet pippa-emendas/output/ 2>/dev/null; then
+            echo "No changes in output"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add pippa-emendas/output/
+            git commit -m "chore: update emendas dashboard $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git push
+          fi
