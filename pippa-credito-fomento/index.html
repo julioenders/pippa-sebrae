@@ -158,6 +158,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
   <div class="header-controls" style="display:flex;align-items:center;gap:8px">
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     <button class="btn btn-outline" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp" style="color:var(--offwhite);border-color:rgba(255,255,255,.25)">📤 WhatsApp</button>
+    <span id="timestampBadge" style="display:none;font-size:10px;color:rgba(255,255,255,.6);margin-right:4px"></span>
     <button class="btn btn-primary" onclick="fetchData()">&#128269; Consultar APIs</button>
   </div>
 </div>
@@ -299,11 +300,77 @@ function formatNum(n) {
   return parseFloat(String(n).replace(',','.')).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+var dataTimestamp = null;
+
 async function fetchBCBSeries(serieId, ultimos) {
   var url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.' + serieId + '/dados/ultimos/' + (ultimos || 12) + '?formato=json';
-  var resp = await fetch(url);
-  if (!resp.ok) return [];
-  return await resp.json();
+  var controller = new AbortController();
+  var timeoutId = setTimeout(function(){ controller.abort(); }, 8000);
+  try {
+    var resp = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (!resp.ok) return [];
+    var ct = resp.headers.get('content-type') || '';
+    if (ct.indexOf('json') < 0) return [];
+    return await resp.json();
+  } catch(e) {
+    clearTimeout(timeoutId);
+    return [];
+  }
+}
+
+function buildIndicadores(seriesData) {
+  return BCB_SERIES.map(function(serie) {
+    var dados = seriesData[String(serie.id)] || [];
+    return {
+      id: serie.id,
+      nome: serie.nome,
+      unidade: serie.unidade,
+      grupo: serie.grupo,
+      icon: serie.icon,
+      color: serie.color,
+      dados: dados,
+      ultimoValor: dados.length > 0 ? dados[dados.length - 1].valor : null,
+      ultimaData: dados.length > 0 ? dados[dados.length - 1].data : null
+    };
+  });
+}
+
+async function loadStaticData() {
+  var container = document.getElementById('indContainer');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando dados...</div>';
+  try {
+    var resp = await fetch('data.json');
+    if (!resp.ok) return false;
+    var payload = await resp.json();
+    dataTimestamp = payload.timestamp || null;
+    allIndicadores = buildIndicadores(payload.series || {});
+    var carregados = allIndicadores.filter(function(i){return i.ultimoValor !== null}).length;
+    if (carregados === 0) return false;
+    showToast(carregados + ' indicadores carregados (cache ' + formatTimestamp(dataTimestamp) + ')');
+    updateKPIs();
+    updateCharts();
+    buildFilters();
+    renderIndicadores();
+    updateTimestampBadge();
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+function formatTimestamp(ts) {
+  if (!ts) return '—';
+  var d = new Date(ts);
+  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+}
+
+function updateTimestampBadge() {
+  var el = document.getElementById('timestampBadge');
+  if (el && dataTimestamp) {
+    el.textContent = 'Dados: ' + formatTimestamp(dataTimestamp);
+    el.style.display = 'inline';
+  }
 }
 
 async function fetchData() {
@@ -312,46 +379,52 @@ async function fetchData() {
   allIndicadores = [];
 
   try {
+    var seriesData = {};
     var BATCH = 3;
+    var totalFetched = 0;
     for (var b = 0; b < BCB_SERIES.length; b += BATCH) {
       var batch = BCB_SERIES.slice(b, b + BATCH);
       var results = await Promise.all(batch.map(function(serie) {
         return fetchBCBSeries(serie.id, 24).then(function(dados) {
-          return {
-            id: serie.id,
-            nome: serie.nome,
-            unidade: serie.unidade,
-            grupo: serie.grupo,
-            icon: serie.icon,
-            color: serie.color,
-            dados: dados,
-            ultimoValor: dados.length > 0 ? dados[dados.length - 1].valor : null,
-            ultimaData: dados.length > 0 ? dados[dados.length - 1].data : null
-          };
-        }).catch(function() {
-          return { id: serie.id, nome: serie.nome, unidade: serie.unidade, grupo: serie.grupo, icon: serie.icon, color: serie.color, dados: [], ultimoValor: null, ultimaData: null };
+          return { id: serie.id, dados: dados };
         });
       }));
-      allIndicadores = allIndicadores.concat(results);
-      container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando indicadores do BCB SGS... ' + allIndicadores.length + '/' + BCB_SERIES.length + '</div>';
+      results.forEach(function(r) { seriesData[String(r.id)] = r.dados; });
+      totalFetched += batch.length;
+      container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando indicadores do BCB SGS... ' + totalFetched + '/' + BCB_SERIES.length + '</div>';
     }
 
+    allIndicadores = buildIndicadores(seriesData);
     var carregados = allIndicadores.filter(function(i){return i.ultimoValor !== null}).length;
+
     if (carregados === 0) {
-      showToast('Nenhum indicador carregado — verifique sua conexao');
-    } else {
-      showToast(carregados + ' de ' + allIndicadores.length + ' indicadores carregados');
+      var loaded = await loadStaticData();
+      if (loaded) {
+        showToast('API BCB indisponivel — exibindo dados do cache');
+      } else {
+        showToast('API BCB indisponivel e sem dados em cache');
+        container.innerHTML = '<div class="empty-state"><div class="icon">&#9888;</div><h3>API do BCB indisponivel</h3><p>O endpoint <code>api.bcb.gov.br</code> esta bloqueado por WAF ou inacessivel nesta rede.<br>Execute o GitHub Action <strong>update-credito-data</strong> para atualizar o <code>data.json</code>.</p></div>';
+      }
+      return;
     }
 
+    dataTimestamp = new Date().toISOString();
+    showToast(carregados + ' de ' + allIndicadores.length + ' indicadores carregados (API live)');
     updateKPIs();
     updateCharts();
     buildFilters();
     renderIndicadores();
+    updateTimestampBadge();
 
   } catch(e) {
-    container.innerHTML = '<div class="empty-state"><div class="icon">&#9888;</div><h3>Erro ao carregar dados</h3><p>' + escapeHtml(e.message) + '</p></div>';
+    var loaded = await loadStaticData();
+    if (!loaded) {
+      container.innerHTML = '<div class="empty-state"><div class="icon">&#9888;</div><h3>Erro ao carregar dados</h3><p>' + escapeHtml(e.message) + '</p></div>';
+    }
   }
 }
+
+document.addEventListener('DOMContentLoaded', function() { loadStaticData(); });
 
 function updateKPIs() {
   var selic = allIndicadores.find(function(i){return i.id===432});
