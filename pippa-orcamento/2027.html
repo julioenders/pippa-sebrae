@@ -46,7 +46,7 @@ a{color:inherit;text-decoration:none;}
 .btn-info{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:.9rem;font-weight:700;transition:all .2s;}
 .btn-info:hover{border-color:var(--accent);color:var(--accent);}
 
-/* Thermometer */
+/* Thermometer / Badge */
 .thermo{display:flex;align-items:center;gap:.5rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:.35rem .8rem;}
 .thermo-bar{width:80px;height:8px;border-radius:4px;background:var(--border);overflow:hidden;}
 .thermo-fill{height:100%;border-radius:4px;transition:width .5s;}
@@ -102,6 +102,7 @@ tr:nth-child(odd){background:var(--surface);}
 td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
 td.negative{color:var(--rose);font-weight:600;}
 td.over{color:var(--green);font-weight:600;}
+td.zero{color:var(--text-muted);}
 
 /* Alert cards */
 .alert-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1rem 1rem 1.2rem;margin-bottom:.6rem;position:relative;overflow:hidden;}
@@ -109,6 +110,8 @@ td.over{color:var(--green);font-weight:600;}
 .alert-card.critico::before{background:var(--rose);}
 .alert-card.alerta::before{background:var(--orange);}
 .alert-card.positivo::before{background:var(--green);}
+.alert-card.info::before{background:var(--accent);}
+
 .alert-title{font-weight:700;font-size:.85rem;margin-bottom:.3rem;}
 .alert-desc{font-size:.78rem;color:var(--text-muted);line-height:1.5;}
 
@@ -125,12 +128,13 @@ td.over{color:var(--green);font-weight:600;}
 .rec-tag.media{background:rgba(101,183,251,.12);color:var(--cyan);}
 .rec-desc{font-size:.78rem;color:var(--text-muted);line-height:1.5;}
 
-/* Risk badges */
+/* Risk badges in tables */
 .badge{display:inline-block;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:3px;text-transform:uppercase;}
 .badge-baixo{background:rgba(97,180,102,.12);color:var(--green);}
 .badge-medio{background:rgba(243,157,114,.12);color:var(--orange);}
 .badge-alto{background:rgba(224,86,93,.12);color:var(--rose);}
 .badge-sobre{background:rgba(97,180,102,.12);color:var(--green);}
+.badge-novo{background:rgba(42,79,218,.12);color:var(--accent);}
 
 /* Footer */
 .footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--text-muted);border-top:1px solid var(--border);}
@@ -174,10 +178,9 @@ td.over{color:var(--green);font-weight:600;}
 <header class="header">
   <div class="header-left">
     <span class="logo">PIPPA Orcamento UPP 2027</span>
-    <span class="subtitle">Execucao Orcamentaria &mdash; Dados Reais</span>
+    <span class="subtitle">Planejamento Orcamentario &mdash; Dados Reais</span>
     <div class="thermo">
-      <div class="thermo-bar"><div class="thermo-fill green" style="width:72%"></div></div>
-      <span class="thermo-label">72,4% Empenhado</span>
+      <span class="thermo-label">R$ 58,7 mi Planejado</span>
     </div>
   </div>
   <div class="header-actions">
@@ -202,41 +205,39 @@ td.over{color:var(--green);font-weight:600;}
 <div class="modal-overlay" id="infoModal" onclick="if(event.target===this)this.classList.remove('active')">
   <div class="modal">
     <h3>Sobre o PIPPA Orcamento 2027</h3>
-    <p>Dashboard de inteligencia orcamentaria da Unidade de Politicas Publicas (UPP) do Sebrae Nacional, exercicio 2027. Dados reais extraidos da planilha oficial "orcamento_upp_2027.xlsx".</p>
+    <p>Dashboard de planejamento orcamentario da Unidade de Politicas Publicas (UPP) do Sebrae Nacional, exercicio 2027. Dados reais extraidos da planilha oficial "Projetos e Acoes - 2027 ajustado.xlsx" (Versao 2).</p>
+    <p><strong>Nota:</strong> Este dashboard apresenta o PLANEJAMENTO orcamentario. Dados de execucao serao incorporados a medida que o exercicio 2027 avance.</p>
 
     <h4>Estrutura Organizacional</h4>
     <ul>
       <li><strong>Projetos Especiais</strong> &mdash; 3 projetos (Entrega de Valor, Fomento Compras, Movimenta) com 7 acoes</li>
-      <li><strong>NAL (Nucleo de Assessoria Legislativa)</strong> &mdash; 1 projeto (Inteligencia Legislativa) com 3 acoes</li>
+      <li><strong>NAL (Nucleo de Assessoria Legislativa)</strong> &mdash; NOVO em 2027. 1 projeto (Inteligencia Legislativa) com 3 acoes. Aprovado pela Resolucao DIREX 97/2024.</li>
       <li><strong>RelGov (Relacionamento Governamental)</strong> &mdash; 1 projeto (Ecossistemas de PP) com 1 acao</li>
       <li><strong>Gestao UPP (compartilhado)</strong> &mdash; 3 processos (Viagens, Bodyshop, Prod. Disseminacao) com 4 acoes</li>
     </ul>
 
-    <h4>Camadas Analiticas</h4>
+    <h4>Mudancas Estruturais em 2027</h4>
     <ul>
-      <li><strong>Descritiva</strong> &mdash; O que aconteceu? Visao geral de KPIs, execucao por nucleo e detalhamento por acao.</li>
-      <li><strong>Diagnostica</strong> &mdash; Por que aconteceu? Alertas, analise de metas, fases de execucao e gaps de liquidacao.</li>
-      <li><strong>Preditiva</strong> &mdash; O que vai acontecer? Projecao linear, indice de viabilidade e risco por acao.</li>
-      <li><strong>Prescritiva</strong> &mdash; O que fazer? Recomendacoes priorizadas e prioridades de aceleracao.</li>
+      <li>Criacao do projeto NAL com acoes que em 2026 estavam dispersas entre Ecossistemas e Projetos Especiais.</li>
+      <li>Bodyshop migra para Gestao UPP como contrato compartilhado.</li>
+      <li>Producao e Disseminacao de Conteudos incluida na Gestao UPP.</li>
     </ul>
 
-    <h4>Glossario</h4>
+    <h4>Camadas Analiticas</h4>
     <ul>
-      <li><strong>Empenhado:</strong> 1a etapa da despesa publica &mdash; valor do empenho emitido.</li>
-      <li><strong>Liquidado:</strong> 2a etapa &mdash; comprovacao da entrega do bem/servico.</li>
-      <li><strong>Pago:</strong> 3a etapa &mdash; saida financeira efetiva.</li>
-      <li><strong>Projecao Linear:</strong> estimativa anual baseada no ritmo medio mensal (empenhado x 12/9).</li>
-      <li><strong>Indice de Viabilidade:</strong> compara ritmo atual vs necessario para 100% de execucao.</li>
+      <li><strong>Descritiva</strong> &mdash; O que esta planejado? Distribuicao do orcamento por nucleo, projeto e acao.</li>
+      <li><strong>Diagnostica</strong> &mdash; Por que esse orcamento? Mudancas estruturais, concentracao, comparativos com 2026.</li>
+      <li><strong>Preditiva</strong> &mdash; O que esperar? Ritmo ideal de execucao, metas mensais e trimestrais.</li>
+      <li><strong>Prescritiva</strong> &mdash; O que preparar? Recomendacoes prioritarias para o inicio do exercicio.</li>
     </ul>
 
     <h4>Indicadores</h4>
     <ul>
-      <li>3 nucleos + 1 grupo compartilhado, 8 projetos/processos, 15 acoes</li>
-      <li>R$ 68,8 mi em orcamento | R$ 49,8 mi empenhados | 72,4% de execucao</li>
-      <li>12 metas fisicas monitoradas</li>
+      <li>3 nucleos + 1 grupo compartilhado, 5 projetos + 3 processos, 15 acoes</li>
+      <li>R$ 58,7 mi planejados | +49% vs 2026 | +29,5% vs 2025</li>
     </ul>
 
-    <p style="margin-top:.8rem;font-size:.75rem;"><strong>Fonte:</strong> Planilha "orcamento_upp_2027.xlsx" &mdash; Sebrae Nacional</p>
+    <p style="margin-top:.8rem;font-size:.75rem;"><strong>Fonte:</strong> Planilha "Projetos e Acoes - 2027 ajustado.xlsx" (Versao 2) &mdash; Sebrae Nacional</p>
     <p style="font-size:.75rem;">PIPPA &mdash; Plataforma de Inteligencia em Politicas Publicas Aplicadas</p>
 
     <button class="modal-close" onclick="document.getElementById('infoModal').classList.remove('active')">Fechar</button>
@@ -246,53 +247,45 @@ td.over{color:var(--green);font-weight:600;}
 <!-- ========== TAB 1: DESCRITIVA ========== -->
 <div class="tab-content active" id="tab-descritiva">
 <div class="container">
-  <h2 class="section-title" style="margin-bottom:1rem;color:var(--text-muted);font-size:.85rem;font-weight:600;">O que aconteceu?</h2>
+  <h2 class="section-title" style="margin-bottom:1rem;color:var(--text-muted);font-size:.85rem;font-weight:600;">O que esta planejado?</h2>
 
   <!-- KPIs -->
   <div class="kpi-row">
     <div class="kpi-card">
-      <div class="kpi-label">Orcamento</div>
-      <div class="kpi-value">R$ 68,8 mi</div>
+      <div class="kpi-label">Orcamento Total</div>
+      <div class="kpi-value accent">R$ 58,7 mi</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Empenhado</div>
-      <div class="kpi-value accent">R$ 49,8 mi</div>
+      <div class="kpi-label">Nucleos</div>
+      <div class="kpi-value">3</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Liquidado</div>
-      <div class="kpi-value">R$ 40,4 mi</div>
+      <div class="kpi-label">Projetos</div>
+      <div class="kpi-value">5</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Pago</div>
-      <div class="kpi-value">R$ 35,9 mi</div>
+      <div class="kpi-label">Acoes</div>
+      <div class="kpi-value">14</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Saldo</div>
-      <div class="kpi-value">R$ 19,0 mi</div>
+      <div class="kpi-label">Variacao vs 2025</div>
+      <div class="kpi-value" style="color:var(--green);">+29,5%</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">% Execucao</div>
-      <div class="kpi-value accent">72,4%</div>
+      <div class="kpi-label">Variacao vs 2026</div>
+      <div class="kpi-value" style="color:var(--green);">+48,9%</div>
     </div>
   </div>
 
   <!-- Charts row 1 -->
   <div class="charts-grid">
     <div class="chart-card">
-      <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Orcamento vs Empenhado por Nucleo</div>
-      <div class="chart-wrap bar-h"><canvas id="chartNucleos"></canvas></div>
+      <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Distribuicao por Nucleo</div>
+      <div class="chart-wrap doughnut"><canvas id="chartNucleos"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Evolucao Mensal Acumulada</div>
-      <div class="chart-wrap bar-h"><canvas id="chartEvolucao"></canvas></div>
-    </div>
-  </div>
-
-  <!-- Chart: % Exec por Projeto -->
-  <div class="charts-grid full">
-    <div class="chart-card">
-      <div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>% Execucao por Projeto</div>
-      <div class="chart-wrap bar-tall"><canvas id="chartPctProjetos"></canvas></div>
+      <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Orcamento por Projeto</div>
+      <div class="chart-wrap bar-tall"><canvas id="chartProjetos"></canvas></div>
     </div>
   </div>
 
@@ -303,149 +296,117 @@ td.over{color:var(--green);font-weight:600;}
       <thead>
         <tr>
           <th>Acao</th>
+          <th>Projeto</th>
           <th>Nucleo</th>
           <th style="text-align:right">Orcamento</th>
-          <th style="text-align:right">Empenhado</th>
-          <th style="text-align:right">% Exec</th>
-          <th style="text-align:right">Liquidado</th>
-          <th style="text-align:right">Pago</th>
+          <th style="text-align:right">% do Total</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Comunidades empreendedoras</td>
-          <td>Projetos Especiais</td>
-          <td class="num">6.219.398</td>
-          <td class="num">4.441.196</td>
-          <td class="num">71,4%</td>
-          <td class="num">3.360.898</td>
-          <td class="num">2.955.743</td>
-        </tr>
-        <tr>
-          <td>Sensibilizar gestores</td>
-          <td>Projetos Especiais</td>
-          <td class="num">0</td>
-          <td class="num">0</td>
-          <td class="num">-</td>
-          <td class="num">0</td>
-          <td class="num">0</td>
-        </tr>
-        <tr>
-          <td>Simplificar e desonerar</td>
-          <td>Projetos Especiais</td>
-          <td class="num">3.570.663</td>
-          <td class="num">2.480.266</td>
-          <td class="num">69,5%</td>
-          <td class="num">2.017.677</td>
-          <td class="num">1.784.852</td>
-        </tr>
-        <tr>
-          <td>Abertura oportunidades MPE</td>
-          <td>Projetos Especiais</td>
-          <td class="num">12.170.000</td>
-          <td class="num">8.648.754</td>
-          <td class="num">71,1%</td>
-          <td class="num">7.011.931</td>
-          <td class="num">6.316.284</td>
-        </tr>
-        <tr>
-          <td>Conexao plataformas</td>
-          <td>Projetos Especiais</td>
-          <td class="num">300.000</td>
-          <td class="num">216.597</td>
-          <td class="num">72,2%</td>
-          <td class="num">167.115</td>
-          <td class="num">151.849</td>
-        </tr>
-        <tr>
-          <td>Avaliar politicas</td>
-          <td>Projetos Especiais</td>
-          <td class="num">1.500.000</td>
-          <td class="num">1.094.661</td>
-          <td class="num">73,0%</td>
-          <td class="num">934.617</td>
-          <td class="num">810.761</td>
-        </tr>
-        <tr>
-          <td>Promover jornadas</td>
-          <td>Projetos Especiais</td>
-          <td class="num">1.000.000</td>
-          <td class="num">714.014</td>
-          <td class="num">71,4%</td>
-          <td class="num">549.352</td>
-          <td class="num">485.979</td>
-        </tr>
-        <tr>
-          <td>Articular agendas</td>
-          <td>NAL</td>
-          <td class="num">2.730.250</td>
-          <td class="num">1.883.808</td>
-          <td class="num">69,0%</td>
-          <td class="num">1.504.748</td>
-          <td class="num">1.356.031</td>
-        </tr>
-        <tr>
-          <td>Parlamento + Empreendedor</td>
-          <td>NAL</td>
-          <td class="num">1.354.000</td>
-          <td class="num">950.789</td>
-          <td class="num">70,2%</td>
-          <td class="num">824.436</td>
-          <td class="num">740.402</td>
-        </tr>
-        <tr>
-          <td>Laboratorios e observatorios</td>
-          <td>NAL</td>
-          <td class="num">2.015.000</td>
-          <td class="num">1.292.319</td>
-          <td class="num">64,1%</td>
-          <td class="num">1.105.011</td>
-          <td class="num">982.794</td>
-        </tr>
-        <tr>
-          <td>Impulsionar ecossistemas</td>
+          <td>Impulsionar ecossistemas empreendedores com parceiros publicos</td>
+          <td>Ecossistemas PP</td>
           <td>RelGov</td>
-          <td class="num">36.069.831</td>
-          <td class="num">26.727.756</td>
-          <td class="num">74,1%</td>
-          <td class="num">21.829.717</td>
-          <td class="num">19.354.441</td>
+          <td class="num">30.229.067</td>
+          <td class="num">51,5%</td>
         </tr>
         <tr>
-          <td>Gestao de Viagens</td>
+          <td>Abertura de oportunidades para MPE junto ao governo</td>
+          <td>Fomento Compras</td>
+          <td>Proj. Especiais</td>
+          <td class="num">10.170.000</td>
+          <td class="num">17,3%</td>
+        </tr>
+        <tr>
+          <td>Construir comunidades empreendedoras de aprendizagem</td>
+          <td>Entrega de Valor</td>
+          <td>Proj. Especiais</td>
+          <td class="num">5.819.398</td>
+          <td class="num">9,9%</td>
+        </tr>
+        <tr>
+          <td>Simplificar, desonerar e agilizar o dia a dia do empreendedor</td>
+          <td>Entrega de Valor</td>
+          <td>Proj. Especiais</td>
+          <td class="num">3.570.663</td>
+          <td class="num">6,1%</td>
+        </tr>
+        <tr>
+          <td>Articular agendas legislativas para a competitividade das MPE</td>
+          <td>Inteligencia Legislativa</td>
+          <td>NAL</td>
+          <td class="num">2.700.000</td>
+          <td class="num">4,6%</td>
+        </tr>
+        <tr>
+          <td>Implementar laboratorios e observatorios de politicas publicas</td>
+          <td>Inteligencia Legislativa</td>
+          <td>NAL</td>
+          <td class="num">1.950.000</td>
+          <td class="num">3,3%</td>
+        </tr>
+        <tr>
+          <td>Gestao de Viagens UPP</td>
+          <td>Gestao Viagens</td>
           <td>Gestao UPP</td>
-          <td class="num">1.300.000</td>
-          <td class="num">974.033</td>
-          <td class="num">74,9%</td>
-          <td class="num">802.550</td>
-          <td class="num">680.670</td>
+          <td class="num">1.200.000</td>
+          <td class="num">2,0%</td>
+        </tr>
+        <tr>
+          <td>Parlamento + Empreendedor (Resolucao DIREX 97/2024)</td>
+          <td>Inteligencia Legislativa</td>
+          <td>NAL</td>
+          <td class="num">1.000.000</td>
+          <td class="num">1,7%</td>
+        </tr>
+        <tr>
+          <td>Avaliar politicas publicas voltadas ao empreendedorismo</td>
+          <td>Movimenta</td>
+          <td>Proj. Especiais</td>
+          <td class="num">750.000</td>
+          <td class="num">1,3%</td>
+        </tr>
+        <tr>
+          <td>Promover jornadas formativas para a rede de politicas publicas</td>
+          <td>Movimenta</td>
+          <td>Proj. Especiais</td>
+          <td class="num">700.000</td>
+          <td class="num">1,2%</td>
         </tr>
         <tr>
           <td>Bodyshop</td>
+          <td>Bodyshop</td>
           <td>Gestao UPP</td>
           <td class="num">221.662</td>
-          <td class="num">159.861</td>
-          <td class="num">72,1%</td>
-          <td class="num">134.843</td>
-          <td class="num">123.696</td>
+          <td class="num">0,4%</td>
         </tr>
         <tr>
-          <td>Licitacoes Brindes</td>
-          <td>Gestao UPP</td>
+          <td>Conexao por meio de plataformas e cadastramento</td>
+          <td>Fomento Compras</td>
+          <td>Proj. Especiais</td>
           <td class="num">200.000</td>
-          <td class="num">134.574</td>
-          <td class="num">67,3%</td>
-          <td class="num">115.729</td>
-          <td class="num">104.568</td>
+          <td class="num">0,3%</td>
+        </tr>
+        <tr>
+          <td>Licitacoes &mdash; Brindes</td>
+          <td>Prod. Disseminacao</td>
+          <td>Gestao UPP</td>
+          <td class="num">150.000</td>
+          <td class="num">0,3%</td>
         </tr>
         <tr>
           <td>Compra direta/impressoes</td>
+          <td>Prod. Disseminacao</td>
           <td>Gestao UPP</td>
-          <td class="num">100.000</td>
-          <td class="num">70.945</td>
-          <td class="num">70,9%</td>
-          <td class="num">58.483</td>
-          <td class="num">51.695</td>
+          <td class="num">80.000</td>
+          <td class="num">0,1%</td>
+        </tr>
+        <tr>
+          <td>Sensibilizar gestores publicos e realizar entregas de politicas</td>
+          <td>Entrega de Valor</td>
+          <td>Proj. Especiais</td>
+          <td class="num zero">0</td>
+          <td class="num zero">0,0%</td>
         </tr>
       </tbody>
     </table>
@@ -456,56 +417,44 @@ td.over{color:var(--green);font-weight:600;}
 <!-- ========== TAB 2: DIAGNOSTICA ========== -->
 <div class="tab-content" id="tab-diagnostica">
 <div class="container">
-  <h2 class="section-title" style="margin-bottom:1rem;color:var(--text-muted);font-size:.85rem;font-weight:600;">Por que aconteceu?</h2>
+  <h2 class="section-title" style="margin-bottom:1rem;color:var(--text-muted);font-size:.85rem;font-weight:600;">Por que esse orcamento?</h2>
 
-  <div class="section-title">&#x26A0;&#xFE0F; Alertas de Execucao</div>
+  <div class="section-title">Destaques Estruturais</div>
 
-  <div class="alert-card alerta">
-    <div class="alert-title">&#x1F7E1; ALERTA &mdash; Inteligencia Legislativa (NAL): 67,7% empenhado</div>
-    <div class="alert-desc">Nucleo com maior defasagem: articular agendas (69%) e laboratorios (64,1%). Necessario acelerar contratacoes no ultimo trimestre.</div>
+  <div class="alert-card info">
+    <div class="alert-title">&#x1F535; INFO &mdash; Novo projeto: Inteligencia Legislativa (NAL)</div>
+    <div class="alert-desc">Em 2027, o NAL ganha projeto proprio com R$ 5,65 mi. Em 2026 essas acoes estavam dispersas entre Ecossistemas (R$ 2,57 mi) e Projetos Especiais (R$ 2,40 mi), totalizando R$ 4,97 mi. Crescimento de 13,8%.</div>
+  </div>
+
+  <div class="alert-card info">
+    <div class="alert-title">&#x1F535; INFO &mdash; Concentracao em RelGov: 51,5% do orcamento</div>
+    <div class="alert-desc">Ecossistemas de Politicas Publicas concentra R$ 30,2 mi (51,5%) em uma unica acao. Risco de concentracao requer monitoramento reforcado de execucao.</div>
   </div>
 
   <div class="alert-card alerta">
-    <div class="alert-title">&#x1F7E1; ALERTA &mdash; Producao e Disseminacao: 68,5% empenhado</div>
-    <div class="alert-desc">Acoes de brindes (67,3%) e impressoes (70,9%) ligeiramente abaixo do esperado para 9 meses.</div>
-  </div>
-
-  <div class="alert-card alerta">
-    <div class="alert-title">&#x1F7E1; ALERTA &mdash; Meta Laboratorios: apenas 50% atingida</div>
-    <div class="alert-desc">2 de 4 laboratorios implementados (menor atingimento de meta). Risco de nao cumprimento ate dezembro.</div>
-  </div>
-
-  <div class="alert-card alerta">
-    <div class="alert-title">&#x1F7E1; ALERTA &mdash; Meta Comunidades: 60% (9 de 15)</div>
-    <div class="alert-desc">Ritmo atual insuficiente: 2 comunidades/mes necessarias vs 1/mes atual para atingir meta.</div>
+    <div class="alert-title">&#x1F7E1; ALERTA &mdash; Sensibilizar gestores: sem dotacao</div>
+    <div class="alert-desc">Acao permanece com R$ 0 de orcamento em 2027, assim como em 2026. Atividade pode estar sendo absorvida por outros projetos.</div>
   </div>
 
   <div class="alert-card positivo">
-    <div class="alert-title">&#x1F7E2; POSITIVO &mdash; Ecossistemas PP (RelGov): 74,1% &mdash; no ritmo</div>
-    <div class="alert-desc">Maior orcamento da UPP (R$ 36,1 mi) com execucao aderente ao cronograma.</div>
+    <div class="alert-title">&#x1F7E2; POSITIVO &mdash; Bodyshop e Disseminacao compartilhados</div>
+    <div class="alert-desc">Bodyshop (R$ 222 mil) e Producao de Conteudos (R$ 230 mil) migram para Gestao UPP como servicos compartilhados entre nucleos.</div>
   </div>
 
   <div class="alert-card positivo">
-    <div class="alert-title">&#x1F7E2; POSITIVO &mdash; Gestao de Viagens: 74,9% &mdash; acima do esperado</div>
-    <div class="alert-desc">Execucao controlada e alinhada ao planejamento.</div>
+    <div class="alert-title">&#x1F7E2; POSITIVO &mdash; Crescimento de 49% vs 2026</div>
+    <div class="alert-desc">Orcamento salta de R$ 39,4 mi (2026) para R$ 58,7 mi (2027). Principal driver: Ecossistemas PP cresce de R$ 22,7 mi para R$ 30,2 mi (+33%).</div>
   </div>
 
-  <!-- Charts -->
+  <!-- Charts row -->
   <div class="charts-grid" style="margin-top:1.5rem;">
     <div class="chart-card">
-      <div class="chart-title"><span class="dot" style="background:var(--orange)"></span>Fases de Execucao por Nucleo</div>
-      <div class="chart-wrap bar-h"><canvas id="chartFases"></canvas></div>
+      <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Comparativo 2026 vs 2027 por Area</div>
+      <div class="chart-wrap bar-tall"><canvas id="chartComparativo"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Atingimento de Metas</div>
-      <div class="chart-wrap bar-tall"><canvas id="chartMetas"></canvas></div>
-    </div>
-  </div>
-
-  <div class="charts-grid full">
-    <div class="chart-card">
-      <div class="chart-title"><span class="dot" style="background:var(--rose)"></span>Gap Empenhado vs Liquidado por Projeto</div>
-      <div class="chart-wrap bar-h"><canvas id="chartGapLiq"></canvas></div>
+      <div class="chart-title"><span class="dot" style="background:var(--orange)"></span>Concentracao Orcamentaria</div>
+      <div class="chart-wrap bar-h"><canvas id="chartConcentracao"></canvas></div>
     </div>
   </div>
 </div>
@@ -514,166 +463,151 @@ td.over{color:var(--green);font-weight:600;}
 <!-- ========== TAB 3: PREDITIVA ========== -->
 <div class="tab-content" id="tab-preditiva">
 <div class="container">
-  <h2 class="section-title" style="margin-bottom:1rem;color:var(--text-muted);font-size:.85rem;font-weight:600;">O que vai acontecer?</h2>
+  <h2 class="section-title" style="margin-bottom:1rem;color:var(--text-muted);font-size:.85rem;font-weight:600;">O que esperar?</h2>
 
   <!-- KPIs -->
   <div class="kpi-row four">
     <div class="kpi-card">
-      <div class="kpi-label">Ritmo Esperado (linear)</div>
-      <div class="kpi-value">75,0%</div>
+      <div class="kpi-label">Ritmo Ideal Mensal</div>
+      <div class="kpi-value accent">R$ 4,9 mi</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Ritmo Real</div>
-      <div class="kpi-value accent">72,4%</div>
+      <div class="kpi-label">Ritmo Ideal Trimestral</div>
+      <div class="kpi-value">R$ 14,7 mi</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Projecao Linear</div>
-      <div class="kpi-value">R$ 66,4 mi</div>
+      <div class="kpi-label">Meta Mensal RelGov</div>
+      <div class="kpi-value">R$ 2,5 mi</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">% Projecao vs Orcamento</div>
-      <div class="kpi-value accent">96,6%</div>
+      <div class="kpi-label">Meta Mensal Proj. Especiais</div>
+      <div class="kpi-value">R$ 1,8 mi</div>
     </div>
   </div>
 
   <!-- Charts -->
   <div class="charts-grid">
     <div class="chart-card">
-      <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Projecao de Execucao por Nucleo</div>
-      <div class="chart-wrap bar-h"><canvas id="chartProjecao"></canvas></div>
+      <div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Ritmo Ideal Mensal por Nucleo</div>
+      <div class="chart-wrap bar-h"><canvas id="chartRitmoMensal"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title"><span class="dot" style="background:var(--rose)"></span>Indice de Viabilidade por Projeto</div>
-      <div class="chart-wrap bar-tall"><canvas id="chartViab"></canvas></div>
+      <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Distribuicao Ideal Trimestral</div>
+      <div class="chart-wrap bar-h"><canvas id="chartTrimestral"></canvas></div>
     </div>
   </div>
 
-  <!-- Projecao por Acao table -->
+  <!-- Cronograma Ideal table -->
   <div class="table-card">
-    <div class="table-title">Projecao por Acao</div>
+    <div class="table-title">Cronograma Ideal por Acao</div>
     <table>
       <thead>
         <tr>
           <th>Acao</th>
-          <th style="text-align:right">Orcamento</th>
-          <th style="text-align:right">Empenhado</th>
-          <th style="text-align:right">Proj. Linear</th>
-          <th style="text-align:right">% Proj</th>
-          <th style="text-align:center">Risco</th>
+          <th>Nucleo</th>
+          <th style="text-align:right">Orcamento Anual</th>
+          <th style="text-align:right">Meta Mensal</th>
+          <th style="text-align:right">Meta Trimestral</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Comunidades empreendedoras</td>
-          <td class="num">6.219.398</td>
-          <td class="num">4.441.196</td>
-          <td class="num">5.921.594</td>
-          <td class="num">95,2%</td>
-          <td style="text-align:center"><span class="badge badge-baixo">Baixo</span></td>
+          <td>Impulsionar ecossistemas empreendedores</td>
+          <td>RelGov</td>
+          <td class="num">30.229.067</td>
+          <td class="num">2.519.089</td>
+          <td class="num">7.557.267</td>
         </tr>
         <tr>
-          <td>Simplificar e desonerar</td>
+          <td>Abertura de oportunidades MPE</td>
+          <td>Proj. Especiais</td>
+          <td class="num">10.170.000</td>
+          <td class="num">847.500</td>
+          <td class="num">2.542.500</td>
+        </tr>
+        <tr>
+          <td>Construir comunidades empreendedoras</td>
+          <td>Proj. Especiais</td>
+          <td class="num">5.819.398</td>
+          <td class="num">484.950</td>
+          <td class="num">1.454.850</td>
+        </tr>
+        <tr>
+          <td>Simplificar/desonerar dia a dia</td>
+          <td>Proj. Especiais</td>
           <td class="num">3.570.663</td>
-          <td class="num">2.480.266</td>
-          <td class="num">3.307.022</td>
-          <td class="num">92,6%</td>
-          <td style="text-align:center"><span class="badge badge-medio">Medio</span></td>
+          <td class="num">297.555</td>
+          <td class="num">892.666</td>
         </tr>
         <tr>
-          <td>Abertura oportunidades MPE</td>
-          <td class="num">12.170.000</td>
-          <td class="num">8.648.754</td>
-          <td class="num">11.531.671</td>
-          <td class="num">94,8%</td>
-          <td style="text-align:center"><span class="badge badge-medio">Medio</span></td>
+          <td>Articular agendas legislativas</td>
+          <td>NAL</td>
+          <td class="num">2.700.000</td>
+          <td class="num">225.000</td>
+          <td class="num">675.000</td>
         </tr>
         <tr>
-          <td>Conexao plataformas</td>
+          <td>Implementar laboratorios e observatorios</td>
+          <td>NAL</td>
+          <td class="num">1.950.000</td>
+          <td class="num">162.500</td>
+          <td class="num">487.500</td>
+        </tr>
+        <tr>
+          <td>Gestao de Viagens UPP</td>
+          <td>Gestao UPP</td>
+          <td class="num">1.200.000</td>
+          <td class="num">100.000</td>
           <td class="num">300.000</td>
-          <td class="num">216.597</td>
-          <td class="num">288.796</td>
-          <td class="num">96,3%</td>
-          <td style="text-align:center"><span class="badge badge-baixo">Baixo</span></td>
-        </tr>
-        <tr>
-          <td>Avaliar politicas</td>
-          <td class="num">1.500.000</td>
-          <td class="num">1.094.661</td>
-          <td class="num">1.459.548</td>
-          <td class="num">97,3%</td>
-          <td style="text-align:center"><span class="badge badge-baixo">Baixo</span></td>
-        </tr>
-        <tr>
-          <td>Promover jornadas</td>
-          <td class="num">1.000.000</td>
-          <td class="num">714.014</td>
-          <td class="num">952.019</td>
-          <td class="num">95,2%</td>
-          <td style="text-align:center"><span class="badge badge-baixo">Baixo</span></td>
-        </tr>
-        <tr>
-          <td>Articular agendas</td>
-          <td class="num">2.730.250</td>
-          <td class="num">1.883.808</td>
-          <td class="num">2.511.744</td>
-          <td class="num">92,0%</td>
-          <td style="text-align:center"><span class="badge badge-medio">Medio</span></td>
         </tr>
         <tr>
           <td>Parlamento + Empreendedor</td>
-          <td class="num">1.354.000</td>
-          <td class="num">950.789</td>
-          <td class="num">1.267.719</td>
-          <td class="num">93,6%</td>
-          <td style="text-align:center"><span class="badge badge-medio">Medio</span></td>
+          <td>NAL</td>
+          <td class="num">1.000.000</td>
+          <td class="num">83.333</td>
+          <td class="num">250.000</td>
         </tr>
         <tr>
-          <td>Laboratorios e observatorios</td>
-          <td class="num">2.015.000</td>
-          <td class="num">1.292.319</td>
-          <td class="num">1.723.091</td>
-          <td class="num">85,5%</td>
-          <td style="text-align:center"><span class="badge badge-medio">Medio</span></td>
+          <td>Avaliar politicas publicas</td>
+          <td>Proj. Especiais</td>
+          <td class="num">750.000</td>
+          <td class="num">62.500</td>
+          <td class="num">187.500</td>
         </tr>
         <tr>
-          <td>Impulsionar ecossistemas</td>
-          <td class="num">36.069.831</td>
-          <td class="num">26.727.756</td>
-          <td class="num">35.637.007</td>
-          <td class="num">98,8%</td>
-          <td style="text-align:center"><span class="badge badge-baixo">Baixo</span></td>
+          <td>Promover jornadas formativas</td>
+          <td>Proj. Especiais</td>
+          <td class="num">700.000</td>
+          <td class="num">58.333</td>
+          <td class="num">175.000</td>
         </tr>
         <tr>
-          <td>Gestao de Viagens</td>
-          <td class="num">1.300.000</td>
-          <td class="num">974.033</td>
-          <td class="num">1.298.711</td>
-          <td class="num">99,9%</td>
-          <td style="text-align:center"><span class="badge badge-baixo">Baixo</span></td>
+          <td>Prod. Disseminacao &mdash; Brindes</td>
+          <td>Gestao UPP</td>
+          <td class="num">150.000</td>
+          <td class="num">12.500</td>
+          <td class="num">37.500</td>
         </tr>
         <tr>
           <td>Bodyshop</td>
+          <td>Gestao UPP</td>
           <td class="num">221.662</td>
-          <td class="num">159.861</td>
-          <td class="num">213.148</td>
-          <td class="num">96,2%</td>
-          <td style="text-align:center"><span class="badge badge-baixo">Baixo</span></td>
+          <td class="num">18.472</td>
+          <td class="num">55.416</td>
         </tr>
         <tr>
-          <td>Licitacoes Brindes</td>
+          <td>Conexao plataformas/cadastramento</td>
+          <td>Proj. Especiais</td>
           <td class="num">200.000</td>
-          <td class="num">134.574</td>
-          <td class="num">179.432</td>
-          <td class="num">89,7%</td>
-          <td style="text-align:center"><span class="badge badge-medio">Medio</span></td>
+          <td class="num">16.667</td>
+          <td class="num">50.000</td>
         </tr>
         <tr>
           <td>Compra direta/impressoes</td>
-          <td class="num">100.000</td>
-          <td class="num">70.945</td>
-          <td class="num">94.593</td>
-          <td class="num">94,6%</td>
-          <td style="text-align:center"><span class="badge badge-medio">Medio</span></td>
+          <td>Gestao UPP</td>
+          <td class="num">80.000</td>
+          <td class="num">6.667</td>
+          <td class="num">20.000</td>
         </tr>
       </tbody>
     </table>
@@ -684,17 +618,17 @@ td.over{color:var(--green);font-weight:600;}
 <!-- ========== TAB 4: PRESCRITIVA ========== -->
 <div class="tab-content" id="tab-prescritiva">
 <div class="container">
-  <h2 class="section-title" style="margin-bottom:1rem;color:var(--text-muted);font-size:.85rem;font-weight:600;">O que fazer?</h2>
+  <h2 class="section-title" style="margin-bottom:1rem;color:var(--text-muted);font-size:.85rem;font-weight:600;">O que preparar?</h2>
 
-  <div class="section-title">&#x1F4A1; Recomendacoes Prioritarias</div>
+  <div class="section-title">&#x1F4A1; Recomendacoes para 2027</div>
 
   <!-- Rec 1 -->
   <div class="rec-card">
     <div class="rec-badge alta">1</div>
     <div>
       <div><span class="rec-tag alta">Alta</span></div>
-      <div class="rec-title">Acelerar Inteligencia Legislativa (NAL)</div>
-      <div class="rec-desc">Nucleo com menor execucao (67,7%). Laboratorios (64,1%) e articular agendas (69%) precisam intensificar contratacoes. Projecao linear indica 90,2% &mdash; 3 meses restantes para fechar o gap.</div>
+      <div class="rec-title">Estruturar governanca do NAL</div>
+      <div class="rec-desc">Novo projeto com R$ 5,65 mi requer definicao de gestor, fluxos de contratacao e cronograma. Prioridade: Parlamento + Empreendedor (Resolucao DIREX 97/2024) e laboratorios.</div>
     </div>
   </div>
 
@@ -703,8 +637,8 @@ td.over{color:var(--green);font-weight:600;}
     <div class="rec-badge alta">2</div>
     <div>
       <div><span class="rec-tag alta">Alta</span></div>
-      <div class="rec-title">Implementar laboratorios restantes</div>
-      <div class="rec-desc">Meta de 4 laboratorios com apenas 2 implementados (50%). Menor atingimento de meta da UPP. Priorizar implementacao dos 2 restantes no 4o trimestre.</div>
+      <div class="rec-title">Plano de execucao do Ecossistemas</div>
+      <div class="rec-desc">R$ 30,2 mi em uma unica acao exige desdobramento em iniciativas mensais. Definir metas intermediarias e marcos de entrega para evitar acumulo no 2o semestre.</div>
     </div>
   </div>
 
@@ -713,8 +647,8 @@ td.over{color:var(--green);font-weight:600;}
     <div class="rec-badge alta">3</div>
     <div>
       <div><span class="rec-tag alta">Alta</span></div>
-      <div class="rec-title">Criar comunidades restantes</div>
-      <div class="rec-desc">6 comunidades faltando para a meta de 15 (60% atingido). Ritmo precisa triplicar: media de 1/mes vs 2/mes necessarios.</div>
+      <div class="rec-title">Estrategia de contratacao do Fomento</div>
+      <div class="rec-desc">Orcamento de R$ 10,4 mi (+112% vs 2026). Antecipar processos licitatorios e contratos para garantir execucao desde janeiro.</div>
     </div>
   </div>
 
@@ -723,8 +657,8 @@ td.over{color:var(--green);font-weight:600;}
     <div class="rec-badge media">4</div>
     <div>
       <div><span class="rec-tag media">Media</span></div>
-      <div class="rec-title">Monitorar liquidacao do Ecossistemas</div>
-      <div class="rec-desc">R$ 4,9 mi empenhados ainda nao liquidados (maior gap absoluto). Garantir tramitacao ate dezembro para evitar restos a pagar.</div>
+      <div class="rec-title">Monitoramento mensal de ritmo</div>
+      <div class="rec-desc">Ritmo ideal de R$ 4,9 mi/mes. Estabelecer reunioes mensais de acompanhamento com coordenadores de nucleo para deteccao precoce de desvios.</div>
     </div>
   </div>
 
@@ -733,27 +667,27 @@ td.over{color:var(--green);font-weight:600;}
     <div class="rec-badge media">5</div>
     <div>
       <div><span class="rec-tag media">Media</span></div>
-      <div class="rec-title">Intensificar Producao e Disseminacao</div>
-      <div class="rec-desc">68,5% empenhado &mdash; ritmo moderado. 8 materiais faltantes para meta de 30. Avaliar antecipacao de licitacoes de brindes.</div>
+      <div class="rec-title">Definir metas fisicas para 2027</div>
+      <div class="rec-desc">Alinhar indicadores de resultado (comunidades, editais, parcerias) com o orcamento aprovado. Metas devem ser proporcionais ao crescimento de 49% do orcamento.</div>
     </div>
   </div>
 
   <!-- Charts -->
   <div class="charts-grid" style="margin-top:1.5rem;">
     <div class="chart-card">
-      <div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Distribuicao Orcamentaria por Nucleo</div>
-      <div class="chart-wrap doughnut"><canvas id="chartDist"></canvas></div>
+      <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Peso Relativo por Nucleo</div>
+      <div class="chart-wrap doughnut"><canvas id="chartPesoNucleo"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title"><span class="dot" style="background:var(--rose)"></span>Prioridade de Aceleracao</div>
-      <div class="chart-wrap bar-tall"><canvas id="chartAceleracao"></canvas></div>
+      <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Areas de Maior Crescimento vs 2026</div>
+      <div class="chart-wrap bar-tall"><canvas id="chartCrescimento"></canvas></div>
     </div>
   </div>
 </div>
 </div>
 
 <footer class="footer">
-  PIPPA Orcamento v1.0 &mdash; Sebrae Nacional &mdash; UPP &mdash; Dados reais: orcamento_upp_2027.xlsx
+  PIPPA Orcamento v1.0 &mdash; Sebrae Nacional &mdash; UPP &mdash; Planejamento: Projetos e Acoes 2027 ajustado.xlsx
 </footer>
 
 <script>
@@ -780,17 +714,61 @@ function switchTab(name){
   document.querySelectorAll('.tab-content').forEach(function(c){c.classList.toggle('active',c.id==='tab-'+name);});
 }
 
-/* ===== DESCRITIVA: Chart 1 — Orcamento vs Empenhado por Nucleo ===== */
+/* ===== DESCRITIVA: Chart 1 — Distribuicao por Nucleo (doughnut) ===== */
 (function(){
-  var labels=['Projetos Especiais','NAL','RelGov','Gestao UPP'];
-  var orcamento=[24760060,6099250,36069831,1821662];
-  var empenhado=[17595488,4126916,26727756,1339412];
   var ctx=document.getElementById('chartNucleos').getContext('2d');
   var c=new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      labels:['RelGov (51,5%)','Proj. Especiais (36,1%)','NAL (9,6%)','Gestao UPP (2,8%)'],
+      datasets:[{data:[30229067,21210061,5650000,1651662],backgroundColor:[brandColors.primary,brandColors.green,brandColors.cyan,brandColors.orange],borderWidth:0,hoverOffset:6}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'60%',
+      plugins:{
+        legend:{position:'bottom',labels:{padding:14,font:{size:11}}},
+        tooltip:{callbacks:{label:function(ctx){return ctx.label+': R$ '+(ctx.raw/1e6).toFixed(1)+' mi';}}}
+      }
+    }
+  });
+  registerChart(c);
+})();
+
+/* ===== DESCRITIVA: Chart 2 — Orcamento por Projeto (horizontal bar) ===== */
+(function(){
+  var labels=['Ecossistemas PP','Fomento Compras','Entrega de Valor','Inteligencia Legislativa','Movimenta','Gestao Viagens','Prod. Disseminacao','Bodyshop'];
+  var vals=[30229067,10370000,9390061,5650000,1450000,1200000,230000,221662];
+  var colors=[brandColors.primary,brandColors.green,brandColors.cyan,brandColors.purple,brandColors.orange,brandColors.rose,brandColors.primary,brandColors.green];
+  var ctx=document.getElementById('chartProjetos').getContext('2d');
+  var c=new Chart(ctx,{
+    type:'bar',
+    data:{labels:labels,datasets:[{label:'Orcamento 2027',data:vals,backgroundColor:colors,borderRadius:3,barPercentage:.6}]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:function(ctx){return 'R$ '+(ctx.raw/1e6).toFixed(1)+' mi';}}}
+      },
+      scales:{
+        x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return 'R$ '+(v/1e6).toFixed(0)+' mi';}}},
+        y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
+      }
+    }
+  });
+  registerChart(c);
+})();
+
+/* ===== DIAGNOSTICA: Chart 3 — Comparativo 2026 vs 2027 (grouped bar) ===== */
+(function(){
+  var labels=['Ecossistemas/RelGov','Entrega de Valor','Fomento Compras','Movimenta','NAL (novo)','Gestao UPP'];
+  var v2026=[22715750,8199529,4900000,2323369,0,1300000];
+  var v2027=[30229067,9390061,10370000,1450000,5650000,1651662];
+  var ctx=document.getElementById('chartComparativo').getContext('2d');
+  var c=new Chart(ctx,{
     type:'bar',
     data:{labels:labels,datasets:[
-      {label:'Orcamento',data:orcamento,backgroundColor:brandColors.primary,borderRadius:3,barPercentage:.7},
-      {label:'Empenhado',data:empenhado,backgroundColor:brandColors.green,borderRadius:3,barPercentage:.7}
+      {label:'2026',data:v2026,backgroundColor:brandColors.orange,borderRadius:3,barPercentage:.7},
+      {label:'2027',data:v2027,backgroundColor:brandColors.primary,borderRadius:3,barPercentage:.7}
     ]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
@@ -807,47 +785,20 @@ function switchTab(name){
   registerChart(c);
 })();
 
-/* ===== DESCRITIVA: Chart 2 — Evolucao Mensal Acumulada ===== */
+/* ===== DIAGNOSTICA: Chart 4 — Concentracao Orcamentaria (horizontal bar %) ===== */
 (function(){
-  var labels=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set'];
-  var acumulado=[3844260,7606578,12578557,17216340,23506206,29008663,36138723,42339711,49789572];
-  var ideal=[5729234,11458467,17187701,22916935,28646168,34375402,40104636,45833869,51563103];
-  var ctx=document.getElementById('chartEvolucao').getContext('2d');
-  var c=new Chart(ctx,{
-    type:'line',
-    data:{labels:labels,datasets:[
-      {label:'Empenhado Acumulado',data:acumulado,borderColor:brandColors.primary,backgroundColor:'rgba(42,79,218,.1)',borderWidth:2.5,pointRadius:3,pointBackgroundColor:brandColors.primary,fill:false,tension:0.3},
-      {label:'Ritmo Ideal',data:ideal,borderColor:brandColors.orange,borderWidth:2,borderDash:[6,4],pointRadius:0,fill:false}
-    ]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{position:'bottom',labels:{padding:12,font:{size:11}}},
-        tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': R$ '+(ctx.raw/1e6).toFixed(1)+' mi';}}}
-      },
-      scales:{
-        x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();}}},
-        y:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return 'R$ '+(v/1e6).toFixed(0)+' mi';}}}
-      }
-    }
-  });
-  registerChart(c);
-})();
-
-/* ===== DESCRITIVA: Chart 3 — % Execucao por Projeto ===== */
-(function(){
-  var labels=['Entrega de Valor','Fomento Compras','Gestao Movimenta','Inteligencia Legislativa','Ecossistemas PP','Gestao Viagens','Bodyshop','Prod. Disseminacao'];
-  var pcts=[70.7,71.1,72.3,67.7,74.1,74.9,72.1,68.5];
-  var colors=pcts.map(function(v){return v>=75?brandColors.green:v>=60?brandColors.primary:brandColors.rose;});
-  var ctx=document.getElementById('chartPctProjetos').getContext('2d');
+  var labels=['Impulsionar ecossistemas','Abertura oportunidades MPE','Comunidades empreendedoras','Simplificar/desonerar','Articular agendas legislativas'];
+  var pcts=[51.5,17.3,9.9,6.1,4.6];
+  var colors=[brandColors.primary,brandColors.green,brandColors.cyan,brandColors.orange,brandColors.purple];
+  var ctx=document.getElementById('chartConcentracao').getContext('2d');
   var c=new Chart(ctx,{
     type:'bar',
-    data:{labels:labels,datasets:[{label:'% Execucao',data:pcts,backgroundColor:colors,borderRadius:3,barPercentage:.55}]},
+    data:{labels:labels,datasets:[{label:'% do Total',data:pcts,backgroundColor:colors,borderRadius:3,barPercentage:.55}]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.raw.toFixed(1)+'%';}}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.raw.toFixed(1)+'% do total';}}}},
       scales:{
-        x:{max:100,grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return v+'%';}}},
+        x:{max:60,grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return v+'%';}}},
         y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
       }
     }
@@ -855,67 +806,18 @@ function switchTab(name){
   registerChart(c);
 })();
 
-/* ===== DIAGNOSTICA: Chart 4 — Fases de Execucao por Nucleo ===== */
+/* ===== PREDITIVA: Chart 5 — Ritmo Ideal Mensal por Nucleo (horizontal bar) ===== */
 (function(){
-  var labels=['Projetos Especiais','NAL','RelGov','Gestao UPP'];
-  var empenhado=[17595488,4126916,26727756,1339412];
-  var liquidado=[14041590,3434195,21829717,1111605];
-  var pago=[12505468,3079227,19354441,960629];
-  var ctx=document.getElementById('chartFases').getContext('2d');
+  var labels=['RelGov','Proj. Especiais','NAL','Gestao UPP'];
+  var vals=[2519089,1767505,470833,137639];
+  var colors=[brandColors.primary,brandColors.green,brandColors.cyan,brandColors.orange];
+  var ctx=document.getElementById('chartRitmoMensal').getContext('2d');
   var c=new Chart(ctx,{
     type:'bar',
-    data:{labels:labels,datasets:[
-      {label:'Empenhado',data:empenhado,backgroundColor:brandColors.primary,borderRadius:3,barPercentage:.7},
-      {label:'Liquidado',data:liquidado,backgroundColor:brandColors.orange,borderRadius:3,barPercentage:.7},
-      {label:'Pago',data:pago,backgroundColor:brandColors.green,borderRadius:3,barPercentage:.7}
-    ]},
+    data:{labels:labels,datasets:[{label:'Meta Mensal (R$)',data:vals,backgroundColor:colors,borderRadius:3,barPercentage:.55}]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{position:'bottom',labels:{padding:12,font:{size:11}}},
-        tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': R$ '+(ctx.raw/1e6).toFixed(1)+' mi';}}}
-      },
-      scales:{
-        x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return 'R$ '+(v/1e6).toFixed(0)+' mi';}}},
-        y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
-      }
-    }
-  });
-  registerChart(c);
-})();
-
-/* ===== DIAGNOSTICA: Chart 5 — Atingimento de Metas ===== */
-(function(){
-  var labels=['Laboratorios implementados','Politicas avaliadas','Comunidades criadas','Gestores sensibilizados','Viagens realizadas','Eventos Parlamento+','Editais monitorados','Materiais produzidos','Jornadas realizadas','MPE cadastradas','Parcerias firmadas','Proposicoes monitoradas'];
-  var pcts=[50.0,58.3,60.0,64.0,65.3,70.0,72.5,73.3,75.0,76.0,76.0,81.7];
-  var colors=pcts.map(function(v){return v>=75?brandColors.green:v>=60?brandColors.orange:brandColors.rose;});
-  var ctx=document.getElementById('chartMetas').getContext('2d');
-  var c=new Chart(ctx,{
-    type:'bar',
-    data:{labels:labels,datasets:[{label:'% Atingimento',data:pcts,backgroundColor:colors,borderRadius:3,barPercentage:.55}]},
-    options:{
-      indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.raw.toFixed(1)+'%';}}}},
-      scales:{
-        x:{max:100,grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return v+'%';}}},
-        y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
-      }
-    }
-  });
-  registerChart(c);
-})();
-
-/* ===== DIAGNOSTICA: Chart 6 — Gap Empenhado vs Liquidado ===== */
-(function(){
-  var labels=['Ecossistemas PP','Fomento Compras','Entrega de Valor','Inteligencia Legislativa','Gestao Movimenta','Gestao Viagens','Prod. Disseminacao','Bodyshop'];
-  var gaps=[4898038,1686305,1542887,692721,324707,171483,31307,25018];
-  var ctx=document.getElementById('chartGapLiq').getContext('2d');
-  var c=new Chart(ctx,{
-    type:'bar',
-    data:{labels:labels,datasets:[{label:'Gap Emp-Liq (R$)',data:gaps,backgroundColor:brandColors.rose,borderRadius:3,barPercentage:.55}]},
-    options:{
-      indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return 'Gap: R$ '+(ctx.raw/1e6).toFixed(2)+' mi';}}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return 'R$ '+(ctx.raw/1e6).toFixed(1)+' mi/mes';}}}},
       scales:{
         x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return 'R$ '+(v/1e6).toFixed(1)+' mi';}}},
         y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
@@ -925,88 +827,77 @@ function switchTab(name){
   registerChart(c);
 })();
 
-/* ===== PREDITIVA: Chart 7 — Projecao de Execucao por Nucleo ===== */
+/* ===== PREDITIVA: Chart 6 — Distribuicao Ideal Trimestral (stacked bar) ===== */
 (function(){
-  var labels=['Projetos Especiais','NAL','RelGov','Gestao UPP'];
-  var proj=[23460651,5502554,35637007,1785883];
-  var orc=[24760060,6099250,36069831,1821662];
-  var ctx=document.getElementById('chartProjecao').getContext('2d');
+  var labels=['Q1','Q2','Q3','Q4'];
+  var relgov=[7557267,7557267,7557267,7557267];
+  var projEsp=[5302515,5302515,5302515,5302515];
+  var nal=[1412500,1412500,1412500,1412500];
+  var gestao=[412916,412916,412916,412916];
+  var ctx=document.getElementById('chartTrimestral').getContext('2d');
   var c=new Chart(ctx,{
     type:'bar',
     data:{labels:labels,datasets:[
-      {label:'Projecao Linear',data:proj,backgroundColor:brandColors.cyan,borderRadius:3,barPercentage:.65},
-      {label:'Orcamento',data:orc,backgroundColor:'rgba(42,79,218,.3)',borderColor:brandColors.primary,borderWidth:1,borderRadius:3,barPercentage:.65}
+      {label:'RelGov',data:relgov,backgroundColor:brandColors.primary,borderRadius:3,barPercentage:.6,stack:'stack1'},
+      {label:'Proj. Especiais',data:projEsp,backgroundColor:brandColors.green,borderRadius:3,barPercentage:.6,stack:'stack1'},
+      {label:'NAL',data:nal,backgroundColor:brandColors.cyan,borderRadius:3,barPercentage:.6,stack:'stack1'},
+      {label:'Gestao UPP',data:gestao,backgroundColor:brandColors.orange,borderRadius:3,barPercentage:.6,stack:'stack1'}
     ]},
     options:{
-      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      responsive:true,maintainAspectRatio:false,
       plugins:{
         legend:{position:'bottom',labels:{padding:12,font:{size:11}}},
         tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': R$ '+(ctx.raw/1e6).toFixed(1)+' mi';}}}
       },
       scales:{
-        x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return 'R$ '+(v/1e6).toFixed(0)+' mi';}}},
-        y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
+        x:{grid:{display:false},ticks:{color:function(){return chartTextColor();}}},
+        y:{stacked:true,grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return 'R$ '+(v/1e6).toFixed(0)+' mi';}}}
       }
     }
   });
   registerChart(c);
 })();
 
-/* ===== PREDITIVA: Chart 8 — Indice de Viabilidade ===== */
+/* ===== PRESCRITIVA: Chart 7 — Peso Relativo por Nucleo (doughnut) ===== */
 (function(){
-  var labels=['Entrega de Valor','Fomento Compras','Gestao Movimenta','Inteligencia Legislativa','Ecossistemas PP','Gestao Viagens','Bodyshop','Prod. Disseminacao'];
-  var viab=[80,82,87,70,95,100,86,73];
-  var colors=viab.map(function(v){return v>=90?brandColors.green:v>=70?brandColors.orange:brandColors.rose;});
-  var ctx=document.getElementById('chartViab').getContext('2d');
-  var c=new Chart(ctx,{
-    type:'bar',
-    data:{labels:labels,datasets:[{label:'Viabilidade %',data:viab,backgroundColor:colors,borderRadius:3,barPercentage:.55}]},
-    options:{
-      indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return 'Viabilidade: '+ctx.raw+'%';}}}},
-      scales:{
-        x:{max:220,grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return v+'%';}}},
-        y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
-      }
-    }
-  });
-  registerChart(c);
-})();
-
-/* ===== PRESCRITIVA: Chart 9 — Distribuicao Orcamentaria ===== */
-(function(){
-  var ctx=document.getElementById('chartDist').getContext('2d');
+  var ctx=document.getElementById('chartPesoNucleo').getContext('2d');
   var c=new Chart(ctx,{
     type:'doughnut',
     data:{
-      labels:['Projetos Especiais (36,0%)','NAL (8,9%)','RelGov (52,5%)','Gestao UPP (2,6%)'],
-      datasets:[{data:[24760060,6099250,36069831,1821662],backgroundColor:[brandColors.primary,brandColors.orange,brandColors.green,brandColors.cyan],borderWidth:0,hoverOffset:6}]
+      labels:['RelGov (51,5%)','Proj. Especiais (36,1%)','NAL (9,6%)','Gestao UPP (2,8%)'],
+      datasets:[{data:[30229067,21210061,5650000,1651662],backgroundColor:[brandColors.primary,brandColors.green,brandColors.cyan,brandColors.orange],borderWidth:0,hoverOffset:6}]
     },
     options:{
       responsive:true,maintainAspectRatio:false,cutout:'60%',
       plugins:{
         legend:{position:'bottom',labels:{padding:14,font:{size:11}}},
-        tooltip:{callbacks:{label:function(ctx){var t=ctx.dataset.data.reduce(function(a,b){return a+b;},0);return ctx.label+': R$ '+(ctx.raw/1e6).toFixed(1)+' mi ('+(ctx.raw/t*100).toFixed(1)+'%)';}}}
+        tooltip:{callbacks:{label:function(ctx){return ctx.label+': R$ '+(ctx.raw/1e6).toFixed(1)+' mi';}}}
       }
     }
   });
   registerChart(c);
 })();
 
-/* ===== PRESCRITIVA: Chart 10 — Prioridade de Aceleracao ===== */
+/* ===== PRESCRITIVA: Chart 8 — Areas de Maior Crescimento vs 2026 (horizontal bar) ===== */
 (function(){
-  var labels=['Inteligencia Legislativa','Prod. Disseminacao','Entrega de Valor','Fomento Compras','Bodyshop','Gestao Movimenta','Ecossistemas PP','Gestao Viagens'];
-  var gaps=[7.3,6.5,4.3,3.9,2.9,2.7,0.9,0.1];
-  var colors=gaps.map(function(v){return v>5?brandColors.rose:v>=1?brandColors.orange:brandColors.green;});
-  var ctx=document.getElementById('chartAceleracao').getContext('2d');
+  var labels=['Fomento Compras','NAL','Ecossistemas/RelGov','Gestao UPP','Entrega de Valor','Movimenta'];
+  var vals=[112,100,33,27,15,-38];
+  var colors=vals.map(function(v){return v>=0?brandColors.green:brandColors.rose;});
+  var ctx=document.getElementById('chartCrescimento').getContext('2d');
   var c=new Chart(ctx,{
     type:'bar',
-    data:{labels:labels,datasets:[{label:'Gap para 75% (pp)',data:gaps,backgroundColor:colors,borderRadius:3,barPercentage:.55}]},
+    data:{labels:labels,datasets:[{label:'Crescimento %',data:vals,backgroundColor:colors,borderRadius:3,barPercentage:.55}]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.raw>0?ctx.raw.toFixed(1)+' pp abaixo':'No alvo';}}}},
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:function(ctx){
+          if(ctx.label==='NAL') return 'NOVO em 2027';
+          return (ctx.raw>=0?'+':'')+ctx.raw+'% vs 2026';
+        }}}
+      },
       scales:{
-        x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return v+' pp';}}},
+        x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return (v>=0?'+':'')+v+'%';}}},
         y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
       }
     }
