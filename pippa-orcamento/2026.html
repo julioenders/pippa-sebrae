@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PIPPA Orcamento UPP 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;
+  --font-heading:"Plus Jakarta Sans",sans-serif;--font-body:"Figtree",sans-serif;
+  --bg:#eff3ee;--surface:#ffffff;--surface2:#f5f7f4;
+  --border:rgba(0,0,0,.1);--text:#1a1a1a;--text-muted:#6b7280;--text-accent:#2a4fda;
+  --accent:#2a4fda;--green:#61b466;--orange:#f39d72;--purple:#be64e3;--cyan:#65b7fb;--rose:#e0565d;
+  --highlight-bg:rgba(42,79,218,.06);--radius:8px;--shadow:0 1px 3px rgba(0,0,0,.06);
+}
+[data-theme="dark"]{
+  --bg:#080f1e;--surface:#0f1a2e;--surface2:#162038;
+  --border:rgba(255,255,255,.08);--text:#eff3ee;--text-muted:#8b9dc3;--text-accent:#65b7fb;
+  --accent:#65b7fb;--highlight-bg:rgba(101,183,251,.08);--shadow:0 1px 3px rgba(0,0,0,.3);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+
+/* Header */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.logo{font-family:var(--font-heading);font-size:1.3rem;font-weight:800;color:var(--accent);}
+.subtitle{font-size:.8rem;color:var(--text-muted);}
+.header-actions{display:flex;align-items:center;gap:.6rem;}
+
+.btn-back{font-family:var(--font-body);font-size:.78rem;padding:.4rem .9rem;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem;}
+.btn-back:hover{border-color:var(--accent);color:var(--accent);}
+
+.btn-theme{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.btn-theme:hover{border-color:var(--accent);color:var(--accent);}
+.btn-theme svg{width:16px;height:16px;}
+.icon-sun{display:none;}
+[data-theme="dark"] .icon-moon{display:none;}
+[data-theme="dark"] .icon-sun{display:block;}
+
+.btn-info{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:.9rem;font-weight:700;transition:all .2s;}
+.btn-info:hover{border-color:var(--accent);color:var(--accent);}
+
+/* Thermometer */
+.thermo{display:flex;align-items:center;gap:.5rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:.35rem .8rem;}
+.thermo-bar{width:80px;height:8px;border-radius:4px;background:var(--border);overflow:hidden;}
+.thermo-fill{height:100%;border-radius:4px;transition:width .5s;}
+.thermo-fill.green{background:var(--green);}
+.thermo-fill.orange{background:var(--orange);}
+.thermo-fill.rose{background:var(--rose);}
+.thermo-label{font-size:.78rem;font-weight:600;color:var(--text);}
+
+/* Container */
+.container{max-width:1200px;margin:0 auto;padding:1.5rem;}
+
+/* KPI row */
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:.75rem;margin-bottom:1.5rem;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;text-align:center;}
+.kpi-label{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem;}
+.kpi-value{font-family:var(--font-heading);font-size:1.35rem;font-weight:800;color:var(--text);}
+.kpi-value.negative{color:var(--rose);}
+.kpi-value.accent{color:var(--accent);}
+
+/* Charts grid */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;}
+.chart-title{font-family:var(--font-heading);font-size:.9rem;font-weight:700;margin-bottom:1rem;}
+.chart-wrap{position:relative;width:100%;}
+.chart-wrap.bar-h{height:280px;}
+.chart-wrap.doughnut{height:280px;display:flex;align-items:center;justify-content:center;}
+
+/* Table */
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.5rem;overflow-x:auto;}
+.table-title{font-family:var(--font-heading);font-size:.9rem;font-weight:700;margin-bottom:1rem;}
+table{width:100%;border-collapse:collapse;font-size:.8rem;}
+th{text-align:left;padding:.6rem .5rem;font-weight:600;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;font-size:.72rem;text-transform:uppercase;letter-spacing:.03em;}
+td{padding:.55rem .5rem;border-bottom:1px solid var(--border);}
+tr:nth-child(even){background:var(--surface2);}
+tr:nth-child(odd){background:var(--surface);}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+td.negative{color:var(--rose);font-weight:600;}
+td.over{color:var(--green);font-weight:600;}
+
+/* Footer */
+.footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--text-muted);border-top:1px solid var(--border);}
+
+/* Info modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;}
+.modal-overlay.active{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.2);}
+.modal h3{font-family:var(--font-heading);font-size:1.1rem;font-weight:700;margin-bottom:.75rem;}
+.modal p{font-size:.85rem;color:var(--text-muted);line-height:1.6;margin-bottom:.5rem;}
+.modal-close{margin-top:1rem;padding:.5rem 1.2rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);color:var(--text);cursor:pointer;font-family:var(--font-body);font-size:.82rem;}
+.modal-close:hover{border-color:var(--accent);color:var(--accent);}
+
+@media(max-width:900px){
+  .kpi-row{grid-template-columns:repeat(3,1fr);}
+  .charts-grid{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  .kpi-row{grid-template-columns:repeat(2,1fr);}
+  .header{padding:.6rem .75rem;}
+  .logo{font-size:1.1rem;}
+  .container{padding:1rem;}
+  .thermo{display:none;}
+}
+</style>
+<script>
+(function(){
+  var t=localStorage.getItem('pippa-theme');
+  if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches))
+    document.documentElement.setAttribute('data-theme','dark');
+})();
+</script>
+</head>
+<body>
+<header class="header">
+  <div class="header-left">
+    <span class="logo">PIPPA Orcamento UPP 2026</span>
+    <span class="subtitle">Execucao Orcamentaria</span>
+    <div class="thermo">
+      <div class="thermo-bar"><div class="thermo-fill green" style="width:74%"></div></div>
+      <span class="thermo-label">74% Executado</span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <a href="index.html" class="btn-back">&larr; Voltar</a>
+    <button class="btn-info" onclick="document.getElementById('infoModal').classList.add('active')" title="Informacoes">i</button>
+    <button class="btn-theme" onclick="toggleTheme()" title="Alternar tema">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- Info Modal -->
+<div class="modal-overlay" id="infoModal" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="modal">
+    <h3>Sobre o Dashboard</h3>
+    <p>Dashboard de execucao orcamentaria da Unidade de Politicas Publicas (UPP) do Sebrae Nacional, exercicio 2026.</p>
+    <p>Dados extraidos da planilha oficial "Orcamento - UPP 2026.xlsx" com 5 projetos, 12 acoes e 62 iniciativas.</p>
+    <p>Valores em Reais (R$). Percentuais de execucao calculados sobre o orcamento previsto.</p>
+    <button class="modal-close" onclick="document.getElementById('infoModal').classList.remove('active')">Fechar</button>
+  </div>
+</div>
+
+<div class="container">
+  <!-- KPI Row -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Previsto</div>
+      <div class="kpi-value">R$ 39,4 mi</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Executado</div>
+      <div class="kpi-value accent">R$ 29,2 mi</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Comprometido</div>
+      <div class="kpi-value">R$ 13,1 mi</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Exec. Prevista</div>
+      <div class="kpi-value">R$ 42,5 mi</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Saldo</div>
+      <div class="kpi-value negative">-R$ 3,1 mi</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">% Execucao</div>
+      <div class="kpi-value accent">74,0%</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">Execucao por Projeto</div>
+      <div class="chart-wrap bar-h"><canvas id="chartProjetos"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">% Execucao por Projeto</div>
+      <div class="chart-wrap bar-h"><canvas id="chartPctProjetos"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Distribuicao por Status</div>
+      <div class="chart-wrap doughnut"><canvas id="chartStatus"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Top 10 Gestores por Iniciativas</div>
+      <div class="chart-wrap bar-h"><canvas id="chartGestores"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <div class="table-title">Detalhamento por Acao</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Acao</th>
+          <th>Projeto</th>
+          <th style="text-align:right">Previsto</th>
+          <th style="text-align:right">Executado</th>
+          <th style="text-align:right">% Exec</th>
+          <th style="text-align:right">Comprometido</th>
+          <th style="text-align:right">Saldo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Impulsionar ecossistemas empreendedores</td>
+          <td>Ecossistemas</td>
+          <td class="num">22.572.425</td>
+          <td class="num">21.027.355</td>
+          <td class="num">93,2%</td>
+          <td class="num">6.208.032</td>
+          <td class="num negative">-4.662.962</td>
+        </tr>
+        <tr>
+          <td>Construir comunidades empreendedoras</td>
+          <td>Entrega de Valor</td>
+          <td class="num">4.743.039</td>
+          <td class="num">2.765.220</td>
+          <td class="num">58,3%</td>
+          <td class="num">2.204.666</td>
+          <td class="num negative">-226.847</td>
+        </tr>
+        <tr>
+          <td>Abertura de oportunidades MPE</td>
+          <td>Fomento Compras</td>
+          <td class="num">4.600.000</td>
+          <td class="num">1.331.890</td>
+          <td class="num">29,0%</td>
+          <td class="num">3.268.110</td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td>Simplificar/desonerar dia a dia</td>
+          <td>Entrega de Valor</td>
+          <td class="num">3.400.000</td>
+          <td class="num">2.119.363</td>
+          <td class="num">62,3%</td>
+          <td class="num">1.133.485</td>
+          <td class="num">147.152</td>
+        </tr>
+        <tr>
+          <td>Promover jornadas formativas</td>
+          <td>Movimenta</td>
+          <td class="num">1.673.369</td>
+          <td class="num">495.371</td>
+          <td class="num">29,6%</td>
+          <td class="num">221.989</td>
+          <td class="num">956.009</td>
+        </tr>
+        <tr>
+          <td>Gestao de viagens UPP</td>
+          <td>Gestao UPP</td>
+          <td class="num">1.300.000</td>
+          <td class="num">1.332.991</td>
+          <td class="num over">102,5%</td>
+          <td class="num negative">-32.991</td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td>Avaliar politicas publicas</td>
+          <td>Movimenta</td>
+          <td class="num">350.000</td>
+          <td class="num">29.400</td>
+          <td class="num">8,4%</td>
+          <td class="num">12.600</td>
+          <td class="num">308.000</td>
+        </tr>
+        <tr>
+          <td>Implementar laboratorios</td>
+          <td>Movimenta</td>
+          <td class="num">300.000</td>
+          <td class="num">0</td>
+          <td class="num">0%</td>
+          <td class="num">0</td>
+          <td class="num">300.000</td>
+        </tr>
+        <tr>
+          <td>Conexao plataformas/cadastramento</td>
+          <td>Fomento Compras</td>
+          <td class="num">300.000</td>
+          <td class="num">0</td>
+          <td class="num">0%</td>
+          <td class="num">0</td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td>Bodyshop</td>
+          <td>Ecossistemas</td>
+          <td class="num">143.325</td>
+          <td class="num">36.944</td>
+          <td class="num">25,8%</td>
+          <td class="num">37.056</td>
+          <td class="num">69.325</td>
+        </tr>
+        <tr>
+          <td>Sensibilizar gestores publicos</td>
+          <td>Entrega de Valor</td>
+          <td class="num">56.490</td>
+          <td class="num">56.490</td>
+          <td class="num over">100%</td>
+          <td class="num">0</td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td>Facilitar construcao de redes</td>
+          <td>Ecossistemas</td>
+          <td class="num">0</td>
+          <td class="num">0</td>
+          <td class="num">0%</td>
+          <td class="num">0</td>
+          <td class="num">0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer class="footer">
+  PIPPA Orcamento v1.0 &mdash; Sebrae Nacional &mdash; UPP &mdash; Dados: Orcamento UPP 2026.xlsx
+</footer>
+
+<script>
+/* ── Color helpers ── */
+function chartTextColor(){
+  return getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
+}
+function chartGridColor(){
+  return getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+}
+function chartMutedColor(){
+  return getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();
+}
+
+var brandColors={
+  primary:'#2a4fda',green:'#61b466',orange:'#f39d72',
+  purple:'#be64e3',cyan:'#65b7fb',rose:'#e0565d'
+};
+
+/* ── Shared defaults ── */
+Chart.defaults.color=chartTextColor();
+Chart.defaults.font.family='"Figtree",sans-serif';
+Chart.defaults.font.size=12;
+Chart.defaults.plugins.legend.labels.usePointStyle=true;
+Chart.defaults.plugins.legend.labels.pointStyleWidth=8;
+
+var allCharts=[];
+function registerChart(c){allCharts.push(c);}
+
+/* ── Chart 1: Execucao por Projeto (horizontal bar) ── */
+(function(){
+  var labels=['Ecossistemas','Entrega de Valor','Fomento Compras','Movimenta','Gestao UPP'];
+  var orcamento=[22715750,8199529,4900000,2323369,1300000];
+  var executado=[21064299,4941073,1331890,524771,1332991];
+  var prevExec=[27309387,8279224,4900000,759360,1300000];
+  var ctx=document.getElementById('chartProjetos').getContext('2d');
+  var c=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[
+        {label:'Orcamento',data:orcamento,backgroundColor:brandColors.primary,borderRadius:3,barPercentage:.7},
+        {label:'Executado',data:executado,backgroundColor:brandColors.green,borderRadius:3,barPercentage:.7},
+        {label:'Prev. Exec.',data:prevExec,backgroundColor:brandColors.orange,borderRadius:3,barPercentage:.7}
+      ]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'bottom',labels:{padding:12,font:{size:11}}},
+        tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': R$ '+(ctx.raw/1e6).toFixed(1)+' mi';}}}
+      },
+      scales:{
+        x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return 'R$ '+(v/1e6).toFixed(0)+' mi';}}},
+        y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
+      }
+    }
+  });
+  registerChart(c);
+})();
+
+/* ── Chart 2: % Execucao por Projeto ── */
+(function(){
+  var labels=['Ecossistemas','Gestao UPP','Entrega de Valor','Fomento Compras','Movimenta'];
+  var pcts=[92.7,102.5,60.3,27.2,22.6];
+  var colors=pcts.map(function(v){return v>=100?brandColors.green:v>=60?brandColors.primary:v>=30?brandColors.orange:brandColors.rose;});
+  var ctx=document.getElementById('chartPctProjetos').getContext('2d');
+  var c=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[{label:'% Execucao',data:pcts,backgroundColor:colors,borderRadius:3,barPercentage:.55}]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:function(ctx){return ctx.raw.toFixed(1)+'%';}}}
+      },
+      scales:{
+        x:{max:120,grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return v+'%';}}},
+        y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
+      }
+    }
+  });
+  registerChart(c);
+})();
+
+/* ── Chart 3: Distribuicao por Status (doughnut) ── */
+(function(){
+  var ctx=document.getElementById('chartStatus').getContext('2d');
+  var c=new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      labels:['Em Execucao','Quitado','Sem informacao','Em tramitacao'],
+      datasets:[{
+        data:[29,20,8,5],
+        backgroundColor:[brandColors.primary,brandColors.green,brandColors.orange,brandColors.cyan],
+        borderWidth:0,
+        hoverOffset:6
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      cutout:'60%',
+      plugins:{
+        legend:{position:'bottom',labels:{padding:14,font:{size:11}}},
+        tooltip:{callbacks:{label:function(ctx){var t=ctx.dataset.data.reduce(function(a,b){return a+b;},0);return ctx.label+': '+ctx.raw+' ('+(ctx.raw/t*100).toFixed(0)+'%)';}}}
+      }
+    }
+  });
+  registerChart(c);
+})();
+
+/* ── Chart 4: Top 10 Gestores ── */
+(function(){
+  var labels=['Flavia','Joana','Julia','Alexander','Francine','Cyntia','Maysa','Mariana','Layla','Outros'];
+  var data=[13,9,5,4,4,4,3,3,3,14];
+  var colors=[brandColors.primary,brandColors.green,brandColors.orange,brandColors.purple,brandColors.cyan,brandColors.rose,'#8b9dc3','#a3d4a8','#d4a3d4','#c0c0c0'];
+  var ctx=document.getElementById('chartGestores').getContext('2d');
+  var c=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[{label:'Iniciativas',data:data,backgroundColor:colors,borderRadius:3,barPercentage:.6}]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:function(ctx){return ctx.raw+' iniciativas';}}}
+      },
+      scales:{
+        x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},stepSize:2}},
+        y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
+      }
+    }
+  });
+  registerChart(c);
+})();
+
+/* ── Theme toggle with chart refresh ── */
+function toggleTheme(){
+  var d=document.documentElement,cur=d.getAttribute('data-theme');
+  if(cur==='dark'){d.removeAttribute('data-theme');localStorage.setItem('pippa-theme','light');}
+  else{d.setAttribute('data-theme','dark');localStorage.setItem('pippa-theme','dark');}
+  /* Update charts */
+  setTimeout(function(){
+    Chart.defaults.color=chartTextColor();
+    allCharts.forEach(function(c){c.update();});
+  },50);
+}
+</script>
+</body>
+</html>
