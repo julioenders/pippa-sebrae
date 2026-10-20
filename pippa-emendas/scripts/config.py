@@ -82,34 +82,67 @@ TIPOS_SEM_AUTOR_INDIVIDUAL = {"Emenda de Bancada", "Emenda de Comissão", "Emend
 DIVERGENCIA_ALERTA_PCT = 5.0
 DIVERGENCIA_CRITICO_PCT = 15.0
 
-# --- Paleta Visual (design system PIPPA) ---
+# --- Paleta Visual (design system PIPPA / Brandbook Sebrae) ---
 
-COLORS = {
-    "bg": "#0f1117",
-    "surface": "#1a1d27",
-    "surface2": "#242836",
-    "border": "#2e3348",
-    "text": "#e4e6ef",
-    "text_muted": "#8b8fa8",
-    "accent": "#10b981",
-    "accent_hover": "#34d399",
-    "primary": "#4f8cff",
-    "light_blue": "#60a5fa",
-    "purple": "#a855f7",
-    "pink": "#f472b6",
+COLORS_LIGHT = {
+    "bg": "#eff3ee",
+    "surface": "#ffffff",
+    "surface2": "#f5f7f4",
+    "border": "rgba(0,0,0,.1)",
+    "border_hover": "rgba(42,79,218,.35)",
+    "text": "#1a1a1a",
+    "text_muted": "#6b7280",
+    "text_accent": "#2a4fda",
+    "accent": "#2a4fda",
+    "accent_hover": "#1e3fb8",
+    "primary": "#2a4fda",
+    "purple": "#be64e3",
+    "pink": "#e0565d",
     "alert": "#ef4444",
     "success": "#22c55e",
     "warning": "#f59e0b",
-    "orange": "#ff8c42",
+    "orange": "#f39d72",
+    "highlight_bg": "rgba(42,79,218,.06)",
+    "accent_ring": "rgba(42,79,218,.12)",
+    "chart_grid": "rgba(0,0,0,.06)",
+    "chart_text": "#6b7280",
+    "chart_label": "#1a1a1a",
+}
+
+COLORS_DARK = {
+    "bg": "#080f1e",
+    "surface": "#0f1a2e",
+    "surface2": "#162038",
+    "border": "rgba(255,255,255,.08)",
+    "border_hover": "rgba(101,183,251,.35)",
+    "text": "#eff3ee",
+    "text_muted": "#8b9dc3",
+    "text_accent": "#65b7fb",
+    "accent": "#65b7fb",
+    "accent_hover": "#90ccfd",
+    "primary": "#65b7fb",
+    "purple": "#be64e3",
+    "pink": "#e0565d",
+    "alert": "#ef4444",
+    "success": "#22c55e",
+    "warning": "#f59e0b",
+    "orange": "#f39d72",
+    "highlight_bg": "rgba(101,183,251,.08)",
+    "accent_ring": "rgba(101,183,251,.12)",
+    "chart_grid": "rgba(139,157,195,.12)",
+    "chart_text": "#8b9dc3",
+    "chart_label": "#eff3ee",
 }
 
 SERIES_COLORS = [
-    "#4f8cff", "#10b981", "#f59e0b", "#a855f7", "#ef4444",
-    "#f472b6", "#22c55e", "#60a5fa", "#f97316", "#8b8fa8",
+    "#2a4fda", "#61b466", "#f39d72", "#be64e3", "#e0565d",
+    "#65b7fb", "#22c55e", "#ff80c8", "#f97316", "#8b9dc3",
     "#14b8a6", "#dc2626", "#8b5cf6", "#2563eb", "#6b7280",
 ]
 
-FONT_FAMILY = "'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif"
+FONT_HEADING = '"Plus Jakarta Sans", sans-serif'
+FONT_BODY = '"Figtree", sans-serif'
+FONT_FAMILY = '"Figtree", sans-serif'
 
 # --- Cache ---
 

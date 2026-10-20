@@ -96,39 +96,78 @@ def render_dashboard(
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PIPPA Emendas Parlamentares | {titulo_periodo}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-treemap@2.3.1"></script>
+  <script>(function(){{var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)}})()</script>
   <style>
     :root {{
-      --bg: #0f1117;
-      --surface: #1a1d27;
-      --surface2: #242836;
-      --border: #2e3348;
-      --text: #e4e6ef;
-      --text-muted: #8b8fa8;
-      --accent: #10b981;
-      --accent-hover: #34d399;
-      --primary: #4f8cff;
-      --purple: #a855f7;
-      --pink: #f472b6;
+      --azul-sebrae: #2a4fda;
+      --atlantico: #0b2574;
+      --ceu: #65b7fb;
+      --offwhite: #eff3ee;
+      --font-heading: "Plus Jakarta Sans", sans-serif;
+      --font-body: "Figtree", sans-serif;
+      --bg: #eff3ee;
+      --surface: #ffffff;
+      --surface2: #f5f7f4;
+      --border: rgba(0,0,0,.1);
+      --border-hover: rgba(42,79,218,.35);
+      --text: #1a1a1a;
+      --text-muted: #6b7280;
+      --text-accent: #2a4fda;
+      --accent: #2a4fda;
+      --accent-hover: #1e3fb8;
+      --primary: #2a4fda;
+      --purple: #be64e3;
+      --pink: #e0565d;
       --alert: #ef4444;
       --success: #22c55e;
       --warning: #f59e0b;
-      --radius: 10px;
-      --shadow: 0 2px 12px rgba(0,0,0,0.3);
+      --highlight-bg: rgba(42,79,218,.06);
+      --accent-ring: rgba(42,79,218,.12);
+      --chart-grid: rgba(0,0,0,.06);
+      --chart-text: #6b7280;
+      --chart-label: #1a1a1a;
+      --scrollbar-track: #eff3ee;
+      --scrollbar-thumb: rgba(42,79,218,.2);
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,.06);
+    }}
+    [data-theme="dark"] {{
+      --bg: #080f1e;
+      --surface: #0f1a2e;
+      --surface2: #162038;
+      --border: rgba(255,255,255,.08);
+      --border-hover: rgba(101,183,251,.35);
+      --text: #eff3ee;
+      --text-muted: #8b9dc3;
+      --text-accent: #65b7fb;
+      --accent: #65b7fb;
+      --accent-hover: #90ccfd;
+      --primary: #65b7fb;
+      --highlight-bg: rgba(101,183,251,.08);
+      --accent-ring: rgba(101,183,251,.12);
+      --chart-grid: rgba(139,157,195,.12);
+      --chart-text: #8b9dc3;
+      --chart-label: #eff3ee;
+      --shadow: 0 1px 3px rgba(0,0,0,.3);
+      --scrollbar-track: #080f1e;
+      --scrollbar-thumb: rgba(42,79,218,.3);
     }}
 
     * {{ margin: 0; padding: 0; box-sizing: border-box; }}
 
     body {{
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: var(--font-body);
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
+      transition: background .3s, color .3s;
     }}
 
     .header {{
-      background: linear-gradient(135deg, #1a1d27 0%, #242836 100%);
+      background: var(--surface);
       border-bottom: 1px solid var(--border);
       padding: 16px 24px;
       display: flex;
@@ -142,11 +181,10 @@ def render_dashboard(
     .header-left {{ display: flex; align-items: center; gap: 16px; }}
 
     .logo {{
+      font-family: var(--font-heading);
       font-size: 22px;
-      font-weight: 700;
-      background: linear-gradient(135deg, #10b981, #4f8cff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+      color: var(--text-accent);
       letter-spacing: -0.5px;
     }}
 
@@ -396,8 +434,9 @@ def render_dashboard(
     }}
 
     .kpi-value {{
+      font-family: var(--font-heading);
       font-size: 32px;
-      font-weight: 700;
+      font-weight: 800;
       line-height: 1;
       margin-bottom: 4px;
     }}
@@ -442,8 +481,9 @@ def render_dashboard(
     }}
 
     .section-title {{
+      font-family: var(--font-heading);
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
     }}
 
     .section-count {{
@@ -651,7 +691,7 @@ def render_dashboard(
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(15,17,23,0.8);
+      background: rgba(0,0,0,0.5);
       z-index: 300;
       align-items: center;
       justify-content: center;
@@ -671,12 +711,11 @@ def render_dashboard(
     }}
 
     .info-modal h2 {{
+      font-family: var(--font-heading);
       font-size: 18px;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 16px;
-      background: linear-gradient(135deg, #10b981, #4f8cff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text-accent);
     }}
 
     .info-modal h3 {{
@@ -775,9 +814,28 @@ def render_dashboard(
     }}
 
     ::-webkit-scrollbar {{ width: 6px; }}
-    ::-webkit-scrollbar-track {{ background: transparent; }}
-    ::-webkit-scrollbar-thumb {{ background: var(--border); border-radius: 3px; }}
-    ::-webkit-scrollbar-thumb:hover {{ background: var(--text-muted); }}
+    ::-webkit-scrollbar-track {{ background: var(--scrollbar-track); }}
+    ::-webkit-scrollbar-thumb {{ background: var(--scrollbar-thumb); border-radius: 3px; }}
+    ::-webkit-scrollbar-thumb:hover {{ background: var(--text-accent); }}
+
+    .theme-toggle {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all .2s;
+    }}
+    .theme-toggle:hover {{ border-color: var(--accent); color: var(--text-accent); background: var(--highlight-bg); }}
+    .theme-toggle svg {{ width: 16px; height: 16px; }}
+    .icon-sun {{ display: none; }}
+    [data-theme="dark"] .icon-sun {{ display: block; }}
+    [data-theme="dark"] .icon-moon {{ display: none; }}
   </style>
 </head>
 <body>
@@ -789,6 +847,7 @@ def render_dashboard(
         <div class="logo-sub">Plataforma de Inteligencia em Politicas Publicas Aplicadas</div>
       </div>
       <button class="info-btn" onclick="toggleInfoModal()" title="Sobre o painel">i</button>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     </div>
     <div class="header-controls">
       <div class="thermometer {thermo_class}">{thermo_text}</div>
@@ -814,7 +873,7 @@ def render_dashboard(
     </div>
   </header>
 
-  <div id="loadingOverlay" style="display:none;position:fixed;inset:0;background:rgba(15,17,23,0.92);z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <div id="loadingOverlay" style="display:none;position:fixed;inset:0;background:var(--bg);opacity:0.96;z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
     <div style="width:48px;height:48px;border:4px solid var(--border);border-top:4px solid var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;"></div>
     <div id="loadingText" style="color:var(--text);font-size:16px;font-weight:600;">Buscando emendas...</div>
     <div id="loadingProgress" style="color:var(--text-muted);font-size:13px;">Consultando dados processados</div>
@@ -1147,10 +1206,15 @@ const UF_REGIAO = {{
 }};
 
 const REGIAO_ORDER = ['Norte', 'Nordeste', 'Sudeste', 'Sul', 'Centro-Oeste'];
-const REGIAO_COLORS = {{ 'Norte': '#4f8cff', 'Nordeste': '#10b981', 'Sudeste': '#f59e0b', 'Sul': '#a855f7', 'Centro-Oeste': '#ef4444' }};
+const REGIAO_COLORS = {{ 'Norte': '#2a4fda', 'Nordeste': '#61b466', 'Sudeste': '#f39d72', 'Sul': '#be64e3', 'Centro-Oeste': '#e0565d' }};
 
 let activeFilters = {{ regiao: [], uf: [], partido: [] }};
 let charts = {{}};
+
+function chartTextColor() {{ return getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim() || '#6b7280'; }}
+function chartLabelColor() {{ return getComputedStyle(document.documentElement).getPropertyValue('--chart-label').trim() || '#1a1a1a'; }}
+function chartGridColor() {{ return getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim() || 'rgba(0,0,0,.06)'; }}
+function toggleTheme() {{ var h=document.documentElement, n=h.getAttribute('data-theme')==='dark'?'light':'dark'; h.setAttribute('data-theme',n); localStorage.setItem('pippa-theme',n); applyAllFilters(); }}
 
 function fmtReais(v) {{
   if (Math.abs(v) >= 1e9) return 'R$ ' + (v/1e9).toFixed(1) + ' bi';
@@ -1313,11 +1377,13 @@ function renderKPIs() {{
 
 // ── Charts ──────────────────────────────────────────────────
 
-const chartOpts = {{
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {{ legend: {{ labels: {{ color: '#8b8fa8', font: {{ size: 11 }} }} }} }}
-}};
+function chartOpts() {{
+  return {{
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {{ legend: {{ labels: {{ color: chartTextColor(), font: {{ size: 11 }} }} }} }}
+  }};
+}}
 
 // ── Charts ──────────────────────────────────────────────────
 
@@ -1331,20 +1397,20 @@ function renderEstadoCharts() {{
     data: {{
       labels: top15.map(d => d.uf),
       datasets: [
-        {{ label: 'Empenhado', data: top15.map(d => d.empenhado), backgroundColor: '#4f8cff' }},
-        {{ label: 'Pago', data: top15.map(d => d.pago), backgroundColor: 'rgba(96,165,250,0.5)' }}
+        {{ label: 'Empenhado', data: top15.map(d => d.empenhado), backgroundColor: '#2a4fda' }},
+        {{ label: 'Pago', data: top15.map(d => d.pago), backgroundColor: 'rgba(42,79,218,0.4)' }}
       ]
     }},
     options: {{
-      ...chartOpts,
+      ...chartOpts(),
       indexAxis: 'y',
       plugins: {{
         ...chartOpts.plugins,
         tooltip: {{ callbacks: {{ label: ctx => ctx.dataset.label + ': ' + fmtReais(ctx.raw) }} }}
       }},
       scales: {{
-        x: {{ ticks: {{ color: '#8b8fa8', callback: v => fmtReais(v) }}, grid: {{ color: 'rgba(255,255,255,0.05)' }} }},
-        y: {{ ticks: {{ color: '#e4e6ef' }}, grid: {{ display: false }} }}
+        x: {{ ticks: {{ color: chartTextColor(), callback: v => fmtReais(v) }}, grid: {{ color: chartGridColor() }} }},
+        y: {{ ticks: {{ color: chartLabelColor() }}, grid: {{ display: false }} }}
       }}
     }}
   }});
@@ -1363,7 +1429,7 @@ function renderEstadoCharts() {{
       }}]
     }},
     options: {{
-      ...chartOpts,
+      ...chartOpts(),
       indexAxis: 'y',
       plugins: {{
         ...chartOpts.plugins,
@@ -1371,8 +1437,8 @@ function renderEstadoCharts() {{
         tooltip: {{ callbacks: {{ label: ctx => ctx.raw.toFixed(1) + '%' }} }}
       }},
       scales: {{
-        x: {{ max: 100, ticks: {{ color: '#8b8fa8', callback: v => v + '%' }}, grid: {{ color: 'rgba(255,255,255,0.05)' }} }},
-        y: {{ ticks: {{ color: '#e4e6ef' }}, grid: {{ display: false }} }}
+        x: {{ max: 100, ticks: {{ color: chartTextColor(), callback: v => v + '%' }}, grid: {{ color: chartGridColor() }} }},
+        y: {{ ticks: {{ color: chartLabelColor() }}, grid: {{ display: false }} }}
       }}
     }}
   }});
@@ -1396,15 +1462,15 @@ function renderEstadoCharts() {{
       ]
     }},
     options: {{
-      ...chartOpts,
+      ...chartOpts(),
       indexAxis: 'y',
       plugins: {{
         ...chartOpts.plugins,
         tooltip: {{ callbacks: {{ label: ctx => ctx.dataset.label + ': ' + fmtReais(ctx.raw) }} }}
       }},
       scales: {{
-        x: {{ ticks: {{ color: '#8b8fa8', callback: v => fmtReais(v) }}, grid: {{ color: 'rgba(255,255,255,0.05)' }} }},
-        y: {{ ticks: {{ color: '#e4e6ef', font: {{ size: 12 }} }}, grid: {{ display: false }} }}
+        x: {{ ticks: {{ color: chartTextColor(), callback: v => fmtReais(v) }}, grid: {{ color: chartGridColor() }} }},
+        y: {{ ticks: {{ color: chartLabelColor(), font: {{ size: 12 }} }}, grid: {{ display: false }} }}
       }}
     }}
   }});
@@ -1444,7 +1510,7 @@ function renderPartidoCharts() {{
         groups: ['partido'],
         spacing: 2,
         borderWidth: 2,
-        borderColor: '#1a1d27',
+        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--surface').trim(),
         backgroundColor: function(ctx) {{
           if (ctx.type !== 'data') return 'transparent';
           return SERIES_COLORS[ctx.dataIndex % SERIES_COLORS.length];
@@ -1492,20 +1558,20 @@ function renderPartidoCharts() {{
     data: {{
       labels: top15.map(d => d.partido),
       datasets: [
-        {{ label: 'Empenhado', data: top15.map(d => d.empenhado), backgroundColor: '#4f8cff' }},
-        {{ label: 'Pago', data: top15.map(d => d.pago), backgroundColor: 'rgba(96,165,250,0.5)' }}
+        {{ label: 'Empenhado', data: top15.map(d => d.empenhado), backgroundColor: '#2a4fda' }},
+        {{ label: 'Pago', data: top15.map(d => d.pago), backgroundColor: 'rgba(42,79,218,0.4)' }}
       ]
     }},
     options: {{
-      ...chartOpts,
+      ...chartOpts(),
       indexAxis: 'y',
       plugins: {{
         ...chartOpts.plugins,
         tooltip: {{ callbacks: {{ label: ctx => ctx.dataset.label + ': ' + fmtReais(ctx.raw) }} }}
       }},
       scales: {{
-        x: {{ ticks: {{ color: '#8b8fa8', callback: v => fmtReais(v) }}, grid: {{ color: 'rgba(255,255,255,0.05)' }} }},
-        y: {{ ticks: {{ color: '#e4e6ef' }}, grid: {{ display: false }} }}
+        x: {{ ticks: {{ color: chartTextColor(), callback: v => fmtReais(v) }}, grid: {{ color: chartGridColor() }} }},
+        y: {{ ticks: {{ color: chartLabelColor() }}, grid: {{ display: false }} }}
       }}
     }}
   }});
@@ -1522,7 +1588,7 @@ function renderAutorChart() {{
   if (search) autores = autores.filter(d => d.nome.toLowerCase().includes(search) || d.partido.toLowerCase().includes(search) || d.uf.toLowerCase().includes(search));
   autores = autores.sort((a, b) => b.empenhado - a.empenhado).slice(0, 20).reverse();
   const labels = autores.map(d => d.nome + ' (' + d.partido + '/' + d.uf + ')');
-  const colors = autores.map(d => d.confianca === 'exato' ? '#4f8cff' : '#f59e0b');
+  const colors = autores.map(d => d.confianca === 'exato' ? '#2a4fda' : '#f39d72');
 
   if (charts.autores) charts.autores.destroy();
   charts.autores = new Chart(document.getElementById('chartAutores'), {{
@@ -1536,7 +1602,7 @@ function renderAutorChart() {{
       }}]
     }},
     options: {{
-      ...chartOpts,
+      ...chartOpts(),
       indexAxis: 'y',
       plugins: {{
         ...chartOpts.plugins,
@@ -1544,8 +1610,8 @@ function renderAutorChart() {{
         tooltip: {{ callbacks: {{ label: ctx => fmtReais(ctx.raw) }} }}
       }},
       scales: {{
-        x: {{ ticks: {{ color: '#8b8fa8', callback: v => fmtReais(v) }}, grid: {{ color: 'rgba(255,255,255,0.05)' }} }},
-        y: {{ ticks: {{ color: '#e4e6ef', font: {{ size: 10 }} }}, grid: {{ display: false }} }}
+        x: {{ ticks: {{ color: chartTextColor(), callback: v => fmtReais(v) }}, grid: {{ color: chartGridColor() }} }},
+        y: {{ ticks: {{ color: chartLabelColor(), font: {{ size: 10 }} }}, grid: {{ display: false }} }}
       }}
     }}
   }});
@@ -1582,20 +1648,20 @@ function renderSerieCharts() {{
     data: {{
       labels: anos,
       datasets: [
-        {{ label: 'Empenhado', data: serie.map(d => d.empenhado), borderColor: '#4f8cff', backgroundColor: 'rgba(79,140,255,0.1)', fill: true, borderWidth: 3, pointRadius: 5, tension: 0.3 }},
-        {{ label: 'Pago', data: serie.map(d => d.pago), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, borderWidth: 3, pointRadius: 5, tension: 0.3 }},
-        {{ label: 'Liquidado', data: serie.map(d => d.liquidado), borderColor: '#f59e0b', borderDash: [5,3], borderWidth: 2, pointRadius: 4, tension: 0.3, fill: false }}
+        {{ label: 'Empenhado', data: serie.map(d => d.empenhado), borderColor: '#2a4fda', backgroundColor: 'rgba(42,79,218,0.1)', fill: true, borderWidth: 3, pointRadius: 5, tension: 0.3 }},
+        {{ label: 'Pago', data: serie.map(d => d.pago), borderColor: '#61b466', backgroundColor: 'rgba(97,180,102,0.1)', fill: true, borderWidth: 3, pointRadius: 5, tension: 0.3 }},
+        {{ label: 'Liquidado', data: serie.map(d => d.liquidado), borderColor: '#f39d72', borderDash: [5,3], borderWidth: 2, pointRadius: 4, tension: 0.3, fill: false }}
       ]
     }},
     options: {{
-      ...chartOpts,
+      ...chartOpts(),
       plugins: {{
         ...chartOpts.plugins,
         tooltip: {{ callbacks: {{ label: ctx => ctx.dataset.label + ': ' + fmtReais(ctx.raw) }} }}
       }},
       scales: {{
-        x: {{ ticks: {{ color: '#8b8fa8' }}, grid: {{ color: 'rgba(255,255,255,0.05)' }} }},
-        y: {{ ticks: {{ color: '#8b8fa8', callback: v => fmtReais(v) }}, grid: {{ color: 'rgba(255,255,255,0.08)' }} }}
+        x: {{ ticks: {{ color: chartTextColor() }}, grid: {{ color: chartGridColor() }} }},
+        y: {{ ticks: {{ color: chartTextColor(), callback: v => fmtReais(v) }}, grid: {{ color: chartGridColor() }} }}
       }}
     }}
   }});
@@ -1640,14 +1706,14 @@ function renderSerieCharts() {{
     type: 'bar',
     data: {{ labels: anosUnicos, datasets: datasets }},
     options: {{
-      ...chartOpts,
+      ...chartOpts(),
       plugins: {{
         ...chartOpts.plugins,
         tooltip: {{ callbacks: {{ label: ctx => ctx.dataset.label + ': ' + fmtReais(ctx.raw) }} }}
       }},
       scales: {{
-        x: {{ stacked: true, ticks: {{ color: '#8b8fa8' }}, grid: {{ color: 'rgba(255,255,255,0.05)' }} }},
-        y: {{ stacked: true, ticks: {{ color: '#8b8fa8', callback: v => fmtReais(v) }}, grid: {{ color: 'rgba(255,255,255,0.08)' }} }}
+        x: {{ stacked: true, ticks: {{ color: chartTextColor() }}, grid: {{ color: chartGridColor() }} }},
+        y: {{ stacked: true, ticks: {{ color: chartTextColor(), callback: v => fmtReais(v) }}, grid: {{ color: chartGridColor() }} }}
       }}
     }}
   }});
