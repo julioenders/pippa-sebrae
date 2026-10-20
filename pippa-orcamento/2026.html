@@ -55,11 +55,23 @@ a{color:inherit;text-decoration:none;}
 .thermo-fill.rose{background:var(--rose);}
 .thermo-label{font-size:.78rem;font-weight:600;color:var(--text);}
 
+/* Tabs */
+.tabs{display:flex;gap:.25rem;padding:0 2rem;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;}
+.tab{padding:.75rem 1.2rem;font-size:.82rem;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
 /* Container */
 .container{max-width:1200px;margin:0 auto;padding:1.5rem;}
 
+/* Section title */
+.section-title{font-family:var(--font-heading);font-size:1rem;font-weight:700;margin-bottom:1rem;}
+
 /* KPI row */
 .kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:.75rem;margin-bottom:1.5rem;}
+.kpi-row.four{grid-template-columns:repeat(4,1fr);}
 .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;text-align:center;}
 .kpi-label{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem;}
 .kpi-value{font-family:var(--font-heading);font-size:1.35rem;font-weight:800;color:var(--text);}
@@ -68,11 +80,16 @@ a{color:inherit;text-decoration:none;}
 
 /* Charts grid */
 .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.charts-grid.full{grid-template-columns:1fr;}
 .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;}
 .chart-title{font-family:var(--font-heading);font-size:.9rem;font-weight:700;margin-bottom:1rem;}
 .chart-wrap{position:relative;width:100%;}
 .chart-wrap.bar-h{height:280px;}
+.chart-wrap.bar-tall{height:340px;}
 .chart-wrap.doughnut{height:280px;display:flex;align-items:center;justify-content:center;}
+
+/* Dot */
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle;}
 
 /* Table */
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.5rem;overflow-x:auto;}
@@ -86,24 +103,59 @@ td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
 td.negative{color:var(--rose);font-weight:600;}
 td.over{color:var(--green);font-weight:600;}
 
+/* Alert cards */
+.alert-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1rem 1rem 1.2rem;margin-bottom:.6rem;position:relative;overflow:hidden;}
+.alert-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;}
+.alert-card.critico::before{background:var(--rose);}
+.alert-card.alerta::before{background:var(--orange);}
+.alert-card.positivo::before{background:var(--green);}
+.alert-title{font-weight:700;font-size:.85rem;margin-bottom:.3rem;}
+.alert-desc{font-size:.78rem;color:var(--text-muted);line-height:1.5;}
+
+/* Recommendation cards */
+.rec-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin-bottom:.75rem;display:flex;gap:1rem;align-items:flex-start;}
+.rec-badge{flex-shrink:0;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:.85rem;color:#fff;}
+.rec-badge.urgente{background:var(--rose);}
+.rec-badge.alta{background:var(--orange);}
+.rec-badge.media{background:var(--cyan);}
+.rec-title{font-weight:700;font-size:.85rem;margin-bottom:.3rem;}
+.rec-tag{display:inline-block;font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:3px;margin-right:.5rem;text-transform:uppercase;}
+.rec-tag.urgente{background:rgba(224,86,93,.12);color:var(--rose);}
+.rec-tag.alta{background:rgba(243,157,114,.12);color:var(--orange);}
+.rec-tag.media{background:rgba(101,183,251,.12);color:var(--cyan);}
+.rec-desc{font-size:.78rem;color:var(--text-muted);line-height:1.5;}
+
+/* Risk badges in tables */
+.badge{display:inline-block;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:3px;text-transform:uppercase;}
+.badge-baixo{background:rgba(97,180,102,.12);color:var(--green);}
+.badge-medio{background:rgba(243,157,114,.12);color:var(--orange);}
+.badge-alto{background:rgba(224,86,93,.12);color:var(--rose);}
+.badge-sobre{background:rgba(97,180,102,.12);color:var(--green);}
+
 /* Footer */
 .footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--text-muted);border-top:1px solid var(--border);}
 
 /* Info modal */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;}
 .modal-overlay.active{display:flex;}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.2);}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.2);}
 .modal h3{font-family:var(--font-heading);font-size:1.1rem;font-weight:700;margin-bottom:.75rem;}
-.modal p{font-size:.85rem;color:var(--text-muted);line-height:1.6;margin-bottom:.5rem;}
+.modal h4{font-family:var(--font-heading);font-size:.9rem;font-weight:700;margin:1rem 0 .4rem;color:var(--accent);}
+.modal p,.modal li{font-size:.82rem;color:var(--text-muted);line-height:1.6;margin-bottom:.4rem;}
+.modal ul{padding-left:1.2rem;margin-bottom:.5rem;}
 .modal-close{margin-top:1rem;padding:.5rem 1.2rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);color:var(--text);cursor:pointer;font-family:var(--font-body);font-size:.82rem;}
 .modal-close:hover{border-color:var(--accent);color:var(--accent);}
 
+/* Responsive */
 @media(max-width:900px){
   .kpi-row{grid-template-columns:repeat(3,1fr);}
+  .kpi-row.four{grid-template-columns:repeat(2,1fr);}
   .charts-grid{grid-template-columns:1fr;}
 }
 @media(max-width:600px){
   .kpi-row{grid-template-columns:repeat(2,1fr);}
+  .kpi-row.four{grid-template-columns:repeat(2,1fr);}
+  .tabs{padding:0 1rem;}
   .header{padding:.6rem .75rem;}
   .logo{font-size:1.1rem;}
   .container{padding:1rem;}
@@ -122,7 +174,7 @@ td.over{color:var(--green);font-weight:600;}
 <header class="header">
   <div class="header-left">
     <span class="logo">PIPPA Orcamento UPP 2026</span>
-    <span class="subtitle">Execucao Orcamentaria</span>
+    <span class="subtitle">Execucao Orcamentaria &mdash; Dados Reais</span>
     <div class="thermo">
       <div class="thermo-bar"><div class="thermo-fill green" style="width:74%"></div></div>
       <span class="thermo-label">74% Executado</span>
@@ -138,19 +190,59 @@ td.over{color:var(--green);font-weight:600;}
   </div>
 </header>
 
+<!-- Tabs bar -->
+<div class="tabs">
+  <div class="tab active" data-tab="descritiva" onclick="switchTab('descritiva')">&#x1F4CA; Descritiva</div>
+  <div class="tab" data-tab="diagnostica" onclick="switchTab('diagnostica')">&#x1F50D; Diagnostica</div>
+  <div class="tab" data-tab="preditiva" onclick="switchTab('preditiva')">&#x1F4C8; Preditiva</div>
+  <div class="tab" data-tab="prescritiva" onclick="switchTab('prescritiva')">&#x1F4A1; Prescritiva</div>
+</div>
+
 <!-- Info Modal -->
 <div class="modal-overlay" id="infoModal" onclick="if(event.target===this)this.classList.remove('active')">
   <div class="modal">
-    <h3>Sobre o Dashboard</h3>
-    <p>Dashboard de execucao orcamentaria da Unidade de Politicas Publicas (UPP) do Sebrae Nacional, exercicio 2026.</p>
-    <p>Dados extraidos da planilha oficial "Orcamento - UPP 2026.xlsx" com 5 projetos, 12 acoes e 62 iniciativas.</p>
-    <p>Valores em Reais (R$). Percentuais de execucao calculados sobre o orcamento previsto.</p>
+    <h3>Sobre o PIPPA Orcamento 2026</h3>
+    <p>Dashboard de inteligencia orcamentaria da Unidade de Politicas Publicas (UPP) do Sebrae Nacional, exercicio 2026. Dados reais extraidos da planilha oficial "Orcamento - UPP 2026.xlsx".</p>
+
+    <h4>Camadas Analiticas</h4>
+    <ul>
+      <li><strong>Descritiva</strong> &mdash; O que aconteceu? Visao geral de KPIs, execucao por projeto e detalhamento por acao.</li>
+      <li><strong>Diagnostica</strong> &mdash; Por que aconteceu? Alertas automaticos, analise de gap, comprometimento e distribuicao por status.</li>
+      <li><strong>Preditiva</strong> &mdash; O que vai acontecer? Projecao linear de execucao, indice de viabilidade e risco por projeto e acao.</li>
+      <li><strong>Prescritiva</strong> &mdash; O que fazer? Recomendacoes priorizadas e sugestoes de remanejamento orcamentario.</li>
+    </ul>
+
+    <h4>Glossario</h4>
+    <ul>
+      <li><strong>Previsto:</strong> orcamento aprovado para o exercicio (jan-dez 2026).</li>
+      <li><strong>Executado:</strong> valores efetivamente empenhados com lancamento no sistema.</li>
+      <li><strong>Comprometido:</strong> valores contratados ainda pendentes de lancamento/liquidacao.</li>
+      <li><strong>Exec. Prevista:</strong> executado + comprometido (total que se espera pagar no exercicio).</li>
+      <li><strong>Saldo:</strong> previsto - exec. prevista (positivo = folga, negativo = sobre-comprometimento).</li>
+      <li><strong>Projecao Linear:</strong> estimativa de execucao ate dezembro baseada no ritmo medio mensal.</li>
+      <li><strong>Indice de Viabilidade:</strong> compara ritmo atual vs necessario para 100% de execucao.</li>
+    </ul>
+
+    <h4>Indicadores</h4>
+    <ul>
+      <li>5 projetos, 12 acoes, 62 iniciativas</li>
+      <li>R$ 39,4 mi previstos | R$ 29,2 mi executados | 74% de execucao</li>
+      <li>29 iniciativas em execucao, 20 quitadas, 5 em tramitacao</li>
+    </ul>
+
+    <p style="margin-top:.8rem;font-size:.75rem;"><strong>Fonte:</strong> Planilha "Orcamento - UPP 2026.xlsx" &mdash; Sebrae Nacional</p>
+    <p style="font-size:.75rem;">PIPPA &mdash; Plataforma de Inteligencia em Politicas Publicas Aplicadas</p>
+
     <button class="modal-close" onclick="document.getElementById('infoModal').classList.remove('active')">Fechar</button>
   </div>
 </div>
 
+<!-- ========== TAB 1: DESCRITIVA ========== -->
+<div class="tab-content active" id="tab-descritiva">
 <div class="container">
-  <!-- KPI Row -->
+  <h2 class="section-title" style="margin-bottom:1rem;color:var(--text-muted);font-size:.85rem;font-weight:600;">O que aconteceu?</h2>
+
+  <!-- KPIs -->
   <div class="kpi-row">
     <div class="kpi-card">
       <div class="kpi-label">Previsto</div>
@@ -178,27 +270,19 @@ td.over{color:var(--green);font-weight:600;}
     </div>
   </div>
 
-  <!-- Charts -->
+  <!-- Charts row 1 -->
   <div class="charts-grid">
     <div class="chart-card">
-      <div class="chart-title">Execucao por Projeto</div>
+      <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Execucao por Projeto</div>
       <div class="chart-wrap bar-h"><canvas id="chartProjetos"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">% Execucao por Projeto</div>
+      <div class="chart-title"><span class="dot" style="background:var(--green)"></span>% Execucao por Projeto</div>
       <div class="chart-wrap bar-h"><canvas id="chartPctProjetos"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Distribuicao por Status</div>
-      <div class="chart-wrap doughnut"><canvas id="chartStatus"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Top 10 Gestores por Iniciativas</div>
-      <div class="chart-wrap bar-h"><canvas id="chartGestores"></canvas></div>
     </div>
   </div>
 
-  <!-- Table -->
+  <!-- Detail table -->
   <div class="table-card">
     <div class="table-title">Detalhamento por Acao</div>
     <table>
@@ -326,29 +410,306 @@ td.over{color:var(--green);font-weight:600;}
     </table>
   </div>
 </div>
+</div>
+
+<!-- ========== TAB 2: DIAGNOSTICA ========== -->
+<div class="tab-content" id="tab-diagnostica">
+<div class="container">
+  <h2 class="section-title" style="margin-bottom:1rem;color:var(--text-muted);font-size:.85rem;font-weight:600;">Por que aconteceu?</h2>
+
+  <!-- Alertas de Execucao -->
+  <div class="section-title">&#x26A0;&#xFE0F; Alertas de Execucao</div>
+
+  <div class="alert-card critico">
+    <div class="alert-title">&#x1F534; CRITICO &mdash; Ecossistemas sobre-comprometido em R$ 4,66 mi</div>
+    <div class="alert-desc">A execucao prevista (R$ 27,3 mi) ultrapassa o orcamento (R$ 22,7 mi) em 20%. Saldo negativo indica necessidade de suplementacao ou corte.</div>
+  </div>
+
+  <div class="alert-card critico">
+    <div class="alert-title">&#x1F534; CRITICO &mdash; Implementar laboratorios: 0% de execucao</div>
+    <div class="alert-desc">Acao com R$ 300 mil previstos sem nenhum lancamento. Se nao houver contratacao ate novembro, recurso sera devolvido.</div>
+  </div>
+
+  <div class="alert-card alerta">
+    <div class="alert-title">&#x1F7E1; ALERTA &mdash; Avaliar politicas publicas: 8,4% executado</div>
+    <div class="alert-desc">Apenas R$ 29,4 mil de R$ 350 mil previstos. Ritmo insuficiente para absorver o orcamento ate dezembro.</div>
+  </div>
+
+  <div class="alert-card alerta">
+    <div class="alert-title">&#x1F7E1; ALERTA &mdash; Fomento Compras: R$ 3,27 mi comprometido pendente</div>
+    <div class="alert-desc">29% executado com 83% do ano transcorrido. R$ 3,27 mi comprometidos aguardando liquidacao.</div>
+  </div>
+
+  <div class="alert-card positivo">
+    <div class="alert-title">&#x1F7E2; POSITIVO &mdash; Gestao de viagens: 102,5% &mdash; acima do previsto</div>
+    <div class="alert-desc">Execucao ja ultrapassou o orcamento em R$ 33 mil. Avaliar congelamento de novas emissoes.</div>
+  </div>
+
+  <div class="alert-card positivo">
+    <div class="alert-title">&#x1F7E2; POSITIVO &mdash; Sensibilizar gestores: 100% executado</div>
+    <div class="alert-desc">Acao integralmente quitada (R$ 56,5 mil).</div>
+  </div>
+
+  <!-- Charts row -->
+  <div class="charts-grid" style="margin-top:1.5rem;">
+    <div class="chart-card">
+      <div class="chart-title"><span class="dot" style="background:var(--orange)"></span>Gap Previsto vs Realizado por Projeto</div>
+      <div class="chart-wrap bar-h"><canvas id="chartGap"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Distribuicao por Status</div>
+      <div class="chart-wrap doughnut"><canvas id="chartStatus"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Comprometimento chart -->
+  <div class="charts-grid full">
+    <div class="chart-card">
+      <div class="chart-title"><span class="dot" style="background:var(--rose)"></span>Comprometimento por Projeto</div>
+      <div class="chart-wrap bar-tall"><canvas id="chartComprom"></canvas></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== TAB 3: PREDITIVA ========== -->
+<div class="tab-content" id="tab-preditiva">
+<div class="container">
+  <h2 class="section-title" style="margin-bottom:1rem;color:var(--text-muted);font-size:.85rem;font-weight:600;">O que vai acontecer?</h2>
+
+  <!-- KPIs -->
+  <div class="kpi-row four">
+    <div class="kpi-card">
+      <div class="kpi-label">Ritmo Esperado (linear)</div>
+      <div class="kpi-value">83,3%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Ritmo Real</div>
+      <div class="kpi-value accent">74,0%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Projecao Linear</div>
+      <div class="kpi-value">R$ 35,0 mi</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Projecao c/ Comprometido</div>
+      <div class="kpi-value accent">R$ 42,2 mi</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Projecao de Execucao por Projeto</div>
+      <div class="chart-wrap bar-h"><canvas id="chartProjecao"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title"><span class="dot" style="background:var(--rose)"></span>Indice de Viabilidade por Projeto</div>
+      <div class="chart-wrap bar-h"><canvas id="chartViab"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Projecao por Acao table -->
+  <div class="table-card">
+    <div class="table-title">Projecao por Acao</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Acao</th>
+          <th style="text-align:right">Orcamento</th>
+          <th style="text-align:right">Executado</th>
+          <th style="text-align:right">Proj. Linear</th>
+          <th style="text-align:right">% Proj</th>
+          <th style="text-align:center">Risco</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Impulsionar ecossistemas</td>
+          <td class="num">22.572.425</td>
+          <td class="num">21.027.355</td>
+          <td class="num">25.232.826</td>
+          <td class="num over">111,8%</td>
+          <td style="text-align:center"><span class="badge badge-sobre">Sobre-exec</span></td>
+        </tr>
+        <tr>
+          <td>Construir comunidades</td>
+          <td class="num">4.743.039</td>
+          <td class="num">2.765.220</td>
+          <td class="num">3.318.264</td>
+          <td class="num">70,0%</td>
+          <td style="text-align:center"><span class="badge badge-medio">Medio</span></td>
+        </tr>
+        <tr>
+          <td>Abertura oportunidades MPE</td>
+          <td class="num">4.600.000</td>
+          <td class="num">1.331.890</td>
+          <td class="num">1.598.268</td>
+          <td class="num negative">34,7%</td>
+          <td style="text-align:center"><span class="badge badge-alto">Alto</span></td>
+        </tr>
+        <tr>
+          <td>Simplificar/desonerar</td>
+          <td class="num">3.400.000</td>
+          <td class="num">2.119.363</td>
+          <td class="num">2.543.236</td>
+          <td class="num">74,8%</td>
+          <td style="text-align:center"><span class="badge badge-medio">Medio</span></td>
+        </tr>
+        <tr>
+          <td>Promover jornadas formativas</td>
+          <td class="num">1.673.369</td>
+          <td class="num">495.371</td>
+          <td class="num">594.445</td>
+          <td class="num negative">35,5%</td>
+          <td style="text-align:center"><span class="badge badge-alto">Alto</span></td>
+        </tr>
+        <tr>
+          <td>Gestao de viagens UPP</td>
+          <td class="num">1.300.000</td>
+          <td class="num">1.332.991</td>
+          <td class="num">1.599.589</td>
+          <td class="num over">123,0%</td>
+          <td style="text-align:center"><span class="badge badge-sobre">Sobre-exec</span></td>
+        </tr>
+        <tr>
+          <td>Avaliar politicas publicas</td>
+          <td class="num">350.000</td>
+          <td class="num">29.400</td>
+          <td class="num">35.280</td>
+          <td class="num negative">10,1%</td>
+          <td style="text-align:center"><span class="badge badge-alto">Alto</span></td>
+        </tr>
+        <tr>
+          <td>Implementar laboratorios</td>
+          <td class="num">300.000</td>
+          <td class="num">0</td>
+          <td class="num">0</td>
+          <td class="num negative">0%</td>
+          <td style="text-align:center"><span class="badge badge-alto">Alto</span></td>
+        </tr>
+        <tr>
+          <td>Conexao plataformas</td>
+          <td class="num">300.000</td>
+          <td class="num">0</td>
+          <td class="num">0</td>
+          <td class="num negative">0%</td>
+          <td style="text-align:center"><span class="badge badge-alto">Alto</span></td>
+        </tr>
+        <tr>
+          <td>Bodyshop</td>
+          <td class="num">143.325</td>
+          <td class="num">36.944</td>
+          <td class="num">44.333</td>
+          <td class="num negative">30,9%</td>
+          <td style="text-align:center"><span class="badge badge-alto">Alto</span></td>
+        </tr>
+        <tr>
+          <td>Sensibilizar gestores</td>
+          <td class="num">56.490</td>
+          <td class="num">56.490</td>
+          <td class="num">67.788</td>
+          <td class="num over">120,0%</td>
+          <td style="text-align:center"><span class="badge badge-sobre">Sobre-exec</span></td>
+        </tr>
+        <tr>
+          <td>Facilitar construcao de redes</td>
+          <td class="num">0</td>
+          <td class="num">0</td>
+          <td class="num">0</td>
+          <td class="num">-</td>
+          <td style="text-align:center"><span class="badge badge-baixo">Baixo</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- ========== TAB 4: PRESCRITIVA ========== -->
+<div class="tab-content" id="tab-prescritiva">
+<div class="container">
+  <h2 class="section-title" style="margin-bottom:1rem;color:var(--text-muted);font-size:.85rem;font-weight:600;">O que fazer?</h2>
+
+  <div class="section-title">&#x1F4A1; Recomendacoes Prioritarias</div>
+
+  <!-- Rec 1 -->
+  <div class="rec-card">
+    <div class="rec-badge urgente">1</div>
+    <div>
+      <div><span class="rec-tag urgente">Urgente</span></div>
+      <div class="rec-title">Remanejar saldo ocioso do Movimenta</div>
+      <div class="rec-desc">O projeto Movimenta tem R$ 1,56 mi em saldo (67% do orcamento). Sugerir remanejamento para cobrir o deficit de R$ 4,66 mi do Ecossistemas, reduzindo a necessidade de suplementacao.</div>
+    </div>
+  </div>
+
+  <!-- Rec 2 -->
+  <div class="rec-card">
+    <div class="rec-badge urgente">2</div>
+    <div>
+      <div><span class="rec-tag urgente">Urgente</span></div>
+      <div class="rec-title">Decidir sobre Implementar Laboratorios</div>
+      <div class="rec-desc">R$ 300 mil sem movimentacao. Com apenas 2 meses restantes, executar contratacao emergencial ou remanejar formalmente para outra acao.</div>
+    </div>
+  </div>
+
+  <!-- Rec 3 -->
+  <div class="rec-card">
+    <div class="rec-badge alta">3</div>
+    <div>
+      <div><span class="rec-tag alta">Alta</span></div>
+      <div class="rec-title">Acelerar liquidacao do Fomento Compras</div>
+      <div class="rec-desc">R$ 3,27 mi comprometidos (pendente de Instituto Jatai) precisam ser liquidados ate dezembro. Monitorar tramitacao semanalmente.</div>
+    </div>
+  </div>
+
+  <!-- Rec 4 -->
+  <div class="rec-card">
+    <div class="rec-badge alta">4</div>
+    <div>
+      <div><span class="rec-tag alta">Alta</span></div>
+      <div class="rec-title">Congelar emissoes de viagens</div>
+      <div class="rec-desc">Gestao de viagens ja ultrapassou o orcamento em R$ 33 mil (102,5%). Restringir novas diarias e passagens para evitar ampliacao do deficit.</div>
+    </div>
+  </div>
+
+  <!-- Rec 5 -->
+  <div class="rec-card">
+    <div class="rec-badge media">5</div>
+    <div>
+      <div><span class="rec-tag media">Media</span></div>
+      <div class="rec-title">Acelerar Avaliar Politicas</div>
+      <div class="rec-desc">Com 8,4% executado e R$ 308 mil de saldo, a acao precisa quadruplicar o ritmo mensal. Avaliar viabilidade de execucao ate dezembro ou propor remanejamento.</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid" style="margin-top:1.5rem;">
+    <div class="chart-card">
+      <div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Sugestao de Remanejamento</div>
+      <div class="chart-wrap bar-h"><canvas id="chartRemanejo"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Impacto do Remanejamento</div>
+      <div class="chart-wrap bar-h"><canvas id="chartImpacto"></canvas></div>
+    </div>
+  </div>
+</div>
+</div>
 
 <footer class="footer">
-  PIPPA Orcamento v1.0 &mdash; Sebrae Nacional &mdash; UPP &mdash; Dados: Orcamento UPP 2026.xlsx
+  PIPPA Orcamento v1.0 &mdash; Sebrae Nacional &mdash; UPP &mdash; Dados reais: Orcamento UPP 2026.xlsx
 </footer>
 
 <script>
-/* ── Color helpers ── */
-function chartTextColor(){
-  return getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
-}
-function chartGridColor(){
-  return getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
-}
-function chartMutedColor(){
-  return getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();
-}
+/* ===== Color helpers ===== */
+function chartTextColor(){return getComputedStyle(document.documentElement).getPropertyValue('--text').trim();}
+function chartGridColor(){return getComputedStyle(document.documentElement).getPropertyValue('--border').trim();}
+function chartMutedColor(){return getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();}
 
-var brandColors={
-  primary:'#2a4fda',green:'#61b466',orange:'#f39d72',
-  purple:'#be64e3',cyan:'#65b7fb',rose:'#e0565d'
-};
+var brandColors={primary:'#2a4fda',green:'#61b466',orange:'#f39d72',purple:'#be64e3',cyan:'#65b7fb',rose:'#e0565d'};
 
-/* ── Shared defaults ── */
+/* ===== Chart.js defaults ===== */
 Chart.defaults.color=chartTextColor();
 Chart.defaults.font.family='"Figtree",sans-serif';
 Chart.defaults.font.size=12;
@@ -358,7 +719,13 @@ Chart.defaults.plugins.legend.labels.pointStyleWidth=8;
 var allCharts=[];
 function registerChart(c){allCharts.push(c);}
 
-/* ── Chart 1: Execucao por Projeto (horizontal bar) ── */
+/* ===== Tab switching ===== */
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===name);});
+  document.querySelectorAll('.tab-content').forEach(function(c){c.classList.toggle('active',c.id==='tab-'+name);});
+}
+
+/* ===== DESCRITIVA: Chart 1 — Execucao por Projeto ===== */
 (function(){
   var labels=['Ecossistemas','Entrega de Valor','Fomento Compras','Movimenta','Gestao UPP'];
   var orcamento=[22715750,8199529,4900000,2323369,1300000];
@@ -367,18 +734,13 @@ function registerChart(c){allCharts.push(c);}
   var ctx=document.getElementById('chartProjetos').getContext('2d');
   var c=new Chart(ctx,{
     type:'bar',
-    data:{
-      labels:labels,
-      datasets:[
-        {label:'Orcamento',data:orcamento,backgroundColor:brandColors.primary,borderRadius:3,barPercentage:.7},
-        {label:'Executado',data:executado,backgroundColor:brandColors.green,borderRadius:3,barPercentage:.7},
-        {label:'Prev. Exec.',data:prevExec,backgroundColor:brandColors.orange,borderRadius:3,barPercentage:.7}
-      ]
-    },
+    data:{labels:labels,datasets:[
+      {label:'Orcamento',data:orcamento,backgroundColor:brandColors.primary,borderRadius:3,barPercentage:.7},
+      {label:'Executado',data:executado,backgroundColor:brandColors.green,borderRadius:3,barPercentage:.7},
+      {label:'Prev. Exec.',data:prevExec,backgroundColor:brandColors.orange,borderRadius:3,barPercentage:.7}
+    ]},
     options:{
-      indexAxis:'y',
-      responsive:true,
-      maintainAspectRatio:false,
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
       plugins:{
         legend:{position:'bottom',labels:{padding:12,font:{size:11}}},
         tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': R$ '+(ctx.raw/1e6).toFixed(1)+' mi';}}}
@@ -392,7 +754,7 @@ function registerChart(c){allCharts.push(c);}
   registerChart(c);
 })();
 
-/* ── Chart 2: % Execucao por Projeto ── */
+/* ===== DESCRITIVA: Chart 2 — % Execucao por Projeto ===== */
 (function(){
   var labels=['Ecossistemas','Gestao UPP','Entrega de Valor','Fomento Compras','Movimenta'];
   var pcts=[92.7,102.5,60.3,27.2,22.6];
@@ -400,18 +762,10 @@ function registerChart(c){allCharts.push(c);}
   var ctx=document.getElementById('chartPctProjetos').getContext('2d');
   var c=new Chart(ctx,{
     type:'bar',
-    data:{
-      labels:labels,
-      datasets:[{label:'% Execucao',data:pcts,backgroundColor:colors,borderRadius:3,barPercentage:.55}]
-    },
+    data:{labels:labels,datasets:[{label:'% Execucao',data:pcts,backgroundColor:colors,borderRadius:3,barPercentage:.55}]},
     options:{
-      indexAxis:'y',
-      responsive:true,
-      maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{callbacks:{label:function(ctx){return ctx.raw.toFixed(1)+'%';}}}
-      },
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.raw.toFixed(1)+'%';}}}},
       scales:{
         x:{max:120,grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return v+'%';}}},
         y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
@@ -421,24 +775,44 @@ function registerChart(c){allCharts.push(c);}
   registerChart(c);
 })();
 
-/* ── Chart 3: Distribuicao por Status (doughnut) ── */
+/* ===== DIAGNOSTICA: Chart 3 — Gap Previsto vs Realizado ===== */
+(function(){
+  var labels=['Ecossistemas','Entrega de Valor','Fomento Compras','Movimenta','Gestao UPP'];
+  var previsto=[22715750,8199529,4900000,2323369,1300000];
+  var executado=[21064299,4941073,1331890,524771,1332991];
+  var ctx=document.getElementById('chartGap').getContext('2d');
+  var c=new Chart(ctx,{
+    type:'bar',
+    data:{labels:labels,datasets:[
+      {label:'Previsto',data:previsto,backgroundColor:brandColors.primary,borderRadius:3,barPercentage:.65},
+      {label:'Executado',data:executado,backgroundColor:brandColors.green,borderRadius:3,barPercentage:.65}
+    ]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'bottom',labels:{padding:12,font:{size:11}}},
+        tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': R$ '+(ctx.raw/1e6).toFixed(1)+' mi';}}}
+      },
+      scales:{
+        x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return 'R$ '+(v/1e6).toFixed(0)+' mi';}}},
+        y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
+      }
+    }
+  });
+  registerChart(c);
+})();
+
+/* ===== DIAGNOSTICA: Chart 4 — Distribuicao por Status ===== */
 (function(){
   var ctx=document.getElementById('chartStatus').getContext('2d');
   var c=new Chart(ctx,{
     type:'doughnut',
     data:{
       labels:['Em Execucao','Quitado','Sem informacao','Em tramitacao'],
-      datasets:[{
-        data:[29,20,8,5],
-        backgroundColor:[brandColors.primary,brandColors.green,brandColors.orange,brandColors.cyan],
-        borderWidth:0,
-        hoverOffset:6
-      }]
+      datasets:[{data:[29,20,8,5],backgroundColor:[brandColors.primary,brandColors.green,brandColors.orange,brandColors.cyan],borderWidth:0,hoverOffset:6}]
     },
     options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      cutout:'60%',
+      responsive:true,maintainAspectRatio:false,cutout:'60%',
       plugins:{
         legend:{position:'bottom',labels:{padding:14,font:{size:11}}},
         tooltip:{callbacks:{label:function(ctx){var t=ctx.dataset.data.reduce(function(a,b){return a+b;},0);return ctx.label+': '+ctx.raw+' ('+(ctx.raw/t*100).toFixed(0)+'%)';}}}
@@ -448,28 +822,28 @@ function registerChart(c){allCharts.push(c);}
   registerChart(c);
 })();
 
-/* ── Chart 4: Top 10 Gestores ── */
+/* ===== DIAGNOSTICA: Chart 5 — Comprometimento por Projeto ===== */
 (function(){
-  var labels=['Flavia','Joana','Julia','Alexander','Francine','Cyntia','Maysa','Mariana','Layla','Outros'];
-  var data=[13,9,5,4,4,4,3,3,3,14];
-  var colors=[brandColors.primary,brandColors.green,brandColors.orange,brandColors.purple,brandColors.cyan,brandColors.rose,'#8b9dc3','#a3d4a8','#d4a3d4','#c0c0c0'];
-  var ctx=document.getElementById('chartGestores').getContext('2d');
+  var labels=['Ecossistemas','Entrega de Valor','Fomento Compras','Movimenta','Gestao UPP'];
+  var exec=[21064299,4941073,1331890,524771,1332991];
+  var compPend=[6208032,2204666,3268110,221989,0]; /* negative comp for Gestao set to 0 */
+  var orc=[22715750,8199529,4900000,2323369,1300000];
+  var ctx=document.getElementById('chartComprom').getContext('2d');
   var c=new Chart(ctx,{
     type:'bar',
-    data:{
-      labels:labels,
-      datasets:[{label:'Iniciativas',data:data,backgroundColor:colors,borderRadius:3,barPercentage:.6}]
-    },
+    data:{labels:labels,datasets:[
+      {label:'Executado',data:exec,backgroundColor:brandColors.green,borderRadius:3,barPercentage:.5,stack:'stack1'},
+      {label:'Comprometido pendente',data:compPend,backgroundColor:brandColors.orange,borderRadius:3,barPercentage:.5,stack:'stack1'},
+      {label:'Orcamento',data:orc,backgroundColor:'rgba(42,79,218,.25)',borderColor:brandColors.primary,borderWidth:2,borderRadius:3,barPercentage:.5,stack:'stack2'}
+    ]},
     options:{
-      indexAxis:'y',
-      responsive:true,
-      maintainAspectRatio:false,
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
       plugins:{
-        legend:{display:false},
-        tooltip:{callbacks:{label:function(ctx){return ctx.raw+' iniciativas';}}}
+        legend:{position:'bottom',labels:{padding:12,font:{size:11}}},
+        tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': R$ '+(ctx.raw/1e6).toFixed(1)+' mi';}}}
       },
       scales:{
-        x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},stepSize:2}},
+        x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return 'R$ '+(v/1e6).toFixed(0)+' mi';}}},
         y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
       }
     }
@@ -477,12 +851,107 @@ function registerChart(c){allCharts.push(c);}
   registerChart(c);
 })();
 
-/* ── Theme toggle with chart refresh ── */
+/* ===== PREDITIVA: Chart 6 — Projecao de Execucao ===== */
+(function(){
+  var labels=['Ecossistemas','Gestao UPP','Entrega de Valor','Fomento Compras','Movimenta'];
+  var proj=[25277159,1599589,5929288,1598268,629725];
+  var orc=[22715750,1300000,8199529,4900000,2323369];
+  var ctx=document.getElementById('chartProjecao').getContext('2d');
+  var c=new Chart(ctx,{
+    type:'bar',
+    data:{labels:labels,datasets:[
+      {label:'Projecao Linear',data:proj,backgroundColor:brandColors.cyan,borderRadius:3,barPercentage:.65},
+      {label:'Orcamento',data:orc,backgroundColor:'rgba(42,79,218,.3)',borderColor:brandColors.primary,borderWidth:1,borderRadius:3,barPercentage:.65}
+    ]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'bottom',labels:{padding:12,font:{size:11}}},
+        tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': R$ '+(ctx.raw/1e6).toFixed(1)+' mi';}}}
+      },
+      scales:{
+        x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return 'R$ '+(v/1e6).toFixed(0)+' mi';}}},
+        y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
+      }
+    }
+  });
+  registerChart(c);
+})();
+
+/* ===== PREDITIVA: Chart 7 — Indice de Viabilidade ===== */
+(function(){
+  var labels=['Ecossistemas','Gestao UPP','Entrega de Valor','Fomento Compras','Movimenta'];
+  var viab=[200,200,30,7,6]; /* capped at 200 */
+  var colors=viab.map(function(v){return v>=100?brandColors.green:v>=50?brandColors.orange:brandColors.rose;});
+  var ctx=document.getElementById('chartViab').getContext('2d');
+  var c=new Chart(ctx,{
+    type:'bar',
+    data:{labels:labels,datasets:[{label:'Viabilidade %',data:viab,backgroundColor:colors,borderRadius:3,barPercentage:.55}]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return 'Viabilidade: '+ctx.raw+'%';}}}},
+      scales:{
+        x:{max:220,grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return v+'%';}}},
+        y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
+      }
+    }
+  });
+  registerChart(c);
+})();
+
+/* ===== PRESCRITIVA: Chart 8 — Sugestao de Remanejamento ===== */
+(function(){
+  var labels=['Movimenta','Fomento Compras','Gestao UPP','Entrega de Valor','Ecossistemas'];
+  var vals=[1564009,0,0,-79695,-4593637];
+  var colors=vals.map(function(v){return v>0?brandColors.green:v<0?brandColors.rose:'rgba(150,150,150,.4)';});
+  var ctx=document.getElementById('chartRemanejo').getContext('2d');
+  var c=new Chart(ctx,{
+    type:'bar',
+    data:{labels:labels,datasets:[{label:'Saldo Remanejavel',data:vals,backgroundColor:colors,borderRadius:3,barPercentage:.55}]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){var v=ctx.raw;return (v>=0?'+':'')+' R$ '+(Math.abs(v)/1e6).toFixed(2)+' mi';}}}},
+      scales:{
+        x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return 'R$ '+(v/1e6).toFixed(1)+' mi';}}},
+        y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
+      }
+    }
+  });
+  registerChart(c);
+})();
+
+/* ===== PRESCRITIVA: Chart 9 — Impacto do Remanejamento ===== */
+(function(){
+  var labels=['Deficit Ecossistemas','Superavit Movimenta'];
+  var antes=[-4593637,1564009];
+  var depois=[-3029628,0];
+  var ctx=document.getElementById('chartImpacto').getContext('2d');
+  var c=new Chart(ctx,{
+    type:'bar',
+    data:{labels:labels,datasets:[
+      {label:'Antes',data:antes.map(function(v){return v/1e6;}),backgroundColor:brandColors.rose,borderRadius:3,barPercentage:.55},
+      {label:'Depois',data:depois.map(function(v){return v/1e6;}),backgroundColor:brandColors.green,borderRadius:3,barPercentage:.55}
+    ]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'bottom',labels:{padding:12,font:{size:11}}},
+        tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': R$ '+ctx.raw.toFixed(2)+' mi';}}}
+      },
+      scales:{
+        x:{grid:{color:function(){return chartGridColor();}},ticks:{color:function(){return chartMutedColor();},callback:function(v){return 'R$ '+v.toFixed(1)+' mi';}}},
+        y:{grid:{display:false},ticks:{color:function(){return chartTextColor();},font:{size:11}}}
+      }
+    }
+  });
+  registerChart(c);
+})();
+
+/* ===== Theme toggle ===== */
 function toggleTheme(){
   var d=document.documentElement,cur=d.getAttribute('data-theme');
   if(cur==='dark'){d.removeAttribute('data-theme');localStorage.setItem('pippa-theme','light');}
   else{d.setAttribute('data-theme','dark');localStorage.setItem('pippa-theme','dark');}
-  /* Update charts */
   setTimeout(function(){
     Chart.defaults.color=chartTextColor();
     allCharts.forEach(function(c){c.update();});
