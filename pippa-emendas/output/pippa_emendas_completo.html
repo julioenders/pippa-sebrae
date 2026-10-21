@@ -778,7 +778,7 @@
         <option value="">Municipio</option>
       </select>
       <button class="btn btn-outline" onclick="applyAllFilters()">Filtrar</button>
-      <button class="btn btn-outline" onclick="openExportModal()">Exportar WhatsApp</button>
+      <button class="btn btn-outline" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp">📤 WhatsApp</button>
     </div>
   </header>
 
@@ -1114,17 +1114,7 @@
   </div>
 
   <!-- Export Modal -->
-  <div class="info-modal-backdrop" id="exportModal" onclick="if(event.target===this)closeExportModal()">
-    <div class="info-modal">
-      <button class="info-close" onclick="closeExportModal()">&times;</button>
-      <h2>Exportar para WhatsApp</h2>
-      <div id="exportContent" style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;font-size:13px;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;"></div>
-      <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">
-        <button class="btn btn-outline" onclick="closeExportModal()">Fechar</button>
-        <button class="btn" onclick="copyExport()">Copiar</button>
-      </div>
-    </div>
-  </div>
+
 
   <div class="toast" id="toast"></div>
 
@@ -1722,8 +1712,9 @@ function toggleInfoModal() {
   document.getElementById('infoModal').classList.toggle('active');
 }
 
-function openExportModal() {
+function exportWhatsApp() {
   const estados = getFilteredEstados();
+  if (!estados || estados.length === 0) { showToast('Sem dados para exportar'); return; }
   const totalEmp = estados.reduce((s,d) => s + d.empenhado, 0);
   const totalPago = estados.reduce((s,d) => s + d.pago, 0);
   const execPct = totalEmp > 0 ? (totalPago/totalEmp*100).toFixed(1) : '0.0';
@@ -1750,13 +1741,7 @@ function openExportModal() {
   t += '\n\ud83d\udd17 Fonte: Portal da Transparencia / Camara / Senado\n';
   t += '\ud83d\udce1 PIPPA — Sebrae Nacional';
 
-  exportText = t;
-  document.getElementById('exportContent').textContent = t;
-  document.getElementById('exportModal').classList.add('active');
-}
-
-function closeExportModal() {
-  document.getElementById('exportModal').classList.remove('active');
+  window.open('https://wa.me/?text=' + encodeURIComponent(t), '_blank');
 }
 
 function copyExport() {
