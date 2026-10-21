@@ -1529,9 +1529,11 @@ function updateKPIs(polls) {
   const candFilter = activeFilters.candidato;
   const allCands = new Set(polls.flatMap(p=>p.candidates.filter(c=>!candFilter.length||candFilter.includes(c.name)).map(c=>c.name)));
   document.getElementById('kpiCandidatos').textContent = allCands.size;
-  if(polls.length) {
-    const dates = polls.map(p=>p.date).sort();
-    document.getElementById('kpiUltima').textContent = formatDate(dates[dates.length-1]);
+  var allDates = polls.map(p=>p.date);
+  SECOND_ROUND.filter(p=>matchesCargo(p.position,currentCargo)).forEach(p=>{if(p.date)allDates.push(p.date)});
+  allDates.sort();
+  if(allDates.length) {
+    document.getElementById('kpiUltima').textContent = formatDate(allDates[allDates.length-1]);
   } else {
     document.getElementById('kpiUltima').textContent = '-';
   }
