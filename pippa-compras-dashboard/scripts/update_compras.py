@@ -2,11 +2,14 @@
 Atualiza os dados do PIPPA Compras Públicas no dashboard HTML.
 
 1. Monitor PNCP 5 Anos — coleta via API PNCP (contratações por UF/ano)
-2. PDDE/PNAE — atualiza se existirem JSONs novos em scripts/data/
+2. Execução Orçamentária — coleta via API SICONFI/Tesouro Nacional (RREO)
+3. PDDE/PNAE — atualiza se existirem JSONs novos em scripts/data/
 
 Uso:
-    python scripts/update_compras.py              # atualiza PNCP Monitor
+    python scripts/update_compras.py              # atualiza PNCP Monitor + SICONFI
     python scripts/update_compras.py --with-pdde  # + PDDE/PNAE se houver JSONs
+    python scripts/update_compras.py --skip-pncp  # só SICONFI (rápido)
+    python scripts/update_compras.py --skip-siconfi  # só PNCP
 """
 
 import json
@@ -161,6 +164,121 @@ def collect_pncp_monitor():
     return result
 
 
+SICONFI_BASE = "https://apidatalake.tesouro.gov.br/ords/siconfi/tt/rreo"
+UF_IBGE = {
+    "RO":11,"AC":12,"AM":13,"RR":14,"PA":15,"AP":16,"TO":17,
+    "MA":21,"PI":22,"CE":23,"RN":24,"PB":25,"PE":26,"AL":27,"SE":28,"BA":29,
+    "MG":31,"ES":32,"RJ":33,"SP":35,
+    "PR":41,"SC":42,"RS":43,
+    "MS":50,"MT":51,"GO":52,"DF":53
+}
+
+
+def find_latest_period(year, ente):
+    for p in range(6, 0, -1):
+        try:
+            r = requests.get(SICONFI_BASE, params={
+                "an_exercicio": year, "nr_periodo": p,
+                "co_tipo_demonstrativo": "RREO", "id_ente": ente
+            }, timeout=30)
+            if r.status_code == 200:
+                data = r.json()
+                if data.get("items"):
+                    return p
+        except Exception:
+            pass
+        time.sleep(1)
+    return None
+
+
+def collect_siconfi():
+    """Coleta dados de execução orçamentária via SICONFI/RREO (Tesouro Nacional)."""
+    current_year = date.today().year
+    start_year = current_year - 6
+    years = list(range(start_year, current_year + 1))
+    results = []
+    t0 = time.time()
+
+    print(f"  {len(UF_IBGE)} UFs x {len(years)} anos ({start_year}-{current_year})")
+
+    ref_ente = 11
+    year_periods = {}
+    print("  Detectando períodos disponíveis...", flush=True)
+    for year in years:
+        p = find_latest_period(year, ref_ente)
+        year_periods[year] = p
+        print(f"    {year}: período {p}", flush=True)
+
+    total_ops = len(UF_IBGE) * len(years)
+    done = 0
+    siconfi_errors = 0
+
+    for year in years:
+        period = year_periods.get(year)
+        if not period:
+            print(f"  AVISO: {year} sem dados RREO disponíveis", flush=True)
+            done += len(UF_IBGE)
+            continue
+
+        for uf, ente in sorted(UF_IBGE.items()):
+            done += 1
+            try:
+                r = requests.get(SICONFI_BASE, params={
+                    "an_exercicio": year, "nr_periodo": period,
+                    "co_tipo_demonstrativo": "RREO", "id_ente": ente
+                }, timeout=30)
+
+                if r.status_code == 429:
+                    print(f"  429 rate limit, aguardando 30s...", flush=True)
+                    time.sleep(30)
+                    r = requests.get(SICONFI_BASE, params={
+                        "an_exercicio": year, "nr_periodo": period,
+                        "co_tipo_demonstrativo": "RREO", "id_ente": ente
+                    }, timeout=30)
+
+                if r.status_code != 200:
+                    siconfi_errors += 1
+                    continue
+
+                items = r.json().get("items", [])
+                emp, liq, pago = 0, 0, 0
+                for it in items:
+                    if it.get("cod_conta") != "DespesasExcetoIntraOrcamentarias":
+                        continue
+                    col = it.get("coluna", "")
+                    val = it.get("valor", 0) or 0
+                    if "EMPENHADAS ATÉ" in col:
+                        emp = val
+                    elif "LIQUIDADAS ATÉ" in col:
+                        liq = val
+                    elif "PAGAS ATÉ" in col:
+                        pago = val
+
+                if emp > 0 or liq > 0 or pago > 0:
+                    results.append({
+                        "ano": year, "uf": uf, "nome": UF_NOMES[uf],
+                        "regiao": UF_REGIAO[uf],
+                        "empenhado": round(emp, 2),
+                        "liquidado": round(liq, 2),
+                        "pago": round(pago, 2)
+                    })
+
+            except Exception as e:
+                siconfi_errors += 1
+                print(f"  ERRO {uf} {year}: {e}", flush=True)
+
+            if done % 10 == 0 or done == total_ops:
+                elapsed = time.time() - t0
+                eta = (elapsed / done) * (total_ops - done) if done > 0 else 0
+                print(f"  [{done/total_ops*100:5.1f}%] {uf} {year} P{period} | ETA: {eta/60:.0f}min | err: {siconfi_errors}", flush=True)
+
+            time.sleep(1.5)
+
+    results.sort(key=lambda x: (x["ano"], x["uf"]))
+    print(f"  Coletados: {len(results)} registros em {(time.time()-t0)/60:.1f} min | {siconfi_errors} erros")
+    return results
+
+
 def replace_js_var(html, varname, value, is_string=False):
     if is_string:
         pattern = re.compile(
@@ -183,22 +301,31 @@ def replace_js_var(html, varname, value, is_string=False):
 
 def main():
     with_pdde = "--with-pdde" in sys.argv
+    skip_pncp = "--skip-pncp" in sys.argv
+    skip_siconfi = "--skip-siconfi" in sys.argv
     now = datetime.now(BRT)
     date_str = now.strftime("%d/%m/%Y")
 
     print(f"[{now:%Y-%m-%d %H:%M}] Atualizando PIPPA Compras Públicas...")
 
-    # 1. Monitor PNCP
-    print("\n=== Monitor PNCP 5 Anos ===")
-    pncp_data = collect_pncp_monitor()
-
-    print("\n  Atualizando HTML...")
     html = open(HTML_FILE, "r", encoding="utf-8").read()
 
-    html = replace_js_var(html, "PNCP_MONITOR_CACHE", pncp_data)
-    html = replace_js_var(html, "PNCP_MONITOR_CACHE_DATE", date_str, is_string=True)
+    # 1. Monitor PNCP
+    if not skip_pncp:
+        print("\n=== Monitor PNCP 5 Anos ===")
+        pncp_data = collect_pncp_monitor()
+        html = replace_js_var(html, "PNCP_MONITOR_CACHE", pncp_data)
+        html = replace_js_var(html, "PNCP_MONITOR_CACHE_DATE", date_str, is_string=True)
 
-    # 2. PDDE/PNAE (se JSONs existirem)
+    # 2. Execução Orçamentária (SICONFI)
+    if not skip_siconfi:
+        print("\n=== Execução Orçamentária (SICONFI/RREO) ===")
+        exec_data = collect_siconfi()
+        if exec_data:
+            html = replace_js_var(html, "EXEC_CACHE", exec_data)
+            html = replace_js_var(html, "EXEC_CACHE_DATE", date_str, is_string=True)
+
+    # 3. PDDE/PNAE (se JSONs existirem)
     if with_pdde:
         data_dir = os.path.join(SCRIPT_DIR, "data")
         pdde_file = os.path.join(data_dir, "pdde_cache.json")
