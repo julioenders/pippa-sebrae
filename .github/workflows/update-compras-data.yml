@@ -1,0 +1,57 @@
+name: Update Compras Públicas
+
+on:
+  schedule:
+    # PNCP Monitor: semanal (domingo 04h UTC = 01h BRT)
+    - cron: '0 4 * * 0'
+  workflow_dispatch:
+    inputs:
+      with_pdde:
+        description: 'Atualizar também PDDE/PNAE (requer JSONs em scripts/data/)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  update-pncp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Collect PDDE/PNAE from FNDE
+        if: inputs.with_pdde == true
+        working-directory: pippa-compras-dashboard
+        run: python scripts/collect_pdde_pnae.py
+        continue-on-error: true
+
+      - name: Run PNCP Monitor update
+        working-directory: pippa-compras-dashboard
+        run: |
+          if [ "${{ inputs.with_pdde }}" = "true" ]; then
+            python scripts/update_compras.py --with-pdde
+          else
+            python scripts/update_compras.py
+          fi
+
+      - name: Commit updated dashboard
+        run: |
+          if git diff --quiet pippa-compras-dashboard/index.html 2>/dev/null; then
+            echo "No changes"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add pippa-compras-dashboard/index.html
+            git commit -m "dados(compras): atualiza Monitor PNCP $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git push
+          fi
