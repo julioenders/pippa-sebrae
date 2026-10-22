@@ -954,13 +954,13 @@ def render_dashboard(
     <div class="main">
 
       <div class="nav-tabs">
-        <button class="nav-tab active" onclick="showTab('estados', this)">Estados</button>
-        <button class="nav-tab" onclick="showTab('municipios', this)">Municipios</button>
-        <button class="nav-tab" onclick="showTab('autores', this)">Autores</button>
-        <button class="nav-tab" onclick="showTab('partidos', this)">Partidos</button>
-        <button class="nav-tab" onclick="showTab('temporal', this)">Serie Temporal</button>
-        <button class="nav-tab" onclick="showTab('setores', this)">Setores</button>
-        <button class="nav-tab" onclick="showTab('qualidade', this)">Qualidade</button>
+        <button class="nav-tab active" data-tab="estados" onclick="showTab('estados', this)">Estados</button>
+        <button class="nav-tab" data-tab="municipios" onclick="showTab('municipios', this)">Municipios</button>
+        <button class="nav-tab" data-tab="autores" onclick="showTab('autores', this)">Autores</button>
+        <button class="nav-tab" data-tab="partidos" onclick="showTab('partidos', this)">Partidos</button>
+        <button class="nav-tab" data-tab="temporal" onclick="showTab('temporal', this)">Serie Temporal</button>
+        <button class="nav-tab" data-tab="setores" onclick="showTab('setores', this)">Setores</button>
+        <button class="nav-tab" data-tab="qualidade" onclick="showTab('qualidade', this)">Qualidade</button>
       </div>
 
       <div class="kpi-bar">
