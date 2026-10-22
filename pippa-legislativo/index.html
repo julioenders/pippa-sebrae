@@ -35,18 +35,17 @@
 }
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);transition:background .3s,color .3s;line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
 
-.header{background:linear-gradient(45deg,var(--atlantico),var(--azul-sebrae));padding:2rem 2rem 1.8rem;border-bottom:2px solid var(--border);position:relative;overflow:hidden}
-.header::before{content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(42,79,218,.08),transparent 70%);pointer-events:none}
-.header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;position:relative;z-index:1}
-.header-brand{display:flex;align-items:center;gap:1rem}
-.header-logo{width:52px;height:52px;background:rgba(42,79,218,.12);border:1px solid rgba(42,79,218,.25);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px}
-.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-.5px;color:#ffffff}
-.header h1 span{color:#ffffff}
-.header-sub{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:.2rem}
+.header{background:var(--surface);padding:12px 16px;border-bottom:1px solid var(--border);box-shadow:var(--shadow);position:sticky;top:0;z-index:100}
+.header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem}
+.header-brand{display:flex;align-items:center;gap:.75rem}
+.header-logo{width:40px;height:40px;background:var(--accent-light);border:1px solid var(--accent-ring);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
+.header h1{font-size:1.1rem;font-weight:800;letter-spacing:-.5px;color:var(--text-accent)}
+.header h1 span{color:var(--text-accent)}
+.header-sub{font-size:.72rem;color:var(--text-muted);margin-top:.1rem}
 .header-controls{display:flex;gap:.5rem;align-items:center}
-.portal-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:8px;font-size:.75rem;font-weight:600;text-decoration:none;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85);transition:all .2s}
-.portal-btn:hover{background:rgba(255,255,255,.1);color:#ffffff}
-.portal-btn svg{width:14px;height:14px}
+.portal-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .9rem;border-radius:8px;font-size:.72rem;font-weight:600;text-decoration:none;border:1px solid var(--border);color:var(--text-accent);background:var(--highlight-bg);transition:all .2s}
+.portal-btn:hover{background:var(--accent-ring);border-color:var(--accent);color:var(--accent)}
+.portal-btn svg{width:13px;height:13px}
 
 .main{flex:1;max-width:1100px;margin:0 auto;padding:2rem 1.5rem;width:100%}
 .intro{background:var(--highlight-bg);border:1px solid var(--accent-ring);border-radius:var(--radius);padding:1.3rem 1.5rem;margin-bottom:2rem;font-size:.85rem;color:var(--secondary);line-height:1.8}
@@ -75,11 +74,11 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
 ::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:3px}
 @media(max-width:700px){
   .grid{grid-template-columns:1fr}
-  .header{padding:1.2rem 1rem}
+  .header{padding:8px 12px}
   .main{padding:1rem}
 }
-.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s;}
-.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#ffffff;background:rgba(255,255,255,.1);}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid var(--border);border-radius:8px;cursor:pointer;color:var(--text-muted);transition:all .2s;}
+.theme-toggle:hover{border-color:var(--accent);color:var(--text-accent);background:var(--highlight-bg);}
 .theme-toggle svg{width:18px;height:18px;}
 .icon-sun{display:none;}
 [data-theme="dark"] .icon-sun{display:block;}
