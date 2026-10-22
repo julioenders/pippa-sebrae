@@ -1,0 +1,36 @@
+name: Update Reforma Tributaria News
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-news:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch Google News RSS
+        run: python pippa-reforma-dashboard/scripts/fetch_news.py
+
+      - name: Commit updated news cache
+        run: |
+          if git diff --quiet pippa-reforma-dashboard/data/ 2>/dev/null; then
+            echo "No changes in news data"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add pippa-reforma-dashboard/data/
+            git commit -m "chore: update reforma news cache $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git push
+          fi

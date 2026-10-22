@@ -1991,7 +1991,52 @@ function showToast(msg) {
   setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
+async function loadCachedNews() {
+  try {
+    const resp = await fetch('data/news_cache.json');
+    if (!resp.ok) return;
+    const cache = await resp.json();
+    if (!cache.items || !cache.items.length) return;
+
+    const dateFrom = document.getElementById('dateInputInicio').value;
+    const dateTo = document.getElementById('dateInputFim').value;
+    const daysDiff = dateFrom && dateTo
+      ? Math.ceil((new Date(dateTo + 'T23:59:59') - new Date(dateFrom + 'T00:00:00')) / 86400000) + 1
+      : 14;
+    const refDate = dateTo || new Date().toISOString().slice(0, 10);
+
+    const classifiedAll = cache.items.map(item => {
+      const classification = classifyNews(item.title);
+      const cred = classifyCredibility(item.source, item.title);
+      return { ...item, ...classification, ...cred, date: refDate };
+    });
+
+    weeklyNews = classifiedAll;
+    allNews = classifiedAll.filter(n => isRecentDay(n.pubDate, refDate, daysDiff));
+
+    const statusOrder = { 'Fato Confirmado': 0, 'Proposta/Discussao': 1, 'Expectativa/Projecao': 2 };
+    const impactoOrder = { 'Alto': 0, 'Medio': 1, 'Baixo': 2, 'Indefinido': 3 };
+    allNews.sort((a, b) => {
+      const s = (statusOrder[a.status] || 3) - (statusOrder[b.status] || 3);
+      if (s !== 0) return s;
+      return (impactoOrder[a.impactoMPE] || 4) - (impactoOrder[b.impactoMPE] || 4);
+    });
+
+    populateFonteFilter();
+    applyFilters();
+
+    const thermo = document.getElementById('thermometer');
+    if (thermo && cache.updated) {
+      const d = new Date(cache.updated);
+      thermo.textContent = `Atualizado: ${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'})} — ${cache.total} noticias`;
+    }
+  } catch (e) {
+    console.warn('Cache load failed:', e.message);
+  }
+}
+
 window.addEventListener('DOMContentLoaded', () => {
+  loadCachedNews();
   updateCharts();
 });
 </script>
