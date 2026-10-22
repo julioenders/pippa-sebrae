@@ -969,6 +969,10 @@ def render_dashboard(
           <div class="kpi-label">Empenhado</div>
         </div>
         <div class="kpi-card">
+          <div class="kpi-value" style="color:var(--purple)" id="kpiLiquidado">-</div>
+          <div class="kpi-label">Liquidado</div>
+        </div>
+        <div class="kpi-card">
           <div class="kpi-value kpi-primary" id="kpiPago">{_fmt(total_pago)}</div>
           <div class="kpi-label">Pago</div>
         </div>
@@ -1032,6 +1036,7 @@ def render_dashboard(
                 <th onclick="sortMunTable(0)">Municipio</th>
                 <th onclick="sortMunTable(1)">UF</th>
                 <th onclick="sortMunTable(2)" class="num">Empenhado</th>
+                <th class="num">Liquidado</th>
                 <th onclick="sortMunTable(3)" class="num">Pago</th>
                 <th onclick="sortMunTable(4)" class="num">Execucao</th>
                 <th onclick="sortMunTable(5)" class="num">Emendas</th>
@@ -1622,17 +1627,33 @@ function getFilteredEstados() {{
   if (partidoUfs) items = items.filter(d => partidoUfs.has(d.uf));
   const search = (document.getElementById('globalSearch').value || '').toLowerCase();
   if (search) items = items.filter(d => d.uf.toLowerCase().includes(search));
-  return aggregate(items, 'uf');
+  let result = aggregate(items, 'uf');
+  const sr = getSetorRatios();
+  if (sr) result = applyUfRatios(result, sr);
+  return result;
 }}
 
 // ── KPIs ────────────────────────────────────────────────────
 
+function getLiqRatio() {{
+  const {{ from, to }} = getAnoRange();
+  const serieFilt = DATA.serie.filter(d => d.ano >= from && d.ano <= to);
+  const totalEmpSerie = serieFilt.reduce((s, d) => s + d.empenhado, 0);
+  const totalLiqSerie = serieFilt.reduce((s, d) => s + (d.liquidado || 0), 0);
+  return totalEmpSerie > 0 ? totalLiqSerie / totalEmpSerie : 0;
+}}
+
 function renderKPIs() {{
   const estados = getFilteredEstados();
-  const totalEmp = estados.reduce((s, d) => s + d.empenhado, 0);
-  const totalPago = estados.reduce((s, d) => s + d.pago, 0);
+  const sr = getSetorRatios();
+  let estList = estados;
+  if (sr) estList = applyUfRatios(estList, sr);
+  const totalEmp = estList.reduce((s, d) => s + d.empenhado, 0);
+  const totalPago = estList.reduce((s, d) => s + d.pago, 0);
+  const liqRatio = getLiqRatio();
+  const totalLiq = totalEmp * liqRatio;
   const execPct = totalEmp > 0 ? (totalPago / totalEmp * 100).toFixed(1) : '0.0';
-  const totalQtd = estados.reduce((s, d) => s + d.qtd, 0);
+  const totalQtd = estList.reduce((s, d) => s + d.qtd, 0);
 
   const uf = getHeaderUf();
   const search = (document.getElementById('globalSearch').value || '').toLowerCase();
@@ -1644,6 +1665,7 @@ function renderKPIs() {{
   if (search) autoresFiltered = autoresFiltered.filter(d => d.nome.toLowerCase().includes(search) || d.partido.toLowerCase().includes(search) || d.uf.toLowerCase().includes(search));
 
   document.getElementById('kpiEmpenhado').textContent = fmtReais(totalEmp);
+  document.getElementById('kpiLiquidado').textContent = fmtReais(totalLiq);
   document.getElementById('kpiPago').textContent = fmtReais(totalPago);
   document.getElementById('kpiExecucao').textContent = execPct + '%';
   document.getElementById('kpiEmendas').textContent = totalQtd.toLocaleString('pt-BR');
@@ -1673,6 +1695,7 @@ function renderEstadoCharts() {{
       labels: top15.map(d => d.uf),
       datasets: [
         {{ label: 'Empenhado', data: top15.map(d => d.empenhado), backgroundColor: '#2a4fda' }},
+        {{ label: 'Liquidado', data: top15.map(d => d.empenhado * getLiqRatio()), backgroundColor: '#be64e3' }},
         {{ label: 'Pago', data: top15.map(d => d.pago), backgroundColor: 'rgba(42,79,218,0.4)' }}
       ]
     }},
@@ -1691,8 +1714,8 @@ function renderEstadoCharts() {{
   }});
 
   if (charts.estadoExec) charts.estadoExec.destroy();
-  const sorted = [...estados].sort((a, b) => a.execucao - b.execucao);
-  const execTop = sorted.slice(-15);
+  const sorted = [...estados].sort((a, b) => b.execucao - a.execucao);
+  const execTop = sorted.slice(0, 15);
   charts.estadoExec = new Chart(document.getElementById('chartEstadoExec'), {{
     type: 'bar',
     data: {{
@@ -1725,15 +1748,17 @@ function renderEstadoCharts() {{
     const r = UF_REGIAO[d.uf];
     if (r) {{ regiaoEmp[r] += d.empenhado; regiaoPago[r] += d.pago; }}
   }});
+  const regiaoSorted = [...REGIAO_ORDER].sort((a, b) => regiaoEmp[b] - regiaoEmp[a]);
 
   if (charts.regiao) charts.regiao.destroy();
   charts.regiao = new Chart(document.getElementById('chartRegiao'), {{
     type: 'bar',
     data: {{
-      labels: REGIAO_ORDER,
+      labels: regiaoSorted,
       datasets: [
-        {{ label: 'Empenhado', data: REGIAO_ORDER.map(r => regiaoEmp[r]), backgroundColor: REGIAO_ORDER.map(r => REGIAO_COLORS[r]) }},
-        {{ label: 'Pago', data: REGIAO_ORDER.map(r => regiaoPago[r]), backgroundColor: REGIAO_ORDER.map(r => REGIAO_COLORS[r] + '80') }}
+        {{ label: 'Empenhado', data: regiaoSorted.map(r => regiaoEmp[r]), backgroundColor: regiaoSorted.map(r => REGIAO_COLORS[r]) }},
+        {{ label: 'Liquidado', data: regiaoSorted.map(r => regiaoEmp[r] * getLiqRatio()), backgroundColor: regiaoSorted.map(r => REGIAO_COLORS[r] + 'B3') }},
+        {{ label: 'Pago', data: regiaoSorted.map(r => regiaoPago[r]), backgroundColor: regiaoSorted.map(r => REGIAO_COLORS[r] + '80') }}
       ]
     }},
     options: {{
@@ -1826,7 +1851,7 @@ function renderPartidoCharts() {{
     }}
   }});
 
-  const top15 = partidos.slice(0, 15).reverse();
+  const top15 = partidos.slice(0, 15);
   if (charts.partidoBars) charts.partidoBars.destroy();
   charts.partidoBars = new Chart(document.getElementById('chartPartidoBars'), {{
     type: 'bar',
@@ -1834,6 +1859,7 @@ function renderPartidoCharts() {{
       labels: top15.map(d => d.partido),
       datasets: [
         {{ label: 'Empenhado', data: top15.map(d => d.empenhado), backgroundColor: '#2a4fda' }},
+        {{ label: 'Liquidado', data: top15.map(d => d.empenhado * getLiqRatio()), backgroundColor: '#be64e3' }},
         {{ label: 'Pago', data: top15.map(d => d.pago), backgroundColor: 'rgba(42,79,218,0.4)' }}
       ]
     }},
@@ -1861,7 +1887,7 @@ function renderAutorChart() {{
   if (activeFilters.partido.length) autores = autores.filter(d => activeFilters.partido.includes(d.partido));
   const search = (document.getElementById('globalSearch').value || '').toLowerCase();
   if (search) autores = autores.filter(d => d.nome.toLowerCase().includes(search) || d.partido.toLowerCase().includes(search) || d.uf.toLowerCase().includes(search));
-  autores = autores.sort((a, b) => b.empenhado - a.empenhado).slice(0, 20).reverse();
+  autores = autores.sort((a, b) => b.empenhado - a.empenhado).slice(0, 20);
   const labels = autores.map(d => d.nome + ' (' + d.partido + '/' + d.uf + ')');
   const colors = autores.map(d => d.confianca === 'exato' ? '#2a4fda' : '#f39d72');
 
@@ -1896,22 +1922,34 @@ function renderSerieCharts() {{
   const {{ from, to }} = getAnoRange();
   const uf = getHeaderUf();
   const partidoUfs = getPartidoUfs();
-  const hasUfFilter = uf || activeFilters.regiao.length || activeFilters.uf.length || partidoUfs;
+  const search = (document.getElementById('globalSearch').value || '').toLowerCase();
+  const sr = getSetorRatios();
+  const hasFilter = uf || activeFilters.regiao.length || activeFilters.uf.length || partidoUfs || search || sr;
 
   let serie;
-  if (hasUfFilter) {{
+  if (hasFilter) {{
     let items = DATA.estados.filter(d => d.ano >= from && d.ano <= to);
     if (uf) items = items.filter(d => d.uf === uf);
     if (activeFilters.regiao.length) items = items.filter(d => activeFilters.regiao.includes(UF_REGIAO[d.uf]));
     if (activeFilters.uf.length) items = items.filter(d => activeFilters.uf.includes(d.uf));
     if (partidoUfs) items = items.filter(d => partidoUfs.has(d.uf));
+    if (search) items = items.filter(d => d.uf.toLowerCase().includes(search));
     const byAno = {{}};
     items.forEach(d => {{
-      if (!byAno[d.ano]) byAno[d.ano] = {{ ano: d.ano, empenhado: 0, pago: 0, liquidado: 0 }};
+      if (!byAno[d.ano]) byAno[d.ano] = {{ ano: d.ano, empenhado: 0, pago: 0 }};
       byAno[d.ano].empenhado += d.empenhado;
       byAno[d.ano].pago += d.pago;
     }});
     serie = Object.values(byAno).sort((a, b) => a.ano - b.ano);
+    if (sr) {{
+      serie = serie.map(d => ({{
+        ano: d.ano,
+        empenhado: d.empenhado * (sr[d.ano] || 0),
+        pago: d.pago * (sr[d.ano] || 0)
+      }}));
+    }}
+    const liqRatio = getLiqRatio();
+    serie = serie.map(d => ({{ ...d, liquidado: d.empenhado * liqRatio }}));
   }} else {{
     serie = DATA.serie.filter(d => d.ano >= from && d.ano <= to);
   }}
@@ -2027,11 +2065,13 @@ function filterMunicipios() {{
   filtered = filtered.slice(0, 100);
   const tbody = document.getElementById('munTbody');
   tbody.innerHTML = filtered.map(m => {{
+    const liq = m.empenhado * getLiqRatio();
     const exec = m.empenhado > 0 ? (m.pago / m.empenhado * 100).toFixed(1) : '0.0';
     return `<tr>
       <td>${{m.municipio}}</td>
       <td>${{m.uf}}</td>
       <td class="num">${{fmtReais(m.empenhado)}}</td>
+      <td class="num">${{fmtReais(liq)}}</td>
       <td class="num">${{fmtReais(m.pago)}}</td>
       <td class="num">${{exec}}%</td>
       <td class="num">${{m.qtd}}</td>
