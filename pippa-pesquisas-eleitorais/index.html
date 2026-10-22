@@ -2107,7 +2107,10 @@ function renderSegundoTurno() {
     const party = recent[0].candidates.find(c => c.name === name)?.party || '';
     return {name, party, avg: Math.round(avg*10)/10};
   });
+  const bniVals = recent.map(p => Math.max(0, Math.round((100 - p.candidates.reduce((s,c) => s+c.pct, 0))*10)/10));
+  const bniAvg = Math.round(bniVals.reduce((s,v) => s+v, 0) / bniVals.length * 10) / 10;
   const colors = [cssVar('--accent'), cssVar('--danger')];
+  const bniColor = 'var(--text-muted)';
 
   const summary = document.getElementById('matchupSummary');
   summary.innerHTML =
@@ -2123,7 +2126,12 @@ function renderSegundoTurno() {
       '<div class="cand-party">' + candStats[1].party + '</div>' +
       '<div class="cand-pct" style="color:' + colors[1] + '">' + candStats[1].avg + '%</div>' +
       '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">media ultimas ' + recent.length + ' pesquisas</div>' +
-    '</div>';
+    '</div>' +
+    (bniAvg > 0 ? '<div class="matchup-card" style="border-color:var(--border);background:var(--surface2)">' +
+      '<div class="cand-name" style="font-size:13px">Brancos / Nulos / Indecisos</div>' +
+      '<div class="cand-pct" style="color:' + bniColor + ';font-size:28px">' + bniAvg + '%</div>' +
+      '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">media ultimas ' + recent.length + ' pesquisas</div>' +
+    '</div>' : '');
 
   const sorted = [...polls].sort((a,b) => a.date.localeCompare(b.date));
   const datasets = candNames.map((name, i) => ({
@@ -2133,6 +2141,15 @@ function renderSegundoTurno() {
     backgroundColor: colors[i] + '33',
     tension: .3, pointRadius: 4, pointHoverRadius: 7, borderWidth: 2.5,
   }));
+  const bniDataset = {
+    label: 'Brancos/Nulos/Ind.',
+    data: sorted.map(p => ({x: p.date, y: Math.max(0, Math.round((100 - p.candidates.reduce((s,c) => s+c.pct, 0))*10)/10)})),
+    borderColor: '#999',
+    backgroundColor: '#99999933',
+    tension: .3, pointRadius: 3, pointHoverRadius: 6, borderWidth: 2,
+    borderDash: [6, 3],
+  };
+  datasets.push(bniDataset);
   chartInstances.segundoturno = new Chart(document.getElementById('chartSegundoTurno'), {
     type: 'line', data: {datasets},
     options: {
@@ -2164,6 +2181,7 @@ function renderSegundoTurno() {
           '<span class="poll-cand-pct">' + c.pct + '%</span>' +
         '</div>'
       ).join('') +
+      (function(){var bni=Math.round((100 - p.candidates.reduce(function(s,c){return s+c.pct},0))*10)/10; return bni > 0 ? '<div class="poll-cand" style="border-top:1px dashed var(--border);margin-top:4px;padding-top:4px;opacity:.7"><span class="poll-cand-name" style="font-size:12px">Brancos/Nulos/Ind.</span><span class="poll-cand-pct" style="color:var(--text-muted)">' + bni + '%</span></div>' : ''})() +
     '</div>'
   ).join('');
 }
