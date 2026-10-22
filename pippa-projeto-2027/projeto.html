@@ -10,9 +10,22 @@
         :root {
             --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;
             --font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif;
-            --bg-primary:#071a5c;--bg-card:#0b2574;--bg-card-hover:#0f2f88;--bg-surface:#091e60;
-            --text-primary:#eff3ee;--text-secondary:#a8c4e0;--text-muted:#7a9bc0;
-            --emerald:#2a4fda;--emerald-dim:rgba(42,79,218,.15);--emerald-glow:rgba(42,79,218,.3);
+            --bg-primary:#eff3ee;--bg-card:#ffffff;--bg-card-hover:#f5f7f4;--bg-surface:#e5eae4;
+            --text-primary:#1a1a1a;--text-secondary:#4a5568;--text-muted:#6b7280;
+            --emerald:#2a4fda;--emerald-dim:rgba(42,79,218,.08);--emerald-glow:rgba(42,79,218,.15);
+            --blue:#2563eb;--blue-dim:rgba(37,99,235,.08);
+            --purple:#7c3aed;--purple-dim:rgba(124,58,237,.08);
+            --amber:#d97706;--amber-dim:rgba(217,119,6,.08);
+            --pink:#db2777;--pink-dim:rgba(219,39,119,.08);
+            --cyan:#0891b2;--cyan-dim:rgba(8,145,178,.08);
+            --red:#dc2626;--red-dim:rgba(220,38,38,.08);
+            --teal:#059669;--teal-dim:rgba(5,150,105,.08);
+            --border:rgba(0,0,0,.1);--border-accent:rgba(42,79,218,.2);
+        }
+        [data-theme="dark"] {
+            --bg-primary:#080f1e;--bg-card:#0f1a2e;--bg-card-hover:#162038;--bg-surface:#0c1525;
+            --text-primary:#eff3ee;--text-secondary:#a8c4e0;--text-muted:#8b9dc3;
+            --emerald:#65b7fb;--emerald-dim:rgba(101,183,251,.12);--emerald-glow:rgba(101,183,251,.2);
             --blue:#65b7fb;--blue-dim:rgba(101,183,251,.15);
             --purple:#be64e3;--purple-dim:rgba(190,100,227,.15);
             --amber:#f39d72;--amber-dim:rgba(243,157,114,.15);
@@ -20,13 +33,7 @@
             --cyan:#65b7fb;--cyan-dim:rgba(101,183,251,.15);
             --red:#e0565d;--red-dim:rgba(224,86,93,.15);
             --teal:#90d275;--teal-dim:rgba(144,210,117,.15);
-            --border:rgba(101,183,251,.1);--border-accent:rgba(42,79,218,.3);
-        }
-        [data-theme="light"] {
-            --bg-primary:#eff3ee;--bg-card:#ffffff;--bg-card-hover:#f5f7f4;--bg-surface:#e5eae4;
-            --text-primary:#000000;--text-secondary:#4a5568;--text-muted:#6b7280;
-            --emerald:#2a4fda;--emerald-dim:rgba(42,79,218,.08);--emerald-glow:rgba(42,79,218,.15);
-            --border:rgba(42,79,218,.08);--border-accent:rgba(42,79,218,.2);
+            --border:rgba(255,255,255,.08);--border-accent:rgba(101,183,251,.25);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -457,9 +464,9 @@
         }
     .theme-toggle{background:transparent;border:1px solid var(--border);color:var(--text-muted);width:34px;height:34px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
 .theme-toggle:hover{border-color:var(--emerald);color:var(--emerald);background:var(--bg-surface)}
-.icon-moon{display:none}
-[data-theme="light"] .icon-sun{display:none}
-[data-theme="light"] .icon-moon{display:block}
+.icon-sun{display:none}
+[data-theme="dark"] .icon-sun{display:block}
+[data-theme="dark"] .icon-moon{display:none}
 </style>
 </head>
 <body>
@@ -1579,7 +1586,7 @@
                     <td>176h/mês × R$ 75,00/h — Design system, interfaces, templates</td>
                     <td class="num">13.200,00</td><td class="num">12</td><td class="num"><strong>158.400,00</strong></td><td class="num">7,9%</td>
                 </tr>
-                <tr style="background: rgba(42,79,218,0.05);">
+                <tr style="background: var(--emerald-dim);">
                     <td colspan="2"><strong>Subtotal Equipe Externa</strong></td>
                     <td class="num"><strong>58.657,28</strong></td><td class="num">12</td><td class="num"><strong>703.887,36</strong></td><td class="num"><strong>34,9%</strong></td>
                 </tr>
@@ -1881,10 +1888,10 @@
                 <svg id="radarChart" viewBox="0 0 420 420" style="width: 100%; max-width: 420px;">
                     <defs>
                         <style>
-                            .radar-label { font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; fill: #a8c4e0; }
+                            .radar-label { font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; fill: var(--text-secondary); }
                             .radar-label-value { font-family: 'Figtree', sans-serif; font-size: 9px; font-weight: 700; }
-                            .radar-grid { stroke: rgba(101,183,251,0.12); stroke-width: 1; fill: none; }
-                            .radar-axis { stroke: rgba(101,183,251,0.08); stroke-width: 1; }
+                            .radar-grid { stroke: var(--border-accent); stroke-width: 1; fill: none; }
+                            .radar-axis { stroke: var(--border); stroke-width: 1; }
                             .radar-polygon { fill-opacity: 0.08; stroke-width: 2; transition: opacity .3s, fill-opacity .3s; }
                             .radar-polygon:hover { fill-opacity: 0.18; stroke-width: 2.5; }
                             .radar-dot { transition: opacity .3s; }
@@ -1900,17 +1907,17 @@
                     <button class="radar-legend-btn" data-release="atual" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-surface); cursor: pointer; font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; color: var(--text-secondary); transition: all .2s;">
                         <span style="width: 10px; height: 10px; border-radius: 50%; background: #7a9bc0;"></span> Atual (Jan)
                     </button>
-                    <button class="radar-legend-btn active" data-release="r1" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid rgba(42,79,218,0.3); background: rgba(42,79,218,0.1); cursor: pointer; font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; color: #2a4fda; transition: all .2s;">
-                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #2a4fda;"></span> R1 (Mar)
+                    <button class="radar-legend-btn active" data-release="r1" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid var(--border-accent); background: var(--emerald-dim); cursor: pointer; font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; color: var(--emerald); transition: all .2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--emerald);"></span> R1 (Mar)
                     </button>
-                    <button class="radar-legend-btn active" data-release="r2" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid rgba(101,183,251,0.3); background: rgba(101,183,251,0.1); cursor: pointer; font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; color: #65b7fb; transition: all .2s;">
-                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #65b7fb;"></span> R2 (Jun)
+                    <button class="radar-legend-btn active" data-release="r2" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid var(--blue-dim); background: var(--blue-dim); cursor: pointer; font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; color: var(--blue); transition: all .2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--blue);"></span> R2 (Jun)
                     </button>
-                    <button class="radar-legend-btn active" data-release="r3" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid rgba(190,100,227,0.3); background: rgba(190,100,227,0.1); cursor: pointer; font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; color: #be64e3; transition: all .2s;">
-                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #be64e3;"></span> R3 (Set)
+                    <button class="radar-legend-btn active" data-release="r3" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid var(--purple-dim); background: var(--purple-dim); cursor: pointer; font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; color: var(--purple); transition: all .2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--purple);"></span> R3 (Set)
                     </button>
-                    <button class="radar-legend-btn active" data-release="r4" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid rgba(243,157,114,0.3); background: rgba(243,157,114,0.1); cursor: pointer; font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; color: #f39d72; transition: all .2s;">
-                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #f39d72;"></span> R4 (Dez)
+                    <button class="radar-legend-btn active" data-release="r4" style="display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .75rem; border-radius: 6px; border: 1px solid var(--amber-dim); background: var(--amber-dim); cursor: pointer; font-family: 'Figtree', sans-serif; font-size: 11px; font-weight: 600; color: var(--amber); transition: all .2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--amber);"></span> R4 (Dez)
                     </button>
                 </div>
 
@@ -2440,7 +2447,7 @@ document.addEventListener('keydown', e => {
         const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         txt.setAttribute('x', lx + 6); txt.setAttribute('y', ly + 3);
         txt.setAttribute('class', 'radar-label-value');
-        txt.setAttribute('fill', '#475569');
+        txt.setAttribute('fill', getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim());
         txt.textContent = l;
         svg.appendChild(txt);
     }
@@ -2489,7 +2496,7 @@ document.addEventListener('keydown', e => {
             dot.setAttribute('cx', dx); dot.setAttribute('cy', dy);
             dot.setAttribute('r', key === 'r4' ? 4.5 : 3.5);
             dot.setAttribute('fill', rel.color);
-            dot.setAttribute('stroke', '#071a5c');
+            dot.setAttribute('stroke', getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim());
             dot.setAttribute('stroke-width', 1.5);
             dot.setAttribute('class', 'radar-dot');
             dot.setAttribute('data-release', key);
