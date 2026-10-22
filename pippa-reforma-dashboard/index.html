@@ -1393,10 +1393,66 @@ async function fetchRSS(query, date, daysBefore) {
   return [];
 }
 
+function processResults(allResults, dateTo, daysDiff) {
+  const classifiedAll = allResults.map(item => {
+    const classification = classifyNews(item.title);
+    const cred = classifyCredibility(item.source, item.title);
+    return { ...item, ...classification, ...cred, date: dateTo };
+  });
+
+  weeklyNews = classifiedAll;
+  allNews = classifiedAll.filter(n => isRecentDay(n.pubDate, dateTo, daysDiff));
+
+  const statusOrder = { 'Fato Confirmado': 0, 'Proposta/Discussao': 1, 'Expectativa/Projecao': 2 };
+  const impactoOrder = { 'Alto': 0, 'Medio': 1, 'Baixo': 2, 'Indefinido': 3 };
+  allNews.sort((a, b) => {
+    const s = (statusOrder[a.status] || 3) - (statusOrder[b.status] || 3);
+    if (s !== 0) return s;
+    return (impactoOrder[a.impactoMPE] || 4) - (impactoOrder[b.impactoMPE] || 4);
+  });
+
+  populateFonteFilter();
+  applyFilters();
+}
+
+async function fetchFromRSS(dateTo, daysDiff) {
+  const allResults = [];
+  const seenTitles = new Set();
+  for (let i = 0; i < SEARCH_QUERIES.length; i++) {
+    showLoading('Buscando noticias...', `Consulta ${i + 1} de ${SEARCH_QUERIES.length}...`);
+    const items = await fetchRSS(SEARCH_QUERIES[i], dateTo, daysDiff);
+    for (const item of items) {
+      const key = normalize(item.title).substring(0, 60);
+      if (!seenTitles.has(key)) {
+        seenTitles.add(key);
+        allResults.push(item);
+      }
+    }
+  }
+  return allResults;
+}
+
+async function fetchFromCache(dateTo, daysDiff) {
+  const resp = await fetch('data/news_cache.json');
+  if (!resp.ok) throw new Error('Cache indisponivel');
+  const cache = await resp.json();
+  if (!cache.items || !cache.items.length) throw new Error('Cache vazio');
+  const allResults = [];
+  const seenTitles = new Set();
+  for (const item of cache.items) {
+    if (!isRecentDay(item.pubDate, dateTo, daysDiff)) continue;
+    const key = normalize(item.title).substring(0, 60);
+    if (!seenTitles.has(key)) {
+      seenTitles.add(key);
+      allResults.push(item);
+    }
+  }
+  return allResults;
+}
+
 async function fetchData() {
   const dateFrom = document.getElementById('dateInputInicio').value;
   const dateTo = document.getElementById('dateInputFim').value;
-  const date = dateTo;
   if (!dateFrom || !dateTo) { alert('Selecione as datas de inicio e fim.'); return; }
 
   const btn = document.getElementById('btnFetch');
@@ -1404,51 +1460,17 @@ async function fetchData() {
 
   try {
     showLoading('Buscando noticias sobre Reforma Tributaria...', '');
-
     const daysDiff = Math.ceil((new Date(dateTo + 'T23:59:59') - new Date(dateFrom + 'T00:00:00')) / 86400000) + 1;
-    const allResults = [];
-    const seenTitles = new Set();
 
-    for (let i = 0; i < SEARCH_QUERIES.length; i++) {
-      showLoading('Buscando noticias...', `Consulta ${i + 1} de ${SEARCH_QUERIES.length}...`);
-      const items = await fetchRSS(SEARCH_QUERIES[i], dateTo, daysDiff);
-      for (const item of items) {
-        const key = normalize(item.title).substring(0, 60);
-        if (!seenTitles.has(key)) {
-          seenTitles.add(key);
-          allResults.push(item);
-        }
-      }
+    let allResults = await fetchFromRSS(dateTo, daysDiff);
+
+    if (allResults.length === 0) {
+      showLoading('Proxies indisponiveis, buscando dados atualizados...', '');
+      allResults = await fetchFromCache(dateTo, daysDiff);
     }
 
     showLoading('Classificando noticias...', `${allResults.length} noticias encontradas`);
-
-    const classifiedAll = allResults.map(item => {
-      const classification = classifyNews(item.title);
-      const cred = classifyCredibility(item.source, item.title);
-      return {
-        ...item,
-        ...classification,
-        ...cred,
-        date: date
-      };
-    });
-
-    weeklyNews = classifiedAll;
-    allNews = classifiedAll.filter(n => isRecentDay(n.pubDate, dateTo, daysDiff));
-
-    // Sort: Fatos first, then Propostas, then Expectativas; within each, Alto impacto first
-    const statusOrder = { 'Fato Confirmado': 0, 'Proposta/Discussao': 1, 'Expectativa/Projecao': 2 };
-    const impactoOrder = { 'Alto': 0, 'Medio': 1, 'Baixo': 2, 'Indefinido': 3 };
-    allNews.sort((a, b) => {
-      const s = (statusOrder[a.status] || 3) - (statusOrder[b.status] || 3);
-      if (s !== 0) return s;
-      return (impactoOrder[a.impactoMPE] || 4) - (impactoOrder[b.impactoMPE] || 4);
-    });
-
-    populateFonteFilter();
-    applyFilters();
-
+    processResults(allResults, dateTo, daysDiff);
     hideLoading();
 
   } catch (e) {
@@ -1991,52 +2013,7 @@ function showToast(msg) {
   setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-async function loadCachedNews() {
-  try {
-    const resp = await fetch('data/news_cache.json');
-    if (!resp.ok) return;
-    const cache = await resp.json();
-    if (!cache.items || !cache.items.length) return;
-
-    const dateFrom = document.getElementById('dateInputInicio').value;
-    const dateTo = document.getElementById('dateInputFim').value;
-    const daysDiff = dateFrom && dateTo
-      ? Math.ceil((new Date(dateTo + 'T23:59:59') - new Date(dateFrom + 'T00:00:00')) / 86400000) + 1
-      : 14;
-    const refDate = dateTo || new Date().toISOString().slice(0, 10);
-
-    const classifiedAll = cache.items.map(item => {
-      const classification = classifyNews(item.title);
-      const cred = classifyCredibility(item.source, item.title);
-      return { ...item, ...classification, ...cred, date: refDate };
-    });
-
-    weeklyNews = classifiedAll;
-    allNews = classifiedAll.filter(n => isRecentDay(n.pubDate, refDate, daysDiff));
-
-    const statusOrder = { 'Fato Confirmado': 0, 'Proposta/Discussao': 1, 'Expectativa/Projecao': 2 };
-    const impactoOrder = { 'Alto': 0, 'Medio': 1, 'Baixo': 2, 'Indefinido': 3 };
-    allNews.sort((a, b) => {
-      const s = (statusOrder[a.status] || 3) - (statusOrder[b.status] || 3);
-      if (s !== 0) return s;
-      return (impactoOrder[a.impactoMPE] || 4) - (impactoOrder[b.impactoMPE] || 4);
-    });
-
-    populateFonteFilter();
-    applyFilters();
-
-    const thermo = document.getElementById('thermometer');
-    if (thermo && cache.updated) {
-      const d = new Date(cache.updated);
-      thermo.textContent = `Atualizado: ${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'})} — ${cache.total} noticias`;
-    }
-  } catch (e) {
-    console.warn('Cache load failed:', e.message);
-  }
-}
-
 window.addEventListener('DOMContentLoaded', () => {
-  loadCachedNews();
   updateCharts();
 });
 </script>
