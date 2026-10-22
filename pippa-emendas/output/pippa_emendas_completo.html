@@ -868,6 +868,17 @@
         </div>
       </div>
 
+      <div class="filter-section" data-section="setor">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <div class="filter-title">Setor <span class="filter-badge" id="badge-setor"></span></div>
+          <span class="filter-arrow">&#9660;</span>
+        </div>
+        <div class="filter-body">
+          <div class="filter-group" id="setorChips"></div>
+          <span class="filter-clear" onclick="clearFilter('setor')">Limpar</span>
+        </div>
+      </div>
+
       <div class="sidebar-footer">
         PIPPA Emendas v2.0<br>
         Sebrae Nacional<br>
@@ -883,6 +894,7 @@
         <button class="nav-tab" onclick="showTab('autores', this)">Autores</button>
         <button class="nav-tab" onclick="showTab('partidos', this)">Partidos</button>
         <button class="nav-tab" onclick="showTab('temporal', this)">Serie Temporal</button>
+        <button class="nav-tab" onclick="showTab('setores', this)">Setores</button>
         <button class="nav-tab" onclick="showTab('qualidade', this)">Qualidade</button>
       </div>
 
@@ -1012,6 +1024,21 @@
       </div>
 
       <!-- QUALIDADE -->
+      <!-- SETORES -->
+      <div id="tab-setores" class="tab-content">
+        <div class="section-header">
+          <div class="section-title">Setores (Funcao Orcamentaria)</div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Top 15 Setores — Empenhado</div>
+          <div class="chart-wrapper" style="height:420px;"><canvas id="chartSetorBars"></canvas></div>
+        </div>
+        <div class="chart-card" style="margin-top:16px;">
+          <div class="chart-title">Evolucao Anual por Setor (Empenhado)</div>
+          <div class="chart-wrapper"><canvas id="chartSetorStacked"></canvas></div>
+        </div>
+      </div>
+
       <div id="tab-qualidade" class="tab-content">
         <div class="section-header">
           <div class="section-title">Diagnostico de Qualidade</div>
@@ -1133,7 +1160,7 @@ const UF_REGIAO = {
 const REGIAO_ORDER = ['Norte', 'Nordeste', 'Sudeste', 'Sul', 'Centro-Oeste'];
 const REGIAO_COLORS = { 'Norte': '#2a4fda', 'Nordeste': '#61b466', 'Sudeste': '#f39d72', 'Sul': '#be64e3', 'Centro-Oeste': '#e0565d' };
 
-let activeFilters = { regiao: [], uf: [], partido: [] };
+let activeFilters = { regiao: [], uf: [], partido: [], setor: [] };
 let charts = {};
 
 function chartTextColor() { return getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim() || '#6b7280'; }
@@ -1178,13 +1205,23 @@ function onUfHeaderChange() {
   });
 }
 
+function getActiveTab() {
+  const active = document.querySelector('.nav-tab.active');
+  return (active && active.dataset.tab) || 'estados';
+}
+
+function renderTabContent(tab) {
+  if (tab === 'estados') renderEstadoCharts();
+  if (tab === 'municipios') filterMunicipios();
+  if (tab === 'autores') renderAutorChart();
+  if (tab === 'partidos') renderPartidoCharts();
+  if (tab === 'temporal') renderSerieCharts();
+  if (tab === 'setores') renderSetorCharts();
+}
+
 function applyAllFilters() {
   renderKPIs();
-  renderEstadoCharts();
-  renderPartidoCharts();
-  renderAutorChart();
-  renderSerieCharts();
-  filterMunicipios();
+  renderTabContent(getActiveTab());
 }
 
 // ── Data helpers ────────────────────────────────────────────
@@ -1213,6 +1250,246 @@ function aggregate(items, key) {
     [key]: k, ...v,
     execucao: v.empenhado > 0 ? +(v.pago / v.empenhado * 100).toFixed(1) : 0
   })).sort((a, b) => b.empenhado - a.empenhado);
+}
+
+function getUfYearRatios() {
+  const { from, to } = getAnoRange();
+  const all = DATA.estados;
+  const filtered = all.filter(d => d.ano >= from && d.ano <= to);
+  const totalByUf = {};
+  const filteredByUf = {};
+  all.forEach(d => {
+    if (!totalByUf[d.uf]) totalByUf[d.uf] = { empenhado: 0, pago: 0, qtd: 0 };
+    totalByUf[d.uf].empenhado += d.empenhado;
+    totalByUf[d.uf].pago += d.pago;
+    totalByUf[d.uf].qtd += d.qtd;
+  });
+  filtered.forEach(d => {
+    if (!filteredByUf[d.uf]) filteredByUf[d.uf] = { empenhado: 0, pago: 0, qtd: 0 };
+    filteredByUf[d.uf].empenhado += d.empenhado;
+    filteredByUf[d.uf].pago += d.pago;
+    filteredByUf[d.uf].qtd += d.qtd;
+  });
+  const ratios = {};
+  Object.keys(totalByUf).forEach(uf => {
+    const t = totalByUf[uf];
+    const f = filteredByUf[uf] || { empenhado: 0, pago: 0, qtd: 0 };
+    ratios[uf] = {
+      empenhado: t.empenhado > 0 ? f.empenhado / t.empenhado : 0,
+      pago: t.pago > 0 ? f.pago / t.pago : 0,
+      qtd: t.qtd > 0 ? f.qtd / t.qtd : 0
+    };
+  });
+  return ratios;
+}
+
+function applyUfRatios(items, ratios) {
+  return items.map(d => {
+    const r = ratios[d.uf] || { empenhado: 0, pago: 0, qtd: 0 };
+    return { ...d, empenhado: d.empenhado * r.empenhado, pago: d.pago * r.pago, qtd: Math.round(d.qtd * r.qtd) };
+  });
+}
+
+function getPartidoRatios() {
+  if (!activeFilters.partido.length) return null;
+  const totalByUf = {};
+  const filteredByUf = {};
+  DATA.autores.forEach(d => {
+    if (!d.uf) return;
+    if (!totalByUf[d.uf]) totalByUf[d.uf] = { empenhado: 0, pago: 0, qtd: 0 };
+    totalByUf[d.uf].empenhado += d.empenhado;
+    totalByUf[d.uf].pago += d.pago;
+    totalByUf[d.uf].qtd += d.qtd;
+    if (activeFilters.partido.includes(d.partido)) {
+      if (!filteredByUf[d.uf]) filteredByUf[d.uf] = { empenhado: 0, pago: 0, qtd: 0 };
+      filteredByUf[d.uf].empenhado += d.empenhado;
+      filteredByUf[d.uf].pago += d.pago;
+      filteredByUf[d.uf].qtd += d.qtd;
+    }
+  });
+  const ratios = {};
+  Object.keys(totalByUf).forEach(uf => {
+    const t = totalByUf[uf];
+    const f = filteredByUf[uf] || { empenhado: 0, pago: 0, qtd: 0 };
+    ratios[uf] = {
+      empenhado: t.empenhado > 0 ? f.empenhado / t.empenhado : 0,
+      pago: t.pago > 0 ? f.pago / t.pago : 0,
+      qtd: t.qtd > 0 ? f.qtd / t.qtd : 0
+    };
+  });
+  return ratios;
+}
+
+function getSetorRatios() {
+  if (!activeFilters.setor.length) return null;
+  if (!DATA.funcoes_uf || !DATA.funcoes_uf.length) return null;
+  const { from, to } = getAnoRange();
+  const totalByUf = {};
+  const filteredByUf = {};
+  DATA.funcoes_uf.forEach(d => {
+    if (d.ano < from || d.ano > to) return;
+    if (!totalByUf[d.uf]) totalByUf[d.uf] = { empenhado: 0, pago: 0, qtd: 0 };
+    totalByUf[d.uf].empenhado += d.empenhado;
+    totalByUf[d.uf].pago += d.pago;
+    totalByUf[d.uf].qtd += d.qtd;
+    if (activeFilters.setor.includes(d.funcao)) {
+      if (!filteredByUf[d.uf]) filteredByUf[d.uf] = { empenhado: 0, pago: 0, qtd: 0 };
+      filteredByUf[d.uf].empenhado += d.empenhado;
+      filteredByUf[d.uf].pago += d.pago;
+      filteredByUf[d.uf].qtd += d.qtd;
+    }
+  });
+  const ratios = {};
+  Object.keys(totalByUf).forEach(uf => {
+    const t = totalByUf[uf];
+    const f = filteredByUf[uf] || { empenhado: 0, pago: 0, qtd: 0 };
+    ratios[uf] = {
+      empenhado: t.empenhado > 0 ? f.empenhado / t.empenhado : 0,
+      pago: t.pago > 0 ? f.pago / t.pago : 0,
+      qtd: t.qtd > 0 ? f.qtd / t.qtd : 0
+    };
+  });
+  return ratios;
+}
+
+// ── Setores Charts ─────────────────────────────────────────
+
+function getFilteredFuncoes() {
+  const { from, to } = getAnoRange();
+  const uf = getHeaderUf();
+  const pr = getPartidoRatios();
+  const search = (document.getElementById('globalSearch').value || '').toLowerCase();
+  const hasSpatialFilter = uf || activeFilters.regiao.length || activeFilters.uf.length || pr || activeFilters.partido.length || search;
+
+  let src;
+  if (hasSpatialFilter && DATA.funcoes_uf && DATA.funcoes_uf.length) {
+    let items = DATA.funcoes_uf.filter(d => d.ano >= from && d.ano <= to);
+    if (uf) items = items.filter(d => d.uf === uf);
+    if (activeFilters.regiao.length) items = items.filter(d => activeFilters.regiao.includes(UF_REGIAO[d.uf]));
+    if (activeFilters.uf.length) items = items.filter(d => activeFilters.uf.includes(d.uf));
+    if (pr) {
+      items = items.map(d => {
+        const r = pr[d.uf] || { empenhado: 0, pago: 0, qtd: 0 };
+        return { ...d, empenhado: d.empenhado * r.empenhado, pago: d.pago * r.pago, qtd: Math.round(d.qtd * r.qtd) };
+      });
+    }
+    if (activeFilters.setor.length) items = items.filter(d => activeFilters.setor.includes(d.funcao));
+    if (search) items = items.filter(d => d.uf.toLowerCase().includes(search) || d.funcao.toLowerCase().includes(search));
+    const byFuncao = {};
+    items.forEach(d => {
+      if (!byFuncao[d.funcao]) byFuncao[d.funcao] = { funcao: d.funcao, empenhado: 0, pago: 0, qtd: 0 };
+      byFuncao[d.funcao].empenhado += d.empenhado;
+      byFuncao[d.funcao].pago += d.pago;
+      byFuncao[d.funcao].qtd += d.qtd;
+    });
+    src = Object.values(byFuncao);
+  } else {
+    let items = (DATA.funcoes || []).filter(d => d.ano >= from && d.ano <= to);
+    if (activeFilters.setor.length) items = items.filter(d => activeFilters.setor.includes(d.funcao));
+    const byFuncao = {};
+    items.forEach(d => {
+      if (!byFuncao[d.funcao]) byFuncao[d.funcao] = { funcao: d.funcao, empenhado: 0, pago: 0, qtd: 0 };
+      byFuncao[d.funcao].empenhado += d.empenhado;
+      byFuncao[d.funcao].pago += d.pago;
+      byFuncao[d.funcao].qtd += d.qtd;
+    });
+    src = Object.values(byFuncao);
+  }
+  return src.sort((a, b) => b.empenhado - a.empenhado);
+}
+
+function renderSetorCharts() {
+  const funcoes = getFilteredFuncoes();
+  if (!funcoes.length) return;
+  const top15 = funcoes.slice(0, 15);
+  const co = chartOpts();
+
+  if (charts.setorBars) charts.setorBars.destroy();
+  charts.setorBars = new Chart(document.getElementById('chartSetorBars'), {
+    type: 'bar',
+    data: {
+      labels: top15.map(d => d.funcao),
+      datasets: [
+        { label: 'Empenhado', data: top15.map(d => d.empenhado), backgroundColor: 'rgba(42,79,218,.7)' },
+        { label: 'Pago', data: top15.map(d => d.pago), backgroundColor: 'rgba(101,183,251,.5)' }
+      ]
+    },
+    options: {
+      ...co,
+      indexAxis: 'y',
+      plugins: {
+        ...co.plugins,
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmtReais(ctx.raw) } }
+      },
+      scales: {
+        x: { ticks: { color: chartTextColor(), callback: v => fmtReais(v) }, grid: { color: chartGridColor() } },
+        y: { ticks: { color: chartLabelColor(), font: { size: 10 } }, grid: { display: false } }
+      }
+    }
+  });
+
+  const { from, to } = getAnoRange();
+  const uf = getHeaderUf();
+  const pr = getPartidoRatios();
+  const search = (document.getElementById('globalSearch').value || '').toLowerCase();
+  const hasSpatialFilter2 = uf || activeFilters.regiao.length || activeFilters.uf.length || pr || activeFilters.partido.length || search;
+
+  let stackSrc;
+  if (hasSpatialFilter2 && DATA.funcoes_uf && DATA.funcoes_uf.length) {
+    let items = DATA.funcoes_uf.filter(d => d.ano >= from && d.ano <= to);
+    if (uf) items = items.filter(d => d.uf === uf);
+    if (activeFilters.regiao.length) items = items.filter(d => activeFilters.regiao.includes(UF_REGIAO[d.uf]));
+    if (activeFilters.uf.length) items = items.filter(d => activeFilters.uf.includes(d.uf));
+    if (pr) {
+      items = items.map(d => {
+        const r = pr[d.uf] || { empenhado: 0 };
+        return { ...d, empenhado: d.empenhado * r.empenhado };
+      });
+    }
+    if (activeFilters.setor.length) items = items.filter(d => activeFilters.setor.includes(d.funcao));
+    if (search) items = items.filter(d => d.uf.toLowerCase().includes(search) || d.funcao.toLowerCase().includes(search));
+    const byKey = {};
+    items.forEach(d => {
+      const k = d.funcao + '|' + d.ano;
+      if (!byKey[k]) byKey[k] = { funcao: d.funcao, ano: d.ano, empenhado: 0 };
+      byKey[k].empenhado += d.empenhado;
+    });
+    stackSrc = Object.values(byKey);
+  } else {
+    let fItems = (DATA.funcoes || []).filter(d => d.ano >= from && d.ano <= to);
+    if (activeFilters.setor.length) fItems = fItems.filter(d => activeFilters.setor.includes(d.funcao));
+    stackSrc = fItems;
+  }
+
+  const top8Funcoes = funcoes.slice(0, 8).map(d => d.funcao);
+  const funcoesUnicos = [...new Set(stackSrc.map(d => d.funcao))].filter(f => top8Funcoes.includes(f));
+  const anosUnicos = [...new Set(stackSrc.map(d => d.ano))].sort();
+  const stackDatasets = funcoesUnicos.map((funcao, i) => {
+    const dataByAno = {};
+    stackSrc.filter(d => d.funcao === funcao).forEach(d => { dataByAno[d.ano] = (dataByAno[d.ano] || 0) + d.empenhado; });
+    return {
+      label: funcao,
+      data: anosUnicos.map(a => dataByAno[a] || 0),
+      backgroundColor: SERIES_COLORS[i % SERIES_COLORS.length],
+    };
+  });
+
+  if (charts.setorStacked) charts.setorStacked.destroy();
+  charts.setorStacked = new Chart(document.getElementById('chartSetorStacked'), {
+    type: 'bar',
+    data: { labels: anosUnicos, datasets: stackDatasets },
+    options: {
+      ...co,
+      plugins: {
+        ...co.plugins,
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmtReais(ctx.raw) } }
+      },
+      scales: {
+        x: { stacked: true, ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } },
+        y: { stacked: true, ticks: { color: chartTextColor(), callback: v => fmtReais(v) }, grid: { color: chartGridColor() } }
+      }
+    }
+  });
 }
 
 // ── Sidebar Filters ─────────────────────────────────────────
@@ -1250,7 +1527,7 @@ function showTab(tab, el) {
   el.classList.add('active');
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
-  if (tab === 'municipios') filterMunicipios();
+  renderTabContent(tab);
 }
 
 function getPartidoUfs() {
@@ -1666,6 +1943,12 @@ function filterMunicipios() {
   if (partidoUfs) {
     filtered = filtered.filter(m => partidoUfs.has(m.uf));
   }
+  const ratios = getUfYearRatios();
+  filtered = applyUfRatios(filtered, ratios);
+  const pr = getPartidoRatios();
+  if (pr) filtered = applyUfRatios(filtered, pr);
+  const sr = getSetorRatios();
+  if (sr) filtered = applyUfRatios(filtered, sr);
   filtered.sort((a, b) => b.empenhado - a.empenhado);
   document.getElementById('countMun').textContent = filtered.length + ' municipios';
   filtered = filtered.slice(0, 100);
@@ -1832,7 +2115,25 @@ function buildPartidoChips() {
 }
 
 buildPartidoChips();
+buildSetorChips();
 applyAllFilters();
+
+function buildSetorChips() {
+  if (!DATA.funcoes) return;
+  const setores = [...new Set(DATA.funcoes.map(d => d.funcao).filter(Boolean))].sort();
+  const container = document.getElementById('setorChips');
+  if (!container) return;
+  container.innerHTML = '';
+  setores.forEach(s => {
+    const chip = document.createElement('span');
+    chip.className = 'filter-chip';
+    chip.dataset.filter = 'setor';
+    chip.dataset.value = s;
+    chip.textContent = s;
+    chip.onclick = function() { toggleFilter(this); };
+    container.appendChild(chip);
+  });
+}
 
 </script>
 </body>
