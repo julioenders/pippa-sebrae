@@ -295,7 +295,6 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
   <div class="content">
     <div class="tab-nav">
       <button class="tab-btn active" onclick="switchTab('mapa')">Mapa Parlamentar</button>
-      <button class="tab-btn" onclick="switchTab('alinhamento')">Alinhamento SEBRAE</button>
       <button class="tab-btn" onclick="switchTab('icprig')">ICP/RIG</button>
     </div>
 
@@ -334,57 +333,6 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
       </div>
     </div>
     </div><!-- /tabMapa -->
-
-    <div id="tabAlinhamento" style="display:none">
-      <div class="kpi-row">
-        <div class="kpi"><div class="kpi-value" id="kpiScoreAlto" style="color:var(--emerald)">—</div><div class="kpi-label">Alto Alinhamento</div></div>
-        <div class="kpi"><div class="kpi-value" id="kpiScoreMedio" style="color:var(--accent)">—</div><div class="kpi-label">Medio</div></div>
-        <div class="kpi"><div class="kpi-value" id="kpiScoreBaixo" style="color:var(--text3)">—</div><div class="kpi-label">Baixo / Nenhum</div></div>
-        <div class="kpi"><div class="kpi-value" id="kpiScoreMedia" style="color:var(--cyan)">—</div><div class="kpi-label">Score Medio</div></div>
-      </div>
-
-      <div class="analytics-panel open" id="scoreMethodPanel">
-        <div class="analytics-toggle" onclick="document.getElementById('scoreMethodPanel').classList.toggle('open')">
-          <h3>Metodologia do Score <span onclick="event.stopPropagation();openScoreMethodology()" style="cursor:pointer;margin-left:8px;font-size:16px;color:var(--cyan);vertical-align:middle" title="Ver detalhes completos do calculo">&#9432;</span></h3>
-          <span class="arrow">&#9660;</span>
-        </div>
-        <div class="analytics-body">
-          <div style="font-size:12px;color:var(--text3);line-height:1.8">
-            <p>O Score de Alinhamento mede a proximidade de cada parlamentar com a missao do SEBRAE (apoio a MPEs), baseado em <strong>3 eixos</strong>:</p>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px">
-              <div style="background:var(--bg);border-radius:8px;padding:12px;border:1px solid var(--border)">
-                <div style="font-weight:700;color:var(--emerald);margin-bottom:4px">Frentes Parlamentares (40%)</div>
-                <div style="font-size:11px">Participacao em frentes com temas de empreendedorismo, MPE, Simples, inovacao, cooperativismo, credito, etc.</div>
-              </div>
-              <div style="background:var(--bg);border-radius:8px;padding:12px;border:1px solid var(--border)">
-                <div style="font-weight:700;color:var(--blue);margin-bottom:4px">Comissoes Estrategicas (30%)</div>
-                <div style="font-size:11px">Atuacao em comissoes-chave: CDEICS, CFT, CAE, CCTCI, CI, CDR — com peso maior para as mais relevantes.</div>
-              </div>
-              <div style="background:var(--bg);border-radius:8px;padding:12px;border:1px solid var(--border)">
-                <div style="font-weight:700;color:var(--purple);margin-bottom:4px">Autorias Tematicas (30%)</div>
-                <div style="font-size:11px">Proposicoes autorais com keywords MPE: microempresa, MEI, Simples Nacional, empreendedorismo, desburocratizacao, etc.</div>
-              </div>
-            </div>
-            <p style="margin-top:10px"><strong>Faixas:</strong> Alto (&ge;50) | Medio (20-49) | Baixo (&lt;20)</p>
-          </div>
-        </div>
-      </div>
-
-      <input type="text" class="search-box" id="scoreSearchBox" placeholder="Buscar parlamentar no ranking..." oninput="renderScoreRanking()">
-
-      <div class="section-header">
-        <div class="section-title">Ranking de Alinhamento SEBRAE</div>
-        <div class="section-count" id="scoreCount"></div>
-      </div>
-
-      <div id="scoreContainer">
-        <div class="empty-state">
-          <div class="icon">&#128202;</div>
-          <h3>Score de Alinhamento SEBRAE</h3>
-          <p>Clique em <strong>Consultar APIs</strong> para buscar dados e calcular o score de alinhamento de cada parlamentar.</p>
-        </div>
-      </div>
-    </div><!-- /tabAlinhamento -->
 
     <div id="tabICPRIG" style="display:none">
       <div class="kpi-row" style="grid-template-columns:repeat(5,1fr)">
@@ -472,170 +420,6 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
       <li>A API do Senado nao expoe frentes parlamentares — apenas deputados sao cruzados com frentes.</li>
       <li>APIs publicas sem SLA — sujeitas a instabilidade.</li>
       <li>A composicao de comissoes pode mudar ao longo da legislatura.</li>
-    </ul>
-  </div>
-</div>
-
-<div class="methodology-backdrop" id="scoreMethodModal" onclick="if(event.target===this)closeScoreMethodology()">
-  <div class="methodology-modal" style="max-width:900px">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start">
-      <h2>Metodologia de Calculo — Score de Alinhamento SEBRAE</h2>
-      <button class="btn btn-outline" onclick="closeScoreMethodology()" style="flex-shrink:0">Fechar</button>
-    </div>
-
-    <p>O score mede o alinhamento de cada parlamentar com a missao do SEBRAE (fortalecimento de MPEs), combinando tres eixos independentes. Cada eixo gera uma nota de 0 a 100 e o score final e a media ponderada.</p>
-
-    <h3>Score Final — Passo a Passo</h3>
-    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:16px">
-      <p style="margin:0 0 8px"><strong style="color:var(--text);font-size:14px">1.</strong> Calcular cada eixo separadamente (resultado de 0 a 100 cada):</p>
-      <ul style="margin:0 0 12px">
-        <li><strong style="color:var(--emerald)">Nota Frentes</strong> = pontuacao das frentes parlamentares (detalhes abaixo)</li>
-        <li><strong style="color:var(--accent)">Nota Comissoes</strong> = pontuacao das comissoes (detalhes abaixo)</li>
-        <li><strong style="color:var(--purple)">Nota Autorias</strong> = pontuacao de autorias tematicas (detalhes abaixo)</li>
-      </ul>
-      <p style="margin:0 0 8px"><strong style="color:var(--text);font-size:14px">2.</strong> Aplicar os pesos e somar:</p>
-      <p style="margin:0 0 8px;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:13px"><strong>Score Final = (Nota Frentes &times; 0,40) + (Nota Comissoes &times; 0,30) + (Nota Autorias &times; 0,30)</strong></p>
-      <p style="margin:0 0 8px"><strong style="color:var(--text);font-size:14px">3.</strong> Classificar na faixa:</p>
-      <ul style="margin:0">
-        <li><strong style="color:var(--emerald)">Alto (&ge;50)</strong> — atuacao consistente em pautas MPE</li>
-        <li><strong style="color:var(--accent)">Medio (20-49)</strong> — participacao parcial em temas relevantes</li>
-        <li><strong style="color:var(--text3)">Baixo (&lt;20)</strong> — pouca ou nenhuma atuacao identificada</li>
-      </ul>
-    </div>
-
-    <h3 style="color:var(--emerald)">Eixo 1 — Frentes Parlamentares (peso: 40%)</h3>
-    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:12px">
-      <p style="margin:0 0 8px"><strong>Passo 1:</strong> Listar todas as frentes parlamentares do deputado (via API da Camara).</p>
-      <p style="margin:0 0 8px"><strong>Passo 2:</strong> Para cada frente, verificar se o titulo contem alguma keyword das listas abaixo. Cada frente e classificada <em>uma unica vez</em>, no tier mais alto que corresponder (uma frente que contem keywords de Tier 1 e Tier 3 conta apenas como Tier 1).</p>
-      <p style="margin:0 0 8px"><strong>Passo 3:</strong> Somar os pontos de todas as frentes classificadas:</p>
-      <ul style="margin:0 0 8px">
-        <li>Cada frente Tier 1 = <strong>20 pontos</strong></li>
-        <li>Cada frente Tier 2 = <strong>12 pontos</strong></li>
-        <li>Cada frente Tier 3 = <strong>5 pontos</strong></li>
-      </ul>
-      <p style="margin:0 0 8px"><strong>Passo 4:</strong> Limitar a 100 (teto).</p>
-      <p style="margin:0;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:12px"><strong>Nota Frentes = min(100, frentes_T1 &times; 20 + frentes_T2 &times; 12 + frentes_T3 &times; 5)</strong></p>
-    </div>
-    <p style="margin-top:8px"><strong>Exemplo:</strong> Deputado participa de 2 frentes Tier 1, 1 frente Tier 2 e 3 frentes Tier 3 &rarr; (2 &times; 20) + (1 &times; 12) + (3 &times; 5) = 40 + 12 + 15 = <strong>67</strong></p>
-
-    <p style="margin-top:12px"><strong>Keywords Tier 1</strong> — temas centrais MPE/MEI (20 pts/frente):</p>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
-      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">empreendedorismo</span>
-      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">micro e pequen*</span>
-      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">microempresa</span>
-      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">pequena empresa</span>
-      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">simples nacional</span>
-      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">mei</span>
-      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">microempreendedor</span>
-    </div>
-    <p><strong>Keywords Tier 2</strong> — temas de apoio (12 pts/frente):</p>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
-      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">desburocratiz*</span>
-      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">inovacao</span>
-      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">startup</span>
-      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">cooperativ*</span>
-      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">credito</span>
-      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">livre iniciativa</span>
-      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">fomento</span>
-    </div>
-    <p><strong>Keywords Tier 3</strong> — temas amplos do ecossistema (5 pts/frente):</p>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
-      <span class="comissao-tag">comercio</span>
-      <span class="comissao-tag">industria</span>
-      <span class="comissao-tag">turismo</span>
-      <span class="comissao-tag">agronegocio</span>
-      <span class="comissao-tag">tecnologia</span>
-      <span class="comissao-tag">digital</span>
-      <span class="comissao-tag">exporta*</span>
-      <span class="comissao-tag">desenvolvimento regional</span>
-    </div>
-
-    <h3 style="color:var(--accent)">Eixo 2 — Comissoes Estrategicas (peso: 30%)</h3>
-    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:12px">
-      <p style="margin:0 0 8px"><strong>Passo 1:</strong> Listar as comissoes do parlamentar (Camara: via API de orgaos; Senado: via API /senador/{id}/comissoes).</p>
-      <p style="margin:0 0 8px"><strong>Passo 2:</strong> Para cada comissao, verificar se a sigla aparece na lista Tier 1 ou Tier 2 abaixo.</p>
-      <p style="margin:0 0 8px"><strong>Passo 3:</strong> Somar os pontos:</p>
-      <ul style="margin:0 0 8px">
-        <li>Cada comissao Tier 1 = <strong>35 pontos</strong></li>
-        <li>Cada comissao Tier 2 = <strong>18 pontos</strong></li>
-      </ul>
-      <p style="margin:0 0 8px"><strong>Passo 4:</strong> Limitar a 100 (teto).</p>
-      <p style="margin:0;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:12px"><strong>Nota Comissoes = min(100, comissoes_T1 &times; 35 + comissoes_T2 &times; 18)</strong></p>
-    </div>
-    <p style="margin-top:8px"><strong>Exemplo:</strong> Deputado na CDEICS (Tier 1) e na CE (Tier 2) &rarr; (1 &times; 35) + (1 &times; 18) = <strong>53</strong></p>
-
-    <p style="margin-top:12px"><strong>Comissoes Tier 1</strong> — diretamente ligadas a MPEs (35 pts/comissao):</p>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
-      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">CDEICS <span style="font-size:10px;opacity:.7">Camara</span></span>
-      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">CFT <span style="font-size:10px;opacity:.7">Camara</span></span>
-      <span class="comissao-tag" style="background:var(--emerald-tint);color:var(--emerald)">CAE <span style="font-size:10px;opacity:.7">Senado</span></span>
-    </div>
-    <p><strong>Comissoes Tier 2</strong> — apoio ao ecossistema (18 pts/comissao):</p>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
-      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">CCTCI <span style="font-size:10px;opacity:.7">Camara</span></span>
-      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">CAPADR <span style="font-size:10px;opacity:.7">Camara</span></span>
-      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">CE <span style="font-size:10px;opacity:.7">Camara</span></span>
-      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">CI <span style="font-size:10px;opacity:.7">Senado</span></span>
-      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">CDR <span style="font-size:10px;opacity:.7">Senado</span></span>
-      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">CAS <span style="font-size:10px;opacity:.7">Senado</span></span>
-      <span class="comissao-tag" style="background:var(--blue-tint);color:var(--blue)">CCT <span style="font-size:10px;opacity:.7">Senado</span></span>
-    </div>
-
-    <h3 style="color:var(--purple)">Eixo 3 — Autorias Tematicas (peso: 30%)</h3>
-    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:12px">
-      <p style="margin:0 0 8px"><strong>Passo 1:</strong> Buscar proposicoes na API da Camara (desde 2023) usando 12 termos de busca em 4 lotes: <em>microempresa, pequena empresa, simples nacional, empreendedorismo, microempreendedor, MEI, desburocratizacao, pronampe, startup, cooperativa, microcredito, credito produtivo</em>.</p>
-      <p style="margin:0 0 8px"><strong>Passo 2:</strong> Filtrar as proposicoes cujas ementas contenham pelo menos uma das 16 keywords abaixo.</p>
-      <p style="margin:0 0 8px"><strong>Passo 3:</strong> Para cada proposicao filtrada, consultar /proposicoes/{id}/autores e identificar o deputado autor.</p>
-      <p style="margin:0 0 8px"><strong>Passo 4:</strong> Contar quantas autorias tematicas cada deputado acumulou.</p>
-      <p style="margin:0 0 8px"><strong>Passo 5:</strong> Normalizar: dividir a contagem do parlamentar pela maior contagem entre todos, e multiplicar por 100.</p>
-      <p style="margin:0;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:12px"><strong>Nota Autorias = min(100, (autorias_parlamentar / maior_contagem) &times; 100)</strong></p>
-    </div>
-    <p style="margin-top:8px"><strong>Exemplo:</strong> Deputado A tem 8 autorias, e o maximo encontrado entre todos e 20 &rarr; (8 / 20) &times; 100 = <strong>40</strong>. Deputado B tem 20 autorias &rarr; (20 / 20) &times; 100 = <strong>100</strong>.</p>
-
-    <p style="margin-top:12px"><strong>Keywords de filtragem de ementas:</strong></p>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px">
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">microempresa</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">pequena empresa</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">pequeno porte</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">simples nacional</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">mei</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">microempreendedor</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">empreendedorismo</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">desburocratiza*</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">sebrae</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">pronampe</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">redesim</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">startup</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">cooperativa</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">credito produtivo</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">microcredito</span>
-      <span class="comissao-tag" style="background:var(--purple-tint);color:var(--purple)">fomento</span>
-    </div>
-
-    <h3>Exemplo Completo</h3>
-    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:12px">
-      <p style="margin:0 0 6px"><strong>Deputado X</strong> — participa de 2 frentes T1 + 1 frente T2, e membro da CDEICS (T1), e autor de 8 proposicoes tematicas (maximo encontrado: 20).</p>
-      <ul style="margin:0 0 8px">
-        <li>Nota Frentes = min(100, 2&times;20 + 1&times;12) = <strong>52</strong></li>
-        <li>Nota Comissoes = min(100, 1&times;35) = <strong>35</strong></li>
-        <li>Nota Autorias = min(100, 8/20 &times; 100) = <strong>40</strong></li>
-      </ul>
-      <p style="margin:0;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:13px">Score Final = (52 &times; 0,40) + (35 &times; 0,30) + (40 &times; 0,30) = 20,8 + 10,5 + 12,0 = <strong style="color:var(--emerald)">43 (Medio)</strong></p>
-    </div>
-
-    <h3>Fontes de Dados</h3>
-    <ul>
-      <li><strong>Frentes:</strong> API Camara — GET /frentes?idLegislatura=57 + /frentes/{id}/membros</li>
-      <li><strong>Comissoes Camara:</strong> API Camara — GET /orgaos?idTipoOrgao=2 + /orgaos/{id}/membros</li>
-      <li><strong>Comissoes Senado:</strong> API Senado — GET /senador/{id}/comissoes</li>
-      <li><strong>Autorias:</strong> API Camara — GET /proposicoes?keywords={kw} + /proposicoes/{id}/autores</li>
-    </ul>
-
-    <h3>Limitacoes</h3>
-    <ul>
-      <li>Frentes parlamentares sao da API da Camara — senadores nao sao cruzados com frentes (Nota Frentes = 0).</li>
-      <li>Autorias buscam apenas proposicoes da Camara (desde 2023) — senadores nao recebem pontuacao neste eixo (Nota Autorias = 0).</li>
-      <li>O score reflete dados disponiveis nas APIs publicas no momento da consulta.</li>
     </ul>
   </div>
 </div>
@@ -2090,21 +1874,13 @@ function showMethodology() {
 function closeMethodology() {
   document.getElementById('methodologyModal').classList.remove('active');
 }
-function openScoreMethodology() {
-  document.getElementById('scoreMethodModal').classList.add('active');
-}
-function closeScoreMethodology() {
-  document.getElementById('scoreMethodModal').classList.remove('active');
-}
 
 // === TAB SWITCHING ===
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
   document.getElementById('tabMapa').style.display = tab === 'mapa' ? 'block' : 'none';
-  document.getElementById('tabAlinhamento').style.display = tab === 'alinhamento' ? 'block' : 'none';
   document.getElementById('tabICPRIG').style.display = tab === 'icprig' ? 'block' : 'none';
   document.querySelector('.tab-btn[onclick*="' + tab + '"]').classList.add('active');
-  if (tab === 'alinhamento' && allParlamentares.length > 0 && !scoreComputed) computeScores();
   if (tab === 'icprig' && allParlamentares.length > 0 && !icpComputed) computeICPRIG();
 }
 
@@ -2215,11 +1991,11 @@ async function fetchAutorias() {
 }
 
 async function computeScores() {
-  var container = document.getElementById('scoreContainer');
+  var container = document.getElementById('icpContainer');
 
   var senators = allParlamentares.filter(function(p) { return p.casa === 'senado' && p.orgaos.length === 0; });
   if (senators.length > 0) {
-    container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando comissoes do Senado (' + senators.length + ' senadores)...</div>';
+    if (container) container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando comissoes do Senado (' + senators.length + ' senadores)...</div>';
     for (var si = 0; si < senators.length; si += 5) {
       var sBatch = senators.slice(si, si + 5);
       await Promise.all(sBatch.map(function(s) {
@@ -2251,7 +2027,7 @@ async function computeScores() {
 
   var depAutorias = {};
   try {
-    container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando autorias tematicas na Camara...</div>';
+    if (container) container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando autorias tematicas na Camara...</div>';
     depAutorias = await fetchAutorias();
   } catch(e) {}
 
@@ -2291,129 +2067,8 @@ async function computeScores() {
   parlScores.sort(function(a, b) { return b.score - a.score; });
   scoreComputed = true;
 
-  updateScoreKPIs();
-  renderScoreRanking();
-  showToast('Score calculado para ' + parlScores.length + ' parlamentares');
 }
 
-function updateScoreKPIs() {
-  var alto = parlScores.filter(function(p) { return p.faixa === 'alto'; }).length;
-  var medio = parlScores.filter(function(p) { return p.faixa === 'medio'; }).length;
-  var baixo = parlScores.filter(function(p) { return p.faixa === 'baixo'; }).length;
-  var avg = parlScores.length > 0 ? (parlScores.reduce(function(s, p) { return s + p.score; }, 0) / parlScores.length).toFixed(1) : '—';
-
-  document.getElementById('kpiScoreAlto').textContent = alto;
-  document.getElementById('kpiScoreMedio').textContent = medio;
-  document.getElementById('kpiScoreBaixo').textContent = baixo;
-  document.getElementById('kpiScoreMedia').textContent = avg;
-}
-
-function renderScoreRanking() {
-  var search = normalizeStr(document.getElementById('scoreSearchBox').value || '');
-  var container = document.getElementById('scoreContainer');
-
-  var filtered = parlScores;
-  if (search) {
-    filtered = parlScores.filter(function(p) {
-      return normalizeStr(p.nome).indexOf(search) >= 0
-        || normalizeStr(p.partido).indexOf(search) >= 0
-        || normalizeStr(p.uf).indexOf(search) >= 0;
-    });
-  }
-
-  if (filters.casa) filtered = filtered.filter(function(p) { return p.casa === filters.casa; });
-  if (filters.partido) filtered = filtered.filter(function(p) { return p.partido === filters.partido; });
-  if (filters.uf) filtered = filtered.filter(function(p) { return p.uf === filters.uf; });
-
-  document.getElementById('scoreCount').textContent = filtered.length + ' parlamentares';
-
-  if (filtered.length === 0) {
-    container.innerHTML = '<div class="empty-state"><div class="icon">&#128269;</div><h3>Nenhum resultado</h3><p>Ajuste a busca ou os filtros.</p></div>';
-    return;
-  }
-
-  var html = '';
-  filtered.forEach(function(p, idx) {
-    var uid = 'sc-' + p.casa + '-' + p.id;
-    var scoreColor = p.faixa === 'alto' ? 'var(--emerald)' : (p.faixa === 'medio' ? 'var(--accent)' : 'var(--text3)');
-    var badgeClass = 'score-' + p.faixa;
-    var casaClass = p.casa === 'camara' ? 'casa-camara' : 'casa-senado';
-    var casaLabel = p.casa === 'camara' ? 'CAMARA' : 'SENADO';
-
-    html += '<div class="parl-card" id="' + uid + '">';
-    html += '<div class="parl-header" onclick="document.getElementById(\'' + uid + '\').classList.toggle(\'expanded\')">';
-
-    html += '<div class="score-rank">#' + (idx + 1) + '</div>';
-
-    html += '<div class="score-badge ' + badgeClass + '">' + p.score + '</div>';
-
-    html += '<div class="parl-info">';
-    html += '<div class="parl-name">' + escapeHtml(p.nome) + '</div>';
-    html += '<div class="parl-meta">';
-    html += '<span class="parl-casa ' + casaClass + '">' + casaLabel + '</span>';
-    html += '<span class="parl-partido">' + escapeHtml(p.partido) + ' - ' + escapeHtml(p.uf) + '</span>';
-    if (p.eleicao2026) {
-      var elColor = p.eleicao2026.eleito ? 'var(--emerald)' : 'var(--red)';
-      var elIcon = p.eleicao2026.eleito ? '&#10003;' : '&#10007;';
-      html += '<span style="font-size:10px;padding:1px 6px;border-radius:4px;background:var(--highlight-bg);color:' + elColor + '">' + elIcon + ' ' + (p.eleicao2026.eleito ? 'Eleito' : 'Nao eleito') + ' — ' + escapeHtml(p.eleicao2026.cargo) + '</span>';
-    }
-    html += '</div>';
-    html += '<div class="score-breakdown">';
-    html += '<span class="score-axis">Frentes: <span class="score-axis-val" style="color:var(--emerald)">' + p.scoreFrentes + '</span></span>';
-    html += '<span class="score-axis">Comissoes: <span class="score-axis-val" style="color:var(--accent)">' + p.scoreComissoes + '</span></span>';
-    html += '<span class="score-axis">Autorias: <span class="score-axis-val" style="color:var(--purple)">' + p.scoreAutorias.toFixed(0) + '</span></span>';
-    if (p.autorias > 0) html += '<span class="score-axis">(' + p.autorias + ' PLs)</span>';
-    html += '</div>';
-    html += '</div>';
-
-    html += '<div style="min-width:120px;display:flex;align-items:center;gap:8px">';
-    html += '<div class="score-bar"><div class="score-fill" style="width:' + p.score + '%;background:' + scoreColor + '"></div></div>';
-    html += '</div>';
-
-    html += '<div class="parl-expand">&#9660;</div>';
-    html += '</div>';
-
-    // Expandable details
-    html += '<div class="parl-details">';
-    html += '<div class="detail-grid">';
-    html += '<div class="detail-item"><span class="detail-label">Score Total</span><span class="detail-value" style="font-size:18px;font-weight:800;color:' + scoreColor + '">' + p.score + '/100</span></div>';
-    html += '<div class="detail-item"><span class="detail-label">Frentes (40%)</span><span class="detail-value" style="color:var(--emerald)">' + p.scoreFrentes + '/100</span></div>';
-    html += '<div class="detail-item"><span class="detail-label">Comissoes (30%)</span><span class="detail-value" style="color:var(--accent)">' + p.scoreComissoes + '/100</span></div>';
-    html += '<div class="detail-item"><span class="detail-label">Autorias (30%)</span><span class="detail-value" style="color:var(--purple)">' + p.scoreAutorias.toFixed(0) + '/100' + (p.autorias > 0 ? ' (' + p.autorias + ' PLs)' : '') + '</span></div>';
-    if (p.eleicao2026) {
-      var elColor2 = p.eleicao2026.eleito ? 'var(--emerald)' : 'var(--red)';
-      var elStatus2 = p.eleicao2026.eleito ? 'ELEITO' : 'NAO ELEITO';
-      var urna2 = p.eleicao2026.urna ? ' (urna: ' + escapeHtml(p.eleicao2026.urna) + ')' : '';
-      html += '<div class="detail-item"><span class="detail-label">Eleicoes 2026</span><span class="detail-value" style="color:' + elColor2 + '">Candidato a ' + escapeHtml(p.eleicao2026.cargo) + ' — ' + escapeHtml(p.eleicao2026.uf) + urna2 + ' — ' + elStatus2 + '</span></div>';
-    } else {
-      html += '<div class="detail-item"><span class="detail-label">Eleicoes 2026</span><span class="detail-value" style="color:var(--text3)">Nao candidato</span></div>';
-    }
-    html += '</div>';
-
-    if (p.frentesMatch.length > 0) {
-      html += '<div style="margin-top:12px"><span class="detail-label">Frentes SEBRAE-relevantes (' + p.frentesMatch.length + ')</span>';
-      html += '<div style="margin-top:4px">';
-      p.frentesMatch.forEach(function(f) { html += '<span class="frente-tag">' + escapeHtml(f) + '</span>'; });
-      html += '</div></div>';
-    }
-
-    if (p.orgaos.length > 0) {
-      html += '<div style="margin-top:12px"><span class="detail-label">Comissoes-Chave (' + p.orgaos.length + ')</span>';
-      html += '<div style="margin-top:4px">';
-      p.orgaos.forEach(function(o) {
-        var c = comissoesChave[o];
-        var tier = COMISSOES_TIER1.indexOf(o) >= 0 ? ' (Tier 1)' : '';
-        html += '<span class="comissao-tag">' + escapeHtml(o) + (c ? ' — ' + escapeHtml(c.nome) : '') + tier + '</span>';
-      });
-      html += '</div></div>';
-    }
-
-    html += '</div>';
-    html += '</div>';
-  });
-
-  container.innerHTML = html;
-}
 
 // === ICP/RIG — Indice de Capital Politico ===
 var icpComputed = false;
@@ -2741,22 +2396,6 @@ function exportWhatsApp() {
   msg += '• Candidatos: ' + cands + '\n';
   msg += '• Eleitos: ' + eleitos + '\n';
 
-  if (scoreComputed && parlScores.length > 0) {
-    var alto = parlScores.filter(function(p){ return p.faixa === 'alto'; }).length;
-    var medio = parlScores.filter(function(p){ return p.faixa === 'medio'; }).length;
-    var baixo = parlScores.filter(function(p){ return p.faixa === 'baixo'; }).length;
-    msg += '\n🎯 *Alinhamento SEBRAE*\n';
-    msg += '• Alto: ' + alto + '\n';
-    msg += '• Medio: ' + medio + '\n';
-    msg += '• Baixo: ' + baixo + '\n';
-
-    var top5 = parlScores.slice(0, 5);
-    if (top5.length > 0) {
-      msg += '\n🏆 *Top 5 Score*\n';
-      top5.forEach(function(p, i) {
-        msg += (i + 1) + '. ' + p.nome + ' (' + p.partido + '-' + p.uf + ') — ' + p.score + ' pts\n';
-      });
-    }
   }
 
   if (icpComputed && icpScores.length > 0) {
