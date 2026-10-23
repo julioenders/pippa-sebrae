@@ -224,6 +224,20 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:var(--scrollbar-track)}
 ::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:3px}
+
+.icp-dim-bar{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.icp-dim-label{font-size:10px;font-weight:600;min-width:105px;color:var(--text3);text-transform:uppercase;letter-spacing:.3px}
+.icp-dim-track{flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.icp-dim-fill{height:100%;border-radius:4px;transition:width .4s}
+.icp-dim-val{font-size:11px;font-weight:700;min-width:36px;text-align:right}
+.icp-factor{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-left:4px}
+.icp-factor-mi{background:var(--purple-tint);color:var(--purple)}
+.icp-factor-bc{background:var(--amber-tint);color:var(--amber)}
+.icp-cp-badge{display:inline-flex;align-items:center;justify-content:center;min-width:52px;height:52px;border-radius:10px;font-size:18px;font-weight:800;flex-shrink:0;border:2px solid}
+.icp-cp-alto{background:var(--emerald-tint);border-color:var(--emerald);color:var(--emerald)}
+.icp-cp-medio{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+.icp-cp-baixo{background:var(--highlight-bg);border-color:var(--text3);color:var(--text3)}
+.icp-formula{background:var(--bg);border-radius:8px;padding:12px;border:1px solid var(--border);margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -233,7 +247,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
     <a href="../pippa-portal/index.html" class="btn-back">&#9664; Portal</a>
     <div>
       <div class="logo">PIPPA Stakeholders</div>
-      <div class="logo-sub">Mapa Parlamentar — CRM Legislativo</div>
+      <div class="logo-sub">Mapa Parlamentar — CRM Legislativo — ICP/RIG</div>
     </div>
     <button class="info-btn" onclick="showMethodology()" title="Sobre este painel">&#8505;</button>
   </div>
@@ -282,6 +296,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
     <div class="tab-nav">
       <button class="tab-btn active" onclick="switchTab('mapa')">Mapa Parlamentar</button>
       <button class="tab-btn" onclick="switchTab('alinhamento')">Alinhamento SEBRAE</button>
+      <button class="tab-btn" onclick="switchTab('icprig')">ICP/RIG</button>
     </div>
 
     <div id="tabMapa">
@@ -370,6 +385,58 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
         </div>
       </div>
     </div><!-- /tabAlinhamento -->
+
+    <div id="tabICPRIG" style="display:none">
+      <div class="kpi-row" style="grid-template-columns:repeat(5,1fr)">
+        <div class="kpi"><div class="kpi-value" id="kpiICPAtores" style="color:var(--accent)">—</div><div class="kpi-label">Atores Avaliados</div></div>
+        <div class="kpi"><div class="kpi-value" id="kpiICPPB" style="color:var(--emerald)">—</div><div class="kpi-label">PB Medio</div></div>
+        <div class="kpi"><div class="kpi-value" id="kpiICPCP" style="color:var(--cyan)">—</div><div class="kpi-label">CP Medio</div></div>
+        <div class="kpi"><div class="kpi-value" id="kpiICPMI" style="color:var(--purple)">—</div><div class="kpi-label">MI Elevado</div></div>
+        <div class="kpi"><div class="kpi-value" id="kpiICPBC" style="color:var(--amber)">—</div><div class="kpi-label">BC Ativo</div></div>
+      </div>
+
+      <div class="analytics-panel open" id="icpMethodPanel">
+        <div class="analytics-toggle" onclick="document.getElementById('icpMethodPanel').classList.toggle('open')">
+          <h3>Modelo ICP/RIG <span onclick="event.stopPropagation();openICPMethodology()" style="cursor:pointer;margin-left:8px;font-size:16px;color:var(--cyan);vertical-align:middle" title="Ver metodologia completa">&#9432;</span></h3>
+          <span class="arrow">&#9660;</span>
+        </div>
+        <div class="analytics-body">
+          <div style="font-size:12px;color:var(--text3);line-height:1.8">
+            <p>O <strong>ICP/RIG</strong> (Indice de Capital Politico do Profissional de RIG) mede o capital politico-institucional combinando <strong>3 camadas</strong>:</p>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px">
+              <div style="background:var(--bg);border-radius:8px;padding:12px;border:1px solid var(--border)">
+                <div style="font-weight:700;color:var(--emerald);margin-bottom:4px">PB — Pontuacao-base (0–100)</div>
+                <div style="font-size:11px">Qualidade do relacionamento em 5 dimensoes: Amplitude da Rede, Profundidade, Relevancia Estrategica, Articulacao e Inteligencia Institucional.</div>
+              </div>
+              <div style="background:var(--bg);border-radius:8px;padding:12px;border:1px solid var(--border)">
+                <div style="font-weight:700;color:var(--purple);margin-bottom:4px">MI — Multiplicador Institucional (1–3×)</div>
+                <div style="font-size:11px">Fator temporario por posicao institucional: deputado eleito senador (2×), senador em comissao estrategica (3×). Nao acumula.</div>
+              </div>
+              <div style="background:var(--bg);border-radius:8px;padding:12px;border:1px solid var(--border)">
+                <div style="font-weight:700;color:var(--amber);margin-bottom:4px">BC — Bonus de Comissao (1.00–1.35)</div>
+                <div style="font-size:11px">Bonus por funcao em comissao prioritaria: suplente (+5%), titular (+15%), presidente/relator (ate +35%). Aplica-se o maior.</div>
+              </div>
+            </div>
+            <p style="margin-top:10px;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:13px"><strong>CP = PB × MI × BC</strong> &nbsp;|&nbsp; ICP/RIG agregado = normalizado 0–100</p>
+          </div>
+        </div>
+      </div>
+
+      <input type="text" class="search-box" id="icpSearchBox" placeholder="Buscar parlamentar no ranking ICP/RIG..." oninput="renderICPRanking()">
+
+      <div class="section-header">
+        <div class="section-title">Ranking ICP/RIG — Capital Ponderado</div>
+        <div class="section-count" id="icpCount"></div>
+      </div>
+
+      <div id="icpContainer">
+        <div class="empty-state">
+          <div class="icon">&#128200;</div>
+          <h3>Indice de Capital Politico — ICP/RIG</h3>
+          <p>Clique em <strong>Consultar APIs</strong> para buscar dados e calcular o ICP/RIG de cada parlamentar.</p>
+        </div>
+      </div>
+    </div><!-- /tabICPRIG -->
 
   </div>
 </div>
@@ -569,6 +636,91 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
       <li>Frentes parlamentares sao da API da Camara — senadores nao sao cruzados com frentes (Nota Frentes = 0).</li>
       <li>Autorias buscam apenas proposicoes da Camara (desde 2023) — senadores nao recebem pontuacao neste eixo (Nota Autorias = 0).</li>
       <li>O score reflete dados disponiveis nas APIs publicas no momento da consulta.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="methodology-backdrop" id="icpMethodModal" onclick="if(event.target===this)closeICPMethodology()">
+  <div class="methodology-modal" style="max-width:900px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <h2>Metodologia ICP/RIG — Indice de Capital Politico</h2>
+      <button class="btn btn-outline" onclick="closeICPMethodology()" style="flex-shrink:0">Fechar</button>
+    </div>
+
+    <p>O ICP/RIG mede o capital politico-institucional e a capacidade de articulacao dos parlamentares para a agenda do Sebrae. O modelo separa a qualidade do relacionamento (PB) dos fatores temporarios de relevancia institucional (MI e BC), evitando confundir acesso com poder formal.</p>
+
+    <h3>Arquitetura — 3 Camadas</h3>
+    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:16px">
+      <p style="margin:0 0 8px;font-family:monospace;font-size:14px"><strong>CP<sub>i</sub> = PB<sub>i</sub> × MI<sub>i</sub> × BC<sub>i</sub></strong></p>
+      <ul style="margin:0">
+        <li><strong style="color:var(--emerald)">PB (0–100):</strong> Pontuacao-base — qualidade e maturidade do relacionamento</li>
+        <li><strong style="color:var(--purple)">MI (1–3×):</strong> Multiplicador Institucional — posicao formal temporaria</li>
+        <li><strong style="color:var(--amber)">BC (1.00–1.35):</strong> Bonus de Comissao — funcao em comissao prioritaria</li>
+        <li><strong style="color:var(--cyan)">ICP/RIG:</strong> Normalizacao do portfólio — 0 a 100</li>
+      </ul>
+    </div>
+
+    <h3 style="color:var(--emerald)">PB — Pontuacao-base (5 dimensoes)</h3>
+    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:12px">
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px">
+        <strong>A. Amplitude (0–20)</strong><span>Diversidade de frentes relevantes + comissoes distintas</span>
+        <strong>B. Profundidade (0–30)</strong><span>Engajamento em frentes/comissoes de alta relevancia (Tier 1/2)</span>
+        <strong>C. Relevancia (0–20)</strong><span>Posicao em comissoes estrategicas + papel exercido (titular/presidente)</span>
+        <strong>D. Articulacao (0–20)</strong><span>Autorias tematicas de proposicoes relevantes para MPEs</span>
+        <strong>E. Inteligencia (0–10)</strong><span>Completude do perfil institucional e dados disponiveis</span>
+      </div>
+      <p style="margin:8px 0 0;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:12px"><strong>PB = A + B + C + D + E (0–100)</strong></p>
+    </div>
+
+    <h3 style="color:var(--purple)">MI — Multiplicador Institucional</h3>
+    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:12px;font-size:12px">
+      <ul style="margin:0">
+        <li><strong>1×</strong> — Padrao (sem condicao especial)</li>
+        <li><strong>2×</strong> — Deputado eleito Senador (12 meses a partir da posse)</li>
+        <li><strong>3×</strong> — Senador em comissao estrategica (CAE, CDEICS, CFT)</li>
+      </ul>
+      <p style="margin:8px 0 0;color:var(--text3)">Regra: aplica-se o <strong>maior</strong> fator; nao se multiplicam entre si.</p>
+    </div>
+
+    <h3 style="color:var(--amber)">BC — Bonus de Comissao</h3>
+    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:12px;font-size:12px">
+      <ul style="margin:0">
+        <li><strong>1.00</strong> — Sem bonus</li>
+        <li><strong>1.05</strong> — Suplente de comissao prioritaria</li>
+        <li><strong>1.15</strong> — Titular de comissao prioritaria</li>
+        <li><strong>1.25</strong> — Relator de materia em comissao prioritaria</li>
+        <li><strong>1.30</strong> — Vice-presidente de comissao prioritaria</li>
+        <li><strong>1.35</strong> — Presidente de comissao estrategica com papel de conducao</li>
+      </ul>
+      <p style="margin:8px 0 0;color:var(--text3)">Regra: aplica-se apenas o <strong>maior</strong> bonus entre todas as comissoes.</p>
+    </div>
+
+    <h3>Exemplo Ilustrativo</h3>
+    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:12px">
+      <p style="margin:0 0 6px"><strong>Senador X</strong> — PB 45, membro titular da CAE (comissao estrategica).</p>
+      <ul style="margin:0 0 8px">
+        <li>PB = 45 (A:12 + B:15 + C:8 + D:6 + E:4)</li>
+        <li>MI = 3× (senador em comissao estrategica)</li>
+        <li>BC = 1.15 (titular de comissao prioritaria)</li>
+      </ul>
+      <p style="margin:0;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:13px">CP = 45 × 3 × 1.15 = <strong style="color:var(--emerald)">155</strong> (PB continua 45 — o CP nao e nota-base)</p>
+    </div>
+
+    <h3>Fonte de Dados</h3>
+    <ul>
+      <li><strong>Frentes/Comissoes Camara:</strong> APIs Dados Abertos da Camara (orgaos e membros com papel)</li>
+      <li><strong>Comissoes Senado:</strong> API Dados Abertos do Senado (/senador/{id}/comissoes)</li>
+      <li><strong>Autorias:</strong> API Camara — proposicoes com keywords MPE</li>
+      <li><strong>Eleicoes 2026:</strong> TSE CDN — resultado oficial para detecao de MI</li>
+    </ul>
+
+    <h3>Principios (conforme documento ICP/RIG Sebrae)</h3>
+    <ul>
+      <li><strong>Evidencia antes de percepcao:</strong> notas sustentadas por dados observaveis</li>
+      <li><strong>Separacao de dimensoes:</strong> qualidade de relacionamento ≠ poder formal ≠ resultado legislativo</li>
+      <li><strong>Temporalidade:</strong> MI e BC tem inicio, validade e expiracao</li>
+      <li><strong>Proporcionalidade:</strong> multiplicadores limitados para nao distorcer o portfolio</li>
+      <li><strong>Neutralidade institucional:</strong> mede capacidade de articulacao, nao adesao politica</li>
     </ul>
   </div>
 </div>
@@ -1266,6 +1418,7 @@ async function fetchData() {
           email: d.email || '',
           frentes: [],
           orgaos: [],
+          orgaoRoles: {},
           eleicao2026: matchElection(d.nome)
         });
       });
@@ -1299,6 +1452,7 @@ async function fetchData() {
             email: id.EmailParlamentar || '',
             frentes: [],
             orgaos: [],
+            orgaoRoles: {},
             eleicao2026: matchElection(nomeSen)
           });
         });
@@ -1364,7 +1518,10 @@ async function fetchData() {
               comissoesChave[o.sigla] = { nome: o.nome, membros: (j.dados || []).map(function(m){ return m.id; }) };
               (j.dados || []).forEach(function(m) {
                 var parl = allParlamentares.find(function(p){ return p.id == m.id; });
-                if (parl) parl.orgaos.push(o.sigla);
+                if (parl) {
+                  parl.orgaos.push(o.sigla);
+                  parl.orgaoRoles[o.sigla] = m.titulo || 'Membro';
+                }
               });
             })
             .catch(function(){ });
@@ -1945,8 +2102,10 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
   document.getElementById('tabMapa').style.display = tab === 'mapa' ? 'block' : 'none';
   document.getElementById('tabAlinhamento').style.display = tab === 'alinhamento' ? 'block' : 'none';
+  document.getElementById('tabICPRIG').style.display = tab === 'icprig' ? 'block' : 'none';
   document.querySelector('.tab-btn[onclick*="' + tab + '"]').classList.add('active');
   if (tab === 'alinhamento' && allParlamentares.length > 0 && !scoreComputed) computeScores();
+  if (tab === 'icprig' && allParlamentares.length > 0 && !icpComputed) computeICPRIG();
 }
 
 // === SCORE DE ALINHAMENTO SEBRAE ===
@@ -2077,7 +2236,11 @@ async function computeScores() {
               lista.forEach(function(c) {
                 var ic = c.IdentificacaoComissao || c;
                 var sigla = ic.SiglaComissao || ic.siglaComissao || '';
-                if (sigla && s.orgaos.indexOf(sigla) < 0) s.orgaos.push(sigla);
+                if (sigla && s.orgaos.indexOf(sigla) < 0) {
+                  s.orgaos.push(sigla);
+                  if (!s.orgaoRoles) s.orgaoRoles = {};
+                  s.orgaoRoles[sigla] = c.DescricaoParticipacao || c.Participacao || c.participacao || 'Membro';
+                }
               });
             } catch(e) {}
           })
@@ -2252,6 +2415,309 @@ function renderScoreRanking() {
   container.innerHTML = html;
 }
 
+// === ICP/RIG — Indice de Capital Politico ===
+var icpComputed = false;
+var icpScores = [];
+
+function openICPMethodology() {
+  document.getElementById('icpMethodModal').classList.add('active');
+}
+function closeICPMethodology() {
+  document.getElementById('icpMethodModal').classList.remove('active');
+}
+
+function computeDimA(p) {
+  var frentesRelevantes = 0;
+  p.frentes.forEach(function(f) {
+    var fn = normalizeStr(f);
+    var matched = false;
+    var allKws = SEBRAE_FRENTE_KEYWORDS.tier1.concat(SEBRAE_FRENTE_KEYWORDS.tier2).concat(SEBRAE_FRENTE_KEYWORDS.tier3);
+    allKws.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) matched = true; });
+    if (matched) frentesRelevantes++;
+  });
+  return Math.min(20, frentesRelevantes * 2 + p.orgaos.length * 3);
+}
+
+function computeDimB(p) {
+  var t1f = 0, t2f = 0;
+  p.frentes.forEach(function(f) {
+    var fn = normalizeStr(f);
+    var tier = 0;
+    SEBRAE_FRENTE_KEYWORDS.tier1.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) tier = 3; });
+    if (tier < 3) SEBRAE_FRENTE_KEYWORDS.tier2.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) tier = Math.max(tier, 2); });
+    if (tier === 3) t1f++;
+    else if (tier === 2) t2f++;
+  });
+  var t1c = 0, t2c = 0;
+  p.orgaos.forEach(function(o) {
+    if (COMISSOES_TIER1.indexOf(o) >= 0) t1c++;
+    else if (COMISSOES_TIER2.indexOf(o) >= 0) t2c++;
+  });
+  return Math.min(30, t1f * 8 + t2f * 4 + t1c * 10 + t2c * 5);
+}
+
+function computeDimC(p) {
+  var pts = 0;
+  p.orgaos.forEach(function(o) {
+    var base = COMISSOES_TIER1.indexOf(o) >= 0 ? 8 : (COMISSOES_TIER2.indexOf(o) >= 0 ? 4 : 0);
+    if (base > 0 && p.orgaoRoles) {
+      var role = p.orgaoRoles[o] || '';
+      var rn = normalizeStr(role);
+      if (rn.indexOf('presidente') >= 0 || rn.indexOf('relator') >= 0) base += 5;
+      else if (rn.indexOf('titular') >= 0) base += 3;
+      pts += base;
+    } else {
+      pts += base;
+    }
+  });
+  return Math.min(20, pts);
+}
+
+function computeDimD(p, autoCount, maxAutorias) {
+  return Math.min(20, Math.round((autoCount / Math.max(maxAutorias, 1)) * 20));
+}
+
+function computeDimE(p) {
+  var pts = 0;
+  if (p.foto) pts += 2;
+  if (p.email) pts += 2;
+  if (p.frentes.length > 0) pts += 2;
+  if (p.orgaos.length > 0) pts += 2;
+  if (p.eleicao2026) pts += 2;
+  return pts;
+}
+
+function computeMI(p) {
+  var factor = 1, reason = 'Padrao';
+  if (p.casa === 'camara' && p.eleicao2026 && p.eleicao2026.cargo === 'Senador' && p.eleicao2026.eleito) {
+    factor = 2;
+    reason = 'Dep. eleito Senador 2026';
+  }
+  if (p.casa === 'senado') {
+    var hasStrategic = false;
+    COMISSOES_TIER1.forEach(function(c) { if (p.orgaos.indexOf(c) >= 0) hasStrategic = true; });
+    if (hasStrategic && factor < 3) {
+      factor = 3;
+      reason = 'Senador em comissao estrategica';
+    }
+  }
+  return { factor: factor, reason: reason };
+}
+
+function computeBC(p) {
+  var bonus = 1.00, reason = 'Sem bonus';
+  var priorityComissoes = COMISSOES_TIER1.concat(COMISSOES_TIER2);
+  priorityComissoes.forEach(function(c) {
+    if (p.orgaos.indexOf(c) < 0) return;
+    var role = (p.orgaoRoles && p.orgaoRoles[c]) || '';
+    var rn = normalizeStr(role);
+    var isPrimary = COMISSOES_TIER1.indexOf(c) >= 0;
+    var b = 1.00, r = '';
+    if (rn.indexOf('presidente') >= 0) {
+      b = isPrimary ? 1.35 : 1.25; r = 'Presidente ' + c;
+    } else if (rn.indexOf('vice') >= 0) {
+      b = isPrimary ? 1.30 : 1.20; r = 'Vice-Presidente ' + c;
+    } else if (rn.indexOf('relator') >= 0) {
+      b = isPrimary ? 1.25 : 1.15; r = 'Relator ' + c;
+    } else if (rn.indexOf('titular') >= 0) {
+      b = isPrimary ? 1.15 : 1.05; r = 'Titular ' + c;
+    } else if (rn.indexOf('suplente') >= 0) {
+      b = isPrimary ? 1.05 : 1.00; r = 'Suplente ' + c;
+    } else if (role) {
+      b = isPrimary ? 1.10 : 1.00; r = role + ' ' + c;
+    }
+    if (b > bonus) { bonus = b; reason = r; }
+  });
+  return { factor: bonus, reason: reason };
+}
+
+async function computeICPRIG() {
+  if (!scoreComputed) {
+    await computeScores();
+  }
+  var container = document.getElementById('icpContainer');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>Calculando ICP/RIG...</div>';
+
+  var maxAutorias = 1;
+  parlScores.forEach(function(ps) { if (ps.autorias > maxAutorias) maxAutorias = ps.autorias; });
+
+  icpScores = allParlamentares.map(function(p) {
+    var ps = parlScores.find(function(s) { return s.id === p.id && s.casa === p.casa; });
+    var autoCount = ps ? ps.autorias : 0;
+    var dimA = computeDimA(p);
+    var dimB = computeDimB(p);
+    var dimC = computeDimC(p);
+    var dimD = computeDimD(p, autoCount, maxAutorias);
+    var dimE = computeDimE(p);
+    var pb = dimA + dimB + dimC + dimD + dimE;
+    var mi = computeMI(p);
+    var bc = computeBC(p);
+    var cp = Math.round(pb * mi.factor * bc.factor);
+    return {
+      id: p.id, nome: p.nome, partido: p.partido, uf: p.uf, casa: p.casa,
+      foto: p.foto, email: p.email,
+      pb: pb, dimA: dimA, dimB: dimB, dimC: dimC, dimD: dimD, dimE: dimE,
+      mi: mi.factor, miReason: mi.reason,
+      bc: bc.factor, bcReason: bc.reason,
+      cp: cp,
+      orgaos: p.orgaos,
+      orgaoRoles: p.orgaoRoles || {},
+      eleicao2026: p.eleicao2026 || null
+    };
+  });
+
+  var maxCP = 1;
+  icpScores.forEach(function(s) { if (s.cp > maxCP) maxCP = s.cp; });
+  icpScores.forEach(function(s) {
+    s.icpNorm = Math.round((s.cp / maxCP) * 100);
+    s.faixa = s.icpNorm >= 50 ? 'alto' : (s.icpNorm >= 20 ? 'medio' : 'baixo');
+  });
+
+  icpScores.sort(function(a, b) { return b.cp - a.cp; });
+  icpComputed = true;
+  updateICPKPIs();
+  renderICPRanking();
+  showToast('ICP/RIG calculado para ' + icpScores.length + ' parlamentares');
+}
+
+function updateICPKPIs() {
+  document.getElementById('kpiICPAtores').textContent = icpScores.length;
+  var avgPB = icpScores.length > 0 ? (icpScores.reduce(function(s, p) { return s + p.pb; }, 0) / icpScores.length).toFixed(1) : '—';
+  var avgCP = icpScores.length > 0 ? (icpScores.reduce(function(s, p) { return s + p.cp; }, 0) / icpScores.length).toFixed(0) : '—';
+  var miElevado = icpScores.filter(function(p) { return p.mi > 1; }).length;
+  var bcAtivo = icpScores.filter(function(p) { return p.bc > 1.00; }).length;
+  document.getElementById('kpiICPPB').textContent = avgPB;
+  document.getElementById('kpiICPCP').textContent = avgCP;
+  document.getElementById('kpiICPMI').textContent = miElevado;
+  document.getElementById('kpiICPBC').textContent = bcAtivo;
+}
+
+function renderICPRanking() {
+  var search = normalizeStr(document.getElementById('icpSearchBox').value || '');
+  var container = document.getElementById('icpContainer');
+
+  var filtered = icpScores;
+  if (search) {
+    filtered = icpScores.filter(function(p) {
+      return normalizeStr(p.nome).indexOf(search) >= 0
+        || normalizeStr(p.partido).indexOf(search) >= 0
+        || normalizeStr(p.uf).indexOf(search) >= 0;
+    });
+  }
+  if (filters.casa) filtered = filtered.filter(function(p) { return p.casa === filters.casa; });
+  if (filters.partido) filtered = filtered.filter(function(p) { return p.partido === filters.partido; });
+  if (filters.uf) filtered = filtered.filter(function(p) { return p.uf === filters.uf; });
+
+  document.getElementById('icpCount').textContent = filtered.length + ' parlamentares';
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">&#128269;</div><h3>Nenhum resultado</h3><p>Ajuste a busca ou os filtros.</p></div>';
+    return;
+  }
+
+  var html = '';
+  filtered.forEach(function(p, idx) {
+    var uid = 'icp-' + p.casa + '-' + p.id;
+    var faixaColor = p.faixa === 'alto' ? 'var(--emerald)' : (p.faixa === 'medio' ? 'var(--accent)' : 'var(--text3)');
+    var cpClass = 'icp-cp-' + p.faixa;
+    var casaClass = p.casa === 'camara' ? 'casa-camara' : 'casa-senado';
+    var casaLabel = p.casa === 'camara' ? 'CAMARA' : 'SENADO';
+
+    html += '<div class="parl-card" id="' + uid + '">';
+    html += '<div class="parl-header" onclick="document.getElementById(\'' + uid + '\').classList.toggle(\'expanded\')">';
+    html += '<div class="score-rank">#' + (idx + 1) + '</div>';
+    html += '<div class="icp-cp-badge ' + cpClass + '">' + p.cp + '</div>';
+    html += '<div class="parl-info">';
+    html += '<div class="parl-name">' + escapeHtml(p.nome) + '</div>';
+    html += '<div class="parl-meta">';
+    html += '<span class="parl-casa ' + casaClass + '">' + casaLabel + '</span>';
+    html += '<span class="parl-partido">' + escapeHtml(p.partido) + ' - ' + escapeHtml(p.uf) + '</span>';
+    if (p.mi > 1) html += '<span class="icp-factor icp-factor-mi">MI ' + p.mi + '×</span>';
+    if (p.bc > 1.00) html += '<span class="icp-factor icp-factor-bc">BC ' + p.bc.toFixed(2) + '</span>';
+    if (p.eleicao2026) {
+      var elC = p.eleicao2026.eleito ? 'var(--emerald)' : 'var(--red)';
+      var elI = p.eleicao2026.eleito ? '&#10003;' : '&#10007;';
+      html += '<span style="font-size:10px;padding:1px 6px;border-radius:4px;background:var(--highlight-bg);color:' + elC + '">' + elI + ' ' + (p.eleicao2026.eleito ? 'Eleito' : 'Nao eleito') + ' — ' + escapeHtml(p.eleicao2026.cargo) + '</span>';
+    }
+    html += '</div>';
+    html += '<div class="score-breakdown">';
+    html += '<span class="score-axis">PB: <span class="score-axis-val" style="color:var(--emerald)">' + p.pb + '</span></span>';
+    html += '<span class="score-axis">MI: <span class="score-axis-val" style="color:var(--purple)">' + p.mi + '×</span></span>';
+    html += '<span class="score-axis">BC: <span class="score-axis-val" style="color:var(--amber)">' + p.bc.toFixed(2) + '</span></span>';
+    html += '<span class="score-axis">ICP: <span class="score-axis-val" style="color:var(--cyan)">' + p.icpNorm + '</span></span>';
+    html += '</div>';
+    html += '</div>';
+    html += '<div style="min-width:120px;display:flex;align-items:center;gap:8px">';
+    html += '<div class="score-bar"><div class="score-fill" style="width:' + p.icpNorm + '%;background:' + faixaColor + '"></div></div>';
+    html += '</div>';
+    html += '<div class="parl-expand">&#9660;</div>';
+    html += '</div>';
+
+    html += '<div class="parl-details">';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">';
+
+    html += '<div>';
+    html += '<div class="detail-label" style="margin-bottom:8px">Pontuacao-base (PB = ' + p.pb + '/100)</div>';
+    var dims = [
+      { label: 'A. Amplitude', val: p.dimA, max: 20, color: 'var(--emerald)' },
+      { label: 'B. Profundidade', val: p.dimB, max: 30, color: 'var(--accent)' },
+      { label: 'C. Relevancia', val: p.dimC, max: 20, color: 'var(--cyan)' },
+      { label: 'D. Articulacao', val: p.dimD, max: 20, color: 'var(--purple)' },
+      { label: 'E. Inteligencia', val: p.dimE, max: 10, color: 'var(--amber)' }
+    ];
+    dims.forEach(function(d) {
+      var pct = Math.round((d.val / d.max) * 100);
+      html += '<div class="icp-dim-bar">';
+      html += '<span class="icp-dim-label">' + d.label + '</span>';
+      html += '<div class="icp-dim-track"><div class="icp-dim-fill" style="width:' + pct + '%;background:' + d.color + '"></div></div>';
+      html += '<span class="icp-dim-val" style="color:' + d.color + '">' + d.val + '/' + d.max + '</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+
+    html += '<div>';
+    html += '<div class="detail-label" style="margin-bottom:8px">Capital Ponderado (CP)</div>';
+    html += '<div class="icp-formula">';
+    html += '<div style="font-family:monospace;font-size:13px;margin-bottom:8px;color:var(--text)">';
+    html += '<strong>CP = ' + p.pb + ' × ' + p.mi + ' × ' + p.bc.toFixed(2) + ' = <span style="color:' + faixaColor + '">' + p.cp + '</span></strong>';
+    html += '</div>';
+    html += '<div style="font-size:11px;color:var(--text3)">ICP/RIG normalizado: <strong style="color:' + faixaColor + '">' + p.icpNorm + '/100</strong></div>';
+    html += '</div>';
+    html += '<div style="margin-bottom:6px">';
+    html += '<span class="icp-factor icp-factor-mi">MI = ' + p.mi + '×</span>';
+    html += '<span style="font-size:11px;color:var(--text3);margin-left:8px">' + escapeHtml(p.miReason) + '</span>';
+    html += '</div>';
+    html += '<div style="margin-bottom:6px">';
+    html += '<span class="icp-factor icp-factor-bc">BC = ' + p.bc.toFixed(2) + '</span>';
+    html += '<span style="font-size:11px;color:var(--text3);margin-left:8px">' + escapeHtml(p.bcReason) + '</span>';
+    html += '</div>';
+    if (p.eleicao2026) {
+      var elC2 = p.eleicao2026.eleito ? 'var(--emerald)' : 'var(--red)';
+      var elS2 = p.eleicao2026.eleito ? 'ELEITO' : 'NAO ELEITO';
+      html += '<div style="margin-top:8px"><span class="detail-label">Eleicoes 2026</span><span class="detail-value" style="color:' + elC2 + ';font-size:11px">' + escapeHtml(p.eleicao2026.cargo) + ' — ' + elS2 + '</span></div>';
+    }
+    html += '</div>';
+    html += '</div>';
+
+    if (p.orgaos.length > 0) {
+      html += '<div style="margin-top:12px"><span class="detail-label">Comissoes (' + p.orgaos.length + ')</span>';
+      html += '<div style="margin-top:4px">';
+      p.orgaos.forEach(function(o) {
+        var c = comissoesChave[o];
+        var role = p.orgaoRoles[o] || '';
+        var tier = COMISSOES_TIER1.indexOf(o) >= 0 ? ' T1' : (COMISSOES_TIER2.indexOf(o) >= 0 ? ' T2' : '');
+        html += '<span class="comissao-tag">' + escapeHtml(o) + (role ? ' — ' + escapeHtml(role) : '') + (tier ? ' (' + tier + ')' : '') + '</span>';
+      });
+      html += '</div></div>';
+    }
+
+    html += '</div>';
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+}
+
 function exportWhatsApp() {
   if (allParlamentares.length === 0) {
     showToast('Consulte as APIs antes de exportar');
@@ -2289,6 +2755,23 @@ function exportWhatsApp() {
       msg += '\n🏆 *Top 5 Score*\n';
       top5.forEach(function(p, i) {
         msg += (i + 1) + '. ' + p.nome + ' (' + p.partido + '-' + p.uf + ') — ' + p.score + ' pts\n';
+      });
+    }
+  }
+
+  if (icpComputed && icpScores.length > 0) {
+    var miElevado2 = icpScores.filter(function(p){ return p.mi > 1; }).length;
+    var bcAtivo2 = icpScores.filter(function(p){ return p.bc > 1.00; }).length;
+    var avgCP2 = (icpScores.reduce(function(s,p){ return s+p.cp;},0)/icpScores.length).toFixed(0);
+    msg += '\n📊 *ICP/RIG*\n';
+    msg += '• CP Medio: ' + avgCP2 + '\n';
+    msg += '• MI Elevado: ' + miElevado2 + '\n';
+    msg += '• BC Ativo: ' + bcAtivo2 + '\n';
+    var top5icp = icpScores.slice(0, 5);
+    if (top5icp.length > 0) {
+      msg += '\n🏆 *Top 5 ICP/RIG*\n';
+      top5icp.forEach(function(p, i) {
+        msg += (i + 1) + '. ' + p.nome + ' (' + p.partido + '-' + p.uf + ') — CP ' + p.cp + '\n';
       });
     }
   }
