@@ -275,6 +275,10 @@ function showToast(msg) {
   setTimeout(function(){ t.classList.remove('show'); }, 3000);
 }
 
+function stripAccents(s) {
+  return s.normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
 function escapeHtml(s) {
   if (!s) return '';
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -326,8 +330,8 @@ async function fetchData() {
       var eventos = camaraJson.dados || [];
 
       eventos.forEach(function(ev) {
-        var tipo = (ev.descricaoTipo || '').toLowerCase();
-        var isConsulta = tipo.indexOf('audiencia') >= 0 || tipo.indexOf('seminario') >= 0 || tipo.indexOf('consulta') >= 0 || tipo.indexOf('reuniao deliberativa') >= 0;
+        var tipo = stripAccents((ev.descricaoTipo || '').toLowerCase());
+        var isConsulta = tipo.indexOf('audiencia') >= 0 || tipo.indexOf('seminario') >= 0 || tipo.indexOf('consulta') >= 0 || tipo.indexOf('reuniao deliberativa') >= 0 || tipo.indexOf('reuniao tecnica') >= 0 || tipo.indexOf('mesa redonda') >= 0;
         if (!isConsulta) return;
 
         var titulo = ev.descricao || ev.descricaoTipo || '';
@@ -419,7 +423,7 @@ async function fetchData() {
           } catch(e) {}
 
           sessoes.forEach(function(s) {
-            var tipo = (s.TipoSessao || '').toLowerCase();
+            var tipo = stripAccents((s.TipoSessao || '').toLowerCase());
             if (tipo.indexOf('audiencia') < 0 && tipo.indexOf('debate') < 0 && tipo.indexOf('sabatina') < 0) return;
 
             var dataSessao = s.DataSessao || '';
