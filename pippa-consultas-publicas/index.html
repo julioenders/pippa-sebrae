@@ -129,6 +129,11 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
   .sidebar{display:none}
   .kpi-row{grid-template-columns:repeat(2,1fr)}
 }
+.date-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:var(--radius);font-size:14px;outline:none;cursor:pointer}
+.date-input:focus{border-color:var(--accent)}
+.header .date-input{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff}
+.header .date-input:focus{border-color:rgba(255,255,255,.6)}
+.header .date-input::-webkit-calendar-picker-indicator{filter:invert(1)}
 .theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s;}
 .theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#ffffff;background:rgba(255,255,255,.1);}
 .theme-toggle svg{width:18px;height:18px;}
@@ -151,9 +156,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
     </div>
     <button class="info-btn" onclick="showMethodology()" title="Sobre este painel">&#8505;</button>
   </div>
-  <div class="header-controls" style="display:flex;align-items:center;gap:8px">
+  <div class="header-controls" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     <button class="btn btn-outline" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp" style="color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.25)">📤 WhatsApp</button>
+    <input type="date" id="dateInputInicio" class="date-input" title="Data inicio">
+    <span style="color:rgba(255,255,255,.7);font-size:13px">a</span>
+    <input type="date" id="dateInputFim" class="date-input" title="Data fim">
     <button class="btn btn-primary" onclick="fetchData()">&#128269; Consultar APIs</button>
   </div>
 </div>
@@ -300,22 +308,17 @@ function formatDateBR(d) {
 }
 
 async function fetchData() {
+  var dateStart = document.getElementById('dateInputInicio').value;
+  var dateEnd = document.getElementById('dateInputFim').value;
+  if (!dateStart || !dateEnd) { alert('Selecione data inicio e data fim.'); return; }
+  if (dateEnd < dateStart) { alert('Data fim deve ser >= data inicio.'); return; }
+
   var container = document.getElementById('consContainer');
   container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando audiencias e consultas publicas...</div>';
   allConsultas = [];
 
   try {
-    // Fetch events from Camara (audiencias publicas, seminarios)
-    var today = new Date();
-    var startDate = new Date(today);
-    startDate.setMonth(startDate.getMonth() - 3);
-    var endDate = new Date(today);
-    endDate.setMonth(endDate.getMonth() + 2);
-
-    var startStr = startDate.toISOString().split('T')[0];
-    var endStr = endDate.toISOString().split('T')[0];
-
-    var camaraUrl = 'https://dadosabertos.camara.leg.br/api/v2/eventos?dataInicio=' + startStr + '&dataFim=' + endStr + '&ordem=DESC&ordenarPor=dataHoraInicio&itens=100';
+    var camaraUrl = 'https://dadosabertos.camara.leg.br/api/v2/eventos?dataInicio=' + dateStart + '&dataFim=' + dateEnd + '&ordem=DESC&ordenarPor=dataHoraInicio&itens=100';
     var camaraResp = await fetch(camaraUrl);
 
     if (camaraResp.ok) {
@@ -394,10 +397,13 @@ async function fetchData() {
 
     // Fetch Senado agenda
     container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando agenda do Senado...</div>';
+    var dStart = new Date(dateStart + 'T00:00:00');
+    var dEnd = new Date(dateEnd + 'T00:00:00');
     var meses = [];
-    for (var m = -2; m <= 1; m++) {
-      var d = new Date(today.getFullYear(), today.getMonth() + m, 1);
-      meses.push(d.getFullYear() + '' + String(d.getMonth()+1).padStart(2,'0'));
+    var cur = new Date(dStart.getFullYear(), dStart.getMonth(), 1);
+    while (cur <= dEnd) {
+      meses.push(cur.getFullYear() + '' + String(cur.getMonth()+1).padStart(2,'0'));
+      cur.setMonth(cur.getMonth() + 1);
     }
 
     for (var mi = 0; mi < meses.length; mi++) {
@@ -416,9 +422,12 @@ async function fetchData() {
             var tipo = (s.TipoSessao || '').toLowerCase();
             if (tipo.indexOf('audiencia') < 0 && tipo.indexOf('debate') < 0 && tipo.indexOf('sabatina') < 0) return;
 
+            var dataSessao = s.DataSessao || '';
+            var ds = dataSessao.substring(0,10);
+            if (ds < dateStart || ds > dateEnd) return;
+
             var titulo = s.TipoSessao + (s.Legislatura ? ' — ' + s.Legislatura : '');
             var classificacao = classifyRelevancia(titulo, '');
-            var dataSessao = s.DataSessao || '';
             var status = getStatus(dataSessao, dataSessao);
 
             allConsultas.push({
@@ -631,8 +640,11 @@ function exportWhatsApp() {
   var relevantes = filteredConsultas.filter(function(c){ return c.relevante; });
   var futuras = filteredConsultas.filter(function(c){ return c.status === 'Futura'; });
 
+  var dateStart = document.getElementById('dateInputInicio').value;
+  var dateEnd = document.getElementById('dateInputFim').value;
   var text = '*PIPPA Consultas Publicas*\n';
-  text += '_Monitor de Participacao Social_\n\n';
+  text += '_Monitor de Participacao Social_\n';
+  text += 'Periodo: ' + formatDateBR(dateStart) + ' a ' + formatDateBR(dateEnd) + '\n\n';
   text += 'Total: ' + filteredConsultas.length + ' consultas/audiencias\n';
   text += 'Abertas: ' + abertas.length + '\n';
   text += 'Futuras: ' + futuras.length + '\n';
@@ -662,6 +674,15 @@ function exportWhatsApp() {
   showToast('Abrindo WhatsApp...');
 }
 </script>
-<script>function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n)}</script>
+<script>
+function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n)}
+(function(){
+  var today = new Date();
+  var start = new Date(today); start.setMonth(start.getMonth() - 3);
+  var end = new Date(today); end.setMonth(end.getMonth() + 2);
+  document.getElementById('dateInputInicio').value = start.toISOString().split('T')[0];
+  document.getElementById('dateInputFim').value = end.toISOString().split('T')[0];
+})();
+</script>
 </body>
 </html>
