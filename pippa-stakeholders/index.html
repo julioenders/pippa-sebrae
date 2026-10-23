@@ -390,37 +390,128 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
 </div>
 
 <div class="methodology-backdrop" id="methodologyModal" onclick="if(event.target===this)closeMethodology()">
-  <div class="methodology-modal">
+  <div class="methodology-modal" style="max-width:920px">
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
       <h2>Sobre o PIPPA Stakeholders</h2>
       <button class="btn btn-outline" onclick="closeMethodology()" style="flex-shrink:0">Fechar</button>
     </div>
-    <h3>O que e o Mapa Parlamentar?</h3>
-    <p>CRM visual de parlamentares relevantes para MPEs. Mapeia deputados e senadores com perfil de atuacao, frentes parlamentares, composicao de comissoes-chave e dados de gabinete — tudo via APIs publicas da Camara e do Senado.</p>
+
+    <h3>Finalidade</h3>
+    <p>CRM legislativo e modelo de gestao de capital politico-institucional para a area de Relacoes Institucionais e Governamentais (RIG) do Sebrae. Combina mapeamento parlamentar com o <strong>ICP/RIG</strong> — Indice de Capital Politico do Profissional de RIG —, permitindo avaliar a qualidade dos relacionamentos, a relevancia estrategica dos contatos e a capacidade de articulacao em torno das pautas prioritarias do Sebrae.</p>
+
+    <h3>Modulo 1 — Mapa Parlamentar</h3>
+    <p>Visao CRM de deputados e senadores com perfil de atuacao, frentes parlamentares, composicao de comissoes-chave, dados de gabinete e resultados eleitorais 2026. Todos os dados sao obtidos ao vivo via APIs publicas.</p>
+
+    <h3>Modulo 2 — ICP/RIG (Indice de Capital Politico)</h3>
+    <p>Modelo de mensuracao baseado no documento metodologico <em>Projeto Francine — ICP/RIG Sebrae</em>. O metodo diferencia a pontuacao-base do relacionamento dos fatores temporarios de relevancia institucional, reduzindo o risco de confundir acesso, confianca, poder formal e resultado legislativo.</p>
+
+    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin:12px 0">
+      <p style="margin:0 0 8px;font-size:13px"><strong>Arquitetura — 3 camadas:</strong></p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:12px">
+        <div style="background:var(--surface);border-radius:6px;padding:10px;border:1px solid var(--border)">
+          <div style="font-weight:700;color:var(--emerald);margin-bottom:4px">PB — Pontuacao-base</div>
+          <div style="color:var(--text3)">Qualidade e maturidade do relacionamento, de 0 a 100, em 5 dimensoes.</div>
+        </div>
+        <div style="background:var(--surface);border-radius:6px;padding:10px;border:1px solid var(--border)">
+          <div style="font-weight:700;color:var(--purple);margin-bottom:4px">MI — Multiplicador Institucional</div>
+          <div style="color:var(--text3)">Fator temporario (1×, 2× ou 3×) por posicao institucional de maior relevancia.</div>
+        </div>
+        <div style="background:var(--surface);border-radius:6px;padding:10px;border:1px solid var(--border)">
+          <div style="font-weight:700;color:var(--amber);margin-bottom:4px">BC — Bonus de Comissao</div>
+          <div style="color:var(--text3)">Fator adicional (1.00 a 1.35) pelo papel exercido em comissao prioritaria.</div>
+        </div>
+      </div>
+      <p style="margin:10px 0 0;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:13px"><strong>CP = PB × MI × BC</strong> &nbsp;|&nbsp; ICP/RIG agregado normalizado 0–100</p>
+    </div>
+
+    <h3>PB — 5 Dimensoes (0–100)</h3>
+    <div style="font-size:12px;line-height:1.8">
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:2px 12px">
+        <strong style="color:var(--emerald)">A. Amplitude e Rede (0–20)</strong><span style="color:var(--text3)">Diversidade de frentes parlamentares relevantes e comissoes distintas em que atua.</span>
+        <strong style="color:var(--accent)">B. Qualidade e Profundidade (0–30)</strong><span style="color:var(--text3)">Engajamento em frentes e comissoes de alta relevancia (Tier 1 e Tier 2 para a agenda MPE).</span>
+        <strong style="color:var(--cyan)">C. Relevancia Estrategica (0–20)</strong><span style="color:var(--text3)">Posicao em comissoes estrategicas e papel exercido (titular, presidente, relator).</span>
+        <strong style="color:var(--purple)">D. Articulacao e Mobilizacao (0–20)</strong><span style="color:var(--text3)">Autorias tematicas — proposicoes legislativas com keywords MPE (normalizadas pelo melhor desempenho).</span>
+        <strong style="color:var(--amber)">E. Inteligencia Institucional (0–10)</strong><span style="color:var(--text3)">Completude do perfil: foto, email, frentes, comissoes e dados eleitorais disponiveis.</span>
+      </div>
+    </div>
+
+    <h3>MI — Multiplicador Institucional</h3>
+    <ul>
+      <li><strong>1×</strong> — Padrao (sem condicao especial)</li>
+      <li><strong>2×</strong> — Deputado federal eleito senador (a partir da posse, validade 12 meses)</li>
+      <li><strong>3×</strong> — Senador que assume comissao estrategica para temas do Sebrae (CAE, CDEICS, CFT)</li>
+    </ul>
+    <p style="font-size:12px;color:var(--text3)">Regra contra duplicidade: aplica-se o <strong>maior</strong> fator; nao se multiplicam entre si.</p>
+
+    <h3>BC — Bonus de Comissao</h3>
+    <ul>
+      <li><strong>1.00</strong> — Sem bonus (nao participa de comissao prioritaria)</li>
+      <li><strong>1.05</strong> — Suplente de comissao prioritaria</li>
+      <li><strong>1.10</strong> — Membro de comissao estrategica (Tier 1)</li>
+      <li><strong>1.15</strong> — Titular de comissao prioritaria</li>
+      <li><strong>1.25</strong> — Relator de materia em comissao prioritaria</li>
+      <li><strong>1.30</strong> — Vice-presidente de comissao prioritaria</li>
+      <li><strong>1.35</strong> — Presidente ou relator estrategico com papel efetivo de conducao</li>
+    </ul>
+    <p style="font-size:12px;color:var(--text3)">Regra: aplica-se apenas o <strong>maior</strong> bonus entre todas as comissoes. Nao somar automaticamente.</p>
+
+    <h3>Comissoes-Chave Monitoradas</h3>
+    <ul>
+      <li><strong>Tier 1 (estrategicas):</strong> CDEICS (Desenvolvimento Economico), CFT (Financas e Tributacao), CAE (Assuntos Economicos — Senado)</li>
+      <li><strong>Tier 2 (apoio ao ecossistema):</strong> CCTCI, CAPADR, CE (Camara) | CI, CDR, CAS, CCT (Senado)</li>
+    </ul>
+
+    <h3>Frentes Parlamentares — Tiers de Relevancia</h3>
+    <ul>
+      <li><strong>Tier 1 (20 pts):</strong> Empreendedorismo, micro/pequena empresa, Simples Nacional, MEI, microempreendedor</li>
+      <li><strong>Tier 2 (12 pts):</strong> Desburocratizacao, inovacao, startup, cooperativismo, credito, livre iniciativa, fomento</li>
+      <li><strong>Tier 3 (5 pts):</strong> Comercio, industria, turismo, agronegocio, tecnologia, digital, exportacao, desenvolvimento regional</li>
+    </ul>
+
+    <h3>Exemplo Ilustrativo</h3>
+    <div style="background:var(--bg);border-radius:8px;padding:16px;border:1px solid var(--border);margin-bottom:12px;font-size:12px">
+      <p style="margin:0 0 6px"><strong>Senador X</strong> — titular da CAE (comissao estrategica Tier 1).</p>
+      <ul style="margin:0 0 8px">
+        <li>PB = 45 (A:12 + B:15 + C:8 + D:6 + E:4)</li>
+        <li>MI = 3× (senador em comissao estrategica — usa-se o maior fator)</li>
+        <li>BC = 1.15 (titular de comissao prioritaria)</li>
+      </ul>
+      <p style="margin:0;padding:8px 12px;background:var(--highlight-bg);border-radius:6px;font-family:monospace;font-size:13px"><strong>CP = 45 × 3 × 1.15 = 155</strong> &nbsp;(a nota-base permanece 45 — CP nao e nota percentual)</p>
+    </div>
+
     <h3>Fontes de Dados</h3>
     <ul>
       <li><strong>Deputados:</strong> API Dados Abertos da Camara — /deputados (paginado)</li>
       <li><strong>Senadores:</strong> API Dados Abertos do Senado — /senador/lista/atual</li>
       <li><strong>Frentes Parlamentares:</strong> API Camara — /frentes e /frentes/{id}/membros</li>
-      <li><strong>Comissoes:</strong> API Camara — /orgaos e /orgaos/{id}/membros</li>
+      <li><strong>Comissoes Camara:</strong> API Camara — /orgaos e /orgaos/{id}/membros (com papel: titular, suplente, presidente)</li>
+      <li><strong>Comissoes Senado:</strong> API Senado — /senador/{id}/comissoes (com participacao)</li>
+      <li><strong>Autorias tematicas:</strong> API Camara — /proposicoes?keywords={kw} + /proposicoes/{id}/autores</li>
       <li><strong>Detalhes individuais:</strong> API Camara — /deputados/{id} (gabinete, escolaridade, naturalidade)</li>
-      <li><strong>Eleicoes 2026:</strong> TSE CDN — resultados oficiais (resultados.tse.jus.br) para Deputado Federal, Deputado Estadual, Senador, Governador e Presidente</li>
+      <li><strong>Eleicoes 2026:</strong> TSE CDN — resultados oficiais (resultados.tse.jus.br)</li>
     </ul>
-    <h3>Frentes Parlamentares Relevantes</h3>
-    <p>O filtro de relevancia identifica frentes cujo titulo menciona termos ligados ao ecossistema MPE: empreendedorismo, micro/pequena empresa, Simples, desburocratizacao, inovacao, cooperativismo, credito, turismo, agronegocio, entre outros.</p>
-    <h3>Comissoes-Chave Monitoradas</h3>
+
+    <h3>Principios Metodologicos</h3>
     <ul>
-      <li><strong>Camara:</strong> CDEICS (Desenvolvimento Economico), CFT (Financas e Tributacao), CFFC (Fiscalizacao), CTASP (Trabalho), CCTCI (Ciencia e Tecnologia), CDU (Desenvolvimento Urbano), CE (Educacao), CME (Minas e Energia)</li>
-      <li><strong>Senado:</strong> CAE (Assuntos Economicos), CI (Infraestrutura), CDR (Desenvolvimento Regional), CCT (Ciencia e Tecnologia)</li>
+      <li><strong>Evidencia antes de percepcao:</strong> toda nota sustentada por registro ou criterio observavel.</li>
+      <li><strong>Separacao de dimensoes:</strong> qualidade do relacionamento ≠ poder formal ≠ resultado legislativo.</li>
+      <li><strong>Temporalidade:</strong> fatores institucionais (MI, BC) tem inicio, validade e expiracao.</li>
+      <li><strong>Comparabilidade:</strong> mesma regra para atores em condicoes equivalentes.</li>
+      <li><strong>Proporcionalidade:</strong> multiplicadores limitados para nao distorcer o portfolio.</li>
+      <li><strong>Rastreabilidade:</strong> cada pontuacao reproduzivel a partir de dados e regras documentadas.</li>
+      <li><strong>Neutralidade institucional:</strong> mede capacidade de articulacao, nao adesao politica.</li>
     </ul>
-    <h3>Ordenacao</h3>
-    <p>Parlamentares sao ordenados por relevancia: quem participa de mais frentes e comissoes-chave aparece primeiro. O score e calculado como (frentes × 2) + comissoes.</p>
+
     <h3>Limitacoes</h3>
     <ul>
-      <li>A API do Senado nao expoe frentes parlamentares — apenas deputados sao cruzados com frentes.</li>
-      <li>APIs publicas sem SLA — sujeitas a instabilidade.</li>
-      <li>A composicao de comissoes pode mudar ao longo da legislatura.</li>
+      <li>A API do Senado nao expoe frentes parlamentares — senadores nao recebem pontuacao de frentes.</li>
+      <li>Autorias tematicas buscam apenas proposicoes da Camara (desde 2023) — senadores nao recebem pontuacao neste eixo.</li>
+      <li>APIs publicas sem SLA — sujeitas a instabilidade e atualizacao da fonte.</li>
+      <li>A composicao de comissoes e papeis pode mudar ao longo da legislatura.</li>
+      <li>O ICP/RIG mede capital relacional-institucional — nao indica lealdade, apoio politico ou garantia de resultado legislativo.</li>
     </ul>
+
+    <p style="margin-top:16px;font-size:11px;color:var(--text3);text-align:center;border-top:1px solid var(--border);padding-top:12px">Metodologia baseada no documento <em>Projeto Francine — ICP/RIG Sebrae</em> (v1.0, 2026).<br>PIPPA Stakeholders — Sebrae Nacional — Observatorio.</p>
   </div>
 </div>
 
