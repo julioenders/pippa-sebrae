@@ -64,14 +64,21 @@ def api_get(path, retries=5):
 
 def fetch_all_polls(election_id):
     all_polls = []
+    seen_ids = set()
     offset = 0
     while True:
         data = api_get(f"/polls?election_id={election_id}&limit=100&offset={offset}&format=json")
         if data is None:
             break
         items = data.get("data", [])
-        all_polls.extend(items)
-        if len(items) < 100:
+        new_items = 0
+        for item in items:
+            item_id = item.get("id") or f"{item.get('publication_date','')}|{(item.get('institute') or {}).get('name','')}"
+            if item_id not in seen_ids:
+                seen_ids.add(item_id)
+                all_polls.append(item)
+                new_items += 1
+        if new_items == 0 or len(items) < 100:
             break
         offset += 100
     return all_polls
