@@ -4,47 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PIPPA Legislativo — Painel de Monitoramento</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-  <script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;
-      --font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif;
-      --bg:#eff3ee;--surface:#ffffff;--surface2:#f5f7f4;
-      --border:rgba(0,0,0,.1);--border-hover:rgba(42,79,218,.35);
-      --text:#1a1a1a;--text-muted:#6b7280;--text-accent:#2a4fda;
-      --accent:#2a4fda;--accent-hover:#1e3fb8;--accent-light:rgba(42,79,218,.08);
-      --emerald:#61b466;--purple:#be64e3;--blue:#2a4fda;--amber:#f39d72;--cyan:#65b7fb;--red:#e0565d;--pink:#ff80c8;--teal:#61b466;
-      --secondary:#6b7280;--muted:#6b7280;
-      --highlight-bg:rgba(42,79,218,.06);--accent-ring:rgba(42,79,218,.12);
-      --shadow:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 4px 12px rgba(0,0,0,.08);
-      --scrollbar-track:#eff3ee;--scrollbar-thumb:rgba(42,79,218,.2);
-      --radius:12px;
-      --p0:#ff4d6a;--p1:#ff8c42;--p2:#ffc542;--p3:#4ecdc4;--p4:#8b8fa8;
-      --central:#ff4d6a;--alta:#ff8c42;--media:#ffc542;--baixa:#4ecdc4;--nula:#8b8fa8;
-      --camara:#4f8cff;--senado:#a855f7;
-      --success:#22c55e;
-      --chart-grid:rgba(0,0,0,.06);
-    }
-    [data-theme="dark"]{
-      --bg:#080f1e;--surface:#0f1a2e;--surface2:#162038;
-      --border:rgba(255,255,255,.08);--border-hover:rgba(101,183,251,.35);
-      --text:#eff3ee;--text-muted:#8b9dc3;--text-accent:#65b7fb;
-      --accent:#65b7fb;--accent-hover:#90ccfd;--accent-light:rgba(101,183,251,.08);
-      --secondary:#8b9dc3;--muted:#8b9dc3;
-      --highlight-bg:rgba(101,183,251,.08);--accent-ring:rgba(101,183,251,.12);
-      --shadow:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 4px 12px rgba(0,0,0,.4);
-      --scrollbar-track:#080f1e;--scrollbar-thumb:rgba(42,79,218,.3);
-      --chart-grid:rgba(255,255,255,.07);
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #242836;
+      --border: #2e3348;
+      --text: #e4e6ef;
+      --text-muted: #8b8fa8;
+      --accent: #4f8cff;
+      --accent-hover: #6ba0ff;
+      --p0: #ff4d6a;
+      --p1: #ff8c42;
+      --p2: #ffc542;
+      --p3: #4ecdc4;
+      --p4: #8b8fa8;
+      --central: #ff4d6a;
+      --alta: #ff8c42;
+      --media: #ffc542;
+      --baixa: #4ecdc4;
+      --nula: #8b8fa8;
+      --camara: #4f8cff;
+      --senado: #a855f7;
+      --success: #22c55e;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.3);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: var(--font-body);
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -52,27 +43,25 @@
 
     /* Header */
     .header {
-      background: var(--surface);
+      background: linear-gradient(135deg, #1a1d27 0%, #242836 100%);
       border-bottom: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      padding: 12px 20px;
+      padding: 16px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px 16px;
       position: sticky;
       top: 0;
       z-index: 100;
     }
 
-    .header-left { display: flex; align-items: center; gap: 12px; margin-right: auto; }
+    .header-left { display: flex; align-items: center; gap: 16px; }
 
     .logo {
-      font-family: var(--font-heading);
       font-size: 22px;
-      font-weight: 800;
-      color: var(--text-accent);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       letter-spacing: -0.5px;
     }
 
@@ -85,14 +74,8 @@
     .header-controls {
       display: flex;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      gap: 12px;
     }
-
-    .header .btn-outline { border:1px solid var(--border); color:var(--text-muted); }
-    .header .btn-outline:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-light); }
-    .header .date-input { background:var(--surface2); border:1px solid var(--border); color:var(--text); }
-    .header .date-input:focus { border-color:var(--accent); }
 
     .date-input {
       background: var(--surface2);
@@ -607,7 +590,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.5);
+      background: rgba(15,17,23,0.85);
       z-index: 200;
       align-items: center;
       justify-content: center;
@@ -662,7 +645,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.5);
+      background: rgba(15,17,23,0.8);
       z-index: 300;
       align-items: center;
       justify-content: center;
@@ -697,7 +680,7 @@
       line-height: 1.6;
       max-height: 400px;
       overflow-y: auto;
-      font-family: var(--font-body);
+      font-family: 'Segoe UI', sans-serif;
     }
 
     .modal-actions {
@@ -741,9 +724,10 @@
     }
 
     /* Scrollbar */
-    ::-webkit-scrollbar{width:6px}
-    ::-webkit-scrollbar-track{background:var(--scrollbar-track)}
-    ::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:3px}
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
     .relevance-badge {
       display: inline-block;
@@ -797,7 +781,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.5);
+      background: rgba(15,17,23,0.85);
       z-index: 300;
       align-items: flex-start;
       justify-content: center;
@@ -879,9 +863,9 @@
       padding: 2px 8px; border-radius: 4px;
       font-size: 11px; font-weight: 500;
     }
-    .situacao-badge.local { background: rgba(79,141,255,0.12); color: var(--camara); }
-    .situacao-badge.status { background: rgba(168,85,247,0.12); color: var(--senado); }
-    .situacao-badge.proximo { background: rgba(34,197,94,0.12); color: var(--success); }
+    .situacao-badge.local { background: rgba(79,141,255,0.12); color: #4f8cff; }
+    .situacao-badge.status { background: rgba(168,85,247,0.12); color: #a855f7; }
+    .situacao-badge.proximo { background: rgba(34,197,94,0.12); color: #22c55e; }
 
     /* Minuta tecnica */
     .minuta-content {
@@ -894,7 +878,7 @@
       white-space: pre-wrap;
       max-height: 500px;
       overflow-y: auto;
-      font-family: var(--font-body);
+      font-family: 'Segoe UI', sans-serif;
     }
 
     /* Action buttons in prop details */
@@ -942,116 +926,6 @@
       flex-shrink: 0;
     }
 
-    /* Merito economico */
-    .merito-section {
-      background: linear-gradient(135deg, rgba(79,140,255,0.08), rgba(168,85,247,0.08));
-      border: 1px solid rgba(79,140,255,0.2);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-top: 12px;
-    }
-    .merito-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--accent);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .merito-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 10px;
-    }
-    .merito-stat {
-      background: var(--surface);
-      border-radius: 8px;
-      padding: 10px 12px;
-      text-align: center;
-    }
-    .merito-stat-value {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1;
-    }
-    .merito-stat-label {
-      font-size: 10px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 4px;
-    }
-    .merito-subtitle {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text);
-      margin-top: 14px;
-      margin-bottom: 6px;
-      padding-bottom: 4px;
-      border-bottom: 1px solid rgba(79,140,255,0.15);
-    }
-    .merito-bar-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .merito-bar-item {
-      flex: 1;
-      min-width: 120px;
-      background: var(--surface);
-      border-radius: 8px;
-      padding: 8px 10px;
-      text-align: center;
-    }
-    .merito-bar-value {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .merito-bar-label {
-      font-size: 10px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 2px;
-    }
-    .merito-cnae-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .merito-cnae-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--surface);
-      border-radius: 6px;
-      padding: 6px 10px;
-      font-size: 12px;
-    }
-    .merito-cnae-id {
-      color: var(--accent);
-      font-weight: 600;
-      margin-right: 8px;
-      font-size: 11px;
-    }
-    .merito-cnae-nome {
-      flex: 1;
-      color: var(--text);
-    }
-    .merito-cnae-total {
-      font-weight: 600;
-      color: var(--text-muted);
-      font-size: 11px;
-    }
-    .merito-note {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 8px;
-      font-style: italic;
-    }
 
     /* Dynamic filter chips */
     .filter-group-dynamic {
@@ -1061,16 +935,10 @@
       max-height: 200px;
       overflow-y: auto;
     }
-    .pippa-home-btn{display:flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
-    .pippa-home-btn:hover{background:var(--accent-light);border-color:var(--accent);color:var(--accent);}
+    .pippa-home-btn{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
+    .pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff;}
     .pippa-home-btn svg{width:13px;height:13px;}
-  .theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid var(--border);border-radius:8px;cursor:pointer;color:var(--text-muted);transition:all .2s;}
-.theme-toggle:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
-.theme-toggle svg{width:18px;height:18px;}
-.icon-sun{display:none;}
-[data-theme="dark"] .icon-sun{display:block;}
-[data-theme="dark"] .icon-moon{display:none;}
-</style>
+  </style>
 </head>
 <body>
 
@@ -1084,14 +952,13 @@
       <button class="info-btn" onclick="showMethodology()" title="Metodologia de classificacao">&#8505;</button>
     </div>
     <div class="header-controls">
-      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
       <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
       <div id="thermometer" class="thermometer thermo-green">Sem dados carregados</div>
       <input type="date" id="dateInputInicio" class="date-input" title="Data inicio">
       <span style="color:var(--text-muted);font-size:13px">a</span>
       <input type="date" id="dateInputFim" class="date-input" title="Data fim">
       <button class="btn" id="btnFetch" onclick="fetchData()">Consultar APIs</button>
-      <button class="btn btn-outline" onclick="exportWhatsApp()">📤 WhatsApp</button>
+      <button class="btn btn-outline" onclick="exportWhatsApp()">Exportar WhatsApp</button>
     </div>
   </header>
 
@@ -1410,6 +1277,18 @@
     <div class="loading-progress" id="loadingProgress"></div>
   </div>
 
+  <!-- Export Modal -->
+  <div class="modal-backdrop" id="exportModal">
+    <div class="modal">
+      <div class="modal-title">Exportar para WhatsApp</div>
+      <div class="modal-content" id="exportContent"></div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeModal()">Fechar</button>
+        <button class="btn" onclick="copyExport()">Copiar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Methodology Modal -->
   <div class="methodology-backdrop" id="methodologyModal">
     <div class="methodology-modal">
@@ -1424,31 +1303,31 @@
         <thead><tr><th>Nivel</th><th>Nome</th><th>Criterio</th><th>Acao Esperada</th></tr></thead>
         <tbody>
           <tr>
-            <td><span class="p-badge" style="background:rgba(255,77,106,0.2);color:var(--p0)">P0</span></td>
+            <td><span class="p-badge" style="background:rgba(255,77,106,0.2);color:#ff4d6a">P0</span></td>
             <td>Critica</td>
             <td>Filtro institucional ativado — materia menciona governanca, orcamento, contribuicao compulsoria ou regime juridico do Sebrae/Sistema S</td>
             <td>Incidencia ativa imediata</td>
           </tr>
           <tr>
-            <td><span class="p-badge" style="background:rgba(255,140,66,0.2);color:var(--p1)">P1</span></td>
+            <td><span class="p-badge" style="background:rgba(255,140,66,0.2);color:#ff8c42">P1</span></td>
             <td>Alta</td>
             <td>Relevancia Central (mencao direta a MEI, Simples Nacional, LC 123, MPE) ou Alta (2+ palavras-chave de eixos estrategicos)</td>
             <td>Incidencia ativa ou monitoramento estrategico</td>
           </tr>
           <tr>
-            <td><span class="p-badge" style="background:rgba(255,197,66,0.2);color:var(--p2)">P2</span></td>
+            <td><span class="p-badge" style="background:rgba(255,197,66,0.2);color:#ffc542">P2</span></td>
             <td>Media</td>
             <td>Relevancia Media — exatamente 1 palavra-chave de eixo estrategico identificada na ementa</td>
             <td>Subsidio tecnico e monitoramento</td>
           </tr>
           <tr>
-            <td><span class="p-badge" style="background:rgba(78,205,196,0.2);color:var(--p3)">P3</span></td>
+            <td><span class="p-badge" style="background:rgba(78,205,196,0.2);color:#4ecdc4">P3</span></td>
             <td>Baixa</td>
             <td>Relevancia Baixa — temas corporativos ou sociais amplos, sem conexao direta com MPE/empreendedorismo</td>
             <td>Monitoramento passivo</td>
           </tr>
           <tr>
-            <td><span class="p-badge" style="background:rgba(139,143,168,0.2);color:var(--p4)">P4</span></td>
+            <td><span class="p-badge" style="background:rgba(139,143,168,0.2);color:#8b8fa8">P4</span></td>
             <td>Arquivar</td>
             <td>Relevancia Nula — sem palavras-chave identificadas, ou tipo processual/simbolico (REQ, RIC, mocoes, homenagens)</td>
             <td>Fora do escopo — arquivar</td>
@@ -1531,13 +1410,6 @@
 // PIPPA LEGISLATIVO — DASHBOARD ENGINE
 // =====================================================
 
-// Theme-aware chart color helpers
-function chartTextColor(){return getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()||'#6b7280'}
-function chartLabelColor(){return getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#1a1a1a'}
-function chartGridColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim()||'rgba(0,0,0,.06)'}
-function chartSurfaceColor(){return getComputedStyle(document.documentElement).getPropertyValue('--surface').trim()||'#ffffff'}
-function cssVar(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
-
 // Word-boundary keyword matching (prevents false positives like "mei" inside "primeiro")
 function matchesKeyword(text, keyword) {
   const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -1563,7 +1435,7 @@ const KEYWORDS_CORE = [
   'contribuicao compulsoria','contribuicoes compulsorias',
   'lei 8029','lei no 8029',
   'servico social autonomo','servicos sociais autonomos',
-  `agenda legislativa ${new Date().getFullYear()}`,`agenda legislativa de ${new Date().getFullYear()}`
+  'agenda legislativa 2026','agenda legislativa de 2026'
 ];
 const KEYWORDS_CORE_SHORT = ['mei','mpe','epp','fampe'];
 
@@ -1600,11 +1472,9 @@ const EIXO_DEFINITIONS = [
     eixo: 'Inovacao e digital',
     keywords: [
       'inovacao empresarial','propriedade intelectual',
+      'inteligencia artificial','transformacao digital','digitalizacao',
       'automacao empresarial','modernizacao produtiva',
       'marco legal das startups','sandbox regulatorio'
-    ],
-    broadKeywords: [
-      'inteligencia artificial','transformacao digital','digitalizacao'
     ],
     shortKeywords: ['startups']
   },
@@ -1640,11 +1510,9 @@ const EIXO_DEFINITIONS = [
       'desburocratizacao','abertura de empresas','licenciamento',
       'obrigacoes acessorias','seguranca juridica','custos regulatorios',
       'reforma tributaria','regime diferenciado','beneficio fiscal',
-      'nota fiscal','registro empresarial',
-      'ambiente de negocios','imposto seletivo'
-    ],
-    broadKeywords: [
-      'tributacao','aliquota','empreendedorismo'
+      'nota fiscal','registro empresarial','tributacao',
+      'ambiente de negocios','imposto seletivo','aliquota',
+      'empreendedorismo'
     ],
     shortKeywords: ['ibs','cbs','cnpj']
   }
@@ -1670,10 +1538,10 @@ const KEYWORDS_INSTITUTIONAL_ENTITIES = [
 ];
 const GOV_CONTEXT_TERMS = [
   'contribuicao','orcamento','governanca','controle','auditoria',
-  'fiscalizacao','regime juridico','extincao',
-  'reorganizacao','destinacao',
-  'transparencia','prestacao de contas',
-  'vinculacao','lei 8029','art 240'
+  'fiscalizacao','regime juridico','competencia','extincao',
+  'reorganizacao','receita','destinacao','gestao','contratacao',
+  'transparencia','prestacao de contas','obrigacao','despesa',
+  'vinculacao','alteracao','lei 8029','art 240'
 ];
 
 // Social amplo sem vinculo com empreendedorismo (PDF criterion 5)
@@ -1699,43 +1567,6 @@ let comissoesData = { permanentes: 0, temporarias: 0 };
 let tendenciaData = [];
 let deputadosCache = {};
 let autoresLoading = false;
-let rfData = null;
-
-const EIXO_TO_SETOR = {
-  'MEI e Simples': ['21','31','11'],
-  'Credito e financiamento': ['21','31'],
-  'Compras publicas': ['21','61','11'],
-  'Inovacao e digital': ['31'],
-  'Educacao empreendedora': ['31'],
-  'Desenvolvimento territorial': ['41','11'],
-  'Inclusao produtiva': ['31','21'],
-  'Ambiente de negocios': ['21','31','11','61'],
-  'Setorial/corporativa': ['31'],
-};
-
-const SETOR_TO_CNAE_PREFIX = {
-  '11': ['C'], '12': ['B'], '13': ['D'], '21': ['G'],
-  '31': ['H','I','J','K','L','M','N','O','P','Q','R','S','T'],
-  '41': ['A'], '61': ['F']
-};
-
-const STATE_TO_REGION = {
-  'Rondônia':'Norte','Acre':'Norte','Amazonas':'Norte','Roraima':'Norte',
-  'Pará':'Norte','Amapá':'Norte','Tocantins':'Norte',
-  'Maranhão':'Nordeste','Piauí':'Nordeste','Ceará':'Nordeste',
-  'Rio Grande do Norte':'Nordeste','Paraíba':'Nordeste','Pernambuco':'Nordeste',
-  'Alagoas':'Nordeste','Sergipe':'Nordeste','Bahia':'Nordeste',
-  'Minas Gerais':'Sudeste','Espírito Santo':'Sudeste','Rio de Janeiro':'Sudeste','São Paulo':'Sudeste',
-  'Paraná':'Sul','Santa Catarina':'Sul','Rio Grande do Sul':'Sul',
-  'Mato Grosso do Sul':'Centro-Oeste','Mato Grosso':'Centro-Oeste','Goiás':'Centro-Oeste','Distrito Federal':'Centro-Oeste'
-};
-
-const MACRO_SETORES = {
-  'Comercio': { label: 'Comercio', keys: ['Comércio'] },
-  'Servicos': { label: 'Servicos', keys: ['Serviço', 'Construção'] },
-  'Industria': { label: 'Industria', keys: ['Industria Transformação', 'Extrativa Mineral', 'SIUP - Serviços Industrias De Utilidade Pública'] },
-  'Agronegocio': { label: 'Agronegocio', keys: ['Agropecuária'] }
-};
 
 // Mapeamento situacao → proximo passo legislativo
 const PROXIMO_PASSO = {
@@ -1778,9 +1609,8 @@ function normalize(text) {
   return text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }
 
-function classifyRelevance(ementa, sigla, indexacao) {
-  const ementaFull = indexacao ? ementa + ' ' + indexacao : ementa;
-  const norm = normalize(ementaFull).replace(/º/g, 'o').replace(/ª/g, 'a');
+function classifyRelevance(ementa, sigla) {
+  const norm = normalize(ementa).replace(/º/g, 'o').replace(/ª/g, 'a');
   const siglaUpper = (sigla || '').toUpperCase().replace(/[^A-Z]/g, '');
 
   // 1. Detect processual/symbolic (PDF: P3 or P4)
@@ -1789,7 +1619,7 @@ function classifyRelevance(ementa, sigla, indexacao) {
 
   if (isProcessual) {
     return {
-      relevancia: 'Nula', prioridade: 'P4', eixo: 'Sem conexao', eixoSecundario: null,
+      relevancia: 'Nula', prioridade: 'P4', eixo: 'Sem conexao',
       impacto: 'Processual ou simbolico', papel: 'Arquivar',
       institucional: 'nao', score: 0,
       matchedPrimary: [], matchedSecondary: [], matchedInstitutional: [],
@@ -1805,34 +1635,22 @@ function classifyRelevance(ementa, sigla, indexacao) {
   let matchedCorporativo = [];
   let allMatched = [];
 
-  const coreSet = new Set();
   for (const kw of KEYWORDS_CORE) {
-    if (matchesKeyword(norm, kw)) { matchedCore.push(kw); allMatched.push(kw); coreSet.add(kw); }
+    if (matchesKeyword(norm, kw)) { matchedCore.push(kw); allMatched.push(kw); }
   }
   for (const kw of KEYWORDS_CORE_SHORT) {
-    if (matchesKeyword(norm, kw)) { matchedCore.push(kw); allMatched.push(kw); coreSet.add(kw); }
+    if (matchesKeyword(norm, kw)) { matchedCore.push(kw); allMatched.push(kw); }
   }
-
-  const hasMpeContext = matchedCore.length > 0 ||
-    ['microempresa','empresa de pequeno porte','pequenos negocios','pequeno negocio','mei','mpe','epp'].some(t => matchesKeyword(norm, t));
 
   for (const def of EIXO_DEFINITIONS) {
     matchedEixoMap[def.eixo] = [];
     for (const kw of (def.keywords || [])) {
-      if (coreSet.has(kw)) continue;
       if (matchesKeyword(norm, kw)) {
         matchedEixoMap[def.eixo].push(kw);
         allMatched.push(kw);
       }
     }
-    for (const kw of (def.broadKeywords || [])) {
-      if (matchesKeyword(norm, kw) && hasMpeContext) {
-        matchedEixoMap[def.eixo].push(kw);
-        allMatched.push(kw);
-      }
-    }
     for (const kw of (def.shortKeywords || [])) {
-      if (coreSet.has(kw)) continue;
       if (matchesKeyword(norm, kw)) {
         matchedEixoMap[def.eixo].push(kw);
         allMatched.push(kw);
@@ -1876,17 +1694,13 @@ function classifyRelevance(ementa, sigla, indexacao) {
 
   allMatched = [...new Set(allMatched)];
 
-  // 3. Eixo — primary by highest match count, secondary if exists (PDF criterion 4)
+  // 3. Eixo — first specific match wins, ordered by specificity (PDF criterion 4)
   let eixo = 'Sem conexao';
-  let eixoSecundario = null;
-  const eixoRanked = EIXO_DEFINITIONS
-    .map(def => ({ eixo: def.eixo, count: matchedEixoMap[def.eixo].length }))
-    .filter(e => e.count > 0)
-    .sort((a, b) => b.count - a.count);
-
-  if (eixoRanked.length > 0) {
-    eixo = eixoRanked[0].eixo;
-    if (eixoRanked.length > 1) eixoSecundario = eixoRanked[1].eixo;
+  for (const def of EIXO_DEFINITIONS) {
+    if (matchedEixoMap[def.eixo].length > 0) {
+      eixo = def.eixo;
+      break;
+    }
   }
   if (matchedCorporativo.length > 0 && matchedCore.length === 0 && eixo === 'Sem conexao') {
     eixo = 'Setorial/corporativa';
@@ -1895,7 +1709,7 @@ function classifyRelevance(ementa, sigla, indexacao) {
   // 4. Institutional filter (PDF criterion 10)
   const institucional = matchedInstitutional.length > 0 ? 'sim' : 'nao';
 
-  // 5. Relevancia (PDF criterion 2) — deduplicated score
+  // 5. Relevancia (PDF criterion 2)
   const totalEixoMatches = Object.values(matchedEixoMap).reduce((s, a) => s + a.length, 0);
   let relevancia;
   if (institucional === 'sim' || matchedCore.length > 0) {
@@ -1962,9 +1776,7 @@ function classifyRelevance(ementa, sigla, indexacao) {
 
   // Grau de impacto Siga Lei (criterion 5A)
   let grauSigaLei;
-  if (impacto === 'Direto Sebrae' && matchedCore.length > 0) {
-    grauSigaLei = 'Muito alto';
-  } else if (impacto === 'Direto MPE/MEI' && relevancia === 'Central') {
+  if (impacto === 'Direto MPE/MEI' && (relevancia === 'Central' || institucional === 'sim')) {
     grauSigaLei = 'Muito alto';
   } else if (impacto === 'Direto MPE/MEI' || impacto === 'Direto Sebrae') {
     grauSigaLei = 'Alto';
@@ -1980,7 +1792,7 @@ function classifyRelevance(ementa, sigla, indexacao) {
   const posicionamento = 'Neutro / em analise';
 
   return {
-    relevancia, prioridade, eixo, eixoSecundario, impacto, papel, institucional, score,
+    relevancia, prioridade, eixo, impacto, papel, institucional, score,
     grauSigaLei, posicionamento,
     matchedPrimary: matchedCore,
     matchedSecondary: Object.values(matchedEixoMap).flat(),
@@ -2038,7 +1850,6 @@ async function fetchCamara(dateStart, dateEnd) {
           numero: prop.numero,
           ano: prop.ano,
           ementa: prop.ementa || '',
-          indexacao: prop.keywords || '',
           casa: 'Camara',
           uri: prop.uri,
           siglaTipo: prop.siglaTipo,
@@ -2445,7 +2256,7 @@ async function fetchData() {
       const isProposicao = TIPOS_PROPOSICAO.includes(siglaUpper);
 
       if (isProposicao) {
-        const classification = classifyRelevance(prop.ementa, prop.siglaTipo, prop.indexacao || '');
+        const classification = classifyRelevance(prop.ementa, prop.siglaTipo);
         allPropositions.push({
           ...prop,
           ...classification,
@@ -2634,7 +2445,7 @@ function applyFilters() {
     if (activeFilters.prioridade.length && !activeFilters.prioridade.includes(prop.prioridade)) return false;
     if (activeFilters.relevancia.length && !activeFilters.relevancia.includes(prop.relevancia)) return false;
     if (activeFilters.casa.length && !activeFilters.casa.includes(prop.casa)) return false;
-    if (activeFilters.eixo.length && !activeFilters.eixo.includes(prop.eixo) && !(prop.eixoSecundario && activeFilters.eixo.includes(prop.eixoSecundario))) return false;
+    if (activeFilters.eixo.length && !activeFilters.eixo.includes(prop.eixo)) return false;
     if (activeFilters.impacto.length && !activeFilters.impacto.includes(prop.impacto)) return false;
     if (activeFilters.papel.length && !activeFilters.papel.includes(prop.papel)) return false;
     if (activeFilters.institucional.length && !activeFilters.institucional.includes(prop.institucional)) return false;
@@ -2734,9 +2545,8 @@ function renderPropCard(prop) {
           <div class="prop-tags">
             <span class="prop-tag prop-tag-relevancia">${prop.relevancia}</span>
             <span class="prop-tag prop-tag-eixo">${prop.eixo}</span>
-            ${prop.eixoSecundario ? `<span class="prop-tag prop-tag-eixo" style="opacity:0.7">${prop.eixoSecundario}</span>` : ''}
-            <span class="prop-tag" style="background:${prop.grauSigaLei === 'Muito alto' || prop.grauSigaLei === 'Alto' ? 'rgba(255,77,106,0.15);color:var(--p0)' : prop.grauSigaLei === 'Medio' ? 'rgba(255,197,66,0.15);color:var(--p2)' : 'rgba(139,143,168,0.15);color:var(--p4)'}">${prop.grauSigaLei}</span>
-            ${(prop.prioridade === 'P0' || prop.prioridade === 'P1' || prop.prioridade === 'P2') ? `<span class="prop-tag" style="background:rgba(79,141,255,0.15);color:var(--accent)">${prop.posicionamento}</span>` : ''}
+            <span class="prop-tag" style="background:${prop.grauSigaLei === 'Muito alto' || prop.grauSigaLei === 'Alto' ? 'rgba(255,77,106,0.15);color:#ff4d6a' : prop.grauSigaLei === 'Medio' ? 'rgba(255,197,66,0.15);color:#ffc542' : 'rgba(139,143,168,0.15);color:#8b8fa8'}">${prop.grauSigaLei}</span>
+            ${(prop.prioridade === 'P0' || prop.prioridade === 'P1') ? `<span class="prop-tag" style="background:rgba(79,141,255,0.15);color:var(--accent)">${prop.posicionamento}</span>` : ''}
             ${keywords}
           </div>
         </div>
@@ -2783,8 +2593,6 @@ function renderPropCard(prop) {
           <button class="btn-action" onclick="event.stopPropagation(); generateMinuta('${prop.id}')">&#128221; Gerar Minuta Tecnica</button>
           ${prop.url ? `<a href="${prop.url}" target="_blank" rel="noopener" class="btn-action" onclick="event.stopPropagation()" style="text-decoration:none">&#128279; Acessar Materia</a>` : ''}
         </div>
-
-        ${buildMeritoSection(prop)}
 
         <div class="classification-editor">
           <div class="class-title">Classificacao — 10 Criterios Sebrae</div>
@@ -2922,7 +2730,6 @@ function renderPropCard(prop) {
             </div>
           </div>
           ${(prop.prioridade === 'P0' || prop.prioridade === 'P1') ? '<div style="margin:8px 0;padding:8px 12px;background:rgba(255,197,66,0.1);border-left:3px solid var(--p2);border-radius:4px;font-size:12px;color:var(--p2)">&#9888; Classificacao P0/P1 requer validacao humana antes de decisao institucional</div>' : ''}
-          ${prop.eixoSecundario ? `<div style="margin:8px 0;padding:8px 12px;background:rgba(79,141,255,0.08);border-left:3px solid var(--accent);border-radius:4px;font-size:12px;color:var(--accent)">Eixo secundario: ${prop.eixoSecundario}</div>` : ''}
           <button class="btn btn-save-class" onclick="saveClassification('${prop.id}')">Salvar Classificacao</button>
         </div>
       </div>
@@ -2992,8 +2799,13 @@ function updateCharts() {
     casaCounts[p.casa] = (casaCounts[p.casa] || 0) + 1;
   });
 
-  Chart.defaults.color = chartTextColor();
-  Chart.defaults.font.family = "'Figtree', sans-serif";
+  const chartDefaults = {
+    color: '#8b8fa8',
+    font: { family: "'Segoe UI', sans-serif" }
+  };
+
+  Chart.defaults.color = chartDefaults.color;
+  Chart.defaults.font.family = chartDefaults.font.family;
 
   // Priority chart
   if (chartPrioridade) chartPrioridade.destroy();
@@ -3003,8 +2815,8 @@ function updateCharts() {
       labels: ['P0 Critica', 'P1 Alta', 'P2 Media', 'P3 Baixa', 'P4 Arquivar'],
       datasets: [{
         data: [prioCounts.P0, prioCounts.P1, prioCounts.P2, prioCounts.P3, prioCounts.P4],
-        backgroundColor: [cssVar('--p0')||'#ff4d6a', cssVar('--p1')||'#ff8c42', cssVar('--p2')||'#ffc542', cssVar('--p3')||'#4ecdc4', cssVar('--p4')||'#8b8fa8'],
-        borderColor: chartSurfaceColor(),
+        backgroundColor: ['#ff4d6a', '#ff8c42', '#ffc542', '#4ecdc4', '#8b8fa8'],
+        borderColor: '#1a1d27',
         borderWidth: 2
       }]
     },
@@ -3042,7 +2854,7 @@ function updateCharts() {
       indexAxis: 'y',
       plugins: { legend: { display: false } },
       scales: {
-        x: { grid: { color: chartGridColor() }, ticks: { font: { size: 11 } } },
+        x: { grid: { color: '#2e3348' }, ticks: { font: { size: 11 } } },
         y: { grid: { display: false }, ticks: { font: { size: 11 } } }
       }
     }
@@ -3056,8 +2868,8 @@ function updateCharts() {
       labels: ['Camara dos Deputados', 'Senado Federal'],
       datasets: [{
         data: [casaCounts.Camara, casaCounts.Senado],
-        backgroundColor: [cssVar('--camara')||'#4f8cff', cssVar('--senado')||'#a855f7'],
-        borderColor: chartSurfaceColor(),
+        backgroundColor: ['#4f8cff', '#a855f7'],
+        borderColor: '#1a1d27',
         borderWidth: 2
       }]
     },
@@ -3086,12 +2898,12 @@ function updateCharts() {
         datasets: [{
           label: 'Relevantes Sebrae',
           data: trendValues,
-          borderColor: cssVar('--success')||'#22c55e',
-          backgroundColor: (cssVar('--success')||'#22c55e')+'26',
+          borderColor: '#22c55e',
+          backgroundColor: 'rgba(34, 197, 94, 0.15)',
           fill: true,
           tension: 0.3,
-          pointBackgroundColor: cssVar('--success')||'#22c55e',
-          pointBorderColor: chartSurfaceColor(),
+          pointBackgroundColor: '#22c55e',
+          pointBorderColor: '#1a1d27',
           pointBorderWidth: 2,
           pointRadius: 5,
           pointHoverRadius: 7
@@ -3105,11 +2917,11 @@ function updateCharts() {
         },
         scales: {
           x: {
-            grid: { color: chartGridColor() },
+            grid: { color: '#2e3348' },
             ticks: { font: { size: 11 } }
           },
           y: {
-            grid: { color: chartGridColor() },
+            grid: { color: '#2e3348' },
             ticks: { font: { size: 11 }, stepSize: 1 },
             beginAtZero: true
           }
@@ -3131,7 +2943,7 @@ function updateCharts() {
       datasets: [{
         data: [comissoesData.permanentes, comissoesData.temporarias],
         backgroundColor: ['#f59e0b', '#6366f1'],
-        borderColor: chartSurfaceColor(),
+        borderColor: '#1a1d27',
         borderWidth: 2
       }]
     },
@@ -3143,7 +2955,7 @@ function updateCharts() {
         title: {
           display: true,
           text: `Total: ${totalComissoes}`,
-          color: chartTextColor(),
+          color: '#8b8fa8',
           font: { size: 12 }
         }
       }
@@ -3166,12 +2978,12 @@ function updateCharts() {
         datasets: [{
           label: 'Total de movimentacoes',
           data: movValues,
-          borderColor: cssVar('--camara')||'#4f8cff',
-          backgroundColor: (cssVar('--camara')||'#4f8cff')+'26',
+          borderColor: '#4f8cff',
+          backgroundColor: 'rgba(79, 140, 255, 0.15)',
           fill: true,
           tension: 0.3,
-          pointBackgroundColor: cssVar('--camara')||'#4f8cff',
-          pointBorderColor: chartSurfaceColor(),
+          pointBackgroundColor: '#4f8cff',
+          pointBorderColor: '#1a1d27',
           pointBorderWidth: 2,
           pointRadius: 5,
           pointHoverRadius: 7
@@ -3185,11 +2997,11 @@ function updateCharts() {
         },
         scales: {
           x: {
-            grid: { color: chartGridColor() },
+            grid: { color: '#2e3348' },
             ticks: { font: { size: 11 } }
           },
           y: {
-            grid: { color: chartGridColor() },
+            grid: { color: '#2e3348' },
             ticks: { font: { size: 11 }, stepSize: 1 },
             beginAtZero: true
           }
@@ -3205,27 +3017,23 @@ function exportWhatsApp() {
   const dateEnd = document.getElementById('dateInputFim').value;
   if (!allPropositions.length) { alert('Consulte os dados primeiro.'); return; }
 
-  const hasActiveFilter = Object.values(activeFilters).some(f => f.length > 0) ||
-    (document.getElementById('searchInput') && document.getElementById('searchInput').value.trim().length > 0);
-  const source = hasActiveFilter ? filteredPropositions : allPropositions;
-
   const dateObjStart = new Date(dateStart + 'T12:00:00');
   const dateObjEnd = new Date(dateEnd + 'T12:00:00');
   const dateStrStart = dateObjStart.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
   const dateStrEnd = dateObjEnd.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
   const dateStr = dateStart === dateEnd ? dateStrStart : `${dateStrStart} a ${dateStrEnd}`;
 
-  const camaraTotal = source.filter(p => p.casa === 'Camara').length;
-  const senadoTotal = source.filter(p => p.casa === 'Senado').length;
-  const relevantes = source.filter(p => p.score > 0).length;
-  const p0 = source.filter(p => p.prioridade === 'P0');
-  const p1 = source.filter(p => p.prioridade === 'P1');
+  const camaraTotal = allPropositions.filter(p => p.casa === 'Camara').length;
+  const senadoTotal = allPropositions.filter(p => p.casa === 'Senado').length;
+  const relevantes = allPropositions.filter(p => p.score > 0).length;
+  const p0 = allPropositions.filter(p => p.prioridade === 'P0');
+  const p1 = allPropositions.filter(p => p.prioridade === 'P1');
   const p0p1 = [...p0, ...p1];
-  const p2 = source.filter(p => p.prioridade === 'P2');
-  const p3p4 = source.filter(p => p.prioridade === 'P3' || p.prioridade === 'P4');
+  const p2 = allPropositions.filter(p => p.prioridade === 'P2');
+  const p3p4 = allPropositions.filter(p => p.prioridade === 'P3' || p.prioridade === 'P4');
 
   const eixos = {};
-  source.filter(p => p.score > 0).forEach(p => { eixos[p.eixo] = (eixos[p.eixo] || 0) + 1; });
+  allPropositions.filter(p => p.score > 0).forEach(p => { eixos[p.eixo] = (eixos[p.eixo] || 0) + 1; });
   const eixosOrdenados = Object.entries(eixos).sort((a,b) => b[1] - a[1]);
 
   const casas = [];
@@ -3235,15 +3043,14 @@ function exportWhatsApp() {
   let text = `*PIPPA — Plataforma de Inteligência em Políticas Públicas Aplicadas*\n`;
   text += `*Monitor Legislativo*\n`;
   text += `${dateStr}\n`;
-  if (hasActiveFilter) text += `(Exportação filtrada — ${source.length} de ${allPropositions.length} proposições)\n`;
-  text += `${source.length} proposições analisadas · ${allAcessorios.length} documentos acessórios (excluídos) · ${relevantes} relevantes para o Sebrae\n\n`;
+  text += `${allPropositions.length} proposições analisadas · ${allAcessorios.length} documentos acessórios (excluídos) · ${relevantes} relevantes para o Sebrae\n\n`;
 
   // Painel estrategico
   text += `*Painel Estratégico*\n\n`;
   const partidoCount = {};
-  source.forEach(p => { if (p.partido) partidoCount[p.partido] = (partidoCount[p.partido] || 0) + 1; });
+  allPropositions.forEach(p => { if (p.partido) partidoCount[p.partido] = (partidoCount[p.partido] || 0) + 1; });
   const topPartido = Object.entries(partidoCount).sort((a, b) => b[1] - a[1])[0];
-  const grauAlto = source.filter(p => p.grauSigaLei === 'Muito alto' || p.grauSigaLei === 'Alto').length;
+  const grauAlto = allPropositions.filter(p => p.grauSigaLei === 'Muito alto' || p.grauSigaLei === 'Alto').length;
   text += `• Câmara: ${camaraTotal} · Senado: ${senadoTotal}\n`;
   text += `• P0+P1: ${p0p1.length} · P2: ${p2.length} · P3/P4: ${p3p4.length}\n`;
   text += `• Impacto Alto+: ${grauAlto} proposições\n`;
@@ -3266,7 +3073,7 @@ function exportWhatsApp() {
       text += `_Ementa:_ ${p.ementa.substring(0, 180).trim()}${p.ementa.length > 180 ? '...' : ''}\n`;
       if (p.autor) text += `_Autor(a):_ ${p.autor}${p.partido ? ' (' + p.partido + (p.uf ? '/' + p.uf : '') + ')' : ''}\n`;
       text += `_Prioridade:_ ${p.prioridade} | _Grau (Siga Lei):_ ${p.grauSigaLei}\n`;
-      text += `_Eixo:_ ${p.eixo}${p.eixoSecundario ? ' / ' + p.eixoSecundario : ''} | _Impacto:_ ${p.impacto}\n`;
+      text += `_Eixo:_ ${p.eixo} | _Impacto:_ ${p.impacto}\n`;
       text += `_Posicionamento Sebrae:_ ${p.posicionamento}\n`;
     }
     if (p0p1.length > 3) text += `\nOutras ${p0p1.length - 3} proposições prioritárias também foram registradas. `;
@@ -3313,7 +3120,7 @@ function exportWhatsApp() {
   if (p3p4.length > 0) {
     pontos.push(`${p3p4.length} proposições de baixa prioridade (P3/P4) identificadas, não detalhadas`);
   }
-  const instit = source.filter(p => p.institucional === 'sim');
+  const instit = allPropositions.filter(p => p.institucional === 'sim');
   if (instit.length > 0) {
     pontos.push(`${instit.length} proposição(ões) com menção institucional direta ao Sebrae ou sistema S`);
   }
@@ -3352,7 +3159,26 @@ function exportWhatsApp() {
   }
   text += `\nConteúdo gerado por Inteligência Artificial (IA)`;
 
-  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+  document.getElementById('exportContent').textContent = text;
+  document.getElementById('exportModal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('exportModal').classList.remove('active');
+}
+
+function copyExport() {
+  const text = document.getElementById('exportContent').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Copiado para a area de transferencia!');
+  }).catch(() => {
+    const range = document.createRange();
+    range.selectNode(document.getElementById('exportContent'));
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    showToast('Copiado!');
+  });
 }
 
 function showToast(msg) {
@@ -3555,141 +3381,13 @@ function copyMinuta() {
   });
 }
 
-// RF data loading
-async function loadRfData() {
-  try {
-    const resp = await fetch('data/rf_empresas.json');
-    if (resp.ok) {
-      rfData = await resp.json();
-      console.log('RF data loaded:', rfData._meta?.gerado_em);
-    }
-  } catch (e) {
-    console.warn('RF data not available:', e.message);
-  }
-}
-
-function formatNum(n) {
-  if (n >= 1e6) return (n / 1e6).toFixed(1).replace('.', ',') + 'M';
-  if (n >= 1e3) return (n / 1e3).toFixed(1).replace('.', ',') + 'K';
-  return Math.round(n).toLocaleString('pt-BR');
-}
-
-function buildMeritoSection(prop) {
-  if (!rfData || !rfData.resumo) return '';
-  if (prop.prioridade !== 'P0' && prop.prioridade !== 'P1') return '';
-  if (prop.eixo === 'Sem conexao') return '';
-
-  const resumo = rfData.resumo;
-  const setores = rfData.setores || {};
-  const estados = rfData.estados || {};
-  const divisoes = rfData.divisoes || [];
-
-  const totalMPE = (resumo.por_porte['Micro Empresário Individual (MEI)'] || 0)
-    + (resumo.por_porte['Microempresa (ME)'] || 0)
-    + (resumo.por_porte['Empresa de Pequeno Porte (EPP)'] || 0);
-
-  const setorIds = EIXO_TO_SETOR[prop.eixo] || [];
-  let setorPrincipal = '';
-  let setorTotal = 0;
-  for (const sid of setorIds) {
-    if (setores[sid]) {
-      if (!setorPrincipal) setorPrincipal = setores[sid].nome;
-      setorTotal += setores[sid].total || 0;
-    }
-  }
-  const impactoPercent = setorTotal > 0 ? ((setorTotal / resumo.total_empresas) * 100).toFixed(1) : '0';
-
-  // Macro setores
-  const porSetor = resumo.por_setor || {};
-  const macroTotals = {};
-  for (const [key, cfg] of Object.entries(MACRO_SETORES)) {
-    macroTotals[key] = cfg.keys.reduce((sum, k) => sum + (porSetor[k] || 0), 0);
-  }
-
-  // CNAEs afetados pelo eixo
-  const cnaePrefixes = new Set();
-  for (const sid of setorIds) {
-    (SETOR_TO_CNAE_PREFIX[sid] || []).forEach(p => cnaePrefixes.add(p));
-  }
-  const cnaesAfetados = divisoes
-    .filter(d => cnaePrefixes.has(d.id.charAt(0)))
-    .sort((a, b) => b.total - a.total)
-    .slice(0, 5);
-
-  // Regioes
-  const regiaoTotals = { 'Norte': 0, 'Nordeste': 0, 'Sudeste': 0, 'Sul': 0, 'Centro-Oeste': 0 };
-  for (const [estado, data] of Object.entries(estados)) {
-    const regiao = STATE_TO_REGION[estado];
-    if (regiao) regiaoTotals[regiao] += data.total || 0;
-  }
-  const regiaoOrder = Object.entries(regiaoTotals).sort((a, b) => b[1] - a[1]);
-
-  let html = `<div class="merito-section">
-    <div class="merito-title">&#128202; Merito Economico — Analise Detalhada (${escapeHtml(prop.prioridade)})</div>
-    <div class="merito-grid">
-      <div class="merito-stat">
-        <div class="merito-stat-value">${formatNum(totalMPE)}</div>
-        <div class="merito-stat-label">MPEs Ativas Brasil</div>
-      </div>
-      <div class="merito-stat">
-        <div class="merito-stat-value" style="color:var(--accent)">${formatNum(setorTotal)}</div>
-        <div class="merito-stat-label">${escapeHtml(setorPrincipal || 'Transversal')}</div>
-      </div>
-      <div class="merito-stat">
-        <div class="merito-stat-value">${impactoPercent}%</div>
-        <div class="merito-stat-label">do Total Nacional</div>
-      </div>
-    </div>`;
-
-  // Setores
-  html += `<div class="merito-subtitle">Impacto por Setor</div>
-    <div class="merito-bar-row">`;
-  const setorColors = { 'Comercio': '#4f8cff', 'Servicos': '#a855f7', 'Industria': '#ff8c42', 'Agronegocio': '#22c55e' };
-  for (const [key, cfg] of Object.entries(MACRO_SETORES)) {
-    html += `<div class="merito-bar-item">
-      <div class="merito-bar-value" style="color:${setorColors[key]}">${formatNum(macroTotals[key])}</div>
-      <div class="merito-bar-label">${cfg.label}</div>
-    </div>`;
-  }
-  html += `</div>`;
-
-  // CNAEs
-  if (cnaesAfetados.length > 0) {
-    html += `<div class="merito-subtitle">Principais CNAEs Afetados (Eixo: ${escapeHtml(prop.eixo)})</div>
-      <div class="merito-cnae-list">`;
-    for (const cnae of cnaesAfetados) {
-      const nome = cnae.nome.length > 50 ? cnae.nome.substring(0, 50) + '...' : cnae.nome;
-      html += `<div class="merito-cnae-item">
-        <span class="merito-cnae-id">${escapeHtml(cnae.id)}</span>
-        <span class="merito-cnae-nome">${escapeHtml(nome)}</span>
-        <span class="merito-cnae-total">${formatNum(cnae.total)} empresas</span>
-      </div>`;
-    }
-    html += `</div>`;
-  }
-
-  // Regioes
-  html += `<div class="merito-subtitle">Volume de Empresas por Regiao</div>
-    <div class="merito-bar-row">`;
-  const regiaoColors = { 'Sudeste': '#4f8cff', 'Nordeste': '#ff8c42', 'Sul': '#22c55e', 'Centro-Oeste': '#a855f7', 'Norte': '#ffc542' };
-  for (const [regiao, total] of regiaoOrder) {
-    html += `<div class="merito-bar-item">
-      <div class="merito-bar-value" style="color:${regiaoColors[regiao] || 'var(--text-muted)'}">${formatNum(total)}</div>
-      <div class="merito-bar-label">${regiao}</div>
-    </div>`;
-  }
-  html += `</div>`;
-
-  html += `<div class="merito-note">Fonte: Receita Federal via Observatorio Sebrae (${rfData._meta?.gerado_em?.split('T')[0] || 'snapshot'}). Analise restrita a proposicoes ${escapeHtml(prop.prioridade)}.</div>`;
-  html += `</div>`;
-  return html;
-}
 
 // Close modals on backdrop click
 document.addEventListener('click', (e) => {
   if (e.target.id === 'methodologyModal') closeMethodologyModal();
   if (e.target.id === 'tramitacaoModal') closeTramitacaoModal();
   if (e.target.id === 'minutaModal') closeMinutaModal();
+  if (e.target.id === 'exportModal') closeModal();
 });
 
 // Close modals on Escape
@@ -3698,16 +3396,15 @@ document.addEventListener('keydown', (e) => {
     closeMethodologyModal();
     closeTramitacaoModal();
     closeMinutaModal();
+    closeModal();
   }
 });
 
 // Initialize
 window.addEventListener('DOMContentLoaded', () => {
   updateCharts();
-  loadRfData();
 });
 </script>
 
-<script>function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n);Chart.defaults.color=chartTextColor();if(typeof updateCharts==='function')updateCharts()}</script>
 </body>
 </html>
