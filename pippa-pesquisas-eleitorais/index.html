@@ -475,10 +475,10 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
       </div>
       <div class="landing-election-card" onclick="showView('resultados')">
         <div class="le-label">2&ordm; Turno</div>
-        <div class="le-value accent" id="landingDias2t">-</div>
+        <div class="le-value" style="color:var(--success)">Encerrado</div>
         <div class="le-sub">25/10/2026</div>
-        <span class="le-badge le-badge-soon" id="landingBadge2t">Em breve</span>
-        <div class="le-tooltip">Acesse a aba <a href="#" onclick="event.preventDefault();showView('resultados')">Resultados Oficiais do TSE</a> para acompanhar os candidatos ao 2&ordm; turno e resultados em tempo real.</div>
+        <span class="le-badge le-badge-done">Realizado</span>
+        <div class="le-tooltip">Acesse a aba <a href="#" onclick="event.preventDefault();showView('resultados')">Resultados Oficiais do TSE</a> para ver os resultados do 2&ordm; turno — presidente e governadores.</div>
       </div>
     </div>
 
@@ -579,7 +579,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
       <div style="margin-top:12px;padding:12px;background:var(--surface2);border-radius:var(--radius);font-size:12px;color:var(--text-muted);line-height:1.5">
         <strong style="color:var(--text)">Fonte de dados</strong><br>
         ElectioLab API + TSE PesqEle<br>
-        <span id="dataInfo">656 pesquisas + 146 cenários 2T — atualizado 26/10/2026 13:25</span>
+        <span id="dataInfo">656 pesquisas + 146 cenários 2T — atualizado 26/10/2026 16:09</span>
       </div>
     </aside>
 
@@ -607,10 +607,10 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
           </div>
           <div class="kpi-card kpi-card-election">
             <div class="kpi-label">2&ordm; Turno</div>
-            <div class="kpi-value accent" id="kpiDias">-</div>
+            <div class="kpi-value" style="color:var(--success);font-size:20px">Encerrado</div>
             <div class="kpi-sub">25/10/2026</div>
-            <span id="kpiBadge2t" class="kpi-badge-soon">Em breve</span>
-            <div class="election-tooltip">Acesse a aba <a href="#" onclick="event.preventDefault();showView('resultados')">Resultados do TSE</a> para acompanhar os candidatos ao 2&ordm; turno e os resultados em tempo real.</div>
+            <span class="kpi-badge-done">Realizado</span>
+            <div class="election-tooltip">Acesse a aba <a href="#" onclick="event.preventDefault();showView('resultados')">Resultados do TSE</a> para ver os resultados do 2&ordm; turno — presidente e governadores.</div>
           </div>
         </div>
 
@@ -827,14 +827,20 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
   </header>
 
   <div class="res-main">
-    <div class="res-tabs">
-      <div class="res-tab active" onclick="switchResTab('brasil',this)">Brasil</div>
-      <div class="res-tab" onclick="switchResTab('estado',this)">Por Estado</div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px">
+      <div class="res-tabs" style="margin-bottom:0">
+        <div class="res-tab active" onclick="switchResTab('brasil',this)">Brasil</div>
+        <div class="res-tab" onclick="switchResTab('estado',this)">Por Estado</div>
+      </div>
+      <div class="res-tabs" id="resTurnoTabs" style="margin-bottom:0">
+        <div class="res-tab" data-turno="1" onclick="switchResTurno(1,this)">1&ordm; Turno</div>
+        <div class="res-tab active" data-turno="2" onclick="switchResTurno(2,this)">2&ordm; Turno</div>
+      </div>
     </div>
 
     <!-- Brasil Tab -->
     <div class="res-content active" id="res-brasil">
-      <h2 style="font-size:18px;font-weight:700;margin-bottom:16px">Presidente da Republica</h2>
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:16px" id="resBrasilTitle">Presidente da Republica — 2&ordm; Turno</h2>
       <div class="res-totalization" id="resTotalBrasil"></div>
       <div class="res-timestamp" id="resTimeBrasil"></div>
       <div class="res-candidate-list" id="resCandBrasil">
@@ -993,7 +999,15 @@ var tseCache = {};
 var currentResTab = 'brasil';
 var currentResUf = '';
 var currentResCargo = '1';
+var currentResTurno = 2;
 var tseDataLoaded = false;
+
+var TSE_TURNO_IDS = {
+  1: { federal: 6257, estadual: 6259 },
+  2: { federal: 6258, estadual: 6260 }
+};
+
+var ESTADOS_2T = ['AC','AM','DF','ES','RN','TO'];
 
 var TSE_CARGO_LABELS = {
   '1': 'Presidente',
@@ -1231,11 +1245,41 @@ async function loadTSEData() {
   btn.disabled = false;
 }
 
+function switchResTurno(turno, el) {
+  currentResTurno = turno;
+  tseCache = {};
+  document.querySelectorAll('#resTurnoTabs .res-tab').forEach(function(t) { t.classList.remove('active'); });
+  if (el) el.classList.add('active');
+
+  var cargoTabs = document.querySelectorAll('#resCargoTabs .res-cargo-tab');
+  if (turno === 2) {
+    cargoTabs.forEach(function(t) {
+      var c = t.dataset.cargoRes;
+      if (c === '5' || c === '6' || c === '7' || c === '8') t.style.display = 'none';
+      else t.style.display = '';
+    });
+    if (['5','6','7','8'].indexOf(currentResCargo) >= 0) {
+      currentResCargo = '3';
+      cargoTabs.forEach(function(t) { t.classList.remove('active'); });
+      var govTab = document.querySelector('#resCargoTabs [data-cargo-res="3"]');
+      if (govTab) govTab.classList.add('active');
+    }
+  } else {
+    cargoTabs.forEach(function(t) { t.style.display = ''; });
+  }
+
+  var titleEl = document.getElementById('resBrasilTitle');
+  if (titleEl) titleEl.innerHTML = 'Presidente da Republica &mdash; ' + turno + '&ordm; Turno';
+
+  if (tseDataLoaded) loadTSEData();
+}
+
 async function loadBrasilResults() {
   var listEl = document.getElementById('resCandBrasil');
-  listEl.innerHTML = '<div class="res-loading"><div class="spinner"></div><p>Carregando resultados do TSE...</p></div>';
+  listEl.innerHTML = '<div class="res-loading"><div class="spinner"></div><p>Carregando resultados do TSE (' + currentResTurno + 'o turno)...</p></div>';
+  var eleicao = TSE_TURNO_IDS[currentResTurno].federal;
   try {
-    var data = await fetchTSE(6257, 'br', 1);
+    var data = await fetchTSE(eleicao, 'br', 1);
     var tot = parseTSETotalization(data);
     renderTotalization('resTotalBrasil', tot);
     document.getElementById('resTimeBrasil').textContent = 'Atualizado em ' + tot.dataGeracao + ' as ' + tot.horaGeracao;
@@ -1244,16 +1288,33 @@ async function loadBrasilResults() {
   } catch (e) {
     document.getElementById('resTotalBrasil').innerHTML = '';
     document.getElementById('resTimeBrasil').textContent = '';
-    listEl.innerHTML = '<div class="res-error"><p style="font-size:18px;margin-bottom:8px">&#128466;</p><p>Dados ainda nao disponiveis para Presidente.</p><p style="font-size:12px;margin-top:8px">A API do TSE so disponibiliza resultados a partir do dia da eleicao.</p></div>';
+    listEl.innerHTML = '<div class="res-error"><p style="font-size:18px;margin-bottom:8px">&#128466;</p><p>Dados ainda nao disponiveis para Presidente (' + currentResTurno + 'o turno).</p><p style="font-size:12px;margin-top:8px">A API do TSE so disponibiliza resultados a partir do dia da eleicao.</p></div>';
   }
 }
 
 async function loadEstadoResults() {
   if (!currentResUf) return;
   var listEl = document.getElementById('resCandEstado');
-  listEl.innerHTML = '<div class="res-loading"><div class="spinner"></div><p>Carregando resultados para ' + currentResUf + '...</p></div>';
   var cargo = parseInt(currentResCargo);
-  var eleicao = (cargo === 1) ? 6257 : 6259;
+  var ids = TSE_TURNO_IDS[currentResTurno];
+
+  if (currentResTurno === 2 && cargo === 3 && ESTADOS_2T.indexOf(currentResUf) < 0) {
+    document.getElementById('resTotalEstado').innerHTML = '';
+    document.getElementById('resTimeEstado').textContent = '';
+    listEl.innerHTML = '<div class="res-error"><p style="font-size:18px;margin-bottom:8px">&#9989;</p><p>Governador de ' + currentResUf + ' foi eleito no 1o turno.</p><p style="font-size:12px;margin-top:8px">Nao houve 2o turno para este estado. Selecione "1o Turno" para ver o resultado.</p></div>';
+    return;
+  }
+
+  if (currentResTurno === 2 && cargo !== 1 && cargo !== 3) {
+    document.getElementById('resTotalEstado').innerHTML = '';
+    document.getElementById('resTimeEstado').textContent = '';
+    var cargoLabel = TSE_CARGO_LABELS[String(cargo)] || 'este cargo';
+    listEl.innerHTML = '<div class="res-error"><p style="font-size:18px;margin-bottom:8px">&#9989;</p><p>' + cargoLabel + ' nao tem 2o turno.</p><p style="font-size:12px;margin-top:8px">Selecione "1o Turno" para ver os resultados.</p></div>';
+    return;
+  }
+
+  listEl.innerHTML = '<div class="res-loading"><div class="spinner"></div><p>Carregando resultados para ' + currentResUf + ' (' + currentResTurno + 'o turno)...</p></div>';
+  var eleicao = (cargo === 1) ? ids.federal : ids.estadual;
   try {
     var data = await fetchTSE(eleicao, currentResUf, cargo);
     var tot = parseTSETotalization(data);
@@ -1265,7 +1326,7 @@ async function loadEstadoResults() {
     document.getElementById('resTotalEstado').innerHTML = '';
     document.getElementById('resTimeEstado').textContent = '';
     var cargoLabel = TSE_CARGO_LABELS[String(cargo)] || 'este cargo';
-    listEl.innerHTML = '<div class="res-error"><p style="font-size:18px;margin-bottom:8px">&#128466;</p><p>Dados ainda nao disponiveis para ' + cargoLabel + ' em ' + currentResUf + '.</p><p style="font-size:12px;margin-top:8px">A API do TSE so disponibiliza resultados a partir do dia da eleicao.</p></div>';
+    listEl.innerHTML = '<div class="res-error"><p style="font-size:18px;margin-bottom:8px">&#128466;</p><p>Dados ainda nao disponiveis para ' + cargoLabel + ' em ' + currentResUf + ' (' + currentResTurno + 'o turno).</p><p style="font-size:12px;margin-top:8px">A API do TSE so disponibiliza resultados a partir do dia da eleicao.</p></div>';
   }
 }
 
