@@ -2239,6 +2239,29 @@ async function fetchSituacaoBatch(propositions) {
     textEl.textContent = `Buscando situacao... ${processed}/${propositions.length}`;
   }
 
+  const SITUACOES_CONCLUIDAS = new Set([
+    'transformada em norma jurídica', 'transformada em norma juridica',
+    'arquivada', 'vetado total', 'rejeitada', 'prejudicada',
+    'retirada pelo autor', 'devolvida ao autor',
+    'declarada prejudicada', 'matéria com a redação final'
+  ]);
+  const SIGLAS_CONCLUIDAS = new Set([
+    'TRANam', 'ARQUIV', 'VETADO'
+  ]);
+
+  const antes = allPropositions.length;
+  allPropositions = allPropositions.filter(prop => {
+    const sitNorm = (prop.situacaoAtual || '').toLowerCase().trim();
+    const siglaSit = (prop.siglaSituacao || '').toUpperCase().trim();
+    if (SITUACOES_CONCLUIDAS.has(sitNorm)) return false;
+    if (SIGLAS_CONCLUIDAS.has(siglaSit)) return false;
+    if (sitNorm.includes('transformada em norma')) return false;
+    if (sitNorm.includes('arquivad')) return false;
+    return true;
+  });
+  const removidas = antes - allPropositions.length;
+  if (removidas > 0) console.log(`Filtradas ${removidas} proposicoes com tramitacao concluida`);
+
   el.classList.remove('active');
   applyFilters();
 }
