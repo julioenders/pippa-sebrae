@@ -4,38 +4,47 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PIPPA Legislativo — Painel de Monitoramento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg: #0f1117;
-      --surface: #1a1d27;
-      --surface2: #242836;
-      --border: #2e3348;
-      --text: #e4e6ef;
-      --text-muted: #8b8fa8;
-      --accent: #4f8cff;
-      --accent-hover: #6ba0ff;
-      --p0: #ff4d6a;
-      --p1: #ff8c42;
-      --p2: #ffc542;
-      --p3: #4ecdc4;
-      --p4: #8b8fa8;
-      --central: #ff4d6a;
-      --alta: #ff8c42;
-      --media: #ffc542;
-      --baixa: #4ecdc4;
-      --nula: #8b8fa8;
-      --camara: #4f8cff;
-      --senado: #a855f7;
-      --success: #22c55e;
-      --radius: 10px;
-      --shadow: 0 2px 12px rgba(0,0,0,0.3);
+      --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;
+      --font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif;
+      --bg:#eff3ee;--surface:#ffffff;--surface2:#f5f7f4;
+      --border:rgba(0,0,0,.1);--border-hover:rgba(42,79,218,.35);
+      --text:#1a1a1a;--text-muted:#6b7280;--text-accent:#2a4fda;
+      --accent:#2a4fda;--accent-hover:#1e3fb8;--accent-light:rgba(42,79,218,.08);
+      --emerald:#61b466;--purple:#be64e3;--blue:#2a4fda;--amber:#f39d72;--cyan:#65b7fb;--red:#e0565d;--pink:#ff80c8;--teal:#61b466;
+      --secondary:#6b7280;--muted:#6b7280;
+      --highlight-bg:rgba(42,79,218,.06);--accent-ring:rgba(42,79,218,.12);
+      --shadow:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 4px 12px rgba(0,0,0,.08);
+      --scrollbar-track:#eff3ee;--scrollbar-thumb:rgba(42,79,218,.2);
+      --radius:12px;
+      --p0:#ff4d6a;--p1:#ff8c42;--p2:#ffc542;--p3:#4ecdc4;--p4:#8b8fa8;
+      --central:#ff4d6a;--alta:#ff8c42;--media:#ffc542;--baixa:#4ecdc4;--nula:#8b8fa8;
+      --camara:#4f8cff;--senado:#a855f7;
+      --success:#22c55e;
+      --chart-grid:rgba(0,0,0,.06);
+    }
+    [data-theme="dark"]{
+      --bg:#080f1e;--surface:#0f1a2e;--surface2:#162038;
+      --border:rgba(255,255,255,.08);--border-hover:rgba(101,183,251,.35);
+      --text:#eff3ee;--text-muted:#8b9dc3;--text-accent:#65b7fb;
+      --accent:#65b7fb;--accent-hover:#90ccfd;--accent-light:rgba(101,183,251,.08);
+      --secondary:#8b9dc3;--muted:#8b9dc3;
+      --highlight-bg:rgba(101,183,251,.08);--accent-ring:rgba(101,183,251,.12);
+      --shadow:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 4px 12px rgba(0,0,0,.4);
+      --scrollbar-track:#080f1e;--scrollbar-thumb:rgba(42,79,218,.3);
+      --chart-grid:rgba(255,255,255,.07);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: var(--font-body);
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -43,25 +52,27 @@
 
     /* Header */
     .header {
-      background: linear-gradient(135deg, #1a1d27 0%, #242836 100%);
+      background: var(--surface);
       border-bottom: 1px solid var(--border);
-      padding: 16px 24px;
+      box-shadow: var(--shadow);
+      padding: 12px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px 16px;
       position: sticky;
       top: 0;
       z-index: 100;
     }
 
-    .header-left { display: flex; align-items: center; gap: 16px; }
+    .header-left { display: flex; align-items: center; gap: 12px; margin-right: auto; }
 
     .logo {
+      font-family: var(--font-heading);
       font-size: 22px;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--accent), #a855f7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+      color: var(--text-accent);
       letter-spacing: -0.5px;
     }
 
@@ -74,8 +85,14 @@
     .header-controls {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
+
+    .header .btn-outline { border:1px solid var(--border); color:var(--text-muted); }
+    .header .btn-outline:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-light); }
+    .header .date-input { background:var(--surface2); border:1px solid var(--border); color:var(--text); }
+    .header .date-input:focus { border-color:var(--accent); }
 
     .date-input {
       background: var(--surface2);
@@ -590,7 +607,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(15,17,23,0.85);
+      background: rgba(0,0,0,0.5);
       z-index: 200;
       align-items: center;
       justify-content: center;
@@ -645,7 +662,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(15,17,23,0.8);
+      background: rgba(0,0,0,0.5);
       z-index: 300;
       align-items: center;
       justify-content: center;
@@ -680,7 +697,7 @@
       line-height: 1.6;
       max-height: 400px;
       overflow-y: auto;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: var(--font-body);
     }
 
     .modal-actions {
@@ -724,10 +741,9 @@
     }
 
     /* Scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:var(--scrollbar-track)}
+    ::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:3px}
 
     .relevance-badge {
       display: inline-block;
@@ -781,7 +797,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(15,17,23,0.85);
+      background: rgba(0,0,0,0.5);
       z-index: 300;
       align-items: flex-start;
       justify-content: center;
@@ -863,9 +879,9 @@
       padding: 2px 8px; border-radius: 4px;
       font-size: 11px; font-weight: 500;
     }
-    .situacao-badge.local { background: rgba(79,141,255,0.12); color: #4f8cff; }
-    .situacao-badge.status { background: rgba(168,85,247,0.12); color: #a855f7; }
-    .situacao-badge.proximo { background: rgba(34,197,94,0.12); color: #22c55e; }
+    .situacao-badge.local { background: rgba(79,141,255,0.12); color: var(--camara); }
+    .situacao-badge.status { background: rgba(168,85,247,0.12); color: var(--senado); }
+    .situacao-badge.proximo { background: rgba(34,197,94,0.12); color: var(--success); }
 
     /* Minuta tecnica */
     .minuta-content {
@@ -878,7 +894,7 @@
       white-space: pre-wrap;
       max-height: 500px;
       overflow-y: auto;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: var(--font-body);
     }
 
     /* Action buttons in prop details */
@@ -926,7 +942,6 @@
       flex-shrink: 0;
     }
 
-
     /* Dynamic filter chips */
     .filter-group-dynamic {
       display: flex;
@@ -935,10 +950,16 @@
       max-height: 200px;
       overflow-y: auto;
     }
-    .pippa-home-btn{display:flex;align-items:center;gap:6px;background:rgba(15,23,42,.85);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
-    .pippa-home-btn:hover{background:rgba(16,185,129,.15);border-color:#10b981;color:#fff;}
+    .pippa-home-btn{display:flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;}
+    .pippa-home-btn:hover{background:var(--accent-light);border-color:var(--accent);color:var(--accent);}
     .pippa-home-btn svg{width:13px;height:13px;}
-  </style>
+  .theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid var(--border);border-radius:8px;cursor:pointer;color:var(--text-muted);transition:all .2s;}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+.theme-toggle svg{width:18px;height:18px;}
+.icon-sun{display:none;}
+[data-theme="dark"] .icon-sun{display:block;}
+[data-theme="dark"] .icon-moon{display:none;}
+</style>
 </head>
 <body>
 
@@ -952,13 +973,14 @@
       <button class="info-btn" onclick="showMethodology()" title="Metodologia de classificacao">&#8505;</button>
     </div>
     <div class="header-controls">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
       <a href="../pippa-portal/index.html" class="pippa-home-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
       <div id="thermometer" class="thermometer thermo-green">Sem dados carregados</div>
       <input type="date" id="dateInputInicio" class="date-input" title="Data inicio">
       <span style="color:var(--text-muted);font-size:13px">a</span>
       <input type="date" id="dateInputFim" class="date-input" title="Data fim">
       <button class="btn" id="btnFetch" onclick="fetchData()">Consultar APIs</button>
-      <button class="btn btn-outline" onclick="exportWhatsApp()">Exportar WhatsApp</button>
+      <button class="btn btn-outline" onclick="exportWhatsApp()">📤 WhatsApp</button>
     </div>
   </header>
 
@@ -1277,18 +1299,6 @@
     <div class="loading-progress" id="loadingProgress"></div>
   </div>
 
-  <!-- Export Modal -->
-  <div class="modal-backdrop" id="exportModal">
-    <div class="modal">
-      <div class="modal-title">Exportar para WhatsApp</div>
-      <div class="modal-content" id="exportContent"></div>
-      <div class="modal-actions">
-        <button class="btn btn-outline" onclick="closeModal()">Fechar</button>
-        <button class="btn" onclick="copyExport()">Copiar</button>
-      </div>
-    </div>
-  </div>
-
   <!-- Methodology Modal -->
   <div class="methodology-backdrop" id="methodologyModal">
     <div class="methodology-modal">
@@ -1303,31 +1313,31 @@
         <thead><tr><th>Nivel</th><th>Nome</th><th>Criterio</th><th>Acao Esperada</th></tr></thead>
         <tbody>
           <tr>
-            <td><span class="p-badge" style="background:rgba(255,77,106,0.2);color:#ff4d6a">P0</span></td>
+            <td><span class="p-badge" style="background:rgba(255,77,106,0.2);color:var(--p0)">P0</span></td>
             <td>Critica</td>
             <td>Filtro institucional ativado — materia menciona governanca, orcamento, contribuicao compulsoria ou regime juridico do Sebrae/Sistema S</td>
             <td>Incidencia ativa imediata</td>
           </tr>
           <tr>
-            <td><span class="p-badge" style="background:rgba(255,140,66,0.2);color:#ff8c42">P1</span></td>
+            <td><span class="p-badge" style="background:rgba(255,140,66,0.2);color:var(--p1)">P1</span></td>
             <td>Alta</td>
             <td>Relevancia Central (mencao direta a MEI, Simples Nacional, LC 123, MPE) ou Alta (2+ palavras-chave de eixos estrategicos)</td>
             <td>Incidencia ativa ou monitoramento estrategico</td>
           </tr>
           <tr>
-            <td><span class="p-badge" style="background:rgba(255,197,66,0.2);color:#ffc542">P2</span></td>
+            <td><span class="p-badge" style="background:rgba(255,197,66,0.2);color:var(--p2)">P2</span></td>
             <td>Media</td>
             <td>Relevancia Media — exatamente 1 palavra-chave de eixo estrategico identificada na ementa</td>
             <td>Subsidio tecnico e monitoramento</td>
           </tr>
           <tr>
-            <td><span class="p-badge" style="background:rgba(78,205,196,0.2);color:#4ecdc4">P3</span></td>
+            <td><span class="p-badge" style="background:rgba(78,205,196,0.2);color:var(--p3)">P3</span></td>
             <td>Baixa</td>
             <td>Relevancia Baixa — temas corporativos ou sociais amplos, sem conexao direta com MPE/empreendedorismo</td>
             <td>Monitoramento passivo</td>
           </tr>
           <tr>
-            <td><span class="p-badge" style="background:rgba(139,143,168,0.2);color:#8b8fa8">P4</span></td>
+            <td><span class="p-badge" style="background:rgba(139,143,168,0.2);color:var(--p4)">P4</span></td>
             <td>Arquivar</td>
             <td>Relevancia Nula — sem palavras-chave identificadas, ou tipo processual/simbolico (REQ, RIC, mocoes, homenagens)</td>
             <td>Fora do escopo — arquivar</td>
@@ -1410,6 +1420,13 @@
 // PIPPA LEGISLATIVO — DASHBOARD ENGINE
 // =====================================================
 
+// Theme-aware chart color helpers
+function chartTextColor(){return getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()||'#6b7280'}
+function chartLabelColor(){return getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#1a1a1a'}
+function chartGridColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim()||'rgba(0,0,0,.06)'}
+function chartSurfaceColor(){return getComputedStyle(document.documentElement).getPropertyValue('--surface').trim()||'#ffffff'}
+function cssVar(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+
 // Word-boundary keyword matching (prevents false positives like "mei" inside "primeiro")
 function matchesKeyword(text, keyword) {
   const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -1435,7 +1452,7 @@ const KEYWORDS_CORE = [
   'contribuicao compulsoria','contribuicoes compulsorias',
   'lei 8029','lei no 8029',
   'servico social autonomo','servicos sociais autonomos',
-  'agenda legislativa 2026','agenda legislativa de 2026'
+  `agenda legislativa ${new Date().getFullYear()}`,`agenda legislativa de ${new Date().getFullYear()}`
 ];
 const KEYWORDS_CORE_SHORT = ['mei','mpe','epp','fampe'];
 
@@ -1472,9 +1489,11 @@ const EIXO_DEFINITIONS = [
     eixo: 'Inovacao e digital',
     keywords: [
       'inovacao empresarial','propriedade intelectual',
-      'inteligencia artificial','transformacao digital','digitalizacao',
       'automacao empresarial','modernizacao produtiva',
       'marco legal das startups','sandbox regulatorio'
+    ],
+    broadKeywords: [
+      'inteligencia artificial','transformacao digital','digitalizacao'
     ],
     shortKeywords: ['startups']
   },
@@ -1510,9 +1529,11 @@ const EIXO_DEFINITIONS = [
       'desburocratizacao','abertura de empresas','licenciamento',
       'obrigacoes acessorias','seguranca juridica','custos regulatorios',
       'reforma tributaria','regime diferenciado','beneficio fiscal',
-      'nota fiscal','registro empresarial','tributacao',
-      'ambiente de negocios','imposto seletivo','aliquota',
-      'empreendedorismo'
+      'nota fiscal','registro empresarial',
+      'ambiente de negocios','imposto seletivo'
+    ],
+    broadKeywords: [
+      'tributacao','aliquota','empreendedorismo'
     ],
     shortKeywords: ['ibs','cbs','cnpj']
   }
@@ -1538,10 +1559,10 @@ const KEYWORDS_INSTITUTIONAL_ENTITIES = [
 ];
 const GOV_CONTEXT_TERMS = [
   'contribuicao','orcamento','governanca','controle','auditoria',
-  'fiscalizacao','regime juridico','competencia','extincao',
-  'reorganizacao','receita','destinacao','gestao','contratacao',
-  'transparencia','prestacao de contas','obrigacao','despesa',
-  'vinculacao','alteracao','lei 8029','art 240'
+  'fiscalizacao','regime juridico','extincao',
+  'reorganizacao','destinacao',
+  'transparencia','prestacao de contas',
+  'vinculacao','lei 8029','art 240'
 ];
 
 // Social amplo sem vinculo com empreendedorismo (PDF criterion 5)
@@ -1567,7 +1588,6 @@ let comissoesData = { permanentes: 0, temporarias: 0 };
 let tendenciaData = [];
 let deputadosCache = {};
 let autoresLoading = false;
-
 // Mapeamento situacao → proximo passo legislativo
 const PROXIMO_PASSO = {
   // Senado (SiglaSituacao)
@@ -1609,8 +1629,9 @@ function normalize(text) {
   return text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }
 
-function classifyRelevance(ementa, sigla) {
-  const norm = normalize(ementa).replace(/º/g, 'o').replace(/ª/g, 'a');
+function classifyRelevance(ementa, sigla, indexacao) {
+  const ementaFull = indexacao ? ementa + ' ' + indexacao : ementa;
+  const norm = normalize(ementaFull).replace(/º/g, 'o').replace(/ª/g, 'a');
   const siglaUpper = (sigla || '').toUpperCase().replace(/[^A-Z]/g, '');
 
   // 1. Detect processual/symbolic (PDF: P3 or P4)
@@ -1619,7 +1640,7 @@ function classifyRelevance(ementa, sigla) {
 
   if (isProcessual) {
     return {
-      relevancia: 'Nula', prioridade: 'P4', eixo: 'Sem conexao',
+      relevancia: 'Nula', prioridade: 'P4', eixo: 'Sem conexao', eixoSecundario: null,
       impacto: 'Processual ou simbolico', papel: 'Arquivar',
       institucional: 'nao', score: 0,
       matchedPrimary: [], matchedSecondary: [], matchedInstitutional: [],
@@ -1635,22 +1656,34 @@ function classifyRelevance(ementa, sigla) {
   let matchedCorporativo = [];
   let allMatched = [];
 
+  const coreSet = new Set();
   for (const kw of KEYWORDS_CORE) {
-    if (matchesKeyword(norm, kw)) { matchedCore.push(kw); allMatched.push(kw); }
+    if (matchesKeyword(norm, kw)) { matchedCore.push(kw); allMatched.push(kw); coreSet.add(kw); }
   }
   for (const kw of KEYWORDS_CORE_SHORT) {
-    if (matchesKeyword(norm, kw)) { matchedCore.push(kw); allMatched.push(kw); }
+    if (matchesKeyword(norm, kw)) { matchedCore.push(kw); allMatched.push(kw); coreSet.add(kw); }
   }
+
+  const hasMpeContext = matchedCore.length > 0 ||
+    ['microempresa','empresa de pequeno porte','pequenos negocios','pequeno negocio','mei','mpe','epp'].some(t => matchesKeyword(norm, t));
 
   for (const def of EIXO_DEFINITIONS) {
     matchedEixoMap[def.eixo] = [];
     for (const kw of (def.keywords || [])) {
+      if (coreSet.has(kw)) continue;
       if (matchesKeyword(norm, kw)) {
         matchedEixoMap[def.eixo].push(kw);
         allMatched.push(kw);
       }
     }
+    for (const kw of (def.broadKeywords || [])) {
+      if (matchesKeyword(norm, kw) && hasMpeContext) {
+        matchedEixoMap[def.eixo].push(kw);
+        allMatched.push(kw);
+      }
+    }
     for (const kw of (def.shortKeywords || [])) {
+      if (coreSet.has(kw)) continue;
       if (matchesKeyword(norm, kw)) {
         matchedEixoMap[def.eixo].push(kw);
         allMatched.push(kw);
@@ -1694,13 +1727,17 @@ function classifyRelevance(ementa, sigla) {
 
   allMatched = [...new Set(allMatched)];
 
-  // 3. Eixo — first specific match wins, ordered by specificity (PDF criterion 4)
+  // 3. Eixo — primary by highest match count, secondary if exists (PDF criterion 4)
   let eixo = 'Sem conexao';
-  for (const def of EIXO_DEFINITIONS) {
-    if (matchedEixoMap[def.eixo].length > 0) {
-      eixo = def.eixo;
-      break;
-    }
+  let eixoSecundario = null;
+  const eixoRanked = EIXO_DEFINITIONS
+    .map(def => ({ eixo: def.eixo, count: matchedEixoMap[def.eixo].length }))
+    .filter(e => e.count > 0)
+    .sort((a, b) => b.count - a.count);
+
+  if (eixoRanked.length > 0) {
+    eixo = eixoRanked[0].eixo;
+    if (eixoRanked.length > 1) eixoSecundario = eixoRanked[1].eixo;
   }
   if (matchedCorporativo.length > 0 && matchedCore.length === 0 && eixo === 'Sem conexao') {
     eixo = 'Setorial/corporativa';
@@ -1709,7 +1746,7 @@ function classifyRelevance(ementa, sigla) {
   // 4. Institutional filter (PDF criterion 10)
   const institucional = matchedInstitutional.length > 0 ? 'sim' : 'nao';
 
-  // 5. Relevancia (PDF criterion 2)
+  // 5. Relevancia (PDF criterion 2) — deduplicated score
   const totalEixoMatches = Object.values(matchedEixoMap).reduce((s, a) => s + a.length, 0);
   let relevancia;
   if (institucional === 'sim' || matchedCore.length > 0) {
@@ -1776,7 +1813,9 @@ function classifyRelevance(ementa, sigla) {
 
   // Grau de impacto Siga Lei (criterion 5A)
   let grauSigaLei;
-  if (impacto === 'Direto MPE/MEI' && (relevancia === 'Central' || institucional === 'sim')) {
+  if (impacto === 'Direto Sebrae' && matchedCore.length > 0) {
+    grauSigaLei = 'Muito alto';
+  } else if (impacto === 'Direto MPE/MEI' && relevancia === 'Central') {
     grauSigaLei = 'Muito alto';
   } else if (impacto === 'Direto MPE/MEI' || impacto === 'Direto Sebrae') {
     grauSigaLei = 'Alto';
@@ -1792,7 +1831,7 @@ function classifyRelevance(ementa, sigla) {
   const posicionamento = 'Neutro / em analise';
 
   return {
-    relevancia, prioridade, eixo, impacto, papel, institucional, score,
+    relevancia, prioridade, eixo, eixoSecundario, impacto, papel, institucional, score,
     grauSigaLei, posicionamento,
     matchedPrimary: matchedCore,
     matchedSecondary: Object.values(matchedEixoMap).flat(),
@@ -1850,6 +1889,7 @@ async function fetchCamara(dateStart, dateEnd) {
           numero: prop.numero,
           ano: prop.ano,
           ementa: prop.ementa || '',
+          indexacao: prop.keywords || '',
           casa: 'Camara',
           uri: prop.uri,
           siglaTipo: prop.siglaTipo,
@@ -2256,7 +2296,7 @@ async function fetchData() {
       const isProposicao = TIPOS_PROPOSICAO.includes(siglaUpper);
 
       if (isProposicao) {
-        const classification = classifyRelevance(prop.ementa, prop.siglaTipo);
+        const classification = classifyRelevance(prop.ementa, prop.siglaTipo, prop.indexacao || '');
         allPropositions.push({
           ...prop,
           ...classification,
@@ -2445,7 +2485,7 @@ function applyFilters() {
     if (activeFilters.prioridade.length && !activeFilters.prioridade.includes(prop.prioridade)) return false;
     if (activeFilters.relevancia.length && !activeFilters.relevancia.includes(prop.relevancia)) return false;
     if (activeFilters.casa.length && !activeFilters.casa.includes(prop.casa)) return false;
-    if (activeFilters.eixo.length && !activeFilters.eixo.includes(prop.eixo)) return false;
+    if (activeFilters.eixo.length && !activeFilters.eixo.includes(prop.eixo) && !(prop.eixoSecundario && activeFilters.eixo.includes(prop.eixoSecundario))) return false;
     if (activeFilters.impacto.length && !activeFilters.impacto.includes(prop.impacto)) return false;
     if (activeFilters.papel.length && !activeFilters.papel.includes(prop.papel)) return false;
     if (activeFilters.institucional.length && !activeFilters.institucional.includes(prop.institucional)) return false;
@@ -2545,8 +2585,9 @@ function renderPropCard(prop) {
           <div class="prop-tags">
             <span class="prop-tag prop-tag-relevancia">${prop.relevancia}</span>
             <span class="prop-tag prop-tag-eixo">${prop.eixo}</span>
-            <span class="prop-tag" style="background:${prop.grauSigaLei === 'Muito alto' || prop.grauSigaLei === 'Alto' ? 'rgba(255,77,106,0.15);color:#ff4d6a' : prop.grauSigaLei === 'Medio' ? 'rgba(255,197,66,0.15);color:#ffc542' : 'rgba(139,143,168,0.15);color:#8b8fa8'}">${prop.grauSigaLei}</span>
-            ${(prop.prioridade === 'P0' || prop.prioridade === 'P1') ? `<span class="prop-tag" style="background:rgba(79,141,255,0.15);color:var(--accent)">${prop.posicionamento}</span>` : ''}
+            ${prop.eixoSecundario ? `<span class="prop-tag prop-tag-eixo" style="opacity:0.7">${prop.eixoSecundario}</span>` : ''}
+            <span class="prop-tag" style="background:${prop.grauSigaLei === 'Muito alto' || prop.grauSigaLei === 'Alto' ? 'rgba(255,77,106,0.15);color:var(--p0)' : prop.grauSigaLei === 'Medio' ? 'rgba(255,197,66,0.15);color:var(--p2)' : 'rgba(139,143,168,0.15);color:var(--p4)'}">${prop.grauSigaLei}</span>
+            ${(prop.prioridade === 'P0' || prop.prioridade === 'P1' || prop.prioridade === 'P2') ? `<span class="prop-tag" style="background:rgba(79,141,255,0.15);color:var(--accent)">${prop.posicionamento}</span>` : ''}
             ${keywords}
           </div>
         </div>
@@ -2730,6 +2771,7 @@ function renderPropCard(prop) {
             </div>
           </div>
           ${(prop.prioridade === 'P0' || prop.prioridade === 'P1') ? '<div style="margin:8px 0;padding:8px 12px;background:rgba(255,197,66,0.1);border-left:3px solid var(--p2);border-radius:4px;font-size:12px;color:var(--p2)">&#9888; Classificacao P0/P1 requer validacao humana antes de decisao institucional</div>' : ''}
+          ${prop.eixoSecundario ? `<div style="margin:8px 0;padding:8px 12px;background:rgba(79,141,255,0.08);border-left:3px solid var(--accent);border-radius:4px;font-size:12px;color:var(--accent)">Eixo secundario: ${prop.eixoSecundario}</div>` : ''}
           <button class="btn btn-save-class" onclick="saveClassification('${prop.id}')">Salvar Classificacao</button>
         </div>
       </div>
@@ -2799,13 +2841,8 @@ function updateCharts() {
     casaCounts[p.casa] = (casaCounts[p.casa] || 0) + 1;
   });
 
-  const chartDefaults = {
-    color: '#8b8fa8',
-    font: { family: "'Segoe UI', sans-serif" }
-  };
-
-  Chart.defaults.color = chartDefaults.color;
-  Chart.defaults.font.family = chartDefaults.font.family;
+  Chart.defaults.color = chartTextColor();
+  Chart.defaults.font.family = "'Figtree', sans-serif";
 
   // Priority chart
   if (chartPrioridade) chartPrioridade.destroy();
@@ -2815,8 +2852,8 @@ function updateCharts() {
       labels: ['P0 Critica', 'P1 Alta', 'P2 Media', 'P3 Baixa', 'P4 Arquivar'],
       datasets: [{
         data: [prioCounts.P0, prioCounts.P1, prioCounts.P2, prioCounts.P3, prioCounts.P4],
-        backgroundColor: ['#ff4d6a', '#ff8c42', '#ffc542', '#4ecdc4', '#8b8fa8'],
-        borderColor: '#1a1d27',
+        backgroundColor: [cssVar('--p0')||'#ff4d6a', cssVar('--p1')||'#ff8c42', cssVar('--p2')||'#ffc542', cssVar('--p3')||'#4ecdc4', cssVar('--p4')||'#8b8fa8'],
+        borderColor: chartSurfaceColor(),
         borderWidth: 2
       }]
     },
@@ -2854,7 +2891,7 @@ function updateCharts() {
       indexAxis: 'y',
       plugins: { legend: { display: false } },
       scales: {
-        x: { grid: { color: '#2e3348' }, ticks: { font: { size: 11 } } },
+        x: { grid: { color: chartGridColor() }, ticks: { font: { size: 11 } } },
         y: { grid: { display: false }, ticks: { font: { size: 11 } } }
       }
     }
@@ -2868,8 +2905,8 @@ function updateCharts() {
       labels: ['Camara dos Deputados', 'Senado Federal'],
       datasets: [{
         data: [casaCounts.Camara, casaCounts.Senado],
-        backgroundColor: ['#4f8cff', '#a855f7'],
-        borderColor: '#1a1d27',
+        backgroundColor: [cssVar('--camara')||'#4f8cff', cssVar('--senado')||'#a855f7'],
+        borderColor: chartSurfaceColor(),
         borderWidth: 2
       }]
     },
@@ -2898,12 +2935,12 @@ function updateCharts() {
         datasets: [{
           label: 'Relevantes Sebrae',
           data: trendValues,
-          borderColor: '#22c55e',
-          backgroundColor: 'rgba(34, 197, 94, 0.15)',
+          borderColor: cssVar('--success')||'#22c55e',
+          backgroundColor: (cssVar('--success')||'#22c55e')+'26',
           fill: true,
           tension: 0.3,
-          pointBackgroundColor: '#22c55e',
-          pointBorderColor: '#1a1d27',
+          pointBackgroundColor: cssVar('--success')||'#22c55e',
+          pointBorderColor: chartSurfaceColor(),
           pointBorderWidth: 2,
           pointRadius: 5,
           pointHoverRadius: 7
@@ -2917,11 +2954,11 @@ function updateCharts() {
         },
         scales: {
           x: {
-            grid: { color: '#2e3348' },
+            grid: { color: chartGridColor() },
             ticks: { font: { size: 11 } }
           },
           y: {
-            grid: { color: '#2e3348' },
+            grid: { color: chartGridColor() },
             ticks: { font: { size: 11 }, stepSize: 1 },
             beginAtZero: true
           }
@@ -2943,7 +2980,7 @@ function updateCharts() {
       datasets: [{
         data: [comissoesData.permanentes, comissoesData.temporarias],
         backgroundColor: ['#f59e0b', '#6366f1'],
-        borderColor: '#1a1d27',
+        borderColor: chartSurfaceColor(),
         borderWidth: 2
       }]
     },
@@ -2955,7 +2992,7 @@ function updateCharts() {
         title: {
           display: true,
           text: `Total: ${totalComissoes}`,
-          color: '#8b8fa8',
+          color: chartTextColor(),
           font: { size: 12 }
         }
       }
@@ -2978,12 +3015,12 @@ function updateCharts() {
         datasets: [{
           label: 'Total de movimentacoes',
           data: movValues,
-          borderColor: '#4f8cff',
-          backgroundColor: 'rgba(79, 140, 255, 0.15)',
+          borderColor: cssVar('--camara')||'#4f8cff',
+          backgroundColor: (cssVar('--camara')||'#4f8cff')+'26',
           fill: true,
           tension: 0.3,
-          pointBackgroundColor: '#4f8cff',
-          pointBorderColor: '#1a1d27',
+          pointBackgroundColor: cssVar('--camara')||'#4f8cff',
+          pointBorderColor: chartSurfaceColor(),
           pointBorderWidth: 2,
           pointRadius: 5,
           pointHoverRadius: 7
@@ -2997,11 +3034,11 @@ function updateCharts() {
         },
         scales: {
           x: {
-            grid: { color: '#2e3348' },
+            grid: { color: chartGridColor() },
             ticks: { font: { size: 11 } }
           },
           y: {
-            grid: { color: '#2e3348' },
+            grid: { color: chartGridColor() },
             ticks: { font: { size: 11 }, stepSize: 1 },
             beginAtZero: true
           }
@@ -3017,23 +3054,27 @@ function exportWhatsApp() {
   const dateEnd = document.getElementById('dateInputFim').value;
   if (!allPropositions.length) { alert('Consulte os dados primeiro.'); return; }
 
+  const hasActiveFilter = Object.values(activeFilters).some(f => f.length > 0) ||
+    (document.getElementById('searchInput') && document.getElementById('searchInput').value.trim().length > 0);
+  const source = hasActiveFilter ? filteredPropositions : allPropositions;
+
   const dateObjStart = new Date(dateStart + 'T12:00:00');
   const dateObjEnd = new Date(dateEnd + 'T12:00:00');
   const dateStrStart = dateObjStart.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
   const dateStrEnd = dateObjEnd.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
   const dateStr = dateStart === dateEnd ? dateStrStart : `${dateStrStart} a ${dateStrEnd}`;
 
-  const camaraTotal = allPropositions.filter(p => p.casa === 'Camara').length;
-  const senadoTotal = allPropositions.filter(p => p.casa === 'Senado').length;
-  const relevantes = allPropositions.filter(p => p.score > 0).length;
-  const p0 = allPropositions.filter(p => p.prioridade === 'P0');
-  const p1 = allPropositions.filter(p => p.prioridade === 'P1');
+  const camaraTotal = source.filter(p => p.casa === 'Camara').length;
+  const senadoTotal = source.filter(p => p.casa === 'Senado').length;
+  const relevantes = source.filter(p => p.score > 0).length;
+  const p0 = source.filter(p => p.prioridade === 'P0');
+  const p1 = source.filter(p => p.prioridade === 'P1');
   const p0p1 = [...p0, ...p1];
-  const p2 = allPropositions.filter(p => p.prioridade === 'P2');
-  const p3p4 = allPropositions.filter(p => p.prioridade === 'P3' || p.prioridade === 'P4');
+  const p2 = source.filter(p => p.prioridade === 'P2');
+  const p3p4 = source.filter(p => p.prioridade === 'P3' || p.prioridade === 'P4');
 
   const eixos = {};
-  allPropositions.filter(p => p.score > 0).forEach(p => { eixos[p.eixo] = (eixos[p.eixo] || 0) + 1; });
+  source.filter(p => p.score > 0).forEach(p => { eixos[p.eixo] = (eixos[p.eixo] || 0) + 1; });
   const eixosOrdenados = Object.entries(eixos).sort((a,b) => b[1] - a[1]);
 
   const casas = [];
@@ -3043,14 +3084,15 @@ function exportWhatsApp() {
   let text = `*PIPPA — Plataforma de Inteligência em Políticas Públicas Aplicadas*\n`;
   text += `*Monitor Legislativo*\n`;
   text += `${dateStr}\n`;
-  text += `${allPropositions.length} proposições analisadas · ${allAcessorios.length} documentos acessórios (excluídos) · ${relevantes} relevantes para o Sebrae\n\n`;
+  if (hasActiveFilter) text += `(Exportação filtrada — ${source.length} de ${allPropositions.length} proposições)\n`;
+  text += `${source.length} proposições analisadas · ${allAcessorios.length} documentos acessórios (excluídos) · ${relevantes} relevantes para o Sebrae\n\n`;
 
   // Painel estrategico
   text += `*Painel Estratégico*\n\n`;
   const partidoCount = {};
-  allPropositions.forEach(p => { if (p.partido) partidoCount[p.partido] = (partidoCount[p.partido] || 0) + 1; });
+  source.forEach(p => { if (p.partido) partidoCount[p.partido] = (partidoCount[p.partido] || 0) + 1; });
   const topPartido = Object.entries(partidoCount).sort((a, b) => b[1] - a[1])[0];
-  const grauAlto = allPropositions.filter(p => p.grauSigaLei === 'Muito alto' || p.grauSigaLei === 'Alto').length;
+  const grauAlto = source.filter(p => p.grauSigaLei === 'Muito alto' || p.grauSigaLei === 'Alto').length;
   text += `• Câmara: ${camaraTotal} · Senado: ${senadoTotal}\n`;
   text += `• P0+P1: ${p0p1.length} · P2: ${p2.length} · P3/P4: ${p3p4.length}\n`;
   text += `• Impacto Alto+: ${grauAlto} proposições\n`;
@@ -3073,7 +3115,7 @@ function exportWhatsApp() {
       text += `_Ementa:_ ${p.ementa.substring(0, 180).trim()}${p.ementa.length > 180 ? '...' : ''}\n`;
       if (p.autor) text += `_Autor(a):_ ${p.autor}${p.partido ? ' (' + p.partido + (p.uf ? '/' + p.uf : '') + ')' : ''}\n`;
       text += `_Prioridade:_ ${p.prioridade} | _Grau (Siga Lei):_ ${p.grauSigaLei}\n`;
-      text += `_Eixo:_ ${p.eixo} | _Impacto:_ ${p.impacto}\n`;
+      text += `_Eixo:_ ${p.eixo}${p.eixoSecundario ? ' / ' + p.eixoSecundario : ''} | _Impacto:_ ${p.impacto}\n`;
       text += `_Posicionamento Sebrae:_ ${p.posicionamento}\n`;
     }
     if (p0p1.length > 3) text += `\nOutras ${p0p1.length - 3} proposições prioritárias também foram registradas. `;
@@ -3120,7 +3162,7 @@ function exportWhatsApp() {
   if (p3p4.length > 0) {
     pontos.push(`${p3p4.length} proposições de baixa prioridade (P3/P4) identificadas, não detalhadas`);
   }
-  const instit = allPropositions.filter(p => p.institucional === 'sim');
+  const instit = source.filter(p => p.institucional === 'sim');
   if (instit.length > 0) {
     pontos.push(`${instit.length} proposição(ões) com menção institucional direta ao Sebrae ou sistema S`);
   }
@@ -3159,26 +3201,7 @@ function exportWhatsApp() {
   }
   text += `\nConteúdo gerado por Inteligência Artificial (IA)`;
 
-  document.getElementById('exportContent').textContent = text;
-  document.getElementById('exportModal').classList.add('active');
-}
-
-function closeModal() {
-  document.getElementById('exportModal').classList.remove('active');
-}
-
-function copyExport() {
-  const text = document.getElementById('exportContent').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('Copiado para a area de transferencia!');
-  }).catch(() => {
-    const range = document.createRange();
-    range.selectNode(document.getElementById('exportContent'));
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
-    document.execCommand('copy');
-    showToast('Copiado!');
-  });
+  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
 }
 
 function showToast(msg) {
@@ -3381,13 +3404,11 @@ function copyMinuta() {
   });
 }
 
-
 // Close modals on backdrop click
 document.addEventListener('click', (e) => {
   if (e.target.id === 'methodologyModal') closeMethodologyModal();
   if (e.target.id === 'tramitacaoModal') closeTramitacaoModal();
   if (e.target.id === 'minutaModal') closeMinutaModal();
-  if (e.target.id === 'exportModal') closeModal();
 });
 
 // Close modals on Escape
@@ -3396,7 +3417,6 @@ document.addEventListener('keydown', (e) => {
     closeMethodologyModal();
     closeTramitacaoModal();
     closeMinutaModal();
-    closeModal();
   }
 });
 
@@ -3406,5 +3426,6 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+<script>function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('pippa-theme',n);Chart.defaults.color=chartTextColor();if(typeof updateCharts==='function')updateCharts()}</script>
 </body>
 </html>
