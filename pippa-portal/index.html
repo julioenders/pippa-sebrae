@@ -495,6 +495,17 @@ const TOOLS = [
     descricao: "Monitor em tempo real do Diário Oficial da União (DOU) com classificação automática de impacto em micro e pequenas empresas. Consulta a API da Imprensa Nacional, aplica heurística de 3 eixos (relevância direta MPE, alcance setorial e potência normativa) e apresenta normas agrupadas por nível de impacto com justificativa transparente do score.",
     features: ["Consulta ao vivo da API do DOU", "Classificação heurística v2 (3 eixos)", "Justificativa transparente de score", "Filtros por impacto, cadeia, tipo, órgão", "Gráficos de órgão, impacto e cadeias", "Timeline de 7 dias", "Agrupamento por nível de impacto", "Exportar WhatsApp"],
     destaque: "Fase 1 — Coleta e classificação do DOU. Identifica automaticamente quais normas publicadas no Diário Oficial impactam MPEs, com score baseado em relevância direta (menções a MEI/ME/EPP, tributos, licitações), alcance setorial (cadeias produtivas) e potência normativa (tipo de ato como multiplicador)."
+  },
+  {
+    id: "impostometro",
+    nome: "PIPPA Impostometro",
+    subtitulo: "Arrecadacao Tributaria Federal",
+    accent: "#e0565d",
+    icon: "💸",
+    url: "../pippa-impostometro/index.html",
+    descricao: "Contador em tempo real da arrecadacao tributaria federal com dados oficiais do Tesouro Nacional (RREO/SICONFI). Exibe impostos, taxas e contribuicoes sociais acumulados no ano com projecao linear para o dia atual, composicao por categoria e evolucao bimestral comparativa.",
+    features: ["Contador animado em tempo real", "Dados oficiais RREO/SICONFI", "Composicao: impostos, taxas e contribuicoes", "Evolucao bimestral com ano anterior", "Projecao linear automatica", "Conexao com Reforma Tributaria"],
+    destaque: "Acompanhe quanto o Brasil arrecada em tributos federais — em tempo real. Dados oficiais do Tesouro Nacional com breakdown por categoria (impostos, taxas, contribuicoes sociais) e comparativo bimestral com o ano anterior."
   }
 ];
 
@@ -539,6 +550,8 @@ const QUESTIONS = [
   { texto: "Qual a taxa media de juros para pequenas empresas?", ferramentas: ["credito"], macro: "orcamento" },
   { texto: "Qual o cenario de inadimplencia e spread bancario?", ferramentas: ["credito"], macro: "orcamento" },
   { texto: "Preciso de uma visao completa de credito e orcamento", ferramentas: ["credito", "orcamento", "emendas"], macro: "orcamento" },
+  { texto: "Quanto o Brasil arrecada em tributos federais?", ferramentas: ["impostometro"], macro: "orcamento" },
+  { texto: "Como esta a arrecadacao federal comparada ao ano passado?", ferramentas: ["impostometro", "reforma"], macro: "orcamento" },
   { texto: "Qual o impacto consolidado das ferramentas PIPPA?", ferramentas: ["impacto"], macro: "estrategia" },
   { texto: "Quantas APIs e indicadores o observatorio monitora?", ferramentas: ["impacto"], macro: "estrategia" },
   { texto: "Quero uma visao de portfolio de evidencias da UPP", ferramentas: ["impacto", "atuacaoupp"], macro: "estrategia" }

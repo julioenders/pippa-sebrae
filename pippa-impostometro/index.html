@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PIPPA Impostometro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --azul-sebrae:#2a4fda;--atlantico:#0b2574;--ceu:#65b7fb;--offwhite:#eff3ee;
+  --font-heading:"Plus Jakarta Sans",sans-serif;--font-body:"Figtree",sans-serif;
+  --bg:#eff3ee;--surface:#ffffff;--surface2:#f5f7f4;
+  --border:rgba(0,0,0,.1);--text:#1a1a1a;--text-muted:#6b7280;--text-accent:#2a4fda;
+  --accent:#2a4fda;--green:#61b466;--orange:#f39d72;--purple:#be64e3;--cyan:#65b7fb;--rose:#e0565d;
+  --highlight-bg:rgba(42,79,218,.06);--radius:8px;--shadow:0 1px 3px rgba(0,0,0,.06);
+}
+[data-theme="dark"]{
+  --bg:#080f1e;--surface:#0f1a2e;--surface2:#162038;
+  --border:rgba(255,255,255,.08);--text:#eff3ee;--text-muted:#8b9dc3;--text-accent:#65b7fb;
+  --accent:#65b7fb;--highlight-bg:rgba(101,183,251,.08);--shadow:0 1px 3px rgba(0,0,0,.3);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+a{color:inherit;text-decoration:none;}
+
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.logo{font-family:var(--font-heading);font-size:1.3rem;font-weight:800;color:var(--accent);}
+.subtitle{font-size:.8rem;color:var(--text-muted);}
+.header-actions{display:flex;align-items:center;gap:.6rem;}
+.btn-portal{font-family:var(--font-body);font-size:.78rem;padding:.4rem .9rem;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem;}
+.btn-portal:hover{border-color:var(--accent);color:var(--accent);}
+.btn-theme{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.btn-theme:hover{border-color:var(--accent);color:var(--accent);}
+.btn-theme svg{width:16px;height:16px;}
+.icon-sun{display:none;}
+[data-theme="dark"] .icon-moon{display:none;}
+[data-theme="dark"] .icon-sun{display:block;}
+
+.hero{background:linear-gradient(135deg,var(--surface) 0%,var(--highlight-bg) 100%);padding:3rem 1.5rem;text-align:center;border-bottom:3px solid var(--accent);min-height:220px;display:flex;align-items:center;justify-content:center;}
+.counter-label{font-family:var(--font-heading);font-size:clamp(.85rem,2vw,1.1rem);font-weight:600;color:var(--text-muted);margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.06em;}
+.counter-display{margin-bottom:.75rem;line-height:1;}
+.counter-main{font-family:var(--font-heading);font-size:clamp(2rem,5vw,3.2rem);font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;}
+.counter-cents{font-family:var(--font-heading);font-size:clamp(1.2rem,3vw,1.8rem);font-weight:700;color:var(--accent);opacity:.65;font-variant-numeric:tabular-nums;}
+[data-theme="dark"] .counter-main{text-shadow:0 0 30px rgba(101,183,251,.25);}
+.counter-rate{font-size:.9rem;color:var(--text-muted);margin-bottom:.5rem;display:flex;align-items:center;justify-content:center;gap:.4rem;}
+.pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.75);}}
+.counter-source{font-size:.72rem;color:var(--text-muted);opacity:.7;max-width:520px;margin:0 auto;}
+
+.container{max-width:1100px;width:100%;margin:0 auto;padding:1.5rem;}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.5rem;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;text-align:center;}
+.kpi-label{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.35rem;}
+.kpi-value{font-family:var(--font-heading);font-size:1.3rem;font-weight:800;color:var(--text);}
+.kpi-value.positive{color:var(--green);}
+.kpi-value.negative{color:var(--rose);}
+.kpi-sub{font-size:.7rem;color:var(--text-muted);margin-top:.2rem;}
+
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;}
+.chart-title{font-family:var(--font-heading);font-size:.9rem;font-weight:700;margin-bottom:1rem;}
+.chart-wrap{position:relative;width:100%;}
+.chart-wrap.doughnut{height:280px;display:flex;align-items:center;justify-content:center;}
+.chart-wrap.bar-h{height:280px;}
+
+.section-title{font-family:var(--font-heading);font-size:1rem;font-weight:700;margin-bottom:1rem;}
+.links-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.5rem;}
+.link-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;display:flex;gap:1rem;align-items:center;transition:all .25s;position:relative;overflow:hidden;}
+.link-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent);opacity:0;transition:opacity .25s;}
+.link-card:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 6px 20px rgba(42,79,218,.1);}
+.link-card:hover::before{opacity:1;}
+.link-icon{font-size:1.5rem;flex-shrink:0;}
+.link-title{font-family:var(--font-heading);font-size:.9rem;font-weight:700;margin-bottom:.2rem;}
+.link-desc{font-size:.78rem;color:var(--text-muted);line-height:1.4;}
+
+.footer{text-align:center;padding:1.5rem;font-size:.75rem;color:var(--text-muted);border-top:1px solid var(--border);margin-top:auto;}
+
+@media(max-width:768px){
+  .kpi-row{grid-template-columns:repeat(2,1fr);}
+  .charts-grid{grid-template-columns:1fr;}
+  .links-grid{grid-template-columns:1fr;}
+  .hero{padding:2rem 1rem;}
+}
+@media(max-width:480px){
+  .header{padding:.6rem .75rem;}
+  .logo{font-size:1.1rem;}
+  .container{padding:1rem;}
+}
+</style>
+<script>
+(function(){
+  var t=localStorage.getItem('pippa-theme');
+  if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches))
+    document.documentElement.setAttribute('data-theme','dark');
+})();
+</script>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <span class="logo">PIPPA Impostometro</span>
+    <span class="subtitle">Arrecadacao Tributaria Federal</span>
+  </div>
+  <div class="header-actions">
+    <a href="../pippa-portal/index.html" class="btn-portal">PIPPA Portal</a>
+    <button class="btn-theme" onclick="toggleTheme()" title="Alternar tema">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="counter-label">Arrecadacao Tributaria Federal em <span id="counterYear"></span></div>
+    <div class="counter-display">
+      <span class="counter-main" id="counterMain">R$ 0</span><span class="counter-cents" id="counterCents">,00</span>
+    </div>
+    <div class="counter-rate">
+      <span class="pulse"></span>
+      <span>R$ <span id="rateValue">0</span>/segundo</span>
+    </div>
+    <div class="counter-source" id="counterSource"></div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Impostos</div>
+      <div class="kpi-value" id="kpiImpostos">&mdash;</div>
+      <div class="kpi-sub">IR, IPI, IOF, II e outros</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Taxas</div>
+      <div class="kpi-value" id="kpiTaxas">&mdash;</div>
+      <div class="kpi-sub">Taxas federais diversas</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Contrib. Sociais</div>
+      <div class="kpi-value" id="kpiContrib">&mdash;</div>
+      <div class="kpi-sub">COFINS, PIS, CSLL, Previd.</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label" id="kpiVarLabel">Var. vs 2025</div>
+      <div class="kpi-value" id="kpiVar">&mdash;</div>
+      <div class="kpi-sub">Mesmo bimestre acumulado</div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">Composicao da Arrecadacao</div>
+      <div class="chart-wrap doughnut"><canvas id="chartDonut"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Evolucao Bimestral (R$ bi)</div>
+      <div class="chart-wrap bar-h"><canvas id="chartBar"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-title">Explore mais</div>
+  <div class="links-grid">
+    <a href="../pippa-reforma-dashboard/index.html" class="link-card">
+      <span class="link-icon">&#x1F4CB;</span>
+      <div>
+        <div class="link-title">PIPPA Reforma Tributaria</div>
+        <div class="link-desc">Entenda o que muda com CBS, IBS e Imposto Seletivo na nova reforma</div>
+      </div>
+    </a>
+    <a href="../pippa-emendas/output/pippa_emendas_completo.html" class="link-card">
+      <span class="link-icon">&#x1F3DB;</span>
+      <div>
+        <div class="link-title">PIPPA Emendas Parlamentares</div>
+        <div class="link-desc">Acompanhe R$ 89+ bi em emendas por autor, partido e estado</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<footer class="footer">
+  PIPPA &mdash; Plataforma de Inteligencia em Politicas Publicas Aplicadas / Sebrae Nacional &mdash; UPP
+</footer>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   Dados embutidos — RREO/SICONFI (Tesouro Nacional)
+   Atualizado em: 2026-10-27
+   Para atualizar: execute atualizar_dados.py
+   ══════════════════════════════════════════════════════════════ */
+var RREO_DATA = {
+  "2025": {
+    "1": {"ReceitaTributaria":214165957350.68,"Impostos":212754569483.76,"Taxas":1411387866.92,"ReceitaDeContribuicoes":251079278407.63,"ContribuicoesSociais":245315880515.43},
+    "2": {"ReceitaTributaria":399138870892.70,"Impostos":396195074549.87,"Taxas":2943796342.83,"ReceitaDeContribuicoes":486750104026.23,"ContribuicoesSociais":474945268518.70},
+    "3": {"ReceitaTributaria":584561292781.83,"Impostos":579416439866.39,"Taxas":5144852915.44,"ReceitaDeContribuicoes":709140100812.49,"ContribuicoesSociais":692480400255.75},
+    "4": {"ReceitaTributaria":756690468017.77,"Impostos":749942090561.79,"Taxas":6748377455.98,"ReceitaDeContribuicoes":955026715537.34,"ContribuicoesSociais":933445418419.63},
+    "5": {"ReceitaTributaria":944413645656.73,"Impostos":935946954286.09,"Taxas":8466691370.64,"ReceitaDeContribuicoes":1207817615346.70,"ContribuicoesSociais":1180872479577.93},
+    "6": {"ReceitaTributaria":1146491700715.94,"Impostos":1136665965634.70,"Taxas":9825735081.24,"ReceitaDeContribuicoes":1487884239843.98,"ContribuicoesSociais":1455285114980.64}
+  },
+  "2026": {
+    "1": {"ReceitaTributaria":229682981840.63,"Impostos":228214248078.67,"Taxas":1468733761.96,"ReceitaDeContribuicoes":270773262535.63,"ContribuicoesSociais":265222860543.24},
+    "2": {"ReceitaTributaria":437380510150.45,"Impostos":434193990399.52,"Taxas":3186519750.93,"ReceitaDeContribuicoes":530977334720.19,"ContribuicoesSociais":518889654659.67},
+    "3": {"ReceitaTributaria":649147061907.09,"Impostos":643694119607.60,"Taxas":5452942299.49,"ReceitaDeContribuicoes":782573103307.72,"ContribuicoesSociais":764636418432.69},
+    "4": {"ReceitaTributaria":846163557843.27,"Impostos":839020127393.72,"Taxas":7143430449.55,"ReceitaDeContribuicoes":1048150710753.87,"ContribuicoesSociais":1024052811553.24}
+  },
+  "atualizado": "2026-10-27"
+};
+
+var YEAR = new Date().getFullYear();
+var PREV = YEAR - 1;
+var donutChart = null, barChart = null;
+
+function getBimEnd(year, period) { return new Date(year, period * 2, 0); }
+function dayOfYear(d) { return Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5); }
+
+function totalTrib(d) { return (d.ReceitaTributaria || 0) + (d.ReceitaDeContribuicoes || 0); }
+
+function startCounter(total, year, period) {
+  var endDate = getBimEnd(year, period);
+  var endDay = dayOfYear(endDate);
+  var daily = total / endDay;
+  var perSec = daily / 86400;
+
+  var now = new Date();
+  var today = dayOfYear(now);
+  var extra = Math.max(0, today - endDay) * daily;
+  var frac = (now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) / 86400;
+  var projected = total + extra + frac * daily;
+
+  document.getElementById('rateValue').textContent = Math.round(perSec).toLocaleString('pt-BR');
+
+  var duration = 2500;
+  var start = performance.now();
+
+  function tick(ts) {
+    var elapsed = ts - start;
+    var value;
+    if (elapsed < duration) {
+      var t = elapsed / duration;
+      value = projected * (1 - Math.pow(1 - t, 3));
+    } else {
+      value = projected + ((elapsed - duration) / 1000) * perSec;
+    }
+    var intPart = Math.floor(value);
+    var cents = Math.floor((value % 1) * 100);
+    document.getElementById('counterMain').textContent = 'R$ ' + intPart.toLocaleString('pt-BR');
+    document.getElementById('counterCents').textContent = ',' + (cents < 10 ? '0' + cents : cents);
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+function fmtBRL(v) {
+  if (v >= 1e12) return 'R$ ' + (v / 1e12).toFixed(2) + ' tri';
+  if (v >= 1e9) return 'R$ ' + (v / 1e9).toFixed(1) + ' bi';
+  if (v >= 1e6) return 'R$ ' + (v / 1e6).toFixed(0) + ' mi';
+  return 'R$ ' + Math.round(v).toLocaleString('pt-BR');
+}
+
+function themeColors() {
+  var dk = document.documentElement.getAttribute('data-theme') === 'dark';
+  return {
+    text: dk ? '#8b9dc3' : '#6b7280',
+    grid: dk ? 'rgba(255,255,255,.08)' : 'rgba(0,0,0,.1)',
+    accent: dk ? '#65b7fb' : '#2a4fda',
+    accentMuted: dk ? 'rgba(101,183,251,.35)' : 'rgba(42,79,218,.3)'
+  };
+}
+
+function renderDonut(data) {
+  var ctx = document.getElementById('chartDonut').getContext('2d');
+  var impostos = data.Impostos || 0;
+  var taxas = data.Taxas || 0;
+  var cSociais = data.ContribuicoesSociais || 0;
+  var cEcon = Math.max(0, (data.ReceitaDeContribuicoes || 0) - cSociais);
+  var tc = themeColors();
+
+  if (donutChart) donutChart.destroy();
+  donutChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Impostos', 'Taxas', 'Contrib. Sociais', 'Contrib. Economicas'],
+      datasets: [{
+        data: [impostos, taxas, cSociais, cEcon],
+        backgroundColor: ['#2a4fda', '#61b466', '#be64e3', '#f39d72'],
+        borderWidth: 0, hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '62%',
+      plugins: {
+        legend: { position: 'bottom', labels: { color: tc.text, padding: 14, font: { family: 'Figtree', size: 12 } } },
+        tooltip: { callbacks: { label: function(c) {
+          var v = c.raw;
+          if (v >= 1e12) return c.label + ': R$ ' + (v / 1e12).toFixed(2) + ' tri';
+          return c.label + ': R$ ' + (v / 1e9).toFixed(1) + ' bi';
+        }}}
+      }
+    }
+  });
+}
+
+function renderBar(curYear, prevYear) {
+  var ctx = document.getElementById('chartBar').getContext('2d');
+  var tc = themeColors();
+  var labels = ['1º Bim', '2º Bim', '3º Bim', '4º Bim', '5º Bim', '6º Bim'];
+
+  function increments(yd) {
+    var vals = [];
+    for (var p = 1; p <= 6; p++) {
+      if (!yd[String(p)]) { vals.push(null); continue; }
+      var t = totalTrib(yd[String(p)]);
+      var prev = p > 1 && yd[String(p - 1)] ? totalTrib(yd[String(p - 1)]) : 0;
+      vals.push((t - prev) / 1e9);
+    }
+    return vals;
+  }
+
+  if (barChart) barChart.destroy();
+  barChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: String(PREV), data: increments(prevYear), backgroundColor: tc.accentMuted, borderRadius: 4 },
+        { label: String(YEAR), data: increments(curYear), backgroundColor: tc.accent, borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true, grid: { color: tc.grid }, ticks: { color: tc.text, font: { family: 'Figtree' }, callback: function(v) { return 'R$ ' + v + ' bi'; } } },
+        x: { grid: { display: false }, ticks: { color: tc.text, font: { family: 'Figtree' } } }
+      },
+      plugins: {
+        legend: { labels: { color: tc.text, font: { family: 'Figtree' } } },
+        tooltip: { callbacks: { label: function(c) { return c.dataset.label + ': R$ ' + (c.raw !== null ? c.raw.toFixed(1) : '—') + ' bi'; } } }
+      }
+    }
+  });
+}
+
+function init() {
+  var curData = RREO_DATA[String(YEAR)] || RREO_DATA[String(PREV)];
+  var prevData = RREO_DATA[String(PREV)] || {};
+  var displayYear = RREO_DATA[String(YEAR)] ? YEAR : PREV;
+
+  var periods = Object.keys(curData).filter(function(k) { return k !== 'atualizado'; }).map(Number).sort(function(a, b) { return a - b; });
+  var latestP = periods[periods.length - 1];
+  var latest = curData[String(latestP)];
+  var total = totalTrib(latest);
+
+  document.getElementById('counterYear').textContent = displayYear;
+  var bimNames = ['1º', '2º', '3º', '4º', '5º', '6º'];
+  document.getElementById('counterSource').textContent =
+    'Acumulado ate o ' + bimNames[latestP - 1] + ' bimestre • Projecao linear para o dia atual • Fonte: RREO/SICONFI — Tesouro Nacional • Dados de ' + RREO_DATA.atualizado;
+
+  startCounter(total, displayYear, latestP);
+
+  document.getElementById('kpiImpostos').textContent = fmtBRL(latest.Impostos || 0);
+  document.getElementById('kpiTaxas').textContent = fmtBRL(latest.Taxas || 0);
+  document.getElementById('kpiContrib').textContent = fmtBRL(latest.ContribuicoesSociais || 0);
+
+  var prevLabel = displayYear === YEAR ? PREV : displayYear - 1;
+  document.getElementById('kpiVarLabel').textContent = 'Var. vs ' + prevLabel;
+
+  if (prevData[String(latestP)]) {
+    var curT = total;
+    var prevT = totalTrib(prevData[String(latestP)]);
+    if (prevT > 0) {
+      var pct = ((curT - prevT) / prevT * 100).toFixed(1);
+      var el = document.getElementById('kpiVar');
+      el.textContent = (pct >= 0 ? '+' : '') + pct + '%';
+      el.className = 'kpi-value ' + (pct >= 0 ? 'positive' : 'negative');
+    }
+  }
+
+  renderDonut(latest);
+  renderBar(curData, prevData);
+}
+
+function toggleTheme() {
+  var d = document.documentElement, cur = d.getAttribute('data-theme');
+  if (cur === 'dark') { d.removeAttribute('data-theme'); localStorage.setItem('pippa-theme', 'light'); }
+  else { d.setAttribute('data-theme', 'dark'); localStorage.setItem('pippa-theme', 'dark'); }
+  var curData = RREO_DATA[String(YEAR)] || RREO_DATA[String(PREV)];
+  var prevData = RREO_DATA[String(PREV)] || {};
+  var periods = Object.keys(curData).filter(function(k) { return k !== 'atualizado'; }).map(Number).sort(function(a, b) { return a - b; });
+  renderDonut(curData[String(periods[periods.length - 1])]);
+  renderBar(curData, prevData);
+}
+
+init();
+</script>
+</body>
+</html>
