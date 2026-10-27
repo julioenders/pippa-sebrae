@@ -67,6 +67,13 @@ a{color:inherit;text-decoration:none;}
 .chart-wrap{position:relative;width:100%;}
 .chart-wrap.doughnut{height:280px;display:flex;align-items:center;justify-content:center;}
 .chart-wrap.bar-h{height:280px;}
+.chart-wrap.bar-setor{height:220px;}
+.charts-grid.full{grid-template-columns:1fr;}
+
+.nota-card{background:var(--highlight-bg);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin-bottom:1.5rem;border-left:4px solid var(--orange);}
+.nota-titulo{font-family:var(--font-heading);font-size:.82rem;font-weight:700;margin-bottom:.5rem;color:var(--orange);}
+.nota-texto{font-size:.78rem;color:var(--text-muted);line-height:1.7;}
+.nota-texto strong{color:var(--text);font-weight:600;}
 
 .section-title{font-family:var(--font-heading);font-size:1rem;font-weight:700;margin-bottom:1rem;}
 .links-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.5rem;}
@@ -165,6 +172,50 @@ a{color:inherit;text-decoration:none;}
     </div>
   </div>
 
+  <div class="section-title">Estimativa por Setor Economico</div>
+
+  <div class="nota-card">
+    <div class="nota-titulo">Nota metodologica</div>
+    <div class="nota-texto">
+      A distribuicao por setor e uma <strong>estimativa</strong> calculada aplicando a participacao
+      de cada setor no PIB (Valor Adicionado Bruto) sobre a arrecadacao tributaria federal total.
+      Os pesos vem das <strong>Contas Nacionais Trimestrais do IBGE</strong> (Tabela 1846, ultimos 4 trimestres anualizados).
+      A carga tributaria efetiva varia entre setores devido a diferencas de aliquotas, regimes especiais
+      (Simples Nacional, Zona Franca, etc.) e incentivos fiscais. Os valores sao aproximacoes para
+      contextualizacao, <strong>nao dados oficiais da Receita Federal por setor</strong>.
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Servicos</div>
+      <div class="kpi-value" id="kpiServicos">&mdash;</div>
+      <div class="kpi-sub">58,8% do PIB (excl. comercio)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Industria</div>
+      <div class="kpi-value" id="kpiIndustria">&mdash;</div>
+      <div class="kpi-sub">23,6% do PIB</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Comercio</div>
+      <div class="kpi-value" id="kpiComercio">&mdash;</div>
+      <div class="kpi-sub">11,3% do PIB</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Agropecuaria</div>
+      <div class="kpi-value" id="kpiAgro">&mdash;</div>
+      <div class="kpi-sub">6,3% do PIB</div>
+    </div>
+  </div>
+
+  <div class="charts-grid full">
+    <div class="chart-card">
+      <div class="chart-title">Carga Tributaria Estimada por Setor (R$ bi)</div>
+      <div class="chart-wrap bar-setor"><canvas id="chartSetor"></canvas></div>
+    </div>
+  </div>
+
   <div class="section-title">Explore mais</div>
   <div class="links-grid">
     <a href="../pippa-reforma-dashboard/index.html" class="link-card">
@@ -212,9 +263,22 @@ var RREO_DATA = {
   "atualizado": "2026-10-27"
 };
 
+/* ══════════════════════════════════════════════════════════════
+   Participacao setorial no PIB — IBGE Contas Nacionais Trimestrais
+   Tabela 1846, var 585, ultimos 4 trimestres anualizados
+   Atualizado em: 2026-10-27
+   ══════════════════════════════════════════════════════════════ */
+var IBGE_SETORES = {
+  periodo: "T3/2025 a T2/2026 (anualizado)",
+  fonte: "IBGE — Contas Nacionais Trimestrais (Tabela 1846, var. 585)",
+  shares: { Servicos: 0.588, Industria: 0.236, Comercio: 0.113, Agropecuaria: 0.063 },
+  va_total_mi: 11308386,
+  atualizado: "2026-10-27"
+};
+
 var YEAR = new Date().getFullYear();
 var PREV = YEAR - 1;
-var donutChart = null, barChart = null;
+var donutChart = null, barChart = null, setorChart = null;
 
 function getBimEnd(year, period) { return new Date(year, period * 2, 0); }
 function dayOfYear(d) { return Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5); }
@@ -346,6 +410,40 @@ function renderBar(curYear, prevYear) {
   });
 }
 
+function renderSetor(total) {
+  var ctx = document.getElementById('chartSetor').getContext('2d');
+  var tc = themeColors();
+  var sh = IBGE_SETORES.shares;
+  var labels = ['Servicos', 'Industria', 'Comercio', 'Agropecuaria'];
+  var colors = ['#2a4fda', '#be64e3', '#61b466', '#f39d72'];
+  var values = labels.map(function(l) { return (total * sh[l]) / 1e9; });
+
+  document.getElementById('kpiServicos').textContent = fmtBRL(total * sh.Servicos);
+  document.getElementById('kpiIndustria').textContent = fmtBRL(total * sh.Industria);
+  document.getElementById('kpiComercio').textContent = fmtBRL(total * sh.Comercio);
+  document.getElementById('kpiAgro').textContent = fmtBRL(total * sh.Agropecuaria);
+
+  if (setorChart) setorChart.destroy();
+  setorChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{ data: values, backgroundColor: colors, borderRadius: 4, barThickness: 28 }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { beginAtZero: true, grid: { color: tc.grid }, ticks: { color: tc.text, font: { family: 'Figtree' }, callback: function(v) { return 'R$ ' + v.toFixed(0) + ' bi'; } } },
+        y: { grid: { display: false }, ticks: { color: tc.text, font: { family: 'Figtree', weight: '600' } } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: function(c) { return 'R$ ' + c.raw.toFixed(1) + ' bi (' + (IBGE_SETORES.shares[c.label] * 100).toFixed(1) + '% do PIB)'; } } }
+      }
+    }
+  });
+}
+
 function init() {
   var curData = RREO_DATA[String(YEAR)] || RREO_DATA[String(PREV)];
   var prevData = RREO_DATA[String(PREV)] || {};
@@ -383,6 +481,7 @@ function init() {
 
   renderDonut(latest);
   renderBar(curData, prevData);
+  renderSetor(total);
 }
 
 function toggleTheme() {
@@ -392,8 +491,11 @@ function toggleTheme() {
   var curData = RREO_DATA[String(YEAR)] || RREO_DATA[String(PREV)];
   var prevData = RREO_DATA[String(PREV)] || {};
   var periods = Object.keys(curData).filter(function(k) { return k !== 'atualizado'; }).map(Number).sort(function(a, b) { return a - b; });
-  renderDonut(curData[String(periods[periods.length - 1])]);
+  var latestSetor = curData[String(periods[periods.length - 1])];
+  var totalSetor = totalTrib(latestSetor);
+  renderDonut(latestSetor);
   renderBar(curData, prevData);
+  renderSetor(totalSetor);
 }
 
 init();
