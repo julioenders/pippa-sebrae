@@ -552,7 +552,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
       <ul style="margin:0">
         <li><strong>1×</strong> — Padrao (sem condicao especial)</li>
         <li><strong>2×</strong> — Deputado eleito Senador (12 meses a partir da posse)</li>
-        <li><strong>3×</strong> — Senador em comissao estrategica (CAE, CDEICS, CFT)</li>
+        <li><strong>3×</strong> — Senador em comissao estrategica (CAE, CDE, CICS, CFT)</li>
       </ul>
       <p style="margin:8px 0 0;color:var(--text3)">Regra: aplica-se o <strong>maior</strong> fator; nao se multiplicam entre si.</p>
     </div>
@@ -618,7 +618,7 @@ var FRENTES_RELEVANTES = [
 ];
 
 var COMISSOES_CHAVE_CAMARA = [
-  'CDEICS', 'CFFC', 'CFT', 'CTASP', 'CCTCI', 'CDU', 'CAPADR', 'CE', 'CME'
+  'CDE', 'CICS', 'CFFC', 'CFT', 'CTRAB', 'CCTI', 'CDU', 'CAPADR', 'CE', 'CME'
 ];
 
 var COMISSOES_CHAVE_SENADO = [
@@ -1241,7 +1241,7 @@ function escapeHtml(s) {
 
 async function safeFetch(url, opts) {
   var controller = new AbortController();
-  var timeout = setTimeout(function(){ controller.abort(); }, 30000);
+  var timeout = setTimeout(function(){ controller.abort(); }, 45000);
   try {
     var resp = await fetch(url, Object.assign({}, opts, { signal: controller.signal }));
     clearTimeout(timeout);
@@ -1265,39 +1265,90 @@ async function fetchData() {
   try {
     // Deputados
     container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando deputados da Camara...</div>';
-    var depResp = await safeFetch('https://dadosabertos.camara.leg.br/api/v2/deputados?idLegislatura=' + leg + '&ordem=ASC&ordenarPor=nome&itens=100');
+    var depUrl = 'https://dadosabertos.camara.leg.br/api/v2/deputados?idLegislatura=' + leg + '&ordem=ASC&ordenarPor=nome&itens=100';
+    var depResp = await safeFetch(depUrl);
+    var depLoaded = false;
+
     if (depResp && depResp.ok) {
-      var depJson = await depResp.json();
-      var deputados = depJson.dados || [];
-      var depLinks = depJson.links || [];
-      var nextLink = depLinks.find(function(l){ return l.rel === 'next'; });
-      while (nextLink) {
-        var r = await safeFetch(nextLink.href);
-        if (!r || !r.ok) break;
-        var j = await r.json();
-        deputados = deputados.concat(j.dados || []);
-        var nl = (j.links || []).find(function(l){ return l.rel === 'next'; });
-        nextLink = nl;
-      }
-      deputados.forEach(function(d) {
-        var key = 'camara-' + d.id;
-        if (seenIds[key]) return;
-        seenIds[key] = true;
-        allParlamentares.push({
-          id: d.id,
-          nome: d.nome,
-          partido: d.siglaPartido,
-          uf: d.siglaUf,
-          casa: 'camara',
-          foto: d.urlFoto,
-          email: d.email || '',
-          frentes: [],
-          orgaos: [],
-          orgaoRoles: {},
-          eleicao2026: matchElection(d.nome)
+      try {
+        var depJson = await depResp.json();
+        var deputados = depJson.dados || [];
+        var depLinks = depJson.links || [];
+        var nextLink = depLinks.find(function(l){ return l.rel === 'next'; });
+        while (nextLink) {
+          var r = await safeFetch(nextLink.href);
+          if (!r || !r.ok) break;
+          var j = await r.json();
+          deputados = deputados.concat(j.dados || []);
+          var nl = (j.links || []).find(function(l){ return l.rel === 'next'; });
+          nextLink = nl;
+        }
+        deputados.forEach(function(d) {
+          var key = 'camara-' + d.id;
+          if (seenIds[key]) return;
+          seenIds[key] = true;
+          allParlamentares.push({
+            id: d.id,
+            nome: d.nome,
+            partido: d.siglaPartido,
+            uf: d.siglaUf,
+            casa: 'camara',
+            foto: d.urlFoto,
+            email: d.email || '',
+            frentes: [],
+            orgaos: [],
+            orgaoRoles: {},
+            eleicao2026: matchElection(d.nome)
+          });
         });
-      });
-    } else {
+        depLoaded = true;
+      } catch(e) {}
+    }
+
+    if (!depLoaded) {
+      container.innerHTML = '<div class="loading"><div class="spinner"></div>API JSON indisponivel — buscando via formato XML...</div>';
+      var xmlResp = await safeFetch(depUrl, { headers: { 'Accept': 'application/xml' } });
+      if (xmlResp && xmlResp.ok) {
+        var totalCount = parseInt(xmlResp.headers.get('x-total-count')) || 0;
+        var xmlText = await xmlResp.text();
+        var allXml = [xmlText];
+        var totalPages = Math.ceil(totalCount / 100);
+        for (var pg = 2; pg <= totalPages; pg++) {
+          container.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando deputados via XML (pagina ' + pg + '/' + totalPages + ')...</div>';
+          var pgResp = await safeFetch(depUrl + '&pagina=' + pg, { headers: { 'Accept': 'application/xml' } });
+          if (pgResp && pgResp.ok) allXml.push(await pgResp.text());
+        }
+        allXml.forEach(function(xt) {
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(xt, 'application/xml');
+          var nodes = doc.querySelectorAll('deputado_');
+          for (var ni = 0; ni < nodes.length; ni++) {
+            var node = nodes[ni];
+            var gt = function(tag) { var el = node.querySelector(tag); return el ? el.textContent : ''; };
+            var did = parseInt(gt('id'));
+            var dkey = 'camara-' + did;
+            if (seenIds[dkey]) continue;
+            seenIds[dkey] = true;
+            allParlamentares.push({
+              id: did,
+              nome: gt('nome'),
+              partido: gt('siglaPartido'),
+              uf: gt('siglaUf'),
+              casa: 'camara',
+              foto: gt('urlFoto'),
+              email: gt('email'),
+              frentes: [],
+              orgaos: [],
+              orgaoRoles: {},
+              eleicao2026: matchElection(gt('nome'))
+            });
+          }
+        });
+        depLoaded = true;
+      }
+    }
+
+    if (!depLoaded) {
       warnings.push('Camara (deputados)');
     }
 
@@ -1345,10 +1396,33 @@ async function fetchData() {
 
     // Frentes parlamentares
     container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando frentes parlamentares...</div>';
-    var frentesResp = await safeFetch('https://dadosabertos.camara.leg.br/api/v2/frentes?idLegislatura=' + leg + '&itens=200');
+    var frentesUrl = 'https://dadosabertos.camara.leg.br/api/v2/frentes?idLegislatura=' + leg + '&itens=200';
+    var frentesResp = await safeFetch(frentesUrl);
+    var todasFrentes = [];
+
     if (frentesResp && frentesResp.ok) {
-      var frentesJson = await frentesResp.json();
-      var todasFrentes = frentesJson.dados || [];
+      try {
+        var frentesJson = await frentesResp.json();
+        todasFrentes = frentesJson.dados || [];
+      } catch(e) {}
+    }
+    if (todasFrentes.length === 0) {
+      var frentesXml = await safeFetch(frentesUrl, { headers: { 'Accept': 'application/xml' } });
+      if (frentesXml && frentesXml.ok) {
+        try {
+          var fxDoc = new DOMParser().parseFromString(await frentesXml.text(), 'application/xml');
+          var fxNodes = fxDoc.querySelectorAll('frentes_');
+          for (var fxi = 0; fxi < fxNodes.length; fxi++) {
+            var fxn = fxNodes[fxi];
+            var fxId = fxn.querySelector('id');
+            var fxTitulo = fxn.querySelector('titulo');
+            if (fxId && fxTitulo) todasFrentes.push({ id: parseInt(fxId.textContent), titulo: fxTitulo.textContent });
+          }
+        } catch(e) {}
+      }
+    }
+
+    if (todasFrentes.length > 0) {
       allFrentes = todasFrentes.filter(function(f) {
         var titulo = (f.titulo || '').toLowerCase();
         return FRENTES_RELEVANTES.some(function(kw) { return titulo.indexOf(kw) >= 0; });
@@ -1376,10 +1450,32 @@ async function fetchData() {
 
     // Comissoes-chave da Camara
     container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando comissoes da Camara...</div>';
-    var orgResp = await safeFetch('https://dadosabertos.camara.leg.br/api/v2/orgaos?idTipoOrgao=2&itens=100&ordem=ASC&ordenarPor=nome');
+    var orgUrl = 'https://dadosabertos.camara.leg.br/api/v2/orgaos?codTipoOrgao=2&itens=100&ordem=ASC&ordenarPor=nome';
+    var orgResp = await safeFetch(orgUrl);
+    var orgaos = [];
+
     if (orgResp && orgResp.ok) {
-      var orgJson = await orgResp.json();
-      var orgaos = orgJson.dados || [];
+      try {
+        var orgJson = await orgResp.json();
+        orgaos = orgJson.dados || [];
+      } catch(e) {}
+    }
+    if (orgaos.length === 0) {
+      var orgXml = await safeFetch(orgUrl, { headers: { 'Accept': 'application/xml' } });
+      if (orgXml && orgXml.ok) {
+        try {
+          var oxDoc = new DOMParser().parseFromString(await orgXml.text(), 'application/xml');
+          var oxNodes = oxDoc.querySelectorAll('orgao_');
+          for (var oxi = 0; oxi < oxNodes.length; oxi++) {
+            var oxn = oxNodes[oxi];
+            var oxGt = function(tag) { var el = oxn.querySelector(tag); return el ? el.textContent : ''; };
+            orgaos.push({ id: parseInt(oxGt('id')), sigla: oxGt('sigla'), nome: oxGt('nome') });
+          }
+        } catch(e) {}
+      }
+    }
+
+    if (orgaos.length > 0) {
       var orgRelevantes = orgaos.filter(function(o) {
         return COMISSOES_CHAVE_CAMARA.indexOf(o.sigla) >= 0;
       });
@@ -1985,8 +2081,8 @@ var SEBRAE_FRENTE_KEYWORDS = {
   tier3: ['comercio', 'industria', 'turismo', 'agronegocio', 'tecnologia', 'digital', 'exporta', 'desenvolvimento regional']
 };
 
-var COMISSOES_TIER1 = ['CDEICS', 'CFT', 'CAE'];
-var COMISSOES_TIER2 = ['CCTCI', 'CI', 'CDR', 'CAS', 'CAPADR', 'CE', 'CCT'];
+var COMISSOES_TIER1 = ['CDE', 'CICS', 'CFT', 'CAE'];
+var COMISSOES_TIER2 = ['CCTI', 'CI', 'CDR', 'CAS', 'CAPADR', 'CE', 'CCT'];
 
 var AUTORIA_KEYWORDS = [
   'microempresa', 'pequena empresa', 'pequeno porte', 'simples nacional',
