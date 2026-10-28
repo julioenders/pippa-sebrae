@@ -75,6 +75,26 @@ body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-pri
 .hero-stat{text-align:center;}
 .hero-stat-value{font-family:var(--font-heading);font-size:32px;font-weight:700;color:#ffffff;}
 .hero-stat-label{font-size:11px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1px;margin-top:var(--sp-1);}
+.hero-stats-wrap{position:relative;display:inline-block;}
+.btn-info{position:absolute;top:-12px;right:-12px;width:26px;height:26px;border-radius:50%;border:1.5px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);backdrop-filter:blur(8px);color:rgba(255,255,255,.8);font-family:var(--font-heading);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;z-index:2;}
+.btn-info:hover{background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.6);color:#fff;transform:scale(1.1);}
+
+/* ══ Modal Dicionário ══════════════════════════ */
+.modal-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:var(--sp-6);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);max-width:640px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.3);animation:modalIn .25s ease;}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-6) var(--sp-6) var(--sp-4);border-bottom:1px solid var(--border);}
+.modal-title{font-family:var(--font-heading);font-size:18px;font-weight:700;color:var(--text-primary);}
+.modal-close{width:32px;height:32px;border-radius:var(--radius-md);border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:18px;}
+.modal-close:hover{border-color:var(--border-hover);color:var(--text-accent);background:var(--highlight-bg);}
+.modal-body{padding:var(--sp-4) var(--sp-6) var(--sp-6);}
+.dict-item{padding:var(--sp-4) 0;border-bottom:1px solid var(--border);}
+.dict-item:last-child{border-bottom:none;}
+.dict-term{display:flex;align-items:center;gap:var(--sp-2);margin-bottom:6px;}
+.dict-value{font-family:var(--font-heading);font-size:22px;font-weight:700;color:var(--text-accent);min-width:42px;}
+.dict-label{font-family:var(--font-heading);font-size:14px;font-weight:700;color:var(--text-primary);}
+.dict-desc{font-size:13px;color:var(--text-muted);line-height:1.6;padding-left:54px;}
 
 /* ══ Search ═════════════════════════════════════ */
 .search-section{max-width:560px;margin:-8px auto 0;padding:0 var(--sp-12) var(--sp-8);position:relative;}
@@ -232,18 +252,69 @@ body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-pri
   <div class="hero-label">SEBRAE Nacional</div>
   <h1 class="hero-title">PIPPA</h1>
   <p class="hero-subtitle">Plataforma de Inteligência em Políticas Públicas Aplicadas — ferramentas de monitoramento legislativo, orçamentário e territorial.</p>
-  <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-value" id="statTotal">19</div><div class="hero-stat-label">Ferramentas</div></div>
-    <div class="hero-stat"><div class="hero-stat-value">33</div><div class="hero-stat-label">Dashboards</div></div>
-    <div class="hero-stat"><div class="hero-stat-value">23</div><div class="hero-stat-label">Fontes de Dados</div></div>
-    <div class="hero-stat"><div class="hero-stat-value">58</div><div class="hero-stat-label">Cubos Analíticos</div></div>
-    <div class="hero-stat"><div class="hero-stat-value">79</div><div class="hero-stat-label">Indicadores Monitorados</div></div>
-    <div class="hero-stat"><div class="hero-stat-value">28</div><div class="hero-stat-label">Agentes Python</div></div>
-    <div class="hero-stat"><div class="hero-stat-value">15</div><div class="hero-stat-label">APIs Integradas</div></div>
-    <div class="hero-stat"><div class="hero-stat-value">6</div><div class="hero-stat-label">Pipelines</div></div>
-    <div class="hero-stat"><div class="hero-stat-value">100%</div><div class="hero-stat-label">HTML Standalone</div></div>
+  <div class="hero-stats-wrap">
+    <button class="btn-info" onclick="openDictModal()" title="O que significam esses números?">i</button>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-value" id="statTotal">20</div><div class="hero-stat-label">Ferramentas</div></div>
+      <div class="hero-stat"><div class="hero-stat-value">34</div><div class="hero-stat-label">Dashboards</div></div>
+      <div class="hero-stat"><div class="hero-stat-value">24</div><div class="hero-stat-label">Fontes de Dados</div></div>
+      <div class="hero-stat"><div class="hero-stat-value">68</div><div class="hero-stat-label">Cubos Analíticos</div></div>
+      <div class="hero-stat"><div class="hero-stat-value">88</div><div class="hero-stat-label">Indicadores Monitorados</div></div>
+      <div class="hero-stat"><div class="hero-stat-value">29</div><div class="hero-stat-label">Agentes Python</div></div>
+      <div class="hero-stat"><div class="hero-stat-value">16</div><div class="hero-stat-label">APIs Integradas</div></div>
+      <div class="hero-stat"><div class="hero-stat-value">7</div><div class="hero-stat-label">Pipelines</div></div>
+      <div class="hero-stat"><div class="hero-stat-value">100%</div><div class="hero-stat-label">HTML Standalone</div></div>
+    </div>
   </div>
 </section>
+
+<!-- Modal Dicionário de Métricas -->
+<div class="modal-overlay" id="dictModal" onclick="if(event.target===this)closeDictModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Dicionário de Métricas</div>
+      <button class="modal-close" onclick="closeDictModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="dict-item">
+        <div class="dict-term"><span class="dict-value">20</span><span class="dict-label">Ferramentas</span></div>
+        <div class="dict-desc">Módulos independentes da plataforma PIPPA, cada um dedicado a um tema de inteligência (legislativo, orçamentário, territorial, tributário etc.). Cada ferramenta é um HTML standalone acessível via navegador.</div>
+      </div>
+      <div class="dict-item">
+        <div class="dict-term"><span class="dict-value">34</span><span class="dict-label">Dashboards</span></div>
+        <div class="dict-desc">Páginas HTML interativas com visualizações de dados — gráficos, mapas, tabelas e KPIs. Uma ferramenta pode conter mais de um dashboard (ex.: Orçamento UPP possui dashboards 2026 e 2027).</div>
+      </div>
+      <div class="dict-item">
+        <div class="dict-term"><span class="dict-value">24</span><span class="dict-label">Fontes de Dados</span></div>
+        <div class="dict-desc">Bases de dados oficiais e institucionais consultadas: Tesouro Nacional (SICONFI), CGU, Câmara dos Deputados, Senado Federal, IBGE, BCB, TSE, PNCP, REDESIM, FNDE, DOU, DATASUS, MTE, INEP, ANATEL, entre outras.</div>
+      </div>
+      <div class="dict-item">
+        <div class="dict-term"><span class="dict-value">68</span><span class="dict-label">Cubos Analíticos</span></div>
+        <div class="dict-desc">Cubos OLAP do Observatório Sebrae acessíveis via API Tesseract. Cada cubo é um conjunto multidimensional de dados (ex.: Empresas, Emprego, Crédito, Comércio Exterior) que permite cruzamentos por território, setor, porte e período.</div>
+      </div>
+      <div class="dict-item">
+        <div class="dict-term"><span class="dict-value">88</span><span class="dict-label">Indicadores Monitorados</span></div>
+        <div class="dict-desc">Métricas e indicadores acompanhados nos dashboards: KPIs financeiros, contagens, percentuais, variações temporais, rankings e séries históricas extraídas das fontes de dados integradas.</div>
+      </div>
+      <div class="dict-item">
+        <div class="dict-term"><span class="dict-value">29</span><span class="dict-label">Agentes Python</span></div>
+        <div class="dict-desc">Scripts Python que automatizam coleta, transformação e análise de dados — desde consultas a APIs públicas até geração de relatórios, pipelines de ETL e agentes de IA com LLM integrado.</div>
+      </div>
+      <div class="dict-item">
+        <div class="dict-term"><span class="dict-value">16</span><span class="dict-label">APIs Integradas</span></div>
+        <div class="dict-desc">Interfaces REST consumidas diretamente pelos dashboards ou agentes: SICONFI, IBGE SIDRA, IBGE Localidades, BCB SGS, Câmara, Senado, PNCP, Google News, TSE, REDESIM, Observatório Sebrae Tesseract, DOU, FNDE, Vertex AI Search, entre outras.</div>
+      </div>
+      <div class="dict-item">
+        <div class="dict-term"><span class="dict-value">7</span><span class="dict-label">Pipelines</span></div>
+        <div class="dict-desc">Fluxos automatizados de processamento de dados com múltiplas etapas — coleta, limpeza, enriquecimento e publicação. Incluem pipelines de emendas parlamentares, regulatório, pesquisas eleitorais, indicadores territoriais, raio-x e impostômetro.</div>
+      </div>
+      <div class="dict-item">
+        <div class="dict-term"><span class="dict-value">100%</span><span class="dict-label">HTML Standalone</span></div>
+        <div class="dict-desc">Todas as ferramentas funcionam como arquivos HTML independentes — sem servidor, sem build, sem dependências externas. Basta abrir no navegador ou hospedar em GitHub Pages.</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="search-section">
   <div class="search-wrap">
@@ -263,8 +334,8 @@ body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-pri
     <div class="sidebar-desc">Selecione uma necessidade para filtrar as ferramentas.</div>
     <div class="questions-wrap" id="questionsWrap"></div>
     <div class="sidebar-stats">
-      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">19</div><div class="sidebar-stat-lbl">Visíveis</div></div>
-      <div class="sidebar-stat"><div class="sidebar-stat-val">19</div><div class="sidebar-stat-lbl">Total</div></div>
+      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">20</div><div class="sidebar-stat-lbl">Visíveis</div></div>
+      <div class="sidebar-stat"><div class="sidebar-stat-val">20</div><div class="sidebar-stat-lbl">Total</div></div>
     </div>
   </div>
 </aside>
@@ -272,7 +343,7 @@ body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-pri
 <section class="grid-section">
   <div class="grid-header">
     <h2>Ferramentas Disponíveis</h2>
-    <div class="grid-count">Exibindo <span id="showCount">19</span> de 19</div>
+    <div class="grid-count">Exibindo <span id="showCount">20</span> de 20</div>
   </div>
   <div class="cards" id="cardsGrid"></div>
 </section>
@@ -722,6 +793,10 @@ function filterCards() {
   document.getElementById("showCount").textContent = vis;
   document.getElementById("statVisiveis").textContent = vis;
 }
+
+function openDictModal(){document.getElementById("dictModal").classList.add("open");document.body.style.overflow="hidden";}
+function closeDictModal(){document.getElementById("dictModal").classList.remove("open");document.body.style.overflow="";}
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeDictModal();});
 
 document.getElementById("footerDate").textContent = new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});
 renderQuestions();
