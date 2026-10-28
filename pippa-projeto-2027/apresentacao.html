@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PIPPA 2027 — Apresentação ao Presidente</title>
+<title>PIPPA 2027 — Apresentacao Presidencia</title>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <style>
@@ -29,21 +29,17 @@
 }
 html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:var(--bg);color:var(--text)}
 
-/* ── Slides Container ──────────────────────────────── */
 .deck{position:relative;width:100%;height:100vh;overflow:hidden}
-.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .45s ease,transform .45s ease;transform:translateX(40px);padding:60px 48px 80px}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .45s ease,transform .45s ease;transform:translateX(40px);padding:60px 48px 80px;overflow-y:auto}
 .slide.active{opacity:1;pointer-events:auto;transform:translateX(0)}
 .slide.prev{opacity:0;transform:translateX(-40px)}
-.slide-inner{width:100%;max-width:1000px;margin:0 auto}
+.slide-inner{width:100%;max-width:1040px;margin:0 auto}
 
-/* ── Cover / Closing gradient slides ───────────────── */
 .slide-cover{background:linear-gradient(45deg,var(--atlantico),var(--azul-sebrae));color:#fff}
 .slide-cover .slide-inner{text-align:center}
 [data-theme="dark"] .slide-cover{background:linear-gradient(45deg,#040a18,#0b2574)}
 
-/* ── Top Bar ───────────────────────────────────────── */
 .top-bar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:10px 24px;background:transparent}
-.slide:not(.slide-cover).active ~ .top-bar-marker + .top-bar-real{background:var(--surface);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
 .top-bar-left{display:flex;align-items:center;gap:10px}
 .top-bar-right{display:flex;align-items:center;gap:8px}
 .tb-back{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:rgba(255,255,255,.7);text-decoration:none;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.2);transition:all .2s}
@@ -56,25 +52,22 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
 .body-bar .tb-back,.body-bar .tb-counter,.body-bar .tb-btn{color:var(--text-muted);border-color:var(--border)}
 .body-bar .tb-back:hover,.body-bar .tb-btn:hover{background:var(--accent-light);color:var(--text-accent);border-color:var(--border-hover)}
 
-/* ── Progress Bar ──────────────────────────────────── */
 .progress-wrap{position:fixed;bottom:0;left:0;right:0;z-index:100;height:4px;background:rgba(255,255,255,.15)}
 .progress-fill{height:100%;background:var(--ceu);transition:width .4s ease;border-radius:0 2px 2px 0}
 .body-progress .progress-wrap{background:var(--border)}
 .body-progress .progress-fill{background:var(--accent)}
 
-/* ── Slide Typography ──────────────────────────────── */
 .s-label{font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
 .s-title{font-family:var(--font-heading);font-size:2rem;font-weight:800;letter-spacing:-1px;margin-bottom:8px;line-height:1.2}
-.s-sub{font-size:1rem;color:var(--text-sec);line-height:1.6;max-width:700px}
+.s-sub{font-size:1rem;color:var(--text-sec);line-height:1.6;max-width:750px}
 .s-note{font-size:.8rem;color:var(--text-muted);margin-top:1.5rem;text-align:center}
 .slide-cover .s-label{color:var(--ceu)}
 .slide-cover .s-sub{color:rgba(255,255,255,.65)}
 
-/* ── Cards ─────────────────────────────────────────── */
 .cards-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:1.5rem}
 .cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem}
 .cards-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:1.5rem}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:border-color .2s}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;transition:border-color .2s}
 .card-accent{border-top:3px solid var(--accent)}
 .card-green{border-top:3px solid var(--green)}
 .card-purple{border-top:3px solid var(--purple)}
@@ -83,29 +76,28 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
 .card-rose{border-top:3px solid var(--rose)}
 .card-pink{border-top:3px solid var(--pink)}
 .card-teal{border-top:3px solid var(--teal)}
-.c-icon{font-size:1.8rem;margin-bottom:.75rem}
-.c-title{font-family:var(--font-heading);font-size:.95rem;font-weight:700;margin-bottom:.4rem}
-.c-text{font-size:.82rem;color:var(--text-muted);line-height:1.6}
+.c-icon{font-size:1.6rem;margin-bottom:.6rem}
+.c-title{font-family:var(--font-heading);font-size:.9rem;font-weight:700;margin-bottom:.35rem}
+.c-text{font-size:.78rem;color:var(--text-muted);line-height:1.6}
+.c-text ul{margin-top:.3rem;padding-left:1.2rem;list-style:disc}
+.c-text li{margin-bottom:.15rem}
 .slide-cover .card{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12)}
 .slide-cover .c-text{color:rgba(255,255,255,.6)}
 .slide-cover .c-title{color:#fff}
 
-/* ── Stat Tiles ────────────────────────────────────── */
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem}
-.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center}
-.stat-val{font-family:var(--font-heading);font-size:2rem;font-weight:800;color:var(--accent);line-height:1}
-.stat-lbl{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-top:6px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.15rem;text-align:center}
+.stat-val{font-family:var(--font-heading);font-size:1.8rem;font-weight:800;color:var(--accent);line-height:1}
+.stat-lbl{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-top:5px}
 
-/* ── Flow ──────────────────────────────────────────── */
-.flow{display:flex;align-items:center;justify-content:center;gap:.5rem;margin:2rem 0;flex-wrap:wrap}
-.flow-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem 2rem;text-align:center;min-width:160px}
+.flow{display:flex;align-items:center;justify-content:center;gap:.5rem;margin:1.5rem 0;flex-wrap:wrap}
+.flow-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.15rem 1.8rem;text-align:center;min-width:150px}
 .flow-box.fb-active{border-color:var(--accent);background:var(--accent-light)}
-.fb-icon{font-size:1.6rem;margin-bottom:.4rem}
-.fb-title{font-family:var(--font-heading);font-size:1rem;font-weight:700}
-.fb-sub{font-size:.75rem;color:var(--text-muted);margin-top:2px}
-.flow-arrow{font-size:1.5rem;color:var(--text-muted);flex-shrink:0}
+.fb-icon{font-size:1.4rem;margin-bottom:.3rem}
+.fb-title{font-family:var(--font-heading);font-size:.95rem;font-weight:700}
+.fb-sub{font-size:.72rem;color:var(--text-muted);margin-top:2px}
+.flow-arrow{font-size:1.4rem;color:var(--text-muted);flex-shrink:0}
 
-/* ── Timeline ──────────────────────────────────────── */
 .timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:1.5rem;position:relative}
 .timeline::before{content:'';position:absolute;top:18px;left:5%;right:5%;height:3px;background:var(--border);border-radius:2px}
 .tl-item{text-align:center;position:relative;padding-top:2.5rem}
@@ -113,134 +105,195 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
 .tl-dot.d-blue{border-color:var(--cyan)}
 .tl-dot.d-purple{border-color:var(--purple)}
 .tl-dot.d-orange{border-color:var(--orange)}
-.tl-tag{display:inline-block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:4px;margin-bottom:.5rem}
+.tl-tag{display:inline-block;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:4px;margin-bottom:.4rem}
 .tl-tag.t-green{background:rgba(42,79,218,.1);color:var(--accent)}
 .tl-tag.t-blue{background:rgba(101,183,251,.12);color:var(--cyan)}
 .tl-tag.t-purple{background:rgba(190,100,227,.12);color:var(--purple)}
 .tl-tag.t-orange{background:rgba(243,157,114,.12);color:var(--orange)}
-.tl-title{font-family:var(--font-heading);font-size:.85rem;font-weight:700;margin-bottom:.3rem}
-.tl-text{font-size:.75rem;color:var(--text-muted);line-height:1.5}
+.tl-title{font-family:var(--font-heading);font-size:.82rem;font-weight:700;margin-bottom:.25rem}
+.tl-text{font-size:.72rem;color:var(--text-muted);line-height:1.5}
 
-/* ── Budget Bars ───────────────────────────────────── */
-.budget-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.budget-label{font-size:.8rem;font-weight:600;min-width:160px;text-align:right;color:var(--text-sec)}
-.budget-bar-wrap{flex:1;height:28px;background:var(--surface2);border-radius:6px;overflow:hidden;position:relative}
-.budget-bar{height:100%;border-radius:6px;display:flex;align-items:center;padding:0 10px;font-size:.7rem;font-weight:700;color:#fff;transition:width .6s ease}
-.budget-pct{font-size:.75rem;font-weight:700;color:var(--text-muted);min-width:44px;text-align:right}
+.budget-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.budget-label{font-size:.78rem;font-weight:600;min-width:155px;text-align:right;color:var(--text-sec)}
+.budget-bar-wrap{flex:1;height:26px;background:var(--surface2);border-radius:6px;overflow:hidden;position:relative}
+.budget-bar{height:100%;border-radius:6px;display:flex;align-items:center;padding:0 10px;font-size:.68rem;font-weight:700;color:#fff;transition:width .6s ease}
+.budget-pct{font-size:.72rem;font-weight:700;color:var(--text-muted);min-width:44px;text-align:right}
 
-/* ── Steps ─────────────────────────────────────────── */
-.steps{display:flex;flex-direction:column;gap:1.25rem;margin-top:2rem}
-.step{display:flex;align-items:flex-start;gap:1.25rem}
-.step-num{width:56px;height:56px;border-radius:14px;background:var(--accent);color:#fff;font-family:var(--font-heading);font-size:1.5rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.step-body h3{font-family:var(--font-heading);font-size:1.1rem;font-weight:700;margin-bottom:.25rem}
-.step-body p{font-size:.88rem;color:var(--text-muted);line-height:1.5}
+.steps{display:flex;flex-direction:column;gap:1.15rem;margin-top:1.75rem}
+.step{display:flex;align-items:flex-start;gap:1.15rem}
+.step-num{width:52px;height:52px;border-radius:14px;background:var(--accent);color:#fff;font-family:var(--font-heading);font-size:1.4rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-body h3{font-family:var(--font-heading);font-size:1rem;font-weight:700;margin-bottom:.2rem}
+.step-body p{font-size:.84rem;color:var(--text-muted);line-height:1.5}
 
-/* ── Groups ────────────────────────────────────────── */
-.groups{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin-top:1.25rem}
-.group{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;display:flex;gap:.75rem;align-items:flex-start}
-.g-icon{font-size:1.4rem;flex-shrink:0;margin-top:2px}
-.g-title{font-family:var(--font-heading);font-size:.82rem;font-weight:700}
-.g-count{font-size:.7rem;color:var(--accent);font-weight:700;margin-left:4px}
-.g-list{font-size:.75rem;color:var(--text-muted);line-height:1.5;margin-top:2px}
+.groups{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem;margin-top:1.1rem}
+.group{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.1rem;display:flex;gap:.7rem;align-items:flex-start}
+.g-icon{font-size:1.3rem;flex-shrink:0;margin-top:2px}
+.g-title{font-family:var(--font-heading);font-size:.8rem;font-weight:700}
+.g-count{font-size:.68rem;color:var(--accent);font-weight:700;margin-left:4px}
+.g-list{font-size:.72rem;color:var(--text-muted);line-height:1.5;margin-top:2px}
 
-/* ── Team ──────────────────────────────────────────── */
 .team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:1.5rem}
-.team-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;display:flex;gap:1rem;align-items:center}
-.team-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--border);flex-shrink:0}
-.team-avatar-placeholder{width:48px;height:48px;border-radius:50%;background:var(--accent-light);border:2px solid var(--accent-ring);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
-.team-name{font-family:var(--font-heading);font-size:.88rem;font-weight:700}
-.team-role{font-size:.75rem;color:var(--text-muted)}
+.team-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.15rem;display:flex;gap:.9rem;align-items:center}
+.team-avatar{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid var(--border);flex-shrink:0}
+.team-avatar-placeholder{width:46px;height:46px;border-radius:50%;background:var(--accent-light);border:2px solid var(--accent-ring);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.team-name{font-family:var(--font-heading);font-size:.84rem;font-weight:700}
+.team-role{font-size:.72rem;color:var(--text-muted)}
 
-/* ── Caso real ─────────────────────────────────────── */
-.caso-url{font-family:var(--font-heading);font-size:1.8rem;font-weight:800;color:var(--accent);margin:1.5rem 0 .5rem;text-align:center;letter-spacing:-1px}
-.caso-sub{font-size:1rem;color:var(--text-sec);text-align:center;margin-bottom:2rem;line-height:1.6}
+.caso-url{font-family:var(--font-heading);font-size:1.7rem;font-weight:800;color:var(--accent);margin:1.3rem 0 .5rem;text-align:center;letter-spacing:-1px}
+.caso-sub{font-size:.95rem;color:var(--text-sec);text-align:center;margin-bottom:1.5rem;line-height:1.6}
 .caso-flow{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap}
-.caso-step{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.5rem;text-align:center;min-width:180px}
-.caso-step-title{font-family:var(--font-heading);font-size:.9rem;font-weight:700}
-.caso-step-sub{font-size:.75rem;color:var(--text-muted);margin-top:2px}
+.caso-step{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.4rem;text-align:center;min-width:170px}
+.caso-step-title{font-family:var(--font-heading);font-size:.85rem;font-weight:700}
+.caso-step-sub{font-size:.72rem;color:var(--text-muted);margin-top:2px}
 
-/* ── Responsive ────────────────────────────────────── */
+.highlight-box{background:var(--highlight-bg);border:1px solid var(--accent-ring);border-radius:12px;padding:1.25rem 1.5rem;margin-top:1.25rem}
+.highlight-box p{font-size:.84rem;line-height:1.7;color:var(--text-sec)}
+.highlight-box strong{color:var(--text)}
+
+.risk-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.9rem;margin-top:1.25rem}
+.risk-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.15rem;display:flex;gap:.9rem;align-items:flex-start}
+.risk-badge{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;flex-shrink:0;font-family:var(--font-heading);color:#fff}
+.risk-badge.rb-high{background:var(--rose)}
+.risk-badge.rb-med{background:var(--orange)}
+.risk-badge.rb-low{background:var(--green)}
+.risk-title{font-family:var(--font-heading);font-size:.82rem;font-weight:700;margin-bottom:.2rem}
+.risk-text{font-size:.72rem;color:var(--text-muted);line-height:1.5}
+.risk-mit{font-size:.7rem;color:var(--accent);font-weight:600;margin-top:.3rem}
+
+.mat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-top:1.25rem}
+.mat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center}
+.mat-dim{font-family:var(--font-heading);font-size:.78rem;font-weight:700;margin-bottom:.5rem}
+.mat-bar-wrap{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-bottom:.3rem}
+.mat-bar{height:100%;border-radius:4px;transition:width .8s}
+.mat-vals{display:flex;justify-content:space-between;font-size:.65rem;color:var(--text-muted)}
+.mat-vals strong{color:var(--text);font-weight:700}
+
+.okr-block{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.15rem;margin-bottom:.8rem}
+.okr-obj{font-family:var(--font-heading);font-size:.85rem;font-weight:700;margin-bottom:.5rem;display:flex;align-items:flex-start;gap:.5rem}
+.okr-obj .on{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;font-size:.7rem;font-weight:800;color:#fff;flex-shrink:0}
+.okr-krs{font-size:.74rem;color:var(--text-muted);line-height:1.65;padding-left:2.4rem}
+.okr-krs span{color:var(--accent);font-weight:700;margin-right:4px}
+
+.backlog-table{width:100%;border-collapse:collapse;margin-top:1.25rem;font-size:.78rem}
+.backlog-table th{text-align:left;padding:.6rem .8rem;border-bottom:2px solid var(--border);font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted)}
+.backlog-table td{padding:.55rem .8rem;border-bottom:1px solid var(--border)}
+.backlog-table tr:last-child td{border-bottom:none;font-weight:700;font-size:.82rem}
+.backlog-tag{display:inline-block;font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.3px}
+.bt-must{background:rgba(42,79,218,.1);color:var(--accent)}
+.bt-should{background:rgba(101,183,251,.1);color:var(--cyan)}
+.bt-could{background:rgba(190,100,227,.1);color:var(--purple)}
+
+.gov-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-top:1.25rem}
+.gov-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem;text-align:center}
+.gov-icon{font-size:1.3rem;margin-bottom:.3rem}
+.gov-name{font-family:var(--font-heading);font-size:.75rem;font-weight:700;margin-bottom:.15rem}
+.gov-detail{font-size:.65rem;color:var(--text-muted);line-height:1.4}
+
 @media(max-width:768px){
   .slide{padding:60px 20px 70px}
-  .s-title{font-size:1.5rem}
+  .s-title{font-size:1.4rem}
   .cards-3,.cards-4{grid-template-columns:1fr 1fr}
-  .stats-grid{grid-template-columns:repeat(3,1fr);gap:.6rem}
-  .stat-val{font-size:1.4rem}
+  .stats-grid{grid-template-columns:repeat(3,1fr);gap:.5rem}
+  .stat-val{font-size:1.3rem}
   .timeline{grid-template-columns:repeat(2,1fr)}
   .timeline::before{display:none}
-  .groups{grid-template-columns:1fr}
+  .groups,.risk-grid,.mat-grid{grid-template-columns:1fr}
   .team-grid{grid-template-columns:1fr}
   .flow{gap:.25rem}
-  .flow-box{padding:.75rem 1rem;min-width:110px}
-  .fb-title{font-size:.85rem}
-  .budget-label{min-width:100px;font-size:.7rem}
+  .flow-box{padding:.7rem .9rem;min-width:100px}
+  .fb-title{font-size:.82rem}
+  .budget-label{min-width:100px;font-size:.68rem}
+  .gov-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:480px){
   .cards-3,.cards-4,.cards-2{grid-template-columns:1fr}
   .stats-grid{grid-template-columns:repeat(3,1fr)}
-  .stat{padding:.75rem}
-  .stat-val{font-size:1.1rem}
+  .stat{padding:.65rem}
+  .stat-val{font-size:1rem}
   .caso-flow{flex-direction:column}
   .caso-flow .flow-arrow{transform:rotate(90deg)}
 }
-
-/* ── Print ─────────────────────────────────────────── */
 @media print{
   html,body{overflow:visible;height:auto;background:#fff;color:#000}
   .top-bar,.progress-wrap{display:none}
   .slide{position:relative;opacity:1;pointer-events:auto;transform:none;page-break-after:always;page-break-inside:avoid;min-height:100vh}
   .slide-cover{background:#0b2574 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .card,.stat,.group,.team-card,.flow-box,.caso-step,.step-num{border:1px solid #ccc}
 }
-
-/* ── Scrollbar ─────────────────────────────────────── */
 ::-webkit-scrollbar{width:0;height:0}
-
-/* ── Theme toggle icon ─────────────────────────────── */
 .icon-sun{display:none}
 [data-theme="dark"] .icon-sun{display:block}
 [data-theme="dark"] .icon-moon{display:none}
-
-/* ── Accessibility ─────────────────────────────────── */
 @media(prefers-reduced-motion:reduce){.slide{transition:none}}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </style>
 </head>
 <body>
 
-<!-- ═══ TOP BAR ═══ -->
 <div class="top-bar" id="topBar">
   <div class="top-bar-left">
     <a href="index.html" class="tb-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg> Projeto</a>
   </div>
   <div class="top-bar-right">
-    <span class="tb-counter" id="counter">1 / 14</span>
+    <span class="tb-counter" id="counter">1 / 22</span>
     <button class="tb-btn" onclick="toggleTheme()" title="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     <button class="tb-btn" onclick="goFS()" title="Tela cheia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
   </div>
 </div>
 
-<!-- ═══ PROGRESS BAR ═══ -->
-<div class="progress-wrap" id="progressWrap"><div class="progress-fill" id="progressFill" style="width:7.14%"></div></div>
+<div class="progress-wrap" id="progressWrap"><div class="progress-fill" id="progressFill" style="width:4.55%"></div></div>
 
-<!-- ═══ SLIDES ═══ -->
 <div class="deck" id="deck">
 
-<!-- ─── 1. COVER ─── -->
+<!-- 1. COVER -->
 <div class="slide slide-cover active" data-idx="0">
   <div class="slide-inner">
     <div class="s-label" style="color:var(--ceu)">Sebrae Nacional — Unidade de Politicas Publicas</div>
     <div class="s-title" style="font-size:3.2rem;color:#fff;margin-bottom:4px">PIPPA <span style="color:var(--ceu)">2027</span></div>
-    <div class="s-sub" style="color:rgba(255,255,255,.7);margin:0 auto 2rem;font-size:1.1rem">Plataforma de Inteligencia em Politicas Publicas Aplicadas</div>
+    <div class="s-sub" style="color:rgba(255,255,255,.7);margin:0 auto 1.5rem;font-size:1.1rem">Plataforma de Inteligencia em Politicas Publicas Aplicadas</div>
     <div style="display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:10px 28px;font-size:.95rem;font-weight:600;color:rgba(255,255,255,.85);letter-spacing:.5px">Projeto de Implantacao Nacional</div>
+    <div style="margin-top:2rem;display:flex;justify-content:center;gap:2rem">
+      <div style="text-align:center"><div style="font-family:var(--font-heading);font-size:2rem;font-weight:800;color:#fff">20</div><div style="font-size:.65rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px">Ferramentas</div></div>
+      <div style="text-align:center"><div style="font-family:var(--font-heading);font-size:2rem;font-weight:800;color:#fff">R$ 2,0M</div><div style="font-size:.65rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px">Investimento</div></div>
+      <div style="text-align:center"><div style="font-family:var(--font-heading);font-size:2rem;font-weight:800;color:#fff">27</div><div style="font-size:.65rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px">Estados</div></div>
+    </div>
   </div>
 </div>
 
-<!-- ─── 2. O DESAFIO ─── -->
+<!-- 2. ALINHAMENTO ESTRATÉGICO -->
 <div class="slide" data-idx="1">
+  <div class="slide-inner">
+    <div class="s-label">Alinhamento Estrategico</div>
+    <div class="s-title">Por Que Este Projeto</div>
+    <div class="s-sub">A PIPPA nasce do Planejamento Estrategico Sebrae 2035 e contribui diretamente para a Missao B: Governo e Estado Empreendedor.</div>
+    <div class="highlight-box">
+      <p><strong>Missao B do PE 2035:</strong> Fortalecer a atuacao do Sebrae como indutor de um ambiente de negocios favoravel para micro e pequenas empresas — por meio de inteligencia baseada em evidencias, incidencia legislativa qualificada e experimentacao em politicas publicas.</p>
+    </div>
+    <div class="cards-3" style="margin-top:1.25rem">
+      <div class="card card-accent">
+        <div class="c-icon">📊</div>
+        <div class="c-title">Inteligencia</div>
+        <div class="c-text">Transformar dados de 24 fontes em evidencias para decisoes sobre ambiente de negocios em todo o Brasil.</div>
+      </div>
+      <div class="card card-purple">
+        <div class="c-icon">⚖️</div>
+        <div class="c-title">Incidencia</div>
+        <div class="c-text">Qualificar a atuacao legislativa com pareceres tecnicos baseados em dados reais e analise de impacto.</div>
+      </div>
+      <div class="card card-green">
+        <div class="c-icon">🧪</div>
+        <div class="c-title">Experimentacao</div>
+        <div class="c-text">Testar politicas publicas antes de implementar em escala, com laboratorios de experimentacao baseados em evidencias.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. O DESAFIO -->
+<div class="slide" data-idx="2">
   <div class="slide-inner">
     <div class="s-label">Contexto</div>
     <div class="s-title">O Desafio</div>
+    <div class="s-sub">O Sebrae atua em politicas publicas sem uma plataforma integrada de inteligencia. Tres problemas centrais:</div>
     <div class="cards-3">
       <div class="card card-rose">
         <div class="c-icon">🚫</div>
@@ -261,8 +314,39 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
   </div>
 </div>
 
-<!-- ─── 3. A SOLUÇÃO ─── -->
-<div class="slide" data-idx="2">
+<!-- 4. 4 PERGUNTAS FUNDACIONAIS -->
+<div class="slide" data-idx="3">
+  <div class="slide-inner">
+    <div class="s-label">Principios</div>
+    <div class="s-title">4 Perguntas Fundacionais</div>
+    <div class="s-sub">Toda construcao dentro do PIPPA parte destas quatro perguntas:</div>
+    <div class="cards-4" style="margin-top:1.5rem">
+      <div class="card card-accent">
+        <div class="c-icon">🎯</div>
+        <div class="c-title">Para que?</div>
+        <div class="c-text">Gerar inteligencia aplicada que melhore o ambiente de negocios para micro e pequenas empresas em todo o Brasil.</div>
+      </div>
+      <div class="card card-cyan">
+        <div class="c-icon">👥</div>
+        <div class="c-title">Para quem?</div>
+        <div class="c-text">Gestores do Sebrae, equipes estaduais, formuladores de politicas publicas, parlamentares e laboratorios de experimentacao.</div>
+      </div>
+      <div class="card card-purple">
+        <div class="c-icon">🏗️</div>
+        <div class="c-title">Por quem?</div>
+        <div class="c-text">Equipe tecnica multidisciplinar da UPP, rede de especialistas em politicas publicas e times nos estados.</div>
+      </div>
+      <div class="card card-orange">
+        <div class="c-icon">⚙️</div>
+        <div class="c-title">Como?</div>
+        <div class="c-text">Transformando dados brutos em narrativas visuais claras: visao geral primeiro, depois zoom nos detalhes, contando uma historia com os dados.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 5. A SOLUÇÃO -->
+<div class="slide" data-idx="4">
   <div class="slide-inner">
     <div class="s-label">A Solucao</div>
     <div class="s-title">PIPPA — Da Inteligencia a Transformacao</div>
@@ -276,14 +360,18 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
       <div class="flow-arrow">→</div>
       <div class="flow-box" style="border-color:var(--orange)"><div class="fb-icon">🚀</div><div class="fb-title">Transformar</div><div class="fb-sub">Advocacy + Incidencia</div></div>
     </div>
+    <div class="highlight-box">
+      <p><strong>Diferencial:</strong> Observatorios tradicionais param no "observar". A PIPPA fecha o ciclo completo — da coleta de dados a mudanca efetiva de politica publica, passando por experimentacao e incidencia legislativa qualificada.</p>
+    </div>
   </div>
 </div>
 
-<!-- ─── 4. O QUE JÁ CONSTRUÍMOS ─── -->
-<div class="slide" data-idx="3">
+<!-- 6. O QUE JÁ CONSTRUÍMOS -->
+<div class="slide" data-idx="5">
   <div class="slide-inner">
     <div class="s-label">Resultado Atual</div>
-    <div class="s-title">20 Ferramentas Prontas</div>
+    <div class="s-title">20 Ferramentas Ja Construidas</div>
+    <div class="s-sub">Antes de pedir investimento, ja entregamos resultados concretos:</div>
     <div class="stats-grid">
       <div class="stat"><div class="stat-val">20</div><div class="stat-lbl">Ferramentas</div></div>
       <div class="stat"><div class="stat-val">34</div><div class="stat-lbl">Dashboards</div></div>
@@ -299,38 +387,38 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
   </div>
 </div>
 
-<!-- ─── 5. PARA QUEM ─── -->
-<div class="slide" data-idx="4">
+<!-- 7. PARA QUEM -->
+<div class="slide" data-idx="6">
   <div class="slide-inner">
     <div class="s-label">Publico-alvo</div>
-    <div class="s-title">Para Quem</div>
+    <div class="s-title">Para Quem Serve</div>
     <div class="cards-4">
       <div class="card card-accent">
         <div class="c-icon">🏛️</div>
         <div class="c-title">Gestores Sebrae</div>
-        <div class="c-text">Inteligencia para tomada de decisao estrategica com dados consolidados.</div>
+        <div class="c-text">Inteligencia para tomada de decisao estrategica com dados consolidados de todo o ecossistema.</div>
       </div>
       <div class="card card-cyan">
         <div class="c-icon">🗺️</div>
         <div class="c-title">Equipes Estaduais</div>
-        <div class="c-text">Dados territoriais customizados por UF e municipio.</div>
+        <div class="c-text">Dados territoriais customizados por UF e municipio, com template replicavel em menos de 1 dia.</div>
       </div>
       <div class="card card-purple">
         <div class="c-icon">⚖️</div>
         <div class="c-title">Parlamentares</div>
-        <div class="c-text">Evidencias para incidencia legislativa qualificada.</div>
+        <div class="c-text">Evidencias para incidencia legislativa qualificada, com pareceres tecnicos automatizados.</div>
       </div>
       <div class="card card-green">
         <div class="c-icon">🧪</div>
         <div class="c-title">Laboratorios</div>
-        <div class="c-text">Base de dados para experimentacao em politicas publicas.</div>
+        <div class="c-text">Base de dados para experimentacao em politicas publicas com 3 modelos de laboratorio.</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 6. OS 3 EIXOS ─── -->
-<div class="slide" data-idx="5">
+<!-- 8. OS 3 EIXOS -->
+<div class="slide" data-idx="7">
   <div class="slide-inner">
     <div class="s-label">Arquitetura</div>
     <div class="s-title">3 Eixos da Plataforma</div>
@@ -338,76 +426,96 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
       <div class="card card-accent" style="border-top-width:4px">
         <div class="c-icon">🔭</div>
         <div class="c-title">PIPPA Nacional</div>
-        <div class="c-text">Hub estrategico com 20 ferramentas de analise legislativa, orcamentaria, territorial e regulatoria para todo o Brasil.</div>
+        <div class="c-text">
+          <ul>
+            <li>20 ferramentas de analise</li>
+            <li>29 agentes Python com IA</li>
+            <li>Base de conhecimento (369 nos, 21 cadeias)</li>
+            <li>APIs unificadas para consumo estadual</li>
+          </ul>
+        </div>
       </div>
       <div class="card card-cyan" style="border-top-width:4px">
         <div class="c-icon">🗺️</div>
         <div class="c-title">PIPPA Estadual</div>
-        <div class="c-text">Cada UF replica o modelo com dados locais. Template pronto para implantacao em menos de 1 dia.</div>
+        <div class="c-text">
+          <ul>
+            <li>Template replicavel baseado no PIPPA PB</li>
+            <li>Self-service de dados por UF/municipio</li>
+            <li>Dashboards customizaveis por estado</li>
+            <li>Capacitacao: 348h em 3+1 trilhas</li>
+          </ul>
+        </div>
       </div>
       <div class="card card-purple" style="border-top-width:4px">
         <div class="c-icon">🧪</div>
         <div class="c-title">PIPPA Aplicada</div>
-        <div class="c-text">TransformaLab: 3 modelos de laboratorio para testar politicas publicas antes de implementar em escala.</div>
+        <div class="c-text">
+          <ul>
+            <li>Lab Design e Experimentacao</li>
+            <li>Lab Pro-Negocios (impacto MPEs)</li>
+            <li>Insight Lab (evidencias + IA)</li>
+            <li>Advocacy e incidencia legislativa</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 7. FERRAMENTAS POR TEMA ─── -->
-<div class="slide" data-idx="6">
+<!-- 9. FERRAMENTAS POR TEMA -->
+<div class="slide" data-idx="8">
   <div class="slide-inner">
     <div class="s-label">Ecossistema</div>
     <div class="s-title">Ferramentas Construidas</div>
     <div class="groups">
-      <div class="group">
-        <div class="g-icon">💰</div>
-        <div>
-          <div class="g-title">Orcamento e Compras<span class="g-count">(5)</span></div>
-          <div class="g-list">Emendas · Compras Publicas · Orcamento UPP · Credito e Fomento · Impostometro</div>
-        </div>
+      <div class="group"><div class="g-icon">💰</div><div><div class="g-title">Orcamento e Compras<span class="g-count">(5)</span></div><div class="g-list">Emendas · Compras Publicas · Orcamento UPP · Credito e Fomento · Impostometro</div></div></div>
+      <div class="group"><div class="g-icon">⚖️</div><div><div class="g-title">Legislativo e Regulatorio<span class="g-count">(5)</span></div><div class="g-list">Legislativo · Reforma Tributaria · Regulatorio DOU · Stakeholders · Consultas Publicas</div></div></div>
+      <div class="group"><div class="g-icon">🏛️</div><div><div class="g-title">Politico e Institucional<span class="g-count">(2)</span></div><div class="g-list">Analise Eleitoral 2026 · Atuacao UPP 2026</div></div></div>
+      <div class="group"><div class="g-icon">🗺️</div><div><div class="g-title">Territorial e Indicadores<span class="g-count">(3)</span></div><div class="g-list">Indicadores Ambiente · Raio-X Territorial · Catalogo de Fontes</div></div></div>
+      <div class="group"><div class="g-icon">🎯</div><div><div class="g-title">Estrategia e Governanca<span class="g-count">(3)</span></div><div class="g-list">Projeto 2027 · Impacto · Mapa Mental NAL</div></div></div>
+      <div class="group"><div class="g-icon">🔬</div><div><div class="g-title">Experimentacao e Dados<span class="g-count">(2)</span></div><div class="g-list">TransformaLab · Prototipo Paraiba</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 10. ARQUITETURA TÉCNICA -->
+<div class="slide" data-idx="9">
+  <div class="slide-inner">
+    <div class="s-label">Tecnologia</div>
+    <div class="s-title">Arquitetura em 6 Camadas</div>
+    <div class="s-sub">Toda a infraestrutura ja disponivel no Sebrae — sem custo adicional de licenciamento base.</div>
+    <div style="display:flex;flex-direction:column;gap:.6rem;margin-top:1.5rem">
+      <div style="display:flex;gap:.8rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.2rem;border-left:3px solid var(--accent)">
+        <div style="font-size:1.2rem;flex-shrink:0">📥</div>
+        <div><div style="font-family:var(--font-heading);font-size:.82rem;font-weight:700">Fontes de Dados</div><div style="font-size:.72rem;color:var(--text-muted)">68 cubos OLAP, 4 bancos SQL Server, 16 APIs gov, DOU, GCS</div></div>
       </div>
-      <div class="group">
-        <div class="g-icon">⚖️</div>
-        <div>
-          <div class="g-title">Legislativo e Regulatorio<span class="g-count">(5)</span></div>
-          <div class="g-list">Legislativo · Reforma Tributaria · Regulatorio DOU · Stakeholders · Consultas Publicas</div>
-        </div>
+      <div style="display:flex;gap:.8rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.2rem;border-left:3px solid var(--cyan)">
+        <div style="font-size:1.2rem;flex-shrink:0">⚙️</div>
+        <div><div style="font-family:var(--font-heading);font-size:.82rem;font-weight:700">Ingestao e Pipeline</div><div style="font-size:.72rem;color:var(--text-muted)">Python, Prefect, Cloud Functions — coleta, transformacao e cache automaticos</div></div>
       </div>
-      <div class="group">
-        <div class="g-icon">🏛️</div>
-        <div>
-          <div class="g-title">Politico e Institucional<span class="g-count">(2)</span></div>
-          <div class="g-list">Analise Eleitoral 2026 · Atuacao UPP 2026</div>
-        </div>
+      <div style="display:flex;gap:.8rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.2rem;border-left:3px solid var(--purple)">
+        <div style="font-size:1.2rem;flex-shrink:0">🗄️</div>
+        <div><div style="font-family:var(--font-heading);font-size:.82rem;font-weight:700">Data Lake / Lakehouse</div><div style="font-size:.72rem;color:var(--text-muted)">Google Cloud Storage, BigQuery, Data Catalog — armazenamento centralizado</div></div>
       </div>
-      <div class="group">
-        <div class="g-icon">🗺️</div>
-        <div>
-          <div class="g-title">Territorial e Indicadores<span class="g-count">(3)</span></div>
-          <div class="g-list">Indicadores Ambiente · Raio-X Territorial · Catalogo de Fontes</div>
-        </div>
+      <div style="display:flex;gap:.8rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.2rem;border-left:3px solid var(--orange)">
+        <div style="font-size:1.2rem;flex-shrink:0">🤖</div>
+        <div><div style="font-family:var(--font-heading);font-size:.82rem;font-weight:700">Inteligencia e IA</div><div style="font-size:.72rem;color:var(--text-muted)">Gemini, Claude, Vertex AI, LangChain — agente conversacional, preditivos, RAG</div></div>
       </div>
-      <div class="group">
-        <div class="g-icon">🎯</div>
-        <div>
-          <div class="g-title">Estrategia e Governanca<span class="g-count">(3)</span></div>
-          <div class="g-list">Projeto 2027 · Impacto · Mapa Mental NAL</div>
-        </div>
+      <div style="display:flex;gap:.8rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.2rem;border-left:3px solid var(--green)">
+        <div style="font-size:1.2rem;flex-shrink:0">💻</div>
+        <div><div style="font-family:var(--font-heading);font-size:.82rem;font-weight:700">Aplicacao</div><div style="font-size:.72rem;color:var(--text-muted)">Portal + dashboards HTML standalone, FastAPI, GitHub Pages — zero dependencia de servidor</div></div>
       </div>
-      <div class="group">
-        <div class="g-icon">🔬</div>
-        <div>
-          <div class="g-title">Experimentacao e Dados<span class="g-count">(2)</span></div>
-          <div class="g-list">TransformaLab · Prototipo Paraiba</div>
-        </div>
+      <div style="display:flex;gap:.8rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.2rem;border-left:3px solid var(--rose)">
+        <div style="font-size:1.2rem;flex-shrink:0">🚀</div>
+        <div><div style="font-family:var(--font-heading);font-size:.82rem;font-weight:700">Distribuicao</div><div style="font-size:.72rem;color:var(--text-muted)">GitHub Pages, GCP Cloud Run, GitLab CI/CD — deploy automatico e monitoramento</div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 8. CASO REAL ─── -->
-<div class="slide" data-idx="7">
+<!-- 11. CASO REAL -->
+<div class="slide" data-idx="10">
   <div class="slide-inner">
     <div class="s-label">Prova de conceito</div>
     <div class="s-title" style="text-align:center">Ja em Producao</div>
@@ -432,73 +540,166 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
   </div>
 </div>
 
-<!-- ─── 9. ROADMAP ─── -->
-<div class="slide" data-idx="8">
+<!-- 12. OKRs ESTRATÉGICOS -->
+<div class="slide" data-idx="11">
+  <div class="slide-inner">
+    <div class="s-label">Objetivos</div>
+    <div class="s-title">OKRs Estrategicos 2027</div>
+    <div class="s-sub">4 objetivos alinhados ao PE 2035 — Missao B:</div>
+    <div style="margin-top:1.25rem;display:flex;flex-direction:column;gap:.7rem">
+      <div class="okr-block">
+        <div class="okr-obj"><span class="on" style="background:var(--accent)">O1</span> Consolidar a PIPPA como hub nacional de inteligencia em PP para MPEs</div>
+        <div class="okr-krs"><span>KR1</span> 20 ferramentas padronizadas com design system e pipelines automatizados<br><span>KR2</span> 100% dos 68 cubos acessiveis via API unificada<br><span>KR3</span> Portal redesenhado com 3 eixos e busca semantica</div>
+      </div>
+      <div class="okr-block">
+        <div class="okr-obj"><span class="on" style="background:var(--cyan)">O2</span> Replicar o modelo PIPPA em pelo menos 5 estados</div>
+        <div class="okr-krs"><span>KR1</span> Template replicavel validado em staging<br><span>KR2</span> 5 UFs com PIPPA propria e equipe capacitada<br><span>KR3</span> Trilha de capacitacao (348h) aplicada em 100% dos pilotos</div>
+      </div>
+      <div class="okr-block">
+        <div class="okr-obj"><span class="on" style="background:var(--purple)">O3</span> Operacionalizar TransformaLab e Advocacy integrados</div>
+        <div class="okr-krs"><span>KR1</span> 3 modelos de laboratorio operacionais<br><span>KR2</span> Modulo Advocacy integrado ao Legislativo<br><span>KR3</span> Pelo menos 1 lab piloto concluido com relatorio de evidencias</div>
+      </div>
+      <div class="okr-block">
+        <div class="okr-obj"><span class="on" style="background:var(--orange)">O4</span> Estabelecer IA/ML como diferencial da plataforma</div>
+        <div class="okr-krs"><span>KR1</span> Agente IA conversacional sobre 68 cubos<br><span>KR2</span> 3+ modelos preditivos em producao<br><span>KR3</span> RAG sobre toda a base de conhecimento PIPPA</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 13. BACKLOG DO PROJETO -->
+<div class="slide" data-idx="12">
+  <div class="slide-inner">
+    <div class="s-label">Escopo</div>
+    <div class="s-title">Backlog: 15 Epics, 69 Features</div>
+    <div class="s-sub">Organizado por eixo com priorizacao MoSCoW (Must / Should / Could):</div>
+    <table class="backlog-table">
+      <thead><tr><th>Eixo</th><th>Epics</th><th>Features</th><th>Prioridade</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--accent);font-weight:700">🔭 Nacional</td><td>6 epics</td><td>30 features</td><td><span class="backlog-tag bt-must">4 MUST</span> <span class="backlog-tag bt-should">2 SHOULD</span></td></tr>
+        <tr><td style="color:var(--cyan);font-weight:700">🗺️ Estadual</td><td>4 epics</td><td>18 features</td><td><span class="backlog-tag bt-must">2 MUST</span> <span class="backlog-tag bt-should">1 SHOULD</span> <span class="backlog-tag bt-could">1 COULD</span></td></tr>
+        <tr><td style="color:var(--purple);font-weight:700">🧪 Aplicada</td><td>3 epics</td><td>13 features</td><td><span class="backlog-tag bt-must">1 MUST</span> <span class="backlog-tag bt-should">2 SHOULD</span></td></tr>
+        <tr><td style="color:var(--teal);font-weight:700">🔗 Transversais</td><td>2 epics</td><td>8 features</td><td><span class="backlog-tag bt-must">2 MUST</span></td></tr>
+        <tr><td>Total</td><td>15 epics</td><td>69 features</td><td><span class="backlog-tag bt-must">9 MUST</span> <span class="backlog-tag bt-should">5 SHOULD</span> <span class="backlog-tag bt-could">1 COULD</span></td></tr>
+      </tbody>
+    </table>
+    <div class="highlight-box">
+      <p><strong>Destaques do backlog:</strong> Design System e padronizacao visual, infraestrutura de dados unificada, agente IA conversacional, template replicavel para estados, TransformaLab com 3 modelos, modulo de Advocacy, CI/CD e seguranca LGPD.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 14. ROADMAP -->
+<div class="slide" data-idx="13">
   <div class="slide-inner">
     <div class="s-label">Planejamento</div>
-    <div class="s-title">Roadmap 2027</div>
+    <div class="s-title">Roadmap 2027 — 4 Releases</div>
     <div class="timeline">
       <div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-tag t-green">Jan – Mar</div>
         <div class="tl-title">R1 Fundacao</div>
-        <div class="tl-text">Infraestrutura de dados, design system, portal redesenhado com 3 eixos</div>
+        <div class="tl-text">CI/CD, data lake, design system, API unificada, portal com 3 eixos</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot d-blue"></div>
         <div class="tl-tag t-blue">Abr – Jun</div>
         <div class="tl-title">R2 Inteligencia</div>
-        <div class="tl-text">Agente IA conversacional, template estadual, primeiros 2 pilotos</div>
+        <div class="tl-text">Agente IA conversacional, RAG, template estadual, primeiros 2 pilotos</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot d-purple"></div>
         <div class="tl-tag t-purple">Jul – Set</div>
         <div class="tl-title">R3 Escala</div>
-        <div class="tl-text">TransformaLab, Advocacy, 5 UFs com PIPPA, modelos ML</div>
+        <div class="tl-text">TransformaLab, Advocacy, 5 UFs com PIPPA, 3 modelos ML em producao</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot d-orange"></div>
         <div class="tl-tag t-orange">Out – Dez</div>
         <div class="tl-title">R4 Maturidade</div>
-        <div class="tl-text">Self-service, capacitacao 348h, Hub TransformaLab, PIPPA 4.0</div>
+        <div class="tl-text">Self-service, capacitacao 348h, Hub TransformaLab, PIPPA 4.0 estavel</div>
       </div>
     </div>
-    <div class="s-note">17 sprints de 2 semanas · 4 gates de aprovacao · Demo Day a cada trimestre</div>
+    <div class="s-note">17 sprints de 2 semanas · 4 gates de aprovacao · Demo Day a cada trimestre · Dezembro = buffer</div>
   </div>
 </div>
 
-<!-- ─── 10. EQUIPE ─── -->
-<div class="slide" data-idx="9">
+<!-- 15. MARCOS CRÍTICOS -->
+<div class="slide" data-idx="14">
+  <div class="slide-inner">
+    <div class="s-label">Cronograma</div>
+    <div class="s-title">Marcos Criticos 2027</div>
+    <div class="s-sub">Datas-chave com entregas concretas e gates de aprovacao:</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem;margin-top:1.25rem">
+      <div style="display:flex;gap:.7rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem"><div style="font-size:.65rem;font-weight:800;color:var(--accent);min-width:50px;font-family:var(--font-heading)">06 Jan</div><div style="font-size:.75rem">Kick-off do Projeto</div></div>
+      <div style="display:flex;gap:.7rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem"><div style="font-size:.65rem;font-weight:800;color:var(--accent);min-width:50px;font-family:var(--font-heading)">14 Fev</div><div style="font-size:.75rem">Design System + API Unificada v1</div></div>
+      <div style="display:flex;gap:.7rem;align-items:center;background:var(--highlight-bg);border:1px solid var(--accent-ring);border-radius:10px;padding:.8rem 1rem"><div style="font-size:.65rem;font-weight:800;color:var(--rose);min-width:50px;font-family:var(--font-heading)">14 Mar</div><div style="font-size:.75rem;font-weight:600">Gate R1 — Portal 3 Eixos + Padronizacao</div></div>
+      <div style="display:flex;gap:.7rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem"><div style="font-size:.65rem;font-weight:800;color:var(--cyan);min-width:50px;font-family:var(--font-heading)">25 Abr</div><div style="font-size:.75rem">Agente IA Conversacional + RAG</div></div>
+      <div style="display:flex;gap:.7rem;align-items:center;background:var(--highlight-bg);border:1px solid var(--accent-ring);border-radius:10px;padding:.8rem 1rem"><div style="font-size:.65rem;font-weight:800;color:var(--rose);min-width:50px;font-family:var(--font-heading)">30 Mai</div><div style="font-size:.75rem;font-weight:600">Gate R2 — IA + 2 UFs Piloto</div></div>
+      <div style="display:flex;gap:.7rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem"><div style="font-size:.65rem;font-weight:800;color:var(--purple);min-width:50px;font-family:var(--font-heading)">25 Jul</div><div style="font-size:.75rem">TransformaLab 3 Modelos + Advocacy</div></div>
+      <div style="display:flex;gap:.7rem;align-items:center;background:var(--highlight-bg);border:1px solid var(--accent-ring);border-radius:10px;padding:.8rem 1rem"><div style="font-size:.65rem;font-weight:800;color:var(--rose);min-width:50px;font-family:var(--font-heading)">29 Ago</div><div style="font-size:.75rem;font-weight:600">Gate R3 — 5 UFs + PIPPA Aplicada</div></div>
+      <div style="display:flex;gap:.7rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem"><div style="font-size:.65rem;font-weight:800;color:var(--orange);min-width:50px;font-family:var(--font-heading)">26 Out</div><div style="font-size:.75rem">Hub TransformaLab + Capacitacao 348h</div></div>
+      <div style="display:flex;gap:.7rem;align-items:center;background:var(--highlight-bg);border:1px solid var(--accent-ring);border-radius:10px;padding:.8rem 1rem"><div style="font-size:.65rem;font-weight:800;color:var(--rose);min-width:50px;font-family:var(--font-heading)">30 Nov</div><div style="font-size:.75rem;font-weight:600">Gate R4 — PIPPA 4.0 Estavel</div></div>
+      <div style="display:flex;gap:.7rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem"><div style="font-size:.65rem;font-weight:800;color:var(--orange);min-width:50px;font-family:var(--font-heading)">Dez</div><div style="font-size:.75rem">Conselho Deliberativo + Plano 2028</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 16. EQUIPE -->
+<div class="slide" data-idx="15">
   <div class="slide-inner">
     <div class="s-label">Governanca</div>
     <div class="s-title">Equipe do Projeto</div>
     <div class="team-grid">
       <div class="team-card">
         <img src="../pippa-quem-somos/fotos/murilo-terra.jpg" alt="Murilo Terra" class="team-avatar" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="team-avatar-placeholder" style="display:none">MT</div>
-        <div><div class="team-name">Murilo Terra</div><div class="team-role">Lider do Projeto — Direcionamento Estrategico</div></div>
+        <div><div class="team-name">Murilo Terra</div><div class="team-role">Lider do Projeto — Direcionamento Estrategico e Articulacao Politica</div></div>
       </div>
       <div class="team-card">
         <img src="../pippa-quem-somos/fotos/julio-enders.png" alt="Julio Enders" class="team-avatar" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="team-avatar-placeholder" style="display:none">JE</div>
-        <div><div class="team-name">Julio Enders</div><div class="team-role">Product Owner — Prioridades e Metodologia</div></div>
+        <div><div class="team-name">Julio Enders</div><div class="team-role">Product Owner — Prioridades, Metodologia e Rigor Tecnico</div></div>
       </div>
       <div class="team-card">
         <img src="../pippa-quem-somos/fotos/julia-marcal.jpg" alt="Julia Marcal" class="team-avatar" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="team-avatar-placeholder" style="display:none">JM</div>
-        <div><div class="team-name">Julia Marcal</div><div class="team-role">Gestora de Operacoes — Orcamento e Contratos</div></div>
+        <div><div class="team-name">Julia Marcal</div><div class="team-role">Gestora de Operacoes — Orcamento, Contratos e Cronograma Financeiro</div></div>
       </div>
       <div class="team-card">
-        <div class="team-avatar-placeholder">ARP</div>
-        <div><div class="team-name">Equipe Tecnica</div><div class="team-role">Eng. Dados Senior · Analista BI Pleno · UX Designer Pleno</div></div>
+        <div class="team-avatar-placeholder">TEC</div>
+        <div><div class="team-name">Equipe Tecnica (ARP 027/2025)</div><div class="team-role">Eng. Dados Senior · Analista BI Pleno · UX Designer Pleno · BI Junior (interno)</div></div>
       </div>
+    </div>
+    <div class="highlight-box">
+      <p><strong>Modelo de contratacao:</strong> Equipe tecnica via ARP 027/2025 (Qualificar TI) — R$ 58.657/mes (3 profissionais). Scrum adaptado com sprints de 2 semanas, Scrum Master rotativo, 8 cerimonias formais e Demo Day trimestral.</p>
     </div>
   </div>
 </div>
 
-<!-- ─── 11. INVESTIMENTO ─── -->
-<div class="slide" data-idx="10">
+<!-- 17. GOVERNANÇA ÁGIL -->
+<div class="slide" data-idx="16">
+  <div class="slide-inner">
+    <div class="s-label">Metodologia</div>
+    <div class="s-title">Governanca Agil</div>
+    <div class="s-sub">Scrum adaptado com Kanban — transparencia total para a Diretoria:</div>
+    <div class="gov-grid">
+      <div class="gov-card"><div class="gov-icon">📋</div><div class="gov-name">Sprint Planning</div><div class="gov-detail">2a-feira, Dia 1<br>2h · Time + PO</div></div>
+      <div class="gov-card"><div class="gov-icon">🔄</div><div class="gov-name">Daily Standup</div><div class="gov-detail">Diaria (Slack)<br>15min · Time</div></div>
+      <div class="gov-card"><div class="gov-icon">🎯</div><div class="gov-name">Sprint Review</div><div class="gov-detail">6a-feira, ultimo dia<br>1h · Stakeholders</div></div>
+      <div class="gov-card"><div class="gov-icon">🔍</div><div class="gov-name">Retrospectiva</div><div class="gov-detail">6a-feira, apos Review<br>45min · Time</div></div>
+      <div class="gov-card"><div class="gov-icon">📊</div><div class="gov-name">Refinement</div><div class="gov-detail">4a-feira, semana 1<br>1h · PO + Leads</div></div>
+      <div class="gov-card"><div class="gov-icon">🚀</div><div class="gov-name">Release Planning</div><div class="gov-detail">Inicio trimestre<br>4h · Diretoria UPP</div></div>
+      <div class="gov-card"><div class="gov-icon">🎪</div><div class="gov-name">Demo Day</div><div class="gov-detail">Final de Release<br>2h · Stakeholders</div></div>
+      <div class="gov-card"><div class="gov-icon">📈</div><div class="gov-name">Quarterly Review</div><div class="gov-detail">Final trimestre<br>3h · Gerencia UPP</div></div>
+    </div>
+    <div class="s-note">Velocity estimada: ~40 SP/sprint · WIP limit: 2 features/dev · Board GitLab com 5 colunas</div>
+  </div>
+</div>
+
+<!-- 18. INVESTIMENTO -->
+<div class="slide" data-idx="17">
   <div class="slide-inner">
     <div class="s-label">Orcamento</div>
     <div class="s-title">Investimento</div>
-    <div style="text-align:center;margin:1rem 0 2rem"><span style="font-family:var(--font-heading);font-size:2.8rem;font-weight:800;color:var(--accent)">R$ 2.015.000</span></div>
+    <div style="text-align:center;margin:.8rem 0 1.5rem"><span style="font-family:var(--font-heading);font-size:2.6rem;font-weight:800;color:var(--accent)">R$ 2.015.000</span></div>
     <div style="max-width:720px;margin:0 auto">
       <div class="budget-row"><div class="budget-label">Equipe tecnica</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:34.9%;background:var(--accent)">R$ 704 mil</div></div><div class="budget-pct">34,9%</div></div>
       <div class="budget-row"><div class="budget-label">Reserva estrategica</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:38%;background:var(--orange)">R$ 765 mil</div></div><div class="budget-pct">38,0%</div></div>
@@ -507,42 +708,147 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
       <div class="budget-row"><div class="budget-label">Eventos</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:6%;background:var(--purple)">R$ 120 mil</div></div><div class="budget-pct">6,0%</div></div>
       <div class="budget-row"><div class="budget-label">Licencas</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:4.8%;background:var(--rose)">R$ 96 mil</div></div><div class="budget-pct">4,8%</div></div>
     </div>
-    <div class="s-note">Cada release entrega valor independente — investimento incremental.</div>
+    <div class="s-note">Reserva de 38% segue boas praticas ageis — cada release entrega valor independente.</div>
   </div>
 </div>
 
-<!-- ─── 12. RESULTADOS ESPERADOS ─── -->
-<div class="slide" data-idx="11">
+<!-- 19. GESTÃO DE RISCOS -->
+<div class="slide" data-idx="18">
+  <div class="slide-inner">
+    <div class="s-label">Riscos</div>
+    <div class="s-title">Gestao de Riscos</div>
+    <div class="s-sub">8 riscos mapeados com mitigacao — 4 principais:</div>
+    <div class="risk-grid">
+      <div class="risk-card">
+        <div class="risk-badge rb-high">R1</div>
+        <div><div class="risk-title">Indisponibilidade da API de cubos</div><div class="risk-text">Os 68 cubos dependem de um servico externo (Tesseract OLAP).</div><div class="risk-mit">Mitigacao: cache em BigQuery + snapshots Parquet locais</div></div>
+      </div>
+      <div class="risk-card">
+        <div class="risk-badge rb-high">R2</div>
+        <div><div class="risk-title">Baixa adesao estadual</div><div class="risk-text">UFs podem nao priorizar a implantacao do PIPPA Estadual.</div><div class="risk-mit">Mitigacao: selecao criteriosa dos pilotos + quick wins em 30 dias</div></div>
+      </div>
+      <div class="risk-card">
+        <div class="risk-badge rb-med">R3</div>
+        <div><div class="risk-title">Turnover da equipe ARP</div><div class="risk-text">Profissionais terceirizados podem sair durante o projeto.</div><div class="risk-mit">Mitigacao: documentacao rigorosa + pair programming + onboarding kit</div></div>
+      </div>
+      <div class="risk-card">
+        <div class="risk-badge rb-med">R4</div>
+        <div><div class="risk-title">Mudanca de prioridades</div><div class="risk-text">Reorganizacao do Sebrae pode alterar escopo ou orcamento.</div><div class="risk-mit">Mitigacao: releases incrementais com valor independente + reserva 38%</div></div>
+      </div>
+    </div>
+    <div class="s-note">Mais 4 riscos mapeados: complexidade de integracao estadual, custos GCP, qualidade ML, LGPD — todos com mitigacao definida.</div>
+  </div>
+</div>
+
+<!-- 20. MATURIDADE DO OBSERVATÓRIO -->
+<div class="slide" data-idx="19">
+  <div class="slide-inner">
+    <div class="s-label">Evolucao</div>
+    <div class="s-title">Maturidade do Observatorio</div>
+    <div class="s-sub">6 dimensoes interdependentes — de nivel 2,0 (hoje) para 5,0 (dezembro 2027):</div>
+    <div class="mat-grid">
+      <div class="mat-card">
+        <div class="mat-dim" style="color:var(--accent)">Infraestrutura</div>
+        <div class="mat-bar-wrap"><div class="mat-bar" style="width:100%;background:linear-gradient(90deg,var(--accent) 40%,var(--accent) 100%)"></div></div>
+        <div class="mat-vals"><span>Hoje: 2</span><strong>Meta: 5</strong></div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-dim" style="color:var(--cyan)">Dados</div>
+        <div class="mat-bar-wrap"><div class="mat-bar" style="width:100%;background:linear-gradient(90deg,var(--cyan) 60%,var(--cyan) 100%)"></div></div>
+        <div class="mat-vals"><span>Hoje: 3</span><strong>Meta: 5</strong></div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-dim" style="color:var(--purple)">Inteligencia</div>
+        <div class="mat-bar-wrap"><div class="mat-bar" style="width:100%;background:linear-gradient(90deg,var(--purple) 40%,var(--purple) 100%)"></div></div>
+        <div class="mat-vals"><span>Hoje: 2</span><strong>Meta: 5</strong></div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-dim" style="color:var(--orange)">Metodologia</div>
+        <div class="mat-bar-wrap"><div class="mat-bar" style="width:100%;background:linear-gradient(90deg,var(--orange) 60%,var(--orange) 100%)"></div></div>
+        <div class="mat-vals"><span>Hoje: 3</span><strong>Meta: 5</strong></div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-dim" style="color:var(--pink)">Comunidade</div>
+        <div class="mat-bar-wrap"><div class="mat-bar" style="width:100%;background:linear-gradient(90deg,var(--pink) 20%,var(--pink) 100%)"></div></div>
+        <div class="mat-vals"><span>Hoje: 1</span><strong>Meta: 5</strong></div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-dim" style="color:var(--teal)">Governanca</div>
+        <div class="mat-bar-wrap"><div class="mat-bar" style="width:100%;background:linear-gradient(90deg,var(--teal) 20%,var(--teal) 100%)"></div></div>
+        <div class="mat-vals"><span>Hoje: 1</span><strong>Meta: 5</strong></div>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <p><strong>Escala:</strong> 1 = Inicial · 2 = Emergente · 3 = Estruturado · 4 = Avancado · 5 = Referencia. Hoje a media geral e <strong>2,0</strong>. Ao final de 2027, projetamos chegar a <strong>5,0</strong> em todas as dimensoes.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 21. CRITÉRIOS DE SUCESSO -->
+<div class="slide" data-idx="20">
   <div class="slide-inner">
     <div class="s-label">Entregas</div>
-    <div class="s-title">O que vamos entregar</div>
+    <div class="s-title">Criterios de Sucesso</div>
+    <div class="s-sub">O que significa "PIPPA implantada" ao final de 2027:</div>
     <div class="cards-2">
       <div class="card card-accent">
         <div class="c-icon">💻</div>
         <div class="c-title">Plataforma</div>
-        <div class="c-text">20 ferramentas padronizadas com design system unificado, 68 cubos via API e pipelines 100% automaticos.</div>
+        <div class="c-text">
+          <ul>
+            <li>Portal com 3 eixos navegaveis</li>
+            <li>20 ferramentas padronizadas</li>
+            <li>68 cubos via API unificada</li>
+            <li>Pipelines 100% automatizados</li>
+            <li>Uptime ≥ 99% em producao</li>
+          </ul>
+        </div>
       </div>
       <div class="card card-cyan">
         <div class="c-icon">🗺️</div>
-        <div class="c-title">Escala</div>
-        <div class="c-text">5+ estados com PIPPA propria, equipes autonomas e 348h de capacitacao disponivel.</div>
+        <div class="c-title">Escala Estadual</div>
+        <div class="c-text">
+          <ul>
+            <li>5+ UFs com PIPPA operacional</li>
+            <li>Template replicavel em &lt;1 dia</li>
+            <li>10+ profissionais capacitados</li>
+            <li>2+ dashboards por UF</li>
+            <li>NPS ≥ 8/10 dos estados</li>
+          </ul>
+        </div>
       </div>
       <div class="card card-purple">
-        <div class="c-icon">🤖</div>
-        <div class="c-title">Inteligencia</div>
-        <div class="c-text">Agente IA conversacional que responde sobre todos os dados + 3 modelos preditivos em producao.</div>
-      </div>
-      <div class="card card-green">
         <div class="c-icon">🧪</div>
-        <div class="c-title">Transformacao</div>
-        <div class="c-text">TransformaLab com 3 modelos de laboratorio e modulo de Advocacy integrado para incidencia legislativa.</div>
+        <div class="c-title">Aplicacao</div>
+        <div class="c-text">
+          <ul>
+            <li>TransformaLab com 3 modelos</li>
+            <li>1+ lab piloto com relatorio</li>
+            <li>Advocacy integrado e funcional</li>
+            <li>5+ pareceres baseados em evidencias</li>
+            <li>Hub com governanca ativa</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card card-orange">
+        <div class="c-icon">🤖</div>
+        <div class="c-title">Inteligencia Artificial</div>
+        <div class="c-text">
+          <ul>
+            <li>Agente IA sobre 68 cubos</li>
+            <li>RAG sobre base de conhecimento</li>
+            <li>3+ modelos preditivos</li>
+            <li>85%+ acuracia do agente</li>
+            <li>Relatorios automatizados</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 13. PRÓXIMOS PASSOS ─── -->
-<div class="slide" data-idx="12">
+<!-- 22. PRÓXIMOS PASSOS -->
+<div class="slide" data-idx="21">
   <div class="slide-inner">
     <div class="s-label">Acao</div>
     <div class="s-title">Proximos Passos</div>
@@ -551,29 +857,36 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
         <div class="step-num">1</div>
         <div class="step-body">
           <h3>Aprovacao do projeto e orcamento</h3>
-          <p>Validacao pelo Conselho Deliberativo do escopo, equipe e investimento de R$ 2.015.000 para 2027.</p>
+          <p>Validacao pela Presidencia e Conselho Deliberativo do escopo, equipe e investimento de R$ 2.015.000 para 2027.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num" style="background:var(--cyan)">2</div>
         <div class="step-body">
           <h3>Contratacao da equipe tecnica</h3>
-          <p>Ativacao dos 3 profissionais via ARP 027/2025 (Qualificar TI): Eng. Dados Senior, Analista BI e UX Designer.</p>
+          <p>Ativacao dos 3 profissionais via ARP 027/2025 (Qualificar TI): Engenheiro de Dados Senior, Analista BI Pleno e UX Designer Pleno.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num" style="background:var(--green)">3</div>
         <div class="step-body">
-          <h3>Kick-off em janeiro de 2027</h3>
-          <p>Inicio da Sprint 1 com a equipe completa. Primeira entrega em 2 semanas — infraestrutura e CI/CD.</p>
+          <h3>Kick-off em 6 de janeiro de 2027</h3>
+          <p>Inicio da Sprint 1 com a equipe completa. Primeira entrega em 2 semanas — infraestrutura CI/CD e repositorios GitLab configurados.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--purple)">4</div>
+        <div class="step-body">
+          <h3>Primeira demo em marco de 2027</h3>
+          <p>Gate R1 — Portal redesenhado com 3 eixos, design system aplicado e pipelines automatizados. Demo Day para stakeholders da UPP.</p>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 14. ENCERRAMENTO ─── -->
-<div class="slide slide-cover" data-idx="13">
+<!-- 23. ENCERRAMENTO -->
+<div class="slide slide-cover" data-idx="22">
   <div class="slide-inner">
     <div style="font-family:var(--font-heading);font-size:3.5rem;font-weight:800;color:#fff;letter-spacing:-2px;margin-bottom:8px">PIPPA</div>
     <div style="font-size:1.3rem;color:var(--ceu);font-weight:600;margin-bottom:2rem">Da inteligencia a transformacao</div>
@@ -581,17 +894,27 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
       Plataforma de Inteligencia em Politicas Publicas Aplicadas<br>
       Sebrae Nacional — Unidade de Politicas Publicas
     </div>
-    <div style="margin-top:3rem;display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:16px 32px">
-      <div style="font-size:.8rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Projeto de Implantacao Nacional</div>
-      <div style="font-family:var(--font-heading);font-size:1.5rem;font-weight:800;color:#fff">2027</div>
+    <div style="margin-top:2.5rem;display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:14px 24px;text-align:center">
+        <div style="font-size:.7rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Investimento</div>
+        <div style="font-family:var(--font-heading);font-size:1.3rem;font-weight:800;color:#fff">R$ 2.015.000</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:14px 24px;text-align:center">
+        <div style="font-size:.7rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Ferramentas</div>
+        <div style="font-family:var(--font-heading);font-size:1.3rem;font-weight:800;color:#fff">20 prontas</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:14px 24px;text-align:center">
+        <div style="font-size:.7rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Kick-off</div>
+        <div style="font-family:var(--font-heading);font-size:1.3rem;font-weight:800;color:#fff">Jan 2027</div>
+      </div>
     </div>
   </div>
 </div>
 
-</div><!-- /deck -->
+</div>
 
 <script>
-var current=0,total=14;
+var current=0,total=23;
 var slides=document.querySelectorAll('.slide');
 var counter=document.getElementById('counter');
 var fill=document.getElementById('progressFill');
@@ -622,14 +945,12 @@ document.addEventListener('keydown',function(e){
   else if(e.key==='Escape'&&document.fullscreenElement)document.exitFullscreen();
 });
 
-// Click navigation: left 30% = prev, right 70% = next
 document.getElementById('deck').addEventListener('click',function(e){
   if(e.target.closest('a,button,.tb-btn,.tb-back'))return;
   var x=e.clientX/window.innerWidth;
   if(x<.3)go(current-1);else go(current+1);
 });
 
-// Touch swipe
 var tx=0;
 document.addEventListener('touchstart',function(e){tx=e.touches[0].clientX},{passive:true});
 document.addEventListener('touchend',function(e){
