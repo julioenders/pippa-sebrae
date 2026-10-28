@@ -600,10 +600,9 @@ var progressWrap=document.getElementById('progressWrap');
 
 function go(n){
   if(n<0||n>=total)return;
-  slides[current].classList.remove('active');
-  slides[current].classList.add(n>current?'prev':'');
-  setTimeout(function(){slides[current===n?current:current].classList.remove('prev')},450);
   var old=current;
+  slides[old].classList.remove('active');
+  if(n>old)slides[old].classList.add('prev');
   current=n;
   slides[current].classList.remove('prev');
   slides[current].classList.add('active');
@@ -612,8 +611,7 @@ function go(n){
   var isCover=slides[current].classList.contains('slide-cover');
   topBar.className=isCover?'top-bar':'top-bar body-bar';
   progressWrap.className=isCover?'progress-wrap':'progress-wrap body-progress';
-  // Clean prev from old slide after transition
-  setTimeout(function(){if(old!==current)slides[old].classList.remove('prev')},500);
+  setTimeout(function(){slides[old].classList.remove('prev')},500);
 }
 
 document.addEventListener('keydown',function(e){
