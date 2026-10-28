@@ -2487,8 +2487,6 @@ function exportWhatsApp() {
   msg += '• Candidatos: ' + cands + '\n';
   msg += '• Eleitos: ' + eleitos + '\n';
 
-  }
-
   if (icpComputed && icpScores.length > 0) {
     var miElevado2 = icpScores.filter(function(p){ return p.mi > 1; }).length;
     var bcAtivo2 = icpScores.filter(function(p){ return p.bc > 1.00; }).length;
