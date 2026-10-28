@@ -116,7 +116,8 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
 .budget-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
 .budget-label{font-size:.78rem;font-weight:600;min-width:155px;text-align:right;color:var(--text-sec)}
 .budget-bar-wrap{flex:1;height:26px;background:var(--surface2);border-radius:6px;overflow:hidden;position:relative}
-.budget-bar{height:100%;border-radius:6px;display:flex;align-items:center;padding:0 10px;font-size:.68rem;font-weight:700;color:#fff;transition:width .6s ease}
+.budget-bar{height:100%;border-radius:6px;transition:width .6s ease}
+.budget-val{font-size:.75rem;font-weight:700;color:var(--text);min-width:80px;white-space:nowrap}
 .budget-pct{font-size:.72rem;font-weight:700;color:var(--text-muted);min-width:44px;text-align:right}
 
 .steps{display:flex;flex-direction:column;gap:1.15rem;margin-top:1.75rem}
@@ -701,12 +702,12 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
     <div class="s-title">Investimento</div>
     <div style="text-align:center;margin:.8rem 0 1.5rem"><span style="font-family:var(--font-heading);font-size:2.6rem;font-weight:800;color:var(--accent)">R$ 2.015.000</span></div>
     <div style="max-width:720px;margin:0 auto">
-      <div class="budget-row"><div class="budget-label">Equipe tecnica</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:34.9%;background:var(--accent)">R$ 704 mil</div></div><div class="budget-pct">34,9%</div></div>
-      <div class="budget-row"><div class="budget-label">Reserva estrategica</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:38%;background:var(--orange)">R$ 765 mil</div></div><div class="budget-pct">38,0%</div></div>
-      <div class="budget-row"><div class="budget-label">Infraestrutura cloud</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:8.9%;background:var(--cyan)">R$ 180 mil</div></div><div class="budget-pct">8,9%</div></div>
-      <div class="budget-row"><div class="budget-label">Capacitacao</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:7.4%;background:var(--green)">R$ 150 mil</div></div><div class="budget-pct">7,4%</div></div>
-      <div class="budget-row"><div class="budget-label">Eventos</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:6%;background:var(--purple)">R$ 120 mil</div></div><div class="budget-pct">6,0%</div></div>
-      <div class="budget-row"><div class="budget-label">Licencas</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:4.8%;background:var(--rose)">R$ 96 mil</div></div><div class="budget-pct">4,8%</div></div>
+      <div class="budget-row"><div class="budget-label">Equipe tecnica</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:34.9%;background:var(--accent)"></div></div><div class="budget-val">R$ 704 mil</div><div class="budget-pct">34,9%</div></div>
+      <div class="budget-row"><div class="budget-label">Reserva estrategica</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:38%;background:var(--orange)"></div></div><div class="budget-val">R$ 765 mil</div><div class="budget-pct">38,0%</div></div>
+      <div class="budget-row"><div class="budget-label">Infraestrutura cloud</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:8.9%;background:var(--cyan)"></div></div><div class="budget-val">R$ 180 mil</div><div class="budget-pct">8,9%</div></div>
+      <div class="budget-row"><div class="budget-label">Capacitacao</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:7.4%;background:var(--green)"></div></div><div class="budget-val">R$ 150 mil</div><div class="budget-pct">7,4%</div></div>
+      <div class="budget-row"><div class="budget-label">Eventos</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:6%;background:var(--purple)"></div></div><div class="budget-val">R$ 120 mil</div><div class="budget-pct">6,0%</div></div>
+      <div class="budget-row"><div class="budget-label">Licencas</div><div class="budget-bar-wrap"><div class="budget-bar" style="width:4.8%;background:var(--rose)"></div></div><div class="budget-val">R$ 96 mil</div><div class="budget-pct">4,8%</div></div>
     </div>
     <div class="s-note">Reserva de 38% segue boas praticas ageis — cada release entrega valor independente.</div>
   </div>
