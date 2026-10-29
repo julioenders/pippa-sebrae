@@ -256,7 +256,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
     <select id="selLegislatura" class="btn btn-outline" style="padding:6px 12px;font-size:12px;background:var(--surface)">
       <option value="57">57a Legislatura (2023-2027)</option>
     </select>
-    <button class="btn btn-primary" onclick="fetchData()">&#128269; Consultar APIs</button>
+    <button class="btn btn-primary" onclick="fetchData()" title="Atualizar dados ao vivo das APIs da Camara e Senado">&#128260; Atualizar APIs</button>
     <button class="btn btn-outline" onclick="exportWhatsApp()" title="Compartilhar resumo via WhatsApp">📤 WhatsApp</button>
   </div>
 </div>
@@ -602,11 +602,13 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
 
 <div class="toast" id="toast"></div>
 
+<script src="stakeholders_cache.js"></script>
 <script>
 var allParlamentares = [];
 var filteredParlamentares = [];
 var allFrentes = [];
 var comissoesChave = {};
+var cachedAutorias = {};
 var filters = { casa: null, partido: null, uf: null, frente: null, comissao: null, eleicao: null };
 
 var FRENTES_RELEVANTES = [
@@ -628,6 +630,23 @@ var COMISSOES_CHAVE_SENADO = [
 function normalizeStr(s) {
   return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
 }
+
+function loadFromCache() {
+  if (typeof STAKEHOLDERS_CACHE === 'undefined') return false;
+  var c = STAKEHOLDERS_CACHE;
+  allParlamentares = c.parlamentares || [];
+  allFrentes = c.frentes || [];
+  comissoesChave = c.comissoesChave || {};
+  cachedAutorias = c.autorias || {};
+  buildFilters();
+  applyFilters();
+  showToast(allParlamentares.length + ' parlamentares carregados (cache ' + (c.buildDate || '') + ')');
+  return true;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  loadFromCache();
+});
 
 // Parlamentares candidatos em 2026 — fonte: TSE CDN (resultados oficiais)
 var CANDIDATOS_2026 = {
@@ -1259,6 +1278,9 @@ async function fetchData() {
   allParlamentares = [];
   allFrentes = [];
   comissoesChave = {};
+  cachedAutorias = {};
+  icpComputed = false;
+  scoreComputed = false;
   var warnings = [];
   var seenIds = {};
 
@@ -2151,43 +2173,51 @@ async function fetchAutorias() {
 async function computeScores() {
   var container = document.getElementById('icpContainer');
 
-  var senators = allParlamentares.filter(function(p) { return p.casa === 'senado' && p.orgaos.length === 0; });
-  if (senators.length > 0) {
-    if (container) container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando comissoes do Senado (' + senators.length + ' senadores)...</div>';
-    for (var si = 0; si < senators.length; si += 5) {
-      var sBatch = senators.slice(si, si + 5);
-      await Promise.all(sBatch.map(function(s) {
-        return fetch('https://legis.senado.leg.br/dadosabertos/senador/' + s.id + '/comissoes', { headers: { 'Accept': 'application/json' } })
-          .then(function(r) { return r.ok ? r.json() : null; })
-          .then(function(j) {
-            if (!j) return;
-            try {
-              var root = j.MembroComissaoParlamentar || j;
-              var parl = root.Parlamentar || root;
-              var coms = parl.Comissoes || parl.comissoes || {};
-              var lista = coms.Comissao || coms.comissao || [];
-              if (!Array.isArray(lista)) lista = [lista];
-              lista.forEach(function(c) {
-                var ic = c.IdentificacaoComissao || c;
-                var sigla = ic.SiglaComissao || ic.siglaComissao || '';
-                if (sigla && s.orgaos.indexOf(sigla) < 0) {
-                  s.orgaos.push(sigla);
-                  if (!s.orgaoRoles) s.orgaoRoles = {};
-                  s.orgaoRoles[sigla] = c.DescricaoParticipacao || c.Participacao || c.participacao || 'Membro';
-                }
-              });
-            } catch(e) {}
-          })
-          .catch(function() {});
-      }));
+  var hasCachedSenado = allParlamentares.some(function(p) { return p.casa === 'senado' && p.orgaos.length > 0; });
+  if (!hasCachedSenado) {
+    var senators = allParlamentares.filter(function(p) { return p.casa === 'senado' && p.orgaos.length === 0; });
+    if (senators.length > 0) {
+      if (container) container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando comissoes do Senado (' + senators.length + ' senadores)...</div>';
+      for (var si = 0; si < senators.length; si += 5) {
+        var sBatch = senators.slice(si, si + 5);
+        await Promise.all(sBatch.map(function(s) {
+          return fetch('https://legis.senado.leg.br/dadosabertos/senador/' + s.id + '/comissoes', { headers: { 'Accept': 'application/json' } })
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(j) {
+              if (!j) return;
+              try {
+                var root = j.MembroComissaoParlamentar || j;
+                var parl = root.Parlamentar || root;
+                var coms = parl.Comissoes || parl.comissoes || {};
+                var lista = coms.Comissao || coms.comissao || [];
+                if (!Array.isArray(lista)) lista = [lista];
+                lista.forEach(function(c) {
+                  var ic = c.IdentificacaoComissao || c;
+                  var sigla = ic.SiglaComissao || ic.siglaComissao || '';
+                  if (sigla && s.orgaos.indexOf(sigla) < 0) {
+                    s.orgaos.push(sigla);
+                    if (!s.orgaoRoles) s.orgaoRoles = {};
+                    s.orgaoRoles[sigla] = c.DescricaoParticipacao || c.Participacao || c.participacao || 'Membro';
+                  }
+                });
+              } catch(e) {}
+            })
+            .catch(function() {});
+        }));
+      }
     }
   }
 
   var depAutorias = {};
-  try {
-    if (container) container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando autorias tematicas na Camara...</div>';
-    depAutorias = await fetchAutorias();
-  } catch(e) {}
+  var hasCachedAutorias = Object.keys(cachedAutorias).length > 0;
+  if (hasCachedAutorias) {
+    Object.keys(cachedAutorias).forEach(function(k) { depAutorias[parseInt(k)] = cachedAutorias[k]; });
+  } else {
+    try {
+      if (container) container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando autorias tematicas na Camara...</div>';
+      depAutorias = await fetchAutorias();
+    } catch(e) {}
+  }
 
   var maxAutorias = 1;
   Object.keys(depAutorias).forEach(function(k) { if (depAutorias[k] > maxAutorias) maxAutorias = depAutorias[k]; });
