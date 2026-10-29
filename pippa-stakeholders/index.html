@@ -51,10 +51,10 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);transition:background .3s,color .3s;min-height:100vh}
 
-.header{background:var(--header-bg);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .header-left{display:flex;align-items:center;gap:16px}
-.logo{font-size:22px;font-weight:700;color:#ffffff;letter-spacing:-.5px}
-.logo-sub{font-size:13px;color:rgba(255,255,255,.6);font-weight:400}
+.logo{font-family:var(--font-heading);font-size:22px;font-weight:800;color:var(--text-accent);letter-spacing:-.5px}
+.logo-sub{font-size:13px;color:var(--text-muted);font-weight:400}
 .header-controls{display:flex;align-items:center;gap:12px}
 .btn{padding:8px 16px;border-radius:var(--radius);font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
 .btn-primary{background:var(--accent);color:#fff}
@@ -62,10 +62,10 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
 .btn-primary:hover{background:var(--accent-hover)}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
 .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
-.btn-back{background:transparent;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85);font-size:11px;padding:6px 12px;text-decoration:none;border-radius:var(--radius);display:inline-flex;align-items:center;gap:4px}
-.btn-back:hover{border-color:rgba(255,255,255,.5);color:#ffffff}
-.info-btn{background:transparent;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
-.info-btn:hover{border-color:rgba(255,255,255,.5);color:#ffffff}
+.btn-back{background:var(--highlight-bg);border:1px solid var(--border);color:var(--text-accent);font-size:11.5px;font-weight:600;padding:7px 14px;text-decoration:none;border-radius:8px;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+.btn-back:hover{background:var(--accent-ring);border-color:var(--accent)}
+.info-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.info-btn:hover{border-color:var(--accent);color:var(--accent)}
 .methodology-backdrop{display:none;position:fixed;inset:0;background:var(--backdrop);z-index:300;align-items:flex-start;justify-content:center;padding-top:40px;overflow-y:auto}
 .methodology-backdrop.active{display:flex}
 .methodology-modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;max-width:820px;width:92%;margin-bottom:40px}
@@ -215,9 +215,9 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
 .score-axis{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:4px}
 .score-axis-val{font-weight:700;color:var(--text2)}
 .score-rank{font-size:11px;font-weight:800;color:var(--text3);min-width:28px;text-align:right}
-.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;cursor:pointer;color:rgba(255,255,255,.85);transition:all .2s}
-.theme-toggle:hover{border-color:rgba(255,255,255,.5);color:#fff;background:rgba(255,255,255,.1)}
-.theme-toggle svg{width:18px;height:18px;}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:transparent;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;color:var(--text-muted);transition:all .2s}
+.theme-toggle:hover{border-color:var(--accent);color:var(--text-accent);background:var(--highlight-bg)}
+.theme-toggle svg{width:16px;height:16px;}
 .icon-sun{display:none;}
 [data-theme="dark"] .icon-sun{display:block;}
 [data-theme="dark"] .icon-moon{display:none;}
@@ -244,15 +244,15 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);transit
 
 <div class="header">
   <div class="header-left">
-    <a href="../pippa-portal/index.html" class="btn-back">&#9664; Portal</a>
+    <a href="../pippa-portal/index.html" class="btn-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> PIPPA Portal</a>
     <div>
       <div class="logo">PIPPA Stakeholders</div>
       <div class="logo-sub">Mapa Parlamentar — CRM Legislativo — ICP/RIG</div>
     </div>
-    <button class="info-btn" onclick="showMethodology()" title="Sobre este painel">&#8505;</button>
+    <button class="info-btn" onclick="showMethodology()" title="Sobre este painel">i</button>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
   </div>
   <div class="header-controls">
-      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     <select id="selLegislatura" class="btn btn-outline" style="padding:6px 12px;font-size:12px;background:var(--surface)">
       <option value="57">57a Legislatura (2023-2027)</option>
     </select>
@@ -1600,6 +1600,7 @@ function applyFilters() {
   updateKPIs();
   renderAnalytics();
   renderParlamentares();
+  if (icpComputed) renderICPRanking();
 }
 
 function renderAnalytics() {
@@ -2365,16 +2366,74 @@ async function computeICPRIG() {
     var mi = computeMI(p);
     var bc = computeBC(p);
     var cp = Math.round(pb * mi.factor * bc.factor);
+
+    var frentesRelevantes = [];
+    p.frentes.forEach(function(f) {
+      var fn = normalizeStr(f);
+      var matched = false;
+      var allKws = SEBRAE_FRENTE_KEYWORDS.tier1.concat(SEBRAE_FRENTE_KEYWORDS.tier2).concat(SEBRAE_FRENTE_KEYWORDS.tier3);
+      allKws.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) matched = true; });
+      if (matched) frentesRelevantes.push(f);
+    });
+    var descA = frentesRelevantes.length > 0
+      ? frentesRelevantes.length + ' frente(s) relevante(s) + ' + p.orgaos.length + ' comissao(oes): ' + frentesRelevantes.slice(0,3).join('; ') + (frentesRelevantes.length > 3 ? ' (+' + (frentesRelevantes.length-3) + ')' : '')
+      : p.orgaos.length + ' comissao(oes), nenhuma frente relevante identificada';
+
+    var t1fNames = [], t2fNames = [];
+    p.frentes.forEach(function(f) {
+      var fn = normalizeStr(f);
+      var tier = 0;
+      SEBRAE_FRENTE_KEYWORDS.tier1.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) tier = 3; });
+      if (tier < 3) SEBRAE_FRENTE_KEYWORDS.tier2.forEach(function(k) { if (fn.indexOf(normalizeStr(k)) >= 0) tier = Math.max(tier, 2); });
+      if (tier === 3) t1fNames.push(f);
+      else if (tier === 2) t2fNames.push(f);
+    });
+    var t1cNames = [], t2cNames = [];
+    p.orgaos.forEach(function(o) {
+      if (COMISSOES_TIER1.indexOf(o) >= 0) t1cNames.push(o);
+      else if (COMISSOES_TIER2.indexOf(o) >= 0) t2cNames.push(o);
+    });
+    var descBParts = [];
+    if (t1fNames.length) descBParts.push(t1fNames.length + ' frente(s) Tier 1');
+    if (t2fNames.length) descBParts.push(t2fNames.length + ' frente(s) Tier 2');
+    if (t1cNames.length) descBParts.push('comissoes T1: ' + t1cNames.join(', '));
+    if (t2cNames.length) descBParts.push('comissoes T2: ' + t2cNames.join(', '));
+    var descB = descBParts.length > 0 ? descBParts.join('; ') : 'Sem engajamento em frentes/comissoes de alta relevancia';
+
+    var descCParts = [];
+    p.orgaos.forEach(function(o) {
+      var base = COMISSOES_TIER1.indexOf(o) >= 0 ? 'estrategica' : (COMISSOES_TIER2.indexOf(o) >= 0 ? 'apoio' : '');
+      if (base && p.orgaoRoles) {
+        var role = p.orgaoRoles[o] || 'Membro';
+        descCParts.push(o + ' (' + role + ', ' + base + ')');
+      }
+    });
+    var descC = descCParts.length > 0 ? descCParts.join('; ') : 'Sem posicao em comissoes estrategicas';
+
+    var descD = autoCount > 0
+      ? autoCount + ' proposicao(oes) tematica(s) identificada(s) (keywords MPE)'
+      : 'Nenhuma autoria tematica identificada na legislatura';
+
+    var descEParts = [];
+    if (p.foto) descEParts.push('foto');
+    if (p.email) descEParts.push('email');
+    if (p.frentes.length > 0) descEParts.push('frentes');
+    if (p.orgaos.length > 0) descEParts.push('comissoes');
+    if (p.eleicao2026) descEParts.push('dados eleitorais');
+    var descE = 'Perfil com ' + descEParts.length + '/5 itens: ' + (descEParts.length > 0 ? descEParts.join(', ') : 'incompleto');
+
     return {
       id: p.id, nome: p.nome, partido: p.partido, uf: p.uf, casa: p.casa,
       foto: p.foto, email: p.email,
       pb: pb, dimA: dimA, dimB: dimB, dimC: dimC, dimD: dimD, dimE: dimE,
+      descA: descA, descB: descB, descC: descC, descD: descD, descE: descE,
       mi: mi.factor, miReason: mi.reason,
       bc: bc.factor, bcReason: bc.reason,
       cp: cp,
       orgaos: p.orgaos,
       orgaoRoles: p.orgaoRoles || {},
-      eleicao2026: p.eleicao2026 || null
+      eleicao2026: p.eleicao2026 || null,
+      autorias: autoCount
     };
   });
 
@@ -2408,19 +2467,42 @@ function renderICPRanking() {
   var search = normalizeStr(document.getElementById('icpSearchBox').value || '');
   var container = document.getElementById('icpContainer');
 
-  var filtered = icpScores;
-  if (search) {
-    filtered = icpScores.filter(function(p) {
-      return normalizeStr(p.nome).indexOf(search) >= 0
-        || normalizeStr(p.partido).indexOf(search) >= 0
-        || normalizeStr(p.uf).indexOf(search) >= 0;
-    });
-  }
-  if (filters.casa) filtered = filtered.filter(function(p) { return p.casa === filters.casa; });
-  if (filters.partido) filtered = filtered.filter(function(p) { return p.partido === filters.partido; });
-  if (filters.uf) filtered = filtered.filter(function(p) { return p.uf === filters.uf; });
+  var filtered = icpScores.filter(function(p) {
+    if (filters.casa && p.casa !== filters.casa) return false;
+    if (filters.partido && p.partido !== filters.partido) return false;
+    if (filters.uf && p.uf !== filters.uf) return false;
+    if (filters.frente) {
+      var srcP = allParlamentares.find(function(ap) { return ap.id === p.id && ap.casa === p.casa; });
+      if (!srcP || srcP.frentes.indexOf(filters.frente) < 0) return false;
+    }
+    if (filters.comissao) {
+      var com = comissoesChave[filters.comissao];
+      if (!com || com.membros.indexOf(p.id) < 0) return false;
+    }
+    if (filters.eleicao) {
+      if (filters.eleicao === 'candidato' && !p.eleicao2026) return false;
+      if (filters.eleicao === 'nao_candidato' && p.eleicao2026) return false;
+      if (filters.eleicao === 'eleito' && (!p.eleicao2026 || !p.eleicao2026.eleito)) return false;
+      if (filters.eleicao === 'nao_eleito' && (!p.eleicao2026 || p.eleicao2026.eleito)) return false;
+      if (['candidato','nao_candidato','eleito','nao_eleito'].indexOf(filters.eleicao) < 0) {
+        if (!p.eleicao2026 || p.eleicao2026.cargo !== filters.eleicao) return false;
+      }
+    }
+    if (search) {
+      var haystack = normalizeStr(p.nome) + ' ' + normalizeStr(p.partido) + ' ' + normalizeStr(p.uf);
+      if (haystack.indexOf(search) < 0) return false;
+    }
+    return true;
+  });
 
   document.getElementById('icpCount').textContent = filtered.length + ' parlamentares';
+  document.getElementById('kpiICPAtores').textContent = filtered.length;
+  var avgPBf = filtered.length > 0 ? (filtered.reduce(function(s,p){return s+p.pb;},0)/filtered.length).toFixed(1) : '—';
+  var avgCPf = filtered.length > 0 ? (filtered.reduce(function(s,p){return s+p.cp;},0)/filtered.length).toFixed(0) : '—';
+  document.getElementById('kpiICPPB').textContent = avgPBf;
+  document.getElementById('kpiICPCP').textContent = avgCPf;
+  document.getElementById('kpiICPMI').textContent = filtered.filter(function(p){return p.mi>1;}).length;
+  document.getElementById('kpiICPBC').textContent = filtered.filter(function(p){return p.bc>1.00;}).length;
 
   if (filtered.length === 0) {
     container.innerHTML = '<div class="empty-state"><div class="icon">&#128269;</div><h3>Nenhum resultado</h3><p>Ajuste a busca ou os filtros.</p></div>';
@@ -2471,18 +2553,21 @@ function renderICPRanking() {
     html += '<div>';
     html += '<div class="detail-label" style="margin-bottom:8px">Pontuacao-base (PB = ' + p.pb + '/100)</div>';
     var dims = [
-      { label: 'A. Amplitude', val: p.dimA, max: 20, color: 'var(--emerald)' },
-      { label: 'B. Profundidade', val: p.dimB, max: 30, color: 'var(--accent)' },
-      { label: 'C. Relevancia', val: p.dimC, max: 20, color: 'var(--cyan)' },
-      { label: 'D. Articulacao', val: p.dimD, max: 20, color: 'var(--purple)' },
-      { label: 'E. Inteligencia', val: p.dimE, max: 10, color: 'var(--amber)' }
+      { label: 'A. Amplitude', val: p.dimA, max: 20, color: 'var(--emerald)', desc: p.descA },
+      { label: 'B. Profundidade', val: p.dimB, max: 30, color: 'var(--accent)', desc: p.descB },
+      { label: 'C. Relevancia', val: p.dimC, max: 20, color: 'var(--cyan)', desc: p.descC },
+      { label: 'D. Articulacao', val: p.dimD, max: 20, color: 'var(--purple)', desc: p.descD },
+      { label: 'E. Inteligencia', val: p.dimE, max: 10, color: 'var(--amber)', desc: p.descE }
     ];
     dims.forEach(function(d) {
       var pct = Math.round((d.val / d.max) * 100);
+      html += '<div style="margin-bottom:8px">';
       html += '<div class="icp-dim-bar">';
       html += '<span class="icp-dim-label">' + d.label + '</span>';
       html += '<div class="icp-dim-track"><div class="icp-dim-fill" style="width:' + pct + '%;background:' + d.color + '"></div></div>';
       html += '<span class="icp-dim-val" style="color:' + d.color + '">' + d.val + '/' + d.max + '</span>';
+      html += '</div>';
+      html += '<div style="font-size:10px;color:var(--text3);padding-left:113px;line-height:1.5;margin-top:2px">' + escapeHtml(d.desc) + '</div>';
       html += '</div>';
     });
     html += '</div>';
