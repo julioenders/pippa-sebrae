@@ -1948,6 +1948,8 @@ function renderParlamentares() {
       var statusTxt = p.eleicao2026.eleito ? 'ELEITO' : 'NAO ELEITO';
       html += '<span class="elec-tag ' + elCls + '">Cand. a ' + escapeHtml(p.eleicao2026.cargo) + ' — ' + escapeHtml(p.eleicao2026.uf) + '</span>';
       html += '<span class="' + statusCls + '">' + statusTxt + '</span>';
+    } else {
+      html += '<span style="display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;margin:2px;background:var(--surface2);color:var(--text3);border:1px solid var(--border)">Nao candidato 2026</span>';
     }
     p.orgaos.forEach(function(o){ html += '<span class="comissao-tag">' + escapeHtml(o) + '</span>'; });
     p.frentes.slice(0,2).forEach(function(f){
@@ -2562,6 +2564,8 @@ function renderICPRanking() {
       var elC = p.eleicao2026.eleito ? 'var(--emerald)' : 'var(--red)';
       var elI = p.eleicao2026.eleito ? '&#10003;' : '&#10007;';
       html += '<span style="font-size:10px;padding:1px 6px;border-radius:4px;background:var(--highlight-bg);color:' + elC + '">' + elI + ' ' + (p.eleicao2026.eleito ? 'Eleito' : 'Nao eleito') + ' — ' + escapeHtml(p.eleicao2026.cargo) + '</span>';
+    } else {
+      html += '<span style="font-size:10px;padding:1px 6px;border-radius:4px;background:var(--surface2);color:var(--text3)">Nao candidato 2026</span>';
     }
     html += '</div>';
     html += '<div class="score-breakdown">';
