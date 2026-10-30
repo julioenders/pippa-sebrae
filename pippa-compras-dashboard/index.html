@@ -2078,8 +2078,8 @@ function enrichItem(item) {
   item._urgencia = classifyUrgencia(item);
   item._diasRestantes = diasRestantes(item);
   item._setores = detectSetores(item);
-  item._acessivelMEI = classifyMEI(item);
-  item._setorMEI = (item._setores || []).some(s => SETORES_MEI.includes(s));
+  item._acessivelMEI = item._oportunidadeMPE === 'Exclusiva MPE' ? classifyMEI(item) : null;
+  item._setorMEI = item._oportunidadeMPE === 'Exclusiva MPE' && (item._setores || []).some(s => SETORES_MEI.includes(s));
   return item;
 }
 
