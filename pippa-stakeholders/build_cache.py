@@ -84,7 +84,7 @@ def fetch_deputados():
     print("1/7 Buscando deputados da Camara...")
     deputados = []
     seen = set()
-    url = f'https://dadosabertos.camara.leg.br/api/v2/deputados?idLegislatura={LEGISLATURA}&ordem=ASC&ordenarPor=nome&itens=100'
+    url = 'https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome&itens=100'
 
     r = safe_get(url, headers={'Accept': 'application/xml'})
     if not r or not r.ok:
