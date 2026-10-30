@@ -1645,17 +1645,35 @@ function getLiqRatio() {{
 }}
 
 function renderKPIs() {{
-  const estados = getFilteredEstados();
-  const sr = getSetorRatios();
-  let estList = estados;
-  if (sr) estList = applyUfRatios(estList, sr);
-  const totalEmp = estList.reduce((s, d) => s + d.empenhado, 0);
-  const totalPago = estList.reduce((s, d) => s + d.pago, 0);
-  const totalLiq = estList.reduce((s, d) => s + (d.liquidado || 0), 0);
-  const execPct = totalEmp > 0 ? (totalPago / totalEmp * 100).toFixed(1) : '0.0';
-  const totalQtd = estList.reduce((s, d) => s + d.qtd, 0);
-
+  const mun = getHeaderMun();
   const uf = getHeaderUf();
+  let totalEmp, totalLiq, totalPago, totalQtd;
+
+  if (mun) {{
+    let munItems = DATA.municipios.filter(d => d.municipio === mun);
+    if (uf) munItems = munItems.filter(d => d.uf === uf);
+    if (activeFilters.regiao.length) munItems = munItems.filter(d => activeFilters.regiao.includes(UF_REGIAO[d.uf]));
+    if (activeFilters.uf.length) munItems = munItems.filter(d => activeFilters.uf.includes(d.uf));
+    const partidoUfs = getPartidoUfs();
+    if (partidoUfs) munItems = munItems.filter(d => partidoUfs.has(d.uf));
+    const sr = getSetorRatios();
+    if (sr) munItems = applyUfRatios(munItems, sr);
+    totalEmp = munItems.reduce((s, d) => s + d.empenhado, 0);
+    totalLiq = munItems.reduce((s, d) => s + (d.liquidado || 0), 0);
+    totalPago = munItems.reduce((s, d) => s + (d.pago || 0), 0);
+    totalQtd = munItems.reduce((s, d) => s + d.qtd, 0);
+  }} else {{
+    const estados = getFilteredEstados();
+    const sr = getSetorRatios();
+    let estList = estados;
+    if (sr) estList = applyUfRatios(estList, sr);
+    totalEmp = estList.reduce((s, d) => s + d.empenhado, 0);
+    totalLiq = estList.reduce((s, d) => s + (d.liquidado || 0), 0);
+    totalPago = estList.reduce((s, d) => s + (d.pago || 0), 0);
+    totalQtd = estList.reduce((s, d) => s + d.qtd, 0);
+  }}
+  const execPct = totalEmp > 0 ? (totalLiq / totalEmp * 100).toFixed(1) : '0.0';
+
   const search = (document.getElementById('globalSearch').value || '').toLowerCase();
   let autoresFiltered = DATA.autores;
   if (uf) autoresFiltered = autoresFiltered.filter(d => d.uf === uf);
