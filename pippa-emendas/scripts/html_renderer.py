@@ -1321,8 +1321,9 @@ function aggregate(items, key) {{
   const map = {{}};
   items.forEach(d => {{
     const k = d[key];
-    if (!map[k]) map[k] = {{ empenhado: 0, pago: 0, qtd: 0 }};
+    if (!map[k]) map[k] = {{ empenhado: 0, liquidado: 0, pago: 0, qtd: 0 }};
     map[k].empenhado += d.empenhado;
+    map[k].liquidado += (d.liquidado || 0);
     map[k].pago += d.pago;
     map[k].qtd += d.qtd;
   }});
@@ -1366,7 +1367,7 @@ function getUfYearRatios() {{
 function applyUfRatios(items, ratios) {{
   return items.map(d => {{
     const r = ratios[d.uf] || {{ empenhado: 0, pago: 0, qtd: 0 }};
-    return {{ ...d, empenhado: d.empenhado * r.empenhado, pago: d.pago * r.pago, qtd: Math.round(d.qtd * r.qtd) }};
+    return {{ ...d, empenhado: d.empenhado * r.empenhado, liquidado: (d.liquidado || 0) * r.empenhado, pago: d.pago * r.pago, qtd: Math.round(d.qtd * r.qtd) }};
   }});
 }}
 
@@ -1650,8 +1651,7 @@ function renderKPIs() {{
   if (sr) estList = applyUfRatios(estList, sr);
   const totalEmp = estList.reduce((s, d) => s + d.empenhado, 0);
   const totalPago = estList.reduce((s, d) => s + d.pago, 0);
-  const liqRatio = getLiqRatio();
-  const totalLiq = totalEmp * liqRatio;
+  const totalLiq = estList.reduce((s, d) => s + (d.liquidado || 0), 0);
   const execPct = totalEmp > 0 ? (totalPago / totalEmp * 100).toFixed(1) : '0.0';
   const totalQtd = estList.reduce((s, d) => s + d.qtd, 0);
 
@@ -1695,7 +1695,7 @@ function renderEstadoCharts() {{
       labels: top15.map(d => d.uf),
       datasets: [
         {{ label: 'Empenhado', data: top15.map(d => d.empenhado), backgroundColor: '#2a4fda' }},
-        {{ label: 'Liquidado', data: top15.map(d => d.empenhado * getLiqRatio()), backgroundColor: '#be64e3' }},
+        {{ label: 'Liquidado', data: top15.map(d => (d.liquidado || 0)), backgroundColor: '#be64e3' }},
         {{ label: 'Pago', data: top15.map(d => d.pago), backgroundColor: 'rgba(42,79,218,0.4)' }}
       ]
     }},
@@ -1742,11 +1742,12 @@ function renderEstadoCharts() {{
   }});
 
   const regiaoEmp = {{}};
+  const regiaoLiq = {{}};
   const regiaoPago = {{}};
-  REGIAO_ORDER.forEach(r => {{ regiaoEmp[r] = 0; regiaoPago[r] = 0; }});
+  REGIAO_ORDER.forEach(r => {{ regiaoEmp[r] = 0; regiaoLiq[r] = 0; regiaoPago[r] = 0; }});
   estados.forEach(d => {{
     const r = UF_REGIAO[d.uf];
-    if (r) {{ regiaoEmp[r] += d.empenhado; regiaoPago[r] += d.pago; }}
+    if (r) {{ regiaoEmp[r] += d.empenhado; regiaoLiq[r] += (d.liquidado || 0); regiaoPago[r] += d.pago; }}
   }});
   const regiaoSorted = [...REGIAO_ORDER].sort((a, b) => regiaoEmp[b] - regiaoEmp[a]);
 
@@ -1757,7 +1758,7 @@ function renderEstadoCharts() {{
       labels: regiaoSorted,
       datasets: [
         {{ label: 'Empenhado', data: regiaoSorted.map(r => regiaoEmp[r]), backgroundColor: regiaoSorted.map(r => REGIAO_COLORS[r]) }},
-        {{ label: 'Liquidado', data: regiaoSorted.map(r => regiaoEmp[r] * getLiqRatio()), backgroundColor: regiaoSorted.map(r => REGIAO_COLORS[r] + 'B3') }},
+        {{ label: 'Liquidado', data: regiaoSorted.map(r => regiaoLiq[r]), backgroundColor: regiaoSorted.map(r => REGIAO_COLORS[r] + 'B3') }},
         {{ label: 'Pago', data: regiaoSorted.map(r => regiaoPago[r]), backgroundColor: regiaoSorted.map(r => REGIAO_COLORS[r] + '80') }}
       ]
     }},
@@ -1859,7 +1860,7 @@ function renderPartidoCharts() {{
       labels: top15.map(d => d.partido),
       datasets: [
         {{ label: 'Empenhado', data: top15.map(d => d.empenhado), backgroundColor: '#2a4fda' }},
-        {{ label: 'Liquidado', data: top15.map(d => d.empenhado * getLiqRatio()), backgroundColor: '#be64e3' }},
+        {{ label: 'Liquidado', data: top15.map(d => (d.liquidado || 0)), backgroundColor: '#be64e3' }},
         {{ label: 'Pago', data: top15.map(d => d.pago), backgroundColor: 'rgba(42,79,218,0.4)' }}
       ]
     }},
@@ -1936,8 +1937,9 @@ function renderSerieCharts() {{
     if (search) items = items.filter(d => d.uf.toLowerCase().includes(search));
     const byAno = {{}};
     items.forEach(d => {{
-      if (!byAno[d.ano]) byAno[d.ano] = {{ ano: d.ano, empenhado: 0, pago: 0 }};
+      if (!byAno[d.ano]) byAno[d.ano] = {{ ano: d.ano, empenhado: 0, liquidado: 0, pago: 0 }};
       byAno[d.ano].empenhado += d.empenhado;
+      byAno[d.ano].liquidado += (d.liquidado || 0);
       byAno[d.ano].pago += d.pago;
     }});
     serie = Object.values(byAno).sort((a, b) => a.ano - b.ano);
@@ -1945,11 +1947,10 @@ function renderSerieCharts() {{
       serie = serie.map(d => ({{
         ano: d.ano,
         empenhado: d.empenhado * (sr[d.ano] || 0),
+        liquidado: (d.liquidado || 0) * (sr[d.ano] || 0),
         pago: d.pago * (sr[d.ano] || 0)
       }}));
     }}
-    const liqRatio = getLiqRatio();
-    serie = serie.map(d => ({{ ...d, liquidado: d.empenhado * liqRatio }}));
   }} else {{
     serie = DATA.serie.filter(d => d.ano >= from && d.ano <= to);
   }}
@@ -2065,7 +2066,7 @@ function filterMunicipios() {{
   filtered = filtered.slice(0, 100);
   const tbody = document.getElementById('munTbody');
   tbody.innerHTML = filtered.map(m => {{
-    const liq = m.empenhado * getLiqRatio();
+    const liq = m.liquidado || 0;
     const exec = m.empenhado > 0 ? (m.pago / m.empenhado * 100).toFixed(1) : '0.0';
     return `<tr>
       <td>${{m.municipio}}</td>

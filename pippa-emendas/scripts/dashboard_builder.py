@@ -37,6 +37,7 @@ def build_estado_data(df_estado: pd.DataFrame) -> list[dict]:
             "uf": _to_sigla(row["uf_destino"]),
             "ano": int(row["ano"]),
             "empenhado": round(float(row["valor_empenhado"]), 2),
+            "liquidado": round(float(row.get("valor_liquidado", 0)), 2),
             "pago": round(float(row.get("valor_pago", 0)), 2),
             "qtd": int(row["qtd_emendas"]),
         }
@@ -193,6 +194,7 @@ def build_municipio_data(df_municipio: pd.DataFrame) -> list[dict]:
             "municipio": str(mun),
             "uf": _to_sigla(str(r.get("uf_destino", ""))),
             "empenhado": round(float(r.get("valor_empenhado", 0)), 2),
+            "liquidado": round(float(r.get("valor_liquidado", 0)), 2),
             "pago": round(float(r.get("valor_pago", 0)), 2),
             "qtd": int(r.get("qtd_emendas", 0)),
         })
