@@ -1287,7 +1287,7 @@ async function fetchData() {
   try {
     // Deputados — XML-first (API JSON instavel, XML funciona)
     container.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando deputados da Camara...</div>';
-    var depUrl = 'https://dadosabertos.camara.leg.br/api/v2/deputados?idLegislatura=' + leg + '&ordem=ASC&ordenarPor=nome&itens=100';
+    var depUrl = 'https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome&itens=100';
     var depLoaded = false;
 
     function parseDeputadosXml(xmlText) {
