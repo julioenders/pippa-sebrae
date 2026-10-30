@@ -1564,7 +1564,6 @@ function renderKPIs() {
   if (mun) {
     let munItems = DATA.municipios.filter(d => d.municipio === mun);
     if (uf) munItems = munItems.filter(d => d.uf === uf);
-    munItems = filterByAno(munItems);
     if (activeFilters.regiao.length) munItems = munItems.filter(d => activeFilters.regiao.includes(UF_REGIAO[d.uf]));
     if (activeFilters.uf.length) munItems = munItems.filter(d => activeFilters.uf.includes(d.uf));
     const partidoUfs = getPartidoUfs();
