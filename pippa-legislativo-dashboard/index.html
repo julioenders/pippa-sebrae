@@ -1912,13 +1912,12 @@ async function fetchSenado(dateStart, dateEnd) {
   let propositions = [];
   const seen = new Set();
 
-  // Usa endpoint /atualizadas para encontrar materias com acao legislativa
-  // no periodo selecionado — independente do ano de apresentacao.
+  // 1) Endpoint /atualizadas — materias com acao legislativa recente (max 30 dias)
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const start = new Date(dateStart + 'T00:00:00');
-  const diffDays = Math.ceil((today - start) / (1000 * 60 * 60 * 24)) + 2;
-  const numdias = Math.min(Math.max(diffDays, 3), 60);
+  const diffDays = Math.ceil((today - start) / (1000 * 60 * 60 * 24));
+  const numdias = Math.min(Math.max(diffDays, 3), 30);
 
   try {
     const url = `https://legis.senado.leg.br/dadosabertos/materia/atualizadas?numdias=${numdias}`;
@@ -1939,7 +1938,6 @@ async function fetchSenado(dateStart, dateEnd) {
 
         if (!TIPOS_PROPOSICAO.includes(siglaM)) continue;
 
-        // Filtra por data de atualizacao dentro do periodo selecionado
         const atualizacoes = mat.AtualizacoesRecentes?.Atualizacao;
         let updateList = [];
         if (Array.isArray(atualizacoes)) updateList = atualizacoes;
@@ -1980,7 +1978,50 @@ async function fetchSenado(dateStart, dateEnd) {
     console.warn('Error fetching Senado atualizadas:', e);
   }
 
-  showLoading('Consultando Senado Federal...', `${propositions.length} proposicoes com movimentacao no periodo`);
+  // 2) Endpoint pesquisa/lista — materias apresentadas no periodo
+  const startCompact = dateStart.replace(/-/g, '');
+  const endCompact = dateEnd.replace(/-/g, '');
+  const siglas = ['PL', 'PLP', 'PEC', 'PDL', 'MPV'];
+  const startYear = parseInt(dateStart.split('-')[0]);
+  const endYear = parseInt(dateEnd.split('-')[0]);
+
+  for (const sigla of siglas) {
+    for (let year = startYear; year <= endYear; year++) {
+      try {
+        const url = `https://legis.senado.leg.br/dadosabertos/materia/pesquisa/lista?sigla=${sigla}&ano=${year}&dataInicioApresentacao=${startCompact}&dataFimApresentacao=${endCompact}&tramitando=S`;
+        const data = await fetchWithTimeout(url);
+        if (!data) continue;
+        let materias = data?.PesquisaBasicaMateria?.Materias?.Materia;
+        if (!materias) continue;
+        if (!Array.isArray(materias)) materias = [materias];
+
+        for (const mat of materias) {
+          const codigo = mat.Codigo || '';
+          if (seen.has(codigo)) continue;
+          seen.add(codigo);
+
+          propositions.push({
+            id: codigo,
+            sigla: mat.Sigla || sigla,
+            numero: (mat.Numero || '').replace(/^0+/, ''),
+            ano: mat.Ano || String(year),
+            ementa: mat.Ementa || '',
+            casa: 'Senado',
+            siglaTipo: mat.Sigla || sigla,
+            dataApresentacao: mat.Data || dateStart,
+            url: `https://www25.senado.leg.br/web/atividade/materias/-/materia/${codigo}`,
+            autor: mat.Autor || '',
+            partido: '',
+            uf: ''
+          });
+        }
+      } catch (e) {
+        console.warn(`Error fetching Senado ${sigla}/${year}:`, e);
+      }
+    }
+  }
+
+  showLoading('Consultando Senado Federal...', `${propositions.length} proposicoes encontradas`);
   return propositions;
 }
 
