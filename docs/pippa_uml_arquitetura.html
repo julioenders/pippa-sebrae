@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIPPA — Arquitetura UML das Ferramentas</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+@page { margin: 2cm; }
+body {
+  font-family: 'Figtree', 'Segoe UI', Arial, sans-serif;
+  color: #1a1a1a;
+  background: #fff;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 32px;
+  line-height: 1.6;
+}
+.cover {
+  text-align: center;
+  padding: 80px 0 60px;
+  border-bottom: 3px solid #2a4fda;
+  margin-bottom: 40px;
+  page-break-after: always;
+}
+.cover-logo {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 56px;
+  font-weight: 800;
+  color: #2a4fda;
+  letter-spacing: -3px;
+}
+.cover-sub {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.cover h1 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0b2574;
+  margin-top: 40px;
+  line-height: 1.3;
+}
+.cover-meta {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 24px;
+}
+.cover-meta strong {
+  color: #374151;
+}
+.cover-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 36px;
+  flex-wrap: wrap;
+}
+.cover-stat {
+  text-align: center;
+}
+.cover-stat-val {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #2a4fda;
+}
+.cover-stat-lbl {
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* TOC */
+.toc {
+  page-break-after: always;
+  margin-bottom: 40px;
+}
+.toc h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 22px;
+  color: #0b2574;
+  border-bottom: 2px solid #2a4fda;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+.toc ol {
+  columns: 1;
+  padding-left: 24px;
+}
+.toc li {
+  font-size: 13px;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+.toc a {
+  color: #2a4fda;
+  text-decoration: none;
+}
+.toc a:hover {
+  text-decoration: underline;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0 32px;
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #374151;
+}
+.legend-box {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1.5px solid;
+  flex-shrink: 0;
+}
+
+/* Tool Sections */
+.tool-section {
+  margin-bottom: 48px;
+  padding-top: 20px;
+}
+.tool-number {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2a4fda;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.tool-section h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0b2574;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+.tool-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+.meta-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+.meta-table th {
+  text-align: left;
+  width: 180px;
+  padding: 8px 12px;
+  background: #f0f4ff;
+  border: 1px solid #e0e5f0;
+  color: #0b2574;
+  font-weight: 600;
+  vertical-align: top;
+}
+.meta-table td {
+  padding: 8px 12px;
+  border: 1px solid #e0e5f0;
+  color: #374151;
+  line-height: 1.5;
+}
+.tool-section h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2a4fda;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 20px 0 12px;
+}
+.diagram-wrap {
+  background: #fafbfc;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 8px;
+  text-align: center;
+  overflow-x: auto;
+}
+.layer-list {
+  padding-left: 20px;
+  font-size: 13px;
+}
+.layer-list li {
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+.layer-list strong {
+  color: #0b2574;
+}
+
+/* Footer */
+.doc-footer {
+  text-align: center;
+  padding: 32px 0;
+  border-top: 2px solid #e5e7eb;
+  margin-top: 48px;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+@media print {
+  body { padding: 0; }
+  .tool-section { page-break-inside: avoid; }
+  .diagram-wrap { border: 1px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-logo">PIPPA</div>
+  <div class="cover-sub">Plataforma de Inteligência em Políticas Públicas Aplicadas</div>
+  <h1>Documentação Arquitetural<br>Diagramas UML de Componentes</h1>
+  <div class="cover-meta">
+    <strong>SEBRAE Nacional</strong> — Unidade de Políticas Públicas<br>
+    Novembro 2026 · v1.0
+  </div>
+  <div class="cover-stats">
+    <div class="cover-stat"><div class="cover-stat-val">21</div><div class="cover-stat-lbl">Diagramas</div></div>
+    <div class="cover-stat"><div class="cover-stat-val">20</div><div class="cover-stat-lbl">Ferramentas</div></div>
+    <div class="cover-stat"><div class="cover-stat-val">16</div><div class="cover-stat-lbl">APIs Integradas</div></div>
+    <div class="cover-stat"><div class="cover-stat-val">29</div><div class="cover-stat-lbl">Agentes Python</div></div>
+  </div>
+</div>
+
+<div class="toc">
+  <h2>Sumário</h2>
+  <ol>
+    <li><a href="#tool-portal">PIPPA Portal</a> — Hub Central da Plataforma</li>
+<li><a href="#tool-emendas">PIPPA Emendas Parlamentares</a> — Inteligência em Emendas Federais</li>
+<li><a href="#tool-compras">PIPPA Compras Públicas</a> — Compras Públicas e Orçamento Educacional</li>
+<li><a href="#tool-legislativo">PIPPA Legislativo</a> — Inteligência Legislativa</li>
+<li><a href="#tool-pesquisas">PIPPA Análise Eleitoral 2026</a> — Pesquisas e Resultados Oficiais</li>
+<li><a href="#tool-reforma">PIPPA Reforma Tributária</a> — Monitor de Impactos em MPEs</li>
+<li><a href="#tool-prototipo">PIPPA — Protótipo Paraíba</a> — Plataforma Completa em Produção</li>
+<li><a href="#tool-catalogo">Catálogo de Fontes do Observatório</a> — Qual é a sua Estratégia?</li>
+<li><a href="#tool-mindmap">Mapa Mental — NAL</a> — Modelo Mental do Núcleo de Assessoria Legislativa</li>
+<li><a href="#tool-orcamento">PIPPA Orçamento</a> — Inteligência Orçamentária UPP 2027</li>
+<li><a href="#tool-projeto2027">Projeto de Implantação Nacional 2027</a> — Escopo, Roadmap e Governança Ágil</li>
+<li><a href="#tool-transformalab">TransformaLab — PIPPA</a> — Plataforma de Experimentação em Políticas Públicas</li>
+<li><a href="#tool-indicadores">PIPPA Indicadores — Ambiente de Negócios</a> — 6 Temas de Indicadores Compostos</li>
+<li><a href="#tool-raioxmunicipal">Raio-X Territorial</a> — Diagnóstico Socioeconômico em Tempo Real</li>
+<li><a href="#tool-atuacaoupp">Atuação UPP 2026</a> — Entregas Estratégicas da Unidade de Políticas Públicas</li>
+<li><a href="#tool-impacto">PIPPA Impacto</a> — Portfólio de Evidências — Prestação de Contas</li>
+<li><a href="#tool-stakeholders">PIPPA Stakeholders</a> — Mapa Parlamentar — CRM Legislativo</li>
+<li><a href="#tool-credito">PIPPA Crédito e Fomento</a> — Radar de Oportunidades para MPEs</li>
+<li><a href="#tool-consultas">PIPPA Consultas Públicas</a> — Monitor de Participação Social</li>
+<li><a href="#tool-regulatorio">PIPPA Regulatório</a> — Monitor do Diário Oficial da União</li>
+<li><a href="#tool-impostometro">PIPPA Impostômetro</a> — Arrecadação Tributária Federal</li>
+
+  </ol>
+  <h3 style="margin-top:24px;">Legenda dos Estereótipos UML</h3>
+  <div class="legend">
+    <span class="legend-item"><span class="legend-box" style="background:#e8f5e9;border-color:#43a047;"></span>«fonte de dados»</span><span class="legend-item"><span class="legend-box" style="background:#e3f2fd;border-color:#1565c0;"></span>«api»</span><span class="legend-item"><span class="legend-box" style="background:#fff3e0;border-color:#e65100;"></span>«script»</span><span class="legend-item"><span class="legend-box" style="background:#ede7f6;border-color:#5e35b1;"></span>«artefato»</span><span class="legend-item"><span class="legend-box" style="background:#fce4ec;border-color:#c62828;"></span>«dashboard»</span><span class="legend-item"><span class="legend-box" style="background:#f5f5f5;border-color:#424242;"></span>«componente»</span><span class="legend-item"><span class="legend-box" style="background:#e0f7fa;border-color:#00695c;"></span>«ator»</span><span class="legend-item"><span class="legend-box" style="background:#eceff1;border-color:#546e7a;"></span>«ci/cd»</span><span class="legend-item"><span class="legend-box" style="background:#fff9c4;border-color:#f9a825;"></span>«externo»</span>
+  </div>
+</div>
+
+
+    <div class="tool-section" id="tool-portal" style="page-break-before:always;">
+      <div class="tool-number">01 / 21</div>
+      <h2>PIPPA Portal</h2>
+      <p class="tool-subtitle">Hub Central da Plataforma</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>HTML standalone com dados embutidos</td></tr>
+        <tr><th>Descrição</th><td>Portal central que agrega e dá acesso às 20 ferramentas PIPPA. Contém arrays JS embutidos (TOOLS e QUESTIONS) que alimentam grid filtrável de cards, navegação por 6 macro-temas e 45 perguntas norteadoras.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 616 476" width="616" height="476" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-portal" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Dados Embutidos</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="217.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="217.0" y="62" text-anchor="middle" font-size="10" fill="#333">TOOLS[]</text>
+<text x="217.0" y="75" text-anchor="middle" font-size="10" fill="#333">(20 ferramentas)</text>
+<rect x="304.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="373.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="373.0" y="62" text-anchor="middle" font-size="10" fill="#333">QUESTIONS[]</text>
+<text x="373.0" y="75" text-anchor="middle" font-size="10" fill="#333">(45 perguntas)</text>
+<rect x="460.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="529.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="529.0" y="62" text-anchor="middle" font-size="10" fill="#333">MACRO_TEMAS[]</text>
+<text x="529.0" y="75" text-anchor="middle" font-size="10" fill="#333">(6 eixos)</text>
+<text x="116" y="189.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Motor de</text>
+<text x="116" y="201.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Navegação</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="217.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="217.0" y="192" text-anchor="middle" font-size="10" fill="#333">Busca textual</text>
+<text x="217.0" y="205" text-anchor="middle" font-size="10" fill="#333">(search)</text>
+<rect x="304.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="373.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="373.0" y="192" text-anchor="middle" font-size="10" fill="#333">Filtro por</text>
+<text x="373.0" y="205" text-anchor="middle" font-size="10" fill="#333">macro-tema</text>
+<rect x="460.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="529.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="529.0" y="192" text-anchor="middle" font-size="10" fill="#333">Filtro por</text>
+<text x="529.0" y="205" text-anchor="middle" font-size="10" fill="#333">pergunta</text>
+<text x="116" y="325.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Interface</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="217.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="217.0" y="322" text-anchor="middle" font-size="10" fill="#333">Grid de Cards</text>
+<text x="217.0" y="335" text-anchor="middle" font-size="10" fill="#333">(20 ferramentas)</text>
+<rect x="304.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="373.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="373.0" y="322" text-anchor="middle" font-size="10" fill="#333">Sidebar</text>
+<text x="373.0" y="335" text-anchor="middle" font-size="10" fill="#333">(perguntas)</text>
+<rect x="460.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="529.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="529.0" y="322" text-anchor="middle" font-size="10" fill="#333">Dicionário de</text>
+<text x="529.0" y="335" text-anchor="middle" font-size="10" fill="#333">Métricas (modal)</text>
+<line x1="217.0" y1="92" x2="217.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="92" x2="373.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="92" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="130.0" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="130.0" x2="217.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-portal)"/>
+<line x1="373.0" y1="130.0" x2="373.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-portal)"/>
+<line x1="529.0" y1="130.0" x2="529.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-portal)"/>
+<line x1="217.0" y1="222" x2="217.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="222" x2="373.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="222" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="260.0" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="260.0" x2="217.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-portal)"/>
+<line x1="373.0" y1="260.0" x2="373.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-portal)"/>
+<line x1="529.0" y1="260.0" x2="529.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-portal)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Dados Embutidos:</strong> TOOLS[] (20 ferramentas), QUESTIONS[] (45 perguntas), MACRO_TEMAS[] (6 eixos)</li>
+<li><strong>Motor de Navegação:</strong> Busca textual (search), Filtro por macro-tema, Filtro por pergunta</li>
+<li><strong>Interface:</strong> Grid de Cards (20 ferramentas), Sidebar (perguntas), Dicionário de Métricas (modal)</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-emendas" style="page-break-before:always;">
+      <div class="tool-number">02 / 21</div>
+      <h2>PIPPA Emendas Parlamentares</h2>
+      <p class="tool-subtitle">Inteligência em Emendas Federais</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>Python pipeline (5 fases) → Parquet → HTML + FastAPI</td></tr>
+        <tr><th>Descrição</th><td>Pipeline completo com 4 coletores, 2 enriquecedores, validação cruzada e persistência em Parquet. Gera dashboard HTML standalone e expõe API FastAPI. Automatizado via GitHub Actions.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 772 736" width="772" height="736" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-emendas" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Fontes de Dados</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="38" width="138" height="54" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+<text x="217.0" y="50" text-anchor="middle" font-size="8" fill="#43a047" font-weight="600">«fonte de dados»</text>
+<text x="217.0" y="62" text-anchor="middle" font-size="10" fill="#333">Portal da</text>
+<text x="217.0" y="75" text-anchor="middle" font-size="10" fill="#333">Transparência (CGU)</text>
+<rect x="304.0" y="38" width="138" height="54" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+<text x="373.0" y="50" text-anchor="middle" font-size="8" fill="#43a047" font-weight="600">«fonte de dados»</text>
+<text x="373.0" y="62" text-anchor="middle" font-size="10" fill="#333">Tesouro</text>
+<text x="373.0" y="75" text-anchor="middle" font-size="10" fill="#333">Transparente</text>
+<rect x="460.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="529.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="529.0" y="62" text-anchor="middle" font-size="10" fill="#333">API Câmara</text>
+<text x="529.0" y="75" text-anchor="middle" font-size="10" fill="#333">(deputados)</text>
+<rect x="616.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="685.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="685.0" y="62" text-anchor="middle" font-size="10" fill="#333">API Senado</text>
+<text x="685.0" y="75" text-anchor="middle" font-size="10" fill="#333">(senadores)</text>
+<text x="116" y="189.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Coleta</text>
+<text x="116" y="201.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">(collectors/)</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="217.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="217.0" y="192" text-anchor="middle" font-size="10" fill="#333">portal_</text>
+<text x="217.0" y="205" text-anchor="middle" font-size="10" fill="#333">transparencia.py</text>
+<rect x="304.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="373.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="373.0" y="192" text-anchor="middle" font-size="10" fill="#333">tesouro_</text>
+<text x="373.0" y="205" text-anchor="middle" font-size="10" fill="#333">transparente.py</text>
+<rect x="460.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="529.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="529.0" y="192" text-anchor="middle" font-size="10" fill="#333">camara_api.py</text>
+<rect x="616.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="685.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="685.0" y="192" text-anchor="middle" font-size="10" fill="#333">senado_api.py</text>
+<text x="116" y="319.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Enriquecimento +</text>
+<text x="116" y="331.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Pipeline</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="226.0" y="298" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="295.0" y="310" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="295.0" y="322" text-anchor="middle" font-size="10" fill="#333">partido_</text>
+<text x="295.0" y="335" text-anchor="middle" font-size="10" fill="#333">resolver.py</text>
+<rect x="382.0" y="298" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="451.0" y="310" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="451.0" y="322" text-anchor="middle" font-size="10" fill="#333">ibge_</text>
+<text x="451.0" y="335" text-anchor="middle" font-size="10" fill="#333">normalizer.py</text>
+<rect x="538.0" y="298" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="607.0" y="310" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="607.0" y="322" text-anchor="middle" font-size="10" fill="#333">pipeline.py</text>
+<text x="607.0" y="335" text-anchor="middle" font-size="10" fill="#333">(orquestrador)</text>
+<text x="116" y="455.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Persistência</text>
+<line x1="122" y1="428" x2="122" y2="482" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="226.0" y="428" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="295.0" y="440" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="295.0" y="452" text-anchor="middle" font-size="10" fill="#333">Parquet</text>
+<text x="295.0" y="465" text-anchor="middle" font-size="10" fill="#333">(agregações)</text>
+<rect x="382.0" y="428" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="451.0" y="440" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="451.0" y="452" text-anchor="middle" font-size="10" fill="#333">cache_manager.py</text>
+<rect x="538.0" y="428" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="607.0" y="440" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="607.0" y="452" text-anchor="middle" font-size="10" fill="#333">dashboard_</text>
+<text x="607.0" y="465" text-anchor="middle" font-size="10" fill="#333">builder.py</text>
+<text x="116" y="585.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Saída</text>
+<line x1="122" y1="558" x2="122" y2="612" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="226.0" y="558" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="295.0" y="570" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="295.0" y="582" text-anchor="middle" font-size="10" fill="#333">html_renderer.py →</text>
+<text x="295.0" y="595" text-anchor="middle" font-size="10" fill="#333">emendas.html</text>
+<rect x="382.0" y="558" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="451.0" y="570" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="451.0" y="582" text-anchor="middle" font-size="10" fill="#333">api.py</text>
+<text x="451.0" y="595" text-anchor="middle" font-size="10" fill="#333">(FastAPI)</text>
+<rect x="538.0" y="558" width="138" height="54" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/>
+<text x="607.0" y="570" text-anchor="middle" font-size="8" fill="#546e7a" font-weight="600">«ci/cd»</text>
+<text x="607.0" y="582" text-anchor="middle" font-size="10" fill="#333">GitHub Actions</text>
+<text x="607.0" y="595" text-anchor="middle" font-size="10" fill="#333">(semanal)</text>
+<line x1="217.0" y1="92" x2="217.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="92" x2="373.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="92" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="685.0" y1="92" x2="685.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="130.0" x2="685.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="130.0" x2="217.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-emendas)"/>
+<line x1="373.0" y1="130.0" x2="373.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-emendas)"/>
+<line x1="529.0" y1="130.0" x2="529.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-emendas)"/>
+<line x1="685.0" y1="130.0" x2="685.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-emendas)"/>
+<line x1="217.0" y1="222" x2="217.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="222" x2="373.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="222" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="685.0" y1="222" x2="685.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="260.0" x2="685.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="295.0" y1="260.0" x2="295.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-emendas)"/>
+<line x1="451.0" y1="260.0" x2="451.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-emendas)"/>
+<line x1="607.0" y1="260.0" x2="607.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-emendas)"/>
+<line x1="295.0" y1="352" x2="295.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="451.0" y1="352" x2="451.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="607.0" y1="352" x2="607.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="295.0" y1="390.0" x2="607.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="295.0" y1="390.0" x2="295.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-emendas)"/>
+<line x1="451.0" y1="390.0" x2="451.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-emendas)"/>
+<line x1="607.0" y1="390.0" x2="607.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-emendas)"/>
+<line x1="295.0" y1="482" x2="295.0" y2="520.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="451.0" y1="482" x2="451.0" y2="520.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="607.0" y1="482" x2="607.0" y2="520.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="295.0" y1="520.0" x2="607.0" y2="520.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="295.0" y1="520.0" x2="295.0" y2="558" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-emendas)"/>
+<line x1="451.0" y1="520.0" x2="451.0" y2="558" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-emendas)"/>
+<line x1="607.0" y1="520.0" x2="607.0" y2="558" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-emendas)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Fontes de Dados:</strong> Portal da Transparência (CGU), Tesouro Transparente, API Câmara (deputados), API Senado (senadores)</li>
+<li><strong>Coleta (collectors/):</strong> portal_ transparencia.py, tesouro_ transparente.py, camara_api.py, senado_api.py</li>
+<li><strong>Enriquecimento + Pipeline:</strong> partido_ resolver.py, ibge_ normalizer.py, pipeline.py (orquestrador)</li>
+<li><strong>Persistência:</strong> Parquet (agregações), cache_manager.py, dashboard_ builder.py</li>
+<li><strong>Saída:</strong> html_renderer.py → emendas.html, api.py (FastAPI), GitHub Actions (semanal)</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-compras" style="page-break-before:always;">
+      <div class="tool-number">03 / 21</div>
+      <h2>PIPPA Compras Públicas</h2>
+      <p class="tool-subtitle">Compras Públicas e Orçamento Educacional</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>Python scripts → JSON embutido → HTML (6 sub-ferramentas)</td></tr>
+        <tr><th>Descrição</th><td>Hub com 6 ferramentas integradas: Radar PNCP, PDDE, SICONFI, PNAE, Monitor PNCP 5 Anos e Fornecedores. Scripts Python coletam dados e injetam JSON no HTML via regex.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 772 476" width="772" height="476" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-compras" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Fontes de Dados</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="226.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="295.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="295.0" y="62" text-anchor="middle" font-size="10" fill="#333">API PNCP</text>
+<text x="295.0" y="75" text-anchor="middle" font-size="10" fill="#333">(licitações)</text>
+<rect x="382.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="451.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="451.0" y="62" text-anchor="middle" font-size="10" fill="#333">API SICONFI</text>
+<text x="451.0" y="75" text-anchor="middle" font-size="10" fill="#333">(Tesouro Nacional)</text>
+<rect x="538.0" y="38" width="138" height="54" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+<text x="607.0" y="50" text-anchor="middle" font-size="8" fill="#43a047" font-weight="600">«fonte de dados»</text>
+<text x="607.0" y="62" text-anchor="middle" font-size="10" fill="#333">CSVs FNDE</text>
+<text x="607.0" y="75" text-anchor="middle" font-size="10" fill="#333">(PDDE/PNAE)</text>
+<text x="116" y="189.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Coleta</text>
+<text x="116" y="201.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">(scripts/)</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="217.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="217.0" y="192" text-anchor="middle" font-size="10" fill="#333">coletar_pncp_</text>
+<text x="217.0" y="205" text-anchor="middle" font-size="10" fill="#333">monitor.py</text>
+<rect x="304.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="373.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="373.0" y="192" text-anchor="middle" font-size="10" fill="#333">collect_</text>
+<text x="373.0" y="205" text-anchor="middle" font-size="10" fill="#333">semester.py</text>
+<rect x="460.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="529.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="529.0" y="192" text-anchor="middle" font-size="10" fill="#333">collect_</text>
+<text x="529.0" y="205" text-anchor="middle" font-size="10" fill="#333">pdde_pnae.py</text>
+<rect x="616.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="685.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="685.0" y="192" text-anchor="middle" font-size="10" fill="#333">update_</text>
+<text x="685.0" y="205" text-anchor="middle" font-size="10" fill="#333">compras.py</text>
+<text x="116" y="325.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Saída</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="304.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="373.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="373.0" y="322" text-anchor="middle" font-size="10" fill="#333">index.html</text>
+<text x="373.0" y="335" text-anchor="middle" font-size="10" fill="#333">(6 abas)</text>
+<rect x="460.0" y="298" width="138" height="54" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/>
+<text x="529.0" y="310" text-anchor="middle" font-size="8" fill="#546e7a" font-weight="600">«ci/cd»</text>
+<text x="529.0" y="322" text-anchor="middle" font-size="10" fill="#333">GitHub Actions</text>
+<text x="529.0" y="335" text-anchor="middle" font-size="10" fill="#333">(semanal)</text>
+<line x1="295.0" y1="92" x2="295.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="451.0" y1="92" x2="451.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="607.0" y1="92" x2="607.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="130.0" x2="685.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="130.0" x2="217.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-compras)"/>
+<line x1="373.0" y1="130.0" x2="373.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-compras)"/>
+<line x1="529.0" y1="130.0" x2="529.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-compras)"/>
+<line x1="685.0" y1="130.0" x2="685.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-compras)"/>
+<line x1="217.0" y1="222" x2="217.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="222" x2="373.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="222" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="685.0" y1="222" x2="685.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="260.0" x2="685.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="373.0" y1="260.0" x2="373.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-compras)"/>
+<line x1="529.0" y1="260.0" x2="529.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-compras)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Fontes de Dados:</strong> API PNCP (licitações), API SICONFI (Tesouro Nacional), CSVs FNDE (PDDE/PNAE)</li>
+<li><strong>Coleta (scripts/):</strong> coletar_pncp_ monitor.py, collect_ semester.py, collect_ pdde_pnae.py, update_ compras.py</li>
+<li><strong>Saída:</strong> index.html (6 abas), GitHub Actions (semanal)</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-legislativo" style="page-break-before:always;">
+      <div class="tool-number">04 / 21</div>
+      <h2>PIPPA Legislativo</h2>
+      <p class="tool-subtitle">Inteligência Legislativa</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>Hub HTML → 2 dashboards com chamadas API em tempo real</td></tr>
+        <tr><th>Descrição</th><td>Hub com 2 ferramentas: Radar Legislativo (classifica proposições P0–P4) e Monitor de Pauta (agenda legislativa). Ambas consultam APIs da Câmara e Senado sob demanda no navegador.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 606" width="500" height="606" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-legislativo" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Usuário</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="246.0" y="38" width="138" height="54" rx="6" fill="#e0f7fa" stroke="#00695c" stroke-width="1.5"/>
+<text x="315.0" y="50" text-anchor="middle" font-size="8" fill="#00695c" font-weight="600">«ator»</text>
+<text x="315.0" y="62" text-anchor="middle" font-size="10" fill="#333">Usuário</text>
+<text x="315.0" y="75" text-anchor="middle" font-size="10" fill="#333">(seleciona período)</text>
+<text x="116" y="195.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Dashboards</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="168" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="237.0" y="180" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="237.0" y="192" text-anchor="middle" font-size="10" fill="#333">Radar Legislativo</text>
+<text x="237.0" y="205" text-anchor="middle" font-size="10" fill="#333">(proposições P0–P4)</text>
+<rect x="324.0" y="168" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="393.0" y="180" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="393.0" y="192" text-anchor="middle" font-size="10" fill="#333">Monitor de Pauta</text>
+<text x="393.0" y="205" text-anchor="middle" font-size="10" fill="#333">(sessões/comissões)</text>
+<text x="116" y="319.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">APIs (runtime</text>
+<text x="116" y="331.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">fetch)</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="298" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="237.0" y="310" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="237.0" y="322" text-anchor="middle" font-size="10" fill="#333">API Câmara</text>
+<text x="237.0" y="335" text-anchor="middle" font-size="10" fill="#333">(/proposicoes, /eventos)</text>
+<rect x="324.0" y="298" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="393.0" y="310" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="393.0" y="322" text-anchor="middle" font-size="10" fill="#333">API Senado</text>
+<text x="393.0" y="335" text-anchor="middle" font-size="10" fill="#333">(/materia, /plenario)</text>
+<text x="116" y="449.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Classificação</text>
+<text x="116" y="461.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Client-side</text>
+<line x1="122" y1="428" x2="122" y2="482" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="428" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="237.0" y="440" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="237.0" y="452" text-anchor="middle" font-size="10" fill="#333">Scoring engine</text>
+<text x="237.0" y="465" text-anchor="middle" font-size="10" fill="#333">(10 critérios SEBRAE)</text>
+<rect x="324.0" y="428" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="393.0" y="440" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="393.0" y="452" text-anchor="middle" font-size="10" fill="#333">Classificação P0–P4</text>
+<text x="393.0" y="465" text-anchor="middle" font-size="10" fill="#333">(prioridade)</text>
+<line x1="315.0" y1="92" x2="315.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="130.0" x2="393.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="237.0" y1="130.0" x2="237.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-legislativo)"/>
+<line x1="393.0" y1="130.0" x2="393.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-legislativo)"/>
+<line x1="237.0" y1="222" x2="237.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="393.0" y1="222" x2="393.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="260.0" x2="393.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="237.0" y1="260.0" x2="237.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-legislativo)"/>
+<line x1="393.0" y1="260.0" x2="393.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-legislativo)"/>
+<line x1="237.0" y1="352" x2="237.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="393.0" y1="352" x2="393.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="390.0" x2="393.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="237.0" y1="390.0" x2="237.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-legislativo)"/>
+<line x1="393.0" y1="390.0" x2="393.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-legislativo)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Usuário:</strong> Usuário (seleciona período)</li>
+<li><strong>Dashboards:</strong> Radar Legislativo (proposições P0–P4), Monitor de Pauta (sessões/comissões)</li>
+<li><strong>APIs (runtime fetch):</strong> API Câmara (/proposicoes, /eventos), API Senado (/materia, /plenario)</li>
+<li><strong>Classificação Client-side:</strong> Scoring engine (10 critérios SEBRAE), Classificação P0–P4 (prioridade)</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-pesquisas" style="page-break-before:always;">
+      <div class="tool-number">05 / 21</div>
+      <h2>PIPPA Análise Eleitoral 2026</h2>
+      <p class="tool-subtitle">Pesquisas e Resultados Oficiais</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>Python → dados embutidos + HTML com API TSE runtime</td></tr>
+        <tr><th>Descrição</th><td>Script Python coleta pesquisas via ElectioLab, calcula médias ponderadas e embute no HTML. Em paralelo, o dashboard consulta a API do TSE em tempo real para resultados oficiais.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 476" width="500" height="476" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-pesquisas" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Fontes de Dados</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="237.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="237.0" y="62" text-anchor="middle" font-size="10" fill="#333">API ElectioLab</text>
+<text x="237.0" y="75" text-anchor="middle" font-size="10" fill="#333">(pesquisas)</text>
+<rect x="324.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="393.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="393.0" y="62" text-anchor="middle" font-size="10" fill="#333">TSE CDN</text>
+<text x="393.0" y="75" text-anchor="middle" font-size="10" fill="#333">(resultados oficiais)</text>
+<text x="116" y="189.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Pipeline</text>
+<text x="116" y="201.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">(Python)</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="237.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="237.0" y="192" text-anchor="middle" font-size="10" fill="#333">update_polls.py</text>
+<text x="237.0" y="205" text-anchor="middle" font-size="10" fill="#333">(média ponderada)</text>
+<rect x="324.0" y="168" width="138" height="54" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/>
+<text x="393.0" y="180" text-anchor="middle" font-size="8" fill="#546e7a" font-weight="600">«ci/cd»</text>
+<text x="393.0" y="192" text-anchor="middle" font-size="10" fill="#333">GitHub Actions</text>
+<text x="393.0" y="205" text-anchor="middle" font-size="10" fill="#333">(3×/dia)</text>
+<text x="116" y="319.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Dashboard</text>
+<text x="116" y="331.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">(runtime)</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="237.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="237.0" y="322" text-anchor="middle" font-size="10" fill="#333">index.html</text>
+<text x="237.0" y="335" text-anchor="middle" font-size="10" fill="#333">(pesquisas embutidas)</text>
+<rect x="324.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="393.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="393.0" y="322" text-anchor="middle" font-size="10" fill="#333">TSE fetcher</text>
+<text x="393.0" y="335" text-anchor="middle" font-size="10" fill="#333">(resultados ao vivo)</text>
+<line x1="237.0" y1="92" x2="237.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="393.0" y1="92" x2="393.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="130.0" x2="393.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="237.0" y1="130.0" x2="237.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-pesquisas)"/>
+<line x1="393.0" y1="130.0" x2="393.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-pesquisas)"/>
+<line x1="237.0" y1="222" x2="237.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="393.0" y1="222" x2="393.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="260.0" x2="393.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="237.0" y1="260.0" x2="237.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-pesquisas)"/>
+<line x1="393.0" y1="260.0" x2="393.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-pesquisas)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Fontes de Dados:</strong> API ElectioLab (pesquisas), TSE CDN (resultados oficiais)</li>
+<li><strong>Pipeline (Python):</strong> update_polls.py (média ponderada), GitHub Actions (3×/dia)</li>
+<li><strong>Dashboard (runtime):</strong> index.html (pesquisas embutidas), TSE fetcher (resultados ao vivo)</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-reforma" style="page-break-before:always;">
+      <div class="tool-number">06 / 21</div>
+      <h2>PIPPA Reforma Tributária</h2>
+      <p class="tool-subtitle">Monitor de Impactos em MPEs</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>Python RSS → JSON cache → HTML com classificação client-side</td></tr>
+        <tr><th>Descrição</th><td>Script Python coleta notícias via Google News RSS, salva cache JSON. O dashboard carrega o cache e classifica por tema (IBS/CBS/Seletivo), impacto MPE e credibilidade.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 616 476" width="616" height="476" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-reforma" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Fonte de Dados</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="304.0" y="38" width="138" height="54" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+<text x="373.0" y="50" text-anchor="middle" font-size="8" fill="#43a047" font-weight="600">«fonte de dados»</text>
+<text x="373.0" y="62" text-anchor="middle" font-size="10" fill="#333">Google News RSS</text>
+<text x="373.0" y="75" text-anchor="middle" font-size="10" fill="#333">(4 queries)</text>
+<text x="116" y="189.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Pipeline</text>
+<text x="116" y="201.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">(Python)</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="217.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="217.0" y="192" text-anchor="middle" font-size="10" fill="#333">fetch_news.py</text>
+<text x="217.0" y="205" text-anchor="middle" font-size="10" fill="#333">(XML parser)</text>
+<rect x="304.0" y="168" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="373.0" y="180" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="373.0" y="192" text-anchor="middle" font-size="10" fill="#333">news_cache.json</text>
+<text x="373.0" y="205" text-anchor="middle" font-size="10" fill="#333">(cache local)</text>
+<rect x="460.0" y="168" width="138" height="54" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/>
+<text x="529.0" y="180" text-anchor="middle" font-size="8" fill="#546e7a" font-weight="600">«ci/cd»</text>
+<text x="529.0" y="192" text-anchor="middle" font-size="10" fill="#333">GitHub Actions</text>
+<text x="529.0" y="205" text-anchor="middle" font-size="10" fill="#333">(cada 6h)</text>
+<text x="116" y="319.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Dashboard</text>
+<text x="116" y="331.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">(client-side)</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="226.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="295.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="295.0" y="322" text-anchor="middle" font-size="10" fill="#333">index.html</text>
+<text x="295.0" y="335" text-anchor="middle" font-size="10" fill="#333">(carrega cache)</text>
+<rect x="382.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="451.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="451.0" y="322" text-anchor="middle" font-size="10" fill="#333">Classificador</text>
+<text x="451.0" y="335" text-anchor="middle" font-size="10" fill="#333">(tema, impacto, cred.)</text>
+<line x1="373.0" y1="92" x2="373.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="130.0" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="130.0" x2="217.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-reforma)"/>
+<line x1="373.0" y1="130.0" x2="373.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-reforma)"/>
+<line x1="529.0" y1="130.0" x2="529.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-reforma)"/>
+<line x1="217.0" y1="222" x2="217.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="222" x2="373.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="222" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="260.0" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="295.0" y1="260.0" x2="295.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-reforma)"/>
+<line x1="451.0" y1="260.0" x2="451.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-reforma)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Fonte de Dados:</strong> Google News RSS (4 queries)</li>
+<li><strong>Pipeline (Python):</strong> fetch_news.py (XML parser), news_cache.json (cache local), GitHub Actions (cada 6h)</li>
+<li><strong>Dashboard (client-side):</strong> index.html (carrega cache), Classificador (tema, impacto, cred.)</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-prototipo" style="page-break-before:always;">
+      <div class="tool-number">07 / 21</div>
+      <h2>PIPPA — Protótipo Paraíba</h2>
+      <p class="tool-subtitle">Plataforma Completa em Produção</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>Plataforma externa em produção (pippa.sebrae.com.br)</td></tr>
+        <tr><th>Descrição</th><td>Versão em produção implantada no SEBRAE Paraíba. Plataforma completa de inteligência territorial com dados socioeconômicos, demográficos e empresariais integrados.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 616 476" width="616" height="476" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-prototipo" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="59.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Fontes</text>
+<text x="116" y="71.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Integradas</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="38" width="138" height="54" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+<text x="217.0" y="50" text-anchor="middle" font-size="8" fill="#43a047" font-weight="600">«fonte de dados»</text>
+<text x="217.0" y="62" text-anchor="middle" font-size="10" fill="#333">Dados</text>
+<text x="217.0" y="75" text-anchor="middle" font-size="10" fill="#333">Socioeconômicos</text>
+<rect x="304.0" y="38" width="138" height="54" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+<text x="373.0" y="50" text-anchor="middle" font-size="8" fill="#43a047" font-weight="600">«fonte de dados»</text>
+<text x="373.0" y="62" text-anchor="middle" font-size="10" fill="#333">Dados</text>
+<text x="373.0" y="75" text-anchor="middle" font-size="10" fill="#333">Demográficos</text>
+<rect x="460.0" y="38" width="138" height="54" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+<text x="529.0" y="50" text-anchor="middle" font-size="8" fill="#43a047" font-weight="600">«fonte de dados»</text>
+<text x="529.0" y="62" text-anchor="middle" font-size="10" fill="#333">Dados</text>
+<text x="529.0" y="75" text-anchor="middle" font-size="10" fill="#333">Empresariais</text>
+<text x="116" y="195.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Plataforma</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="304.0" y="168" width="138" height="54" rx="6" fill="#fff9c4" stroke="#f9a825" stroke-width="1.5"/>
+<text x="373.0" y="180" text-anchor="middle" font-size="8" fill="#f9a825" font-weight="600">«externo»</text>
+<text x="373.0" y="192" text-anchor="middle" font-size="10" fill="#333">PIPPA Paraíba</text>
+<text x="373.0" y="205" text-anchor="middle" font-size="10" fill="#333">(pippa.sebrae.com.br)</text>
+<text x="116" y="325.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Saídas</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="217.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="217.0" y="322" text-anchor="middle" font-size="10" fill="#333">Inteligência</text>
+<text x="217.0" y="335" text-anchor="middle" font-size="10" fill="#333">Territorial</text>
+<rect x="304.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="373.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="373.0" y="322" text-anchor="middle" font-size="10" fill="#333">Análise</text>
+<text x="373.0" y="335" text-anchor="middle" font-size="10" fill="#333">Municipal</text>
+<rect x="460.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="529.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="529.0" y="322" text-anchor="middle" font-size="10" fill="#333">Decisão baseada</text>
+<text x="529.0" y="335" text-anchor="middle" font-size="10" fill="#333">em evidências</text>
+<line x1="217.0" y1="92" x2="217.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="92" x2="373.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="92" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="130.0" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="373.0" y1="130.0" x2="373.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-prototipo)"/>
+<line x1="373.0" y1="222" x2="373.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="260.0" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="260.0" x2="217.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-prototipo)"/>
+<line x1="373.0" y1="260.0" x2="373.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-prototipo)"/>
+<line x1="529.0" y1="260.0" x2="529.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-prototipo)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Fontes Integradas:</strong> Dados Socioeconômicos, Dados Demográficos, Dados Empresariais</li>
+<li><strong>Plataforma:</strong> PIPPA Paraíba (pippa.sebrae.com.br)</li>
+<li><strong>Saídas:</strong> Inteligência Territorial, Análise Municipal, Decisão baseada em evidências</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-catalogo" style="page-break-before:always;">
+      <div class="tool-number">08 / 21</div>
+      <h2>Catálogo de Fontes do Observatório</h2>
+      <p class="tool-subtitle">Qual é a sua Estratégia?</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>HTML standalone com dados embutidos (17 fontes, 58 cubos)</td></tr>
+        <tr><th>Descrição</th><td>Catálogo interativo com 17 fontes de dados e 58 cubos analíticos organizados por perguntas norteadoras. Todos os dados são arrays JS embutidos no HTML.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 616 346" width="616" height="346" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-catalogo" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Dados Embutidos</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="217.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="217.0" y="62" text-anchor="middle" font-size="10" fill="#333">FONTES[]</text>
+<text x="217.0" y="75" text-anchor="middle" font-size="10" fill="#333">(17 fontes)</text>
+<rect x="304.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="373.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="373.0" y="62" text-anchor="middle" font-size="10" fill="#333">CUBOS[]</text>
+<text x="373.0" y="75" text-anchor="middle" font-size="10" fill="#333">(58 cubos)</text>
+<rect x="460.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="529.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="529.0" y="62" text-anchor="middle" font-size="10" fill="#333">PERGUNTAS[]</text>
+<text x="529.0" y="75" text-anchor="middle" font-size="10" fill="#333">(norteadoras)</text>
+<text x="116" y="189.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Interface</text>
+<text x="116" y="201.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Interativa</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="217.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="217.0" y="192" text-anchor="middle" font-size="10" fill="#333">Busca</text>
+<text x="217.0" y="205" text-anchor="middle" font-size="10" fill="#333">inteligente</text>
+<rect x="304.0" y="168" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="373.0" y="180" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="373.0" y="192" text-anchor="middle" font-size="10" fill="#333">Cards</text>
+<text x="373.0" y="205" text-anchor="middle" font-size="10" fill="#333">expandíveis</text>
+<rect x="460.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="529.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="529.0" y="192" text-anchor="middle" font-size="10" fill="#333">Exportar</text>
+<text x="529.0" y="205" text-anchor="middle" font-size="10" fill="#333">WhatsApp</text>
+<line x1="217.0" y1="92" x2="217.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="92" x2="373.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="92" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="130.0" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="130.0" x2="217.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-catalogo)"/>
+<line x1="373.0" y1="130.0" x2="373.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-catalogo)"/>
+<line x1="529.0" y1="130.0" x2="529.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-catalogo)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Dados Embutidos:</strong> FONTES[] (17 fontes), CUBOS[] (58 cubos), PERGUNTAS[] (norteadoras)</li>
+<li><strong>Interface Interativa:</strong> Busca inteligente, Cards expandíveis, Exportar WhatsApp</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-mindmap" style="page-break-before:always;">
+      <div class="tool-number">09 / 21</div>
+      <h2>Mapa Mental — NAL</h2>
+      <p class="tool-subtitle">Modelo Mental do Núcleo de Assessoria Legislativa</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>HTML standalone com mapa mental interativo SVG/CSS</td></tr>
+        <tr><th>Descrição</th><td>Mapa mental interativo do NAL com 10 frentes de atuação. Estrutura de árvore embutida em JS, renderizada como SVG/CSS com pan, zoom e expand/collapse.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 616 476" width="616" height="476" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-mindmap" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Dados Embutidos</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="304.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="373.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="373.0" y="62" text-anchor="middle" font-size="10" fill="#333">TREE{}</text>
+<text x="373.0" y="75" text-anchor="middle" font-size="10" fill="#333">(10 ramos NAL)</text>
+<text x="116" y="189.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Motor de</text>
+<text x="116" y="201.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Renderização</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="217.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="217.0" y="192" text-anchor="middle" font-size="10" fill="#333">Mind map</text>
+<text x="217.0" y="205" text-anchor="middle" font-size="10" fill="#333">renderer (JS)</text>
+<rect x="304.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="373.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="373.0" y="192" text-anchor="middle" font-size="10" fill="#333">Pan + Zoom</text>
+<text x="373.0" y="205" text-anchor="middle" font-size="10" fill="#333">controls</text>
+<rect x="460.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="529.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="529.0" y="192" text-anchor="middle" font-size="10" fill="#333">Expand/</text>
+<text x="529.0" y="205" text-anchor="middle" font-size="10" fill="#333">Collapse</text>
+<text x="116" y="325.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Saída Visual</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="304.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="373.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="373.0" y="322" text-anchor="middle" font-size="10" fill="#333">Mapa mental</text>
+<text x="373.0" y="335" text-anchor="middle" font-size="10" fill="#333">interativo (SVG)</text>
+<line x1="373.0" y1="92" x2="373.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="130.0" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="130.0" x2="217.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-mindmap)"/>
+<line x1="373.0" y1="130.0" x2="373.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-mindmap)"/>
+<line x1="529.0" y1="130.0" x2="529.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-mindmap)"/>
+<line x1="217.0" y1="222" x2="217.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="222" x2="373.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="222" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="260.0" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="373.0" y1="260.0" x2="373.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-mindmap)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Dados Embutidos:</strong> TREE{} (10 ramos NAL)</li>
+<li><strong>Motor de Renderização:</strong> Mind map renderer (JS), Pan + Zoom controls, Expand/ Collapse</li>
+<li><strong>Saída Visual:</strong> Mapa mental interativo (SVG)</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-orcamento" style="page-break-before:always;">
+      <div class="tool-number">10 / 21</div>
+      <h2>PIPPA Orçamento</h2>
+      <p class="tool-subtitle">Inteligência Orçamentária UPP 2027</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>HTML standalone com dados orçamentários embutidos + Chart.js</td></tr>
+        <tr><th>Descrição</th><td>Inteligência orçamentária da UPP com 2 exercícios (2026 execução real R$ 39,4mi e 2027 planejamento R$ 58,7mi) em 4 camadas analíticas. Dados hardcoded.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 772 476" width="772" height="476" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-orcamento" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Dados Embutidos</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="226.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="295.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="295.0" y="62" text-anchor="middle" font-size="10" fill="#333">Orçamento 2026</text>
+<text x="295.0" y="75" text-anchor="middle" font-size="10" fill="#333">(execução real)</text>
+<rect x="382.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="451.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="451.0" y="62" text-anchor="middle" font-size="10" fill="#333">Orçamento 2027</text>
+<text x="451.0" y="75" text-anchor="middle" font-size="10" fill="#333">(planejamento)</text>
+<rect x="538.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="607.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="607.0" y="62" text-anchor="middle" font-size="10" fill="#333">Núcleos UPP</text>
+<text x="607.0" y="75" text-anchor="middle" font-size="10" fill="#333">(NAL/PE/RelGov)</text>
+<text x="116" y="189.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Visualização</text>
+<text x="116" y="201.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">(Chart.js)</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="217.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="217.0" y="192" text-anchor="middle" font-size="10" fill="#333">Camada Descritiva</text>
+<text x="217.0" y="205" text-anchor="middle" font-size="10" fill="#333">(KPIs, barras)</text>
+<rect x="304.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="373.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="373.0" y="192" text-anchor="middle" font-size="10" fill="#333">Camada Diagnóstica</text>
+<text x="373.0" y="205" text-anchor="middle" font-size="10" fill="#333">(comparativos)</text>
+<rect x="460.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="529.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="529.0" y="192" text-anchor="middle" font-size="10" fill="#333">Camada Preditiva</text>
+<text x="529.0" y="205" text-anchor="middle" font-size="10" fill="#333">(projeções)</text>
+<rect x="616.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="685.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="685.0" y="192" text-anchor="middle" font-size="10" fill="#333">Camada Prescritiva</text>
+<text x="685.0" y="205" text-anchor="middle" font-size="10" fill="#333">(alertas)</text>
+<text x="116" y="325.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Dashboards</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="226.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="295.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="295.0" y="322" text-anchor="middle" font-size="10" fill="#333">index.html</text>
+<text x="295.0" y="335" text-anchor="middle" font-size="10" fill="#333">(hub)</text>
+<rect x="382.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="451.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="451.0" y="322" text-anchor="middle" font-size="10" fill="#333">2026.html</text>
+<text x="451.0" y="335" text-anchor="middle" font-size="10" fill="#333">(execução)</text>
+<rect x="538.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="607.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="607.0" y="322" text-anchor="middle" font-size="10" fill="#333">2027.html</text>
+<text x="607.0" y="335" text-anchor="middle" font-size="10" fill="#333">(planejamento)</text>
+<line x1="295.0" y1="92" x2="295.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="451.0" y1="92" x2="451.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="607.0" y1="92" x2="607.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="130.0" x2="685.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="130.0" x2="217.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-orcamento)"/>
+<line x1="373.0" y1="130.0" x2="373.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-orcamento)"/>
+<line x1="529.0" y1="130.0" x2="529.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-orcamento)"/>
+<line x1="685.0" y1="130.0" x2="685.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-orcamento)"/>
+<line x1="217.0" y1="222" x2="217.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="222" x2="373.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="222" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="685.0" y1="222" x2="685.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="260.0" x2="685.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="295.0" y1="260.0" x2="295.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-orcamento)"/>
+<line x1="451.0" y1="260.0" x2="451.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-orcamento)"/>
+<line x1="607.0" y1="260.0" x2="607.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-orcamento)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Dados Embutidos:</strong> Orçamento 2026 (execução real), Orçamento 2027 (planejamento), Núcleos UPP (NAL/PE/RelGov)</li>
+<li><strong>Visualização (Chart.js):</strong> Camada Descritiva (KPIs, barras), Camada Diagnóstica (comparativos), Camada Preditiva (projeções), Camada Prescritiva (alertas)</li>
+<li><strong>Dashboards:</strong> index.html (hub), 2026.html (execução), 2027.html (planejamento)</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-projeto2027" style="page-break-before:always;">
+      <div class="tool-number">11 / 21</div>
+      <h2>Projeto de Implantação Nacional 2027</h2>
+      <p class="tool-subtitle">Escopo, Roadmap e Governança Ágil</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>HTML standalone — documento estático/apresentação</td></tr>
+        <tr><th>Descrição</th><td>Documento de escopo para implantação nacional: 3 eixos, 15 epics, 69 features, 17 sprints, R$ 2.015.000. Inclui radar de maturidade, OKRs, RACI e gestão de riscos.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 616 476" width="616" height="476" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-projeto2027" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="59.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Conteúdo</text>
+<text x="116" y="71.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Estruturado</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="217.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="217.0" y="62" text-anchor="middle" font-size="10" fill="#333">3 Eixos</text>
+<text x="217.0" y="75" text-anchor="middle" font-size="10" fill="#333">(Nacional/Estadual/</text>
+<text x="217.0" y="88" text-anchor="middle" font-size="10" fill="#333">Aplicada)</text>
+<rect x="304.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="373.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="373.0" y="62" text-anchor="middle" font-size="10" fill="#333">15 Epics</text>
+<text x="373.0" y="75" text-anchor="middle" font-size="10" fill="#333">69 Features</text>
+<text x="373.0" y="88" text-anchor="middle" font-size="10" fill="#333">(MoSCoW)</text>
+<rect x="460.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="529.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="529.0" y="62" text-anchor="middle" font-size="10" fill="#333">17 Sprints</text>
+<text x="529.0" y="75" text-anchor="middle" font-size="10" fill="#333">4 Releases</text>
+<text x="529.0" y="88" text-anchor="middle" font-size="10" fill="#333">(trimestral)</text>
+<text x="116" y="195.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Documentação</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="168" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="217.0" y="180" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="217.0" y="192" text-anchor="middle" font-size="10" fill="#333">projeto.html</text>
+<text x="217.0" y="205" text-anchor="middle" font-size="10" fill="#333">(escopo completo)</text>
+<rect x="304.0" y="168" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="373.0" y="180" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="373.0" y="192" text-anchor="middle" font-size="10" fill="#333">apresentacao.html</text>
+<text x="373.0" y="205" text-anchor="middle" font-size="10" fill="#333">(slides)</text>
+<rect x="460.0" y="168" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="529.0" y="180" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="529.0" y="192" text-anchor="middle" font-size="10" fill="#333">index.html</text>
+<text x="529.0" y="205" text-anchor="middle" font-size="10" fill="#333">(hub)</text>
+<text x="116" y="319.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Artefatos de</text>
+<text x="116" y="331.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Gestão</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="217.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="217.0" y="322" text-anchor="middle" font-size="10" fill="#333">Radar de</text>
+<text x="217.0" y="335" text-anchor="middle" font-size="10" fill="#333">Maturidade (6D)</text>
+<rect x="304.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="373.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="373.0" y="322" text-anchor="middle" font-size="10" fill="#333">OKRs + RACI</text>
+<text x="373.0" y="335" text-anchor="middle" font-size="10" fill="#333">+ Riscos</text>
+<rect x="460.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="529.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="529.0" y="322" text-anchor="middle" font-size="10" fill="#333">Glossário</text>
+<text x="529.0" y="335" text-anchor="middle" font-size="10" fill="#333">interativo</text>
+<line x1="217.0" y1="92" x2="217.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="92" x2="373.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="92" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="130.0" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="130.0" x2="217.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-projeto2027)"/>
+<line x1="373.0" y1="130.0" x2="373.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-projeto2027)"/>
+<line x1="529.0" y1="130.0" x2="529.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-projeto2027)"/>
+<line x1="217.0" y1="222" x2="217.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="222" x2="373.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="222" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="260.0" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="260.0" x2="217.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-projeto2027)"/>
+<line x1="373.0" y1="260.0" x2="373.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-projeto2027)"/>
+<line x1="529.0" y1="260.0" x2="529.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-projeto2027)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Conteúdo Estruturado:</strong> 3 Eixos (Nacional/Estadual/ Aplicada), 15 Epics 69 Features (MoSCoW), 17 Sprints 4 Releases (trimestral)</li>
+<li><strong>Documentação:</strong> projeto.html (escopo completo), apresentacao.html (slides), index.html (hub)</li>
+<li><strong>Artefatos de Gestão:</strong> Radar de Maturidade (6D), OKRs + RACI + Riscos, Glossário interativo</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-transformalab" style="page-break-before:always;">
+      <div class="tool-number">12 / 21</div>
+      <h2>TransformaLab — PIPPA</h2>
+      <p class="tool-subtitle">Plataforma de Experimentação em Políticas Públicas</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>HTML standalone com dados sintéticos + Chart.js</td></tr>
+        <tr><th>Descrição</th><td>Plataforma de experimentação com 3 modelos de laboratório, 27 labs estaduais, framework de 6 etapas com gates. Dados demonstrativos gerados via funções JS.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 616 476" width="616" height="476" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-transformalab" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="59.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Dados</text>
+<text x="116" y="71.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Demonstrativos</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="217.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="217.0" y="62" text-anchor="middle" font-size="10" fill="#333">UFS[]</text>
+<text x="217.0" y="75" text-anchor="middle" font-size="10" fill="#333">(27 estados)</text>
+<rect x="304.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="373.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="373.0" y="62" text-anchor="middle" font-size="10" fill="#333">EXPERIMENTOS[]</text>
+<text x="373.0" y="75" text-anchor="middle" font-size="10" fill="#333">(12 ativos)</text>
+<rect x="460.0" y="38" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="529.0" y="50" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="529.0" y="62" text-anchor="middle" font-size="10" fill="#333">CHAMADAS[]</text>
+<text x="529.0" y="75" text-anchor="middle" font-size="10" fill="#333">LAB_MODELS[]</text>
+<text x="116" y="189.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Motor de</text>
+<text x="116" y="201.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Simulação</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="217.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="217.0" y="192" text-anchor="middle" font-size="10" fill="#333">Gerador</text>
+<text x="217.0" y="205" text-anchor="middle" font-size="10" fill="#333">(rnd/pick)</text>
+<rect x="304.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="373.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="373.0" y="192" text-anchor="middle" font-size="10" fill="#333">Framework</text>
+<text x="373.0" y="205" text-anchor="middle" font-size="10" fill="#333">6 etapas + gates</text>
+<rect x="460.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="529.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="529.0" y="192" text-anchor="middle" font-size="10" fill="#333">3 Modelos de</text>
+<text x="529.0" y="205" text-anchor="middle" font-size="10" fill="#333">Laboratório</text>
+<text x="116" y="325.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Interface</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="217.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="217.0" y="322" text-anchor="middle" font-size="10" fill="#333">Hub TransformaLab</text>
+<text x="217.0" y="335" text-anchor="middle" font-size="10" fill="#333">(27 labs)</text>
+<rect x="304.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="373.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="373.0" y="322" text-anchor="middle" font-size="10" fill="#333">Cards de</text>
+<text x="373.0" y="335" text-anchor="middle" font-size="10" fill="#333">Experimentos</text>
+<rect x="460.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="529.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="529.0" y="322" text-anchor="middle" font-size="10" fill="#333">Chart.js</text>
+<text x="529.0" y="335" text-anchor="middle" font-size="10" fill="#333">(resultados)</text>
+<line x1="217.0" y1="92" x2="217.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="92" x2="373.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="92" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="130.0" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="130.0" x2="217.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-transformalab)"/>
+<line x1="373.0" y1="130.0" x2="373.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-transformalab)"/>
+<line x1="529.0" y1="130.0" x2="529.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-transformalab)"/>
+<line x1="217.0" y1="222" x2="217.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="222" x2="373.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="222" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="260.0" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="260.0" x2="217.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-transformalab)"/>
+<line x1="373.0" y1="260.0" x2="373.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-transformalab)"/>
+<line x1="529.0" y1="260.0" x2="529.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-transformalab)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Dados Demonstrativos:</strong> UFS[] (27 estados), EXPERIMENTOS[] (12 ativos), CHAMADAS[] LAB_MODELS[]</li>
+<li><strong>Motor de Simulação:</strong> Gerador (rnd/pick), Framework 6 etapas + gates, 3 Modelos de Laboratório</li>
+<li><strong>Interface:</strong> Hub TransformaLab (27 labs), Cards de Experimentos, Chart.js (resultados)</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-indicadores" style="page-break-before:always;">
+      <div class="tool-number">13 / 21</div>
+      <h2>PIPPA Indicadores — Ambiente de Negócios</h2>
+      <p class="tool-subtitle">6 Temas de Indicadores Compostos</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>14 scripts Python + HTML com botão &#x27;Consultar APIs&#x27; em runtime</td></tr>
+        <tr><th>Descrição</th><td>Painel de indicadores compostos com 6 temas. Scripts Python coletam dados de APIs públicas (REDESIM, PNCP, BCB, IBGE). Dashboards HTML consultam APIs ao vivo via botão.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 772 476" width="772" height="476" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-indicadores" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">APIs Públicas</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="217.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="217.0" y="62" text-anchor="middle" font-size="10" fill="#333">REDESIM Gov</text>
+<text x="217.0" y="75" text-anchor="middle" font-size="10" fill="#333">(tempo abertura)</text>
+<rect x="304.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="373.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="373.0" y="62" text-anchor="middle" font-size="10" fill="#333">API PNCP</text>
+<text x="373.0" y="75" text-anchor="middle" font-size="10" fill="#333">(compras públicas)</text>
+<rect x="460.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="529.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="529.0" y="62" text-anchor="middle" font-size="10" fill="#333">BCB SGS</text>
+<text x="529.0" y="75" text-anchor="middle" font-size="10" fill="#333">(crédito/Selic)</text>
+<rect x="616.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="685.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="685.0" y="62" text-anchor="middle" font-size="10" fill="#333">IBGE SIDRA</text>
+<text x="685.0" y="75" text-anchor="middle" font-size="10" fill="#333">(PIB/demografia)</text>
+<text x="116" y="189.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Pipeline (14</text>
+<text x="116" y="201.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">scripts)</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="304.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="373.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="373.0" y="192" text-anchor="middle" font-size="10" fill="#333">Scripts de</text>
+<text x="373.0" y="205" text-anchor="middle" font-size="10" fill="#333">coleta Python</text>
+<rect x="460.0" y="168" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="529.0" y="180" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="529.0" y="192" text-anchor="middle" font-size="10" fill="#333">Observatório Sebrae</text>
+<text x="529.0" y="205" text-anchor="middle" font-size="10" fill="#333">(Tesseract OLAP)</text>
+<text x="116" y="319.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Dashboards (6</text>
+<text x="116" y="331.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">temas)</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="226.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="295.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="295.0" y="322" text-anchor="middle" font-size="10" fill="#333">Burocracia e</text>
+<text x="295.0" y="335" text-anchor="middle" font-size="10" fill="#333">Formalização</text>
+<rect x="382.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="451.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="451.0" y="322" text-anchor="middle" font-size="10" fill="#333">Compras Públicas</text>
+<text x="451.0" y="335" text-anchor="middle" font-size="10" fill="#333">e MEI</text>
+<rect x="538.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="607.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="607.0" y="322" text-anchor="middle" font-size="10" fill="#333">Crédito, Emprego</text>
+<text x="607.0" y="335" text-anchor="middle" font-size="10" fill="#333">e Diversidade</text>
+<line x1="217.0" y1="92" x2="217.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="92" x2="373.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="92" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="685.0" y1="92" x2="685.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="130.0" x2="685.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="373.0" y1="130.0" x2="373.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-indicadores)"/>
+<line x1="529.0" y1="130.0" x2="529.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-indicadores)"/>
+<line x1="373.0" y1="222" x2="373.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="222" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="295.0" y1="260.0" x2="607.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="295.0" y1="260.0" x2="295.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-indicadores)"/>
+<line x1="451.0" y1="260.0" x2="451.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-indicadores)"/>
+<line x1="607.0" y1="260.0" x2="607.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-indicadores)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>APIs Públicas:</strong> REDESIM Gov (tempo abertura), API PNCP (compras públicas), BCB SGS (crédito/Selic), IBGE SIDRA (PIB/demografia)</li>
+<li><strong>Pipeline (14 scripts):</strong> Scripts de coleta Python, Observatório Sebrae (Tesseract OLAP)</li>
+<li><strong>Dashboards (6 temas):</strong> Burocracia e Formalização, Compras Públicas e MEI, Crédito, Emprego e Diversidade</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-raioxmunicipal" style="page-break-before:always;">
+      <div class="tool-number">14 / 21</div>
+      <h2>Raio-X Territorial</h2>
+      <p class="tool-subtitle">Diagnóstico Socioeconômico em Tempo Real</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>HTML standalone com chamadas API em tempo real (IBGE + BCB)</td></tr>
+        <tr><th>Descrição</th><td>Dashboard drill-down (Brasil→Região→Estado→Município) consultando APIs públicas em tempo real para população, PIB, VAB, empresas, emprego, Selic, IPCA e crédito.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 616 606" width="616" height="606" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-raioxmunicipal" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Usuário</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="304.0" y="38" width="138" height="54" rx="6" fill="#e0f7fa" stroke="#00695c" stroke-width="1.5"/>
+<text x="373.0" y="50" text-anchor="middle" font-size="8" fill="#00695c" font-weight="600">«ator»</text>
+<text x="373.0" y="62" text-anchor="middle" font-size="10" fill="#333">Usuário</text>
+<text x="373.0" y="75" text-anchor="middle" font-size="10" fill="#333">(seleciona território)</text>
+<text x="116" y="189.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">APIs (runtime</text>
+<text x="116" y="201.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">fetch)</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="168" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="217.0" y="180" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="217.0" y="192" text-anchor="middle" font-size="10" fill="#333">IBGE Agregados</text>
+<text x="217.0" y="205" text-anchor="middle" font-size="10" fill="#333">(população, PIB)</text>
+<rect x="304.0" y="168" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="373.0" y="180" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="373.0" y="192" text-anchor="middle" font-size="10" fill="#333">IBGE Localidades</text>
+<text x="373.0" y="205" text-anchor="middle" font-size="10" fill="#333">(municípios, UFs)</text>
+<rect x="460.0" y="168" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="529.0" y="180" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="529.0" y="192" text-anchor="middle" font-size="10" fill="#333">BCB SGS</text>
+<text x="529.0" y="205" text-anchor="middle" font-size="10" fill="#333">(Selic, IPCA, crédito)</text>
+<text x="116" y="319.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Processamento</text>
+<text x="116" y="331.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Client-side</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="217.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="217.0" y="322" text-anchor="middle" font-size="10" fill="#333">Narrativa</text>
+<text x="217.0" y="335" text-anchor="middle" font-size="10" fill="#333">automática</text>
+<rect x="304.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="373.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="373.0" y="322" text-anchor="middle" font-size="10" fill="#333">KPIs dinâmicos</text>
+<text x="373.0" y="335" text-anchor="middle" font-size="10" fill="#333">(Chart.js)</text>
+<rect x="460.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="529.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="529.0" y="322" text-anchor="middle" font-size="10" fill="#333">Drill-down</text>
+<text x="529.0" y="335" text-anchor="middle" font-size="10" fill="#333">4 níveis</text>
+<text x="116" y="455.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Saída</text>
+<line x1="122" y1="428" x2="122" y2="482" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="226.0" y="428" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="295.0" y="440" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="295.0" y="452" text-anchor="middle" font-size="10" fill="#333">Dashboard</text>
+<text x="295.0" y="465" text-anchor="middle" font-size="10" fill="#333">territorial</text>
+<rect x="382.0" y="428" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="451.0" y="440" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="451.0" y="452" text-anchor="middle" font-size="10" fill="#333">Exportar</text>
+<text x="451.0" y="465" text-anchor="middle" font-size="10" fill="#333">WhatsApp</text>
+<line x1="373.0" y1="92" x2="373.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="130.0" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="130.0" x2="217.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-raioxmunicipal)"/>
+<line x1="373.0" y1="130.0" x2="373.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-raioxmunicipal)"/>
+<line x1="529.0" y1="130.0" x2="529.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-raioxmunicipal)"/>
+<line x1="217.0" y1="222" x2="217.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="222" x2="373.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="222" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="260.0" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="260.0" x2="217.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-raioxmunicipal)"/>
+<line x1="373.0" y1="260.0" x2="373.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-raioxmunicipal)"/>
+<line x1="529.0" y1="260.0" x2="529.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-raioxmunicipal)"/>
+<line x1="217.0" y1="352" x2="217.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="352" x2="373.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="352" x2="529.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="390.0" x2="529.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="295.0" y1="390.0" x2="295.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-raioxmunicipal)"/>
+<line x1="451.0" y1="390.0" x2="451.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-raioxmunicipal)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Usuário:</strong> Usuário (seleciona território)</li>
+<li><strong>APIs (runtime fetch):</strong> IBGE Agregados (população, PIB), IBGE Localidades (municípios, UFs), BCB SGS (Selic, IPCA, crédito)</li>
+<li><strong>Processamento Client-side:</strong> Narrativa automática, KPIs dinâmicos (Chart.js), Drill-down 4 níveis</li>
+<li><strong>Saída:</strong> Dashboard territorial, Exportar WhatsApp</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-atuacaoupp" style="page-break-before:always;">
+      <div class="tool-number">15 / 21</div>
+      <h2>Atuação UPP 2026</h2>
+      <p class="tool-subtitle">Entregas Estratégicas da Unidade de Políticas Públicas</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>HTML standalone — conteúdo estático institucional</td></tr>
+        <tr><th>Descrição</th><td>Portal de entregas dos 3 núcleos da UPP (abril–outubro 2026): NAL, Projetos Especiais e RelGov. Conteúdo 100% estático sem APIs ou scripts.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 616 476" width="616" height="476" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-atuacaoupp" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Hub (index.html)</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="304.0" y="38" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="373.0" y="50" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="373.0" y="62" text-anchor="middle" font-size="10" fill="#333">Landing page</text>
+<text x="373.0" y="75" text-anchor="middle" font-size="10" fill="#333">UPP 2026</text>
+<text x="116" y="195.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">3 Núcleos</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="168" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="217.0" y="180" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="217.0" y="192" text-anchor="middle" font-size="10" fill="#333">nal.html</text>
+<text x="217.0" y="205" text-anchor="middle" font-size="10" fill="#333">(Assessoria Legislativa)</text>
+<rect x="304.0" y="168" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="373.0" y="180" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="373.0" y="192" text-anchor="middle" font-size="10" fill="#333">projetos-especiais.html</text>
+<text x="373.0" y="205" text-anchor="middle" font-size="10" fill="#333">(48 entregas)</text>
+<rect x="460.0" y="168" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="529.0" y="180" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="529.0" y="192" text-anchor="middle" font-size="10" fill="#333">relgov.html</text>
+<text x="529.0" y="205" text-anchor="middle" font-size="10" fill="#333">(18 entregas)</text>
+<text x="116" y="325.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Conteúdo</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="217.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="217.0" y="322" text-anchor="middle" font-size="10" fill="#333">PLP 108</text>
+<text x="217.0" y="335" text-anchor="middle" font-size="10" fill="#333">Reforma Tributária</text>
+<rect x="304.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="373.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="373.0" y="322" text-anchor="middle" font-size="10" fill="#333">Movimenta</text>
+<text x="373.0" y="335" text-anchor="middle" font-size="10" fill="#333">(164 ações)</text>
+<rect x="460.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="529.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="529.0" y="322" text-anchor="middle" font-size="10" fill="#333">Contrata+Brasil</text>
+<text x="529.0" y="335" text-anchor="middle" font-size="10" fill="#333">Pró-Catadores</text>
+<line x1="373.0" y1="92" x2="373.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="130.0" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="130.0" x2="217.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-atuacaoupp)"/>
+<line x1="373.0" y1="130.0" x2="373.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-atuacaoupp)"/>
+<line x1="529.0" y1="130.0" x2="529.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-atuacaoupp)"/>
+<line x1="217.0" y1="222" x2="217.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="222" x2="373.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="222" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="260.0" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="260.0" x2="217.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-atuacaoupp)"/>
+<line x1="373.0" y1="260.0" x2="373.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-atuacaoupp)"/>
+<line x1="529.0" y1="260.0" x2="529.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-atuacaoupp)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Hub (index.html):</strong> Landing page UPP 2026</li>
+<li><strong>3 Núcleos:</strong> nal.html (Assessoria Legislativa), projetos-especiais.html (48 entregas), relgov.html (18 entregas)</li>
+<li><strong>Conteúdo:</strong> PLP 108 Reforma Tributária, Movimenta (164 ações), Contrata+Brasil Pró-Catadores</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-impacto" style="page-break-before:always;">
+      <div class="tool-number">16 / 21</div>
+      <h2>PIPPA Impacto</h2>
+      <p class="tool-subtitle">Portfólio de Evidências — Prestação de Contas</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>HTML standalone — fetch dinâmico do portal + Chart.js</td></tr>
+        <tr><th>Descrição</th><td>Dashboard que faz fetch da página do portal PIPPA em runtime, extrai o array TOOLS via regex e computa KPIs consolidados (ferramentas, eixos, APIs, indicadores).</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 476" width="500" height="476" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-impacto" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Fonte Interna</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="246.0" y="38" width="138" height="54" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+<text x="315.0" y="50" text-anchor="middle" font-size="8" fill="#43a047" font-weight="600">«fonte de dados»</text>
+<text x="315.0" y="62" text-anchor="middle" font-size="10" fill="#333">pippa-portal/</text>
+<text x="315.0" y="75" text-anchor="middle" font-size="10" fill="#333">index.html</text>
+<text x="116" y="189.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Processamento</text>
+<text x="116" y="201.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Runtime</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="237.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="237.0" y="192" text-anchor="middle" font-size="10" fill="#333">fetch() portal</text>
+<text x="237.0" y="205" text-anchor="middle" font-size="10" fill="#333">+ regex TOOLS[]</text>
+<rect x="324.0" y="168" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="393.0" y="180" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="393.0" y="192" text-anchor="middle" font-size="10" fill="#333">Cálculo de KPIs</text>
+<text x="393.0" y="205" text-anchor="middle" font-size="10" fill="#333">(cobertura, eixos)</text>
+<text x="116" y="325.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Saída</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="298" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="237.0" y="310" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="237.0" y="322" text-anchor="middle" font-size="10" fill="#333">Dashboard</text>
+<text x="237.0" y="335" text-anchor="middle" font-size="10" fill="#333">portfólio</text>
+<rect x="324.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="393.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="393.0" y="322" text-anchor="middle" font-size="10" fill="#333">Chart.js</text>
+<text x="393.0" y="335" text-anchor="middle" font-size="10" fill="#333">(gráficos)</text>
+<line x1="315.0" y1="92" x2="315.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="130.0" x2="393.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="237.0" y1="130.0" x2="237.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-impacto)"/>
+<line x1="393.0" y1="130.0" x2="393.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-impacto)"/>
+<line x1="237.0" y1="222" x2="237.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="393.0" y1="222" x2="393.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="260.0" x2="393.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="237.0" y1="260.0" x2="237.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-impacto)"/>
+<line x1="393.0" y1="260.0" x2="393.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-impacto)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Fonte Interna:</strong> pippa-portal/ index.html</li>
+<li><strong>Processamento Runtime:</strong> fetch() portal + regex TOOLS[], Cálculo de KPIs (cobertura, eixos)</li>
+<li><strong>Saída:</strong> Dashboard portfólio, Chart.js (gráficos)</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-stakeholders" style="page-break-before:always;">
+      <div class="tool-number">17 / 21</div>
+      <h2>PIPPA Stakeholders</h2>
+      <p class="tool-subtitle">Mapa Parlamentar — CRM Legislativo</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>Python pipeline → cache JS + HTML com API runtime</td></tr>
+        <tr><th>Descrição</th><td>CRM visual de parlamentares com cache pré-computado (Python) + consulta ao vivo de APIs. Scoring ICP/RIG (PB×MI×BC) e overlay de resultados eleitorais TSE 2026.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 616 606" width="616" height="606" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-stakeholders" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="59.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">APIs</text>
+<text x="116" y="71.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Legislativas</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="217.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="217.0" y="62" text-anchor="middle" font-size="10" fill="#333">API Câmara</text>
+<text x="217.0" y="75" text-anchor="middle" font-size="10" fill="#333">(deputados/frentes)</text>
+<rect x="304.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="373.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="373.0" y="62" text-anchor="middle" font-size="10" fill="#333">API Senado</text>
+<text x="373.0" y="75" text-anchor="middle" font-size="10" fill="#333">(senadores/comissões)</text>
+<rect x="460.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="529.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="529.0" y="62" text-anchor="middle" font-size="10" fill="#333">TSE CDN</text>
+<text x="529.0" y="75" text-anchor="middle" font-size="10" fill="#333">(eleições 2026)</text>
+<text x="116" y="195.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Pipeline Python</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="226.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="295.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="295.0" y="192" text-anchor="middle" font-size="10" fill="#333">build_cache.py</text>
+<text x="295.0" y="205" text-anchor="middle" font-size="10" fill="#333">(pré-computa dados)</text>
+<rect x="382.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="451.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="451.0" y="192" text-anchor="middle" font-size="10" fill="#333">build_eleicao_</text>
+<text x="451.0" y="205" text-anchor="middle" font-size="10" fill="#333">2026.py (TSE)</text>
+<text x="116" y="319.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Cache</text>
+<text x="116" y="331.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Intermediário</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="226.0" y="298" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="295.0" y="310" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="295.0" y="322" text-anchor="middle" font-size="10" fill="#333">stakeholders_</text>
+<text x="295.0" y="335" text-anchor="middle" font-size="10" fill="#333">cache.js</text>
+<rect x="382.0" y="298" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="451.0" y="310" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="451.0" y="322" text-anchor="middle" font-size="10" fill="#333">candidatos_</text>
+<text x="451.0" y="335" text-anchor="middle" font-size="10" fill="#333">2026.js</text>
+<text x="116" y="455.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Dashboard</text>
+<line x1="122" y1="428" x2="122" y2="482" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="226.0" y="428" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="295.0" y="440" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="295.0" y="452" text-anchor="middle" font-size="10" fill="#333">index.html</text>
+<text x="295.0" y="465" text-anchor="middle" font-size="10" fill="#333">(CRM + ICP/RIG)</text>
+<rect x="382.0" y="428" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="451.0" y="440" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="451.0" y="452" text-anchor="middle" font-size="10" fill="#333">APIs ao vivo</text>
+<text x="451.0" y="465" text-anchor="middle" font-size="10" fill="#333">(fallback)</text>
+<line x1="217.0" y1="92" x2="217.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="92" x2="373.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="92" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="130.0" x2="529.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="295.0" y1="130.0" x2="295.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-stakeholders)"/>
+<line x1="451.0" y1="130.0" x2="451.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-stakeholders)"/>
+<line x1="295.0" y1="222" x2="295.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="451.0" y1="222" x2="451.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="295.0" y1="260.0" x2="451.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="295.0" y1="260.0" x2="295.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-stakeholders)"/>
+<line x1="451.0" y1="260.0" x2="451.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-stakeholders)"/>
+<line x1="295.0" y1="352" x2="295.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="451.0" y1="352" x2="451.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="295.0" y1="390.0" x2="451.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="295.0" y1="390.0" x2="295.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-stakeholders)"/>
+<line x1="451.0" y1="390.0" x2="451.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-stakeholders)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>APIs Legislativas:</strong> API Câmara (deputados/frentes), API Senado (senadores/comissões), TSE CDN (eleições 2026)</li>
+<li><strong>Pipeline Python:</strong> build_cache.py (pré-computa dados), build_eleicao_ 2026.py (TSE)</li>
+<li><strong>Cache Intermediário:</strong> stakeholders_ cache.js, candidatos_ 2026.js</li>
+<li><strong>Dashboard:</strong> index.html (CRM + ICP/RIG), APIs ao vivo (fallback)</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-credito" style="page-break-before:always;">
+      <div class="tool-number">18 / 21</div>
+      <h2>PIPPA Crédito e Fomento</h2>
+      <p class="tool-subtitle">Radar de Oportunidades para MPEs</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>Python → JSON + HTML com fallback API BCB runtime</td></tr>
+        <tr><th>Descrição</th><td>Radar de 14 séries BCB SGS. Script Python coleta via IPEADATA (mirror) com fallback BCB direto. Dashboard tenta API live primeiro, cai para data.json.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 606" width="500" height="606" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-credito" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="59.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">APIs Banco</text>
+<text x="116" y="71.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Central</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="237.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="237.0" y="62" text-anchor="middle" font-size="10" fill="#333">IPEADATA</text>
+<text x="237.0" y="75" text-anchor="middle" font-size="10" fill="#333">(mirror BCB SGS)</text>
+<rect x="324.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="393.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="393.0" y="62" text-anchor="middle" font-size="10" fill="#333">BCB SGS direto</text>
+<text x="393.0" y="75" text-anchor="middle" font-size="10" fill="#333">(fallback)</text>
+<text x="116" y="195.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Pipeline Python</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="237.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="237.0" y="192" text-anchor="middle" font-size="10" fill="#333">fetch_data.py</text>
+<text x="237.0" y="205" text-anchor="middle" font-size="10" fill="#333">(14 séries)</text>
+<rect x="324.0" y="168" width="138" height="54" rx="6" fill="#eceff1" stroke="#546e7a" stroke-width="1.5"/>
+<text x="393.0" y="180" text-anchor="middle" font-size="8" fill="#546e7a" font-weight="600">«ci/cd»</text>
+<text x="393.0" y="192" text-anchor="middle" font-size="10" fill="#333">GitHub Actions</text>
+<text x="393.0" y="205" text-anchor="middle" font-size="10" fill="#333">(diário útil)</text>
+<text x="116" y="325.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Armazenamento</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="246.0" y="298" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="315.0" y="310" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="315.0" y="322" text-anchor="middle" font-size="10" fill="#333">data.json</text>
+<text x="315.0" y="335" text-anchor="middle" font-size="10" fill="#333">(cache local)</text>
+<text x="116" y="455.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Dashboard</text>
+<line x1="122" y1="428" x2="122" y2="482" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="428" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="237.0" y="440" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="237.0" y="452" text-anchor="middle" font-size="10" fill="#333">index.html</text>
+<text x="237.0" y="465" text-anchor="middle" font-size="10" fill="#333">(radar 14 indicadores)</text>
+<rect x="324.0" y="428" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="393.0" y="440" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="393.0" y="452" text-anchor="middle" font-size="10" fill="#333">BCB API live</text>
+<text x="393.0" y="465" text-anchor="middle" font-size="10" fill="#333">→ data.json fallback</text>
+<line x1="237.0" y1="92" x2="237.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="393.0" y1="92" x2="393.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="130.0" x2="393.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="237.0" y1="130.0" x2="237.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-credito)"/>
+<line x1="393.0" y1="130.0" x2="393.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-credito)"/>
+<line x1="237.0" y1="222" x2="237.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="393.0" y1="222" x2="393.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="260.0" x2="393.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="315.0" y1="260.0" x2="315.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-credito)"/>
+<line x1="315.0" y1="352" x2="315.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="390.0" x2="393.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="237.0" y1="390.0" x2="237.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-credito)"/>
+<line x1="393.0" y1="390.0" x2="393.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-credito)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>APIs Banco Central:</strong> IPEADATA (mirror BCB SGS), BCB SGS direto (fallback)</li>
+<li><strong>Pipeline Python:</strong> fetch_data.py (14 séries), GitHub Actions (diário útil)</li>
+<li><strong>Armazenamento:</strong> data.json (cache local)</li>
+<li><strong>Dashboard:</strong> index.html (radar 14 indicadores), BCB API live → data.json fallback</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-consultas" style="page-break-before:always;">
+      <div class="tool-number">19 / 21</div>
+      <h2>PIPPA Consultas Públicas</h2>
+      <p class="tool-subtitle">Monitor de Participação Social</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>HTML standalone com chamadas API em tempo real</td></tr>
+        <tr><th>Descrição</th><td>Monitor de audiências e consultas públicas da Câmara e Senado sob demanda. Classificação automática de relevância para MPEs client-side.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 606" width="500" height="606" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-consultas" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Usuário</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="246.0" y="38" width="138" height="54" rx="6" fill="#e0f7fa" stroke="#00695c" stroke-width="1.5"/>
+<text x="315.0" y="50" text-anchor="middle" font-size="8" fill="#00695c" font-weight="600">«ator»</text>
+<text x="315.0" y="62" text-anchor="middle" font-size="10" fill="#333">Usuário</text>
+<text x="315.0" y="75" text-anchor="middle" font-size="10" fill="#333">(seleciona período)</text>
+<text x="116" y="189.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Dashboard</text>
+<text x="116" y="201.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">(runtime fetch)</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="246.0" y="168" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="315.0" y="180" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="315.0" y="192" text-anchor="middle" font-size="10" fill="#333">index.html</text>
+<text x="315.0" y="205" text-anchor="middle" font-size="10" fill="#333">(monitor)</text>
+<text x="116" y="319.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">APIs</text>
+<text x="116" y="331.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Legislativas</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="298" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="237.0" y="310" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="237.0" y="322" text-anchor="middle" font-size="10" fill="#333">API Câmara</text>
+<text x="237.0" y="335" text-anchor="middle" font-size="10" fill="#333">(/eventos audiências)</text>
+<rect x="324.0" y="298" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="393.0" y="310" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="393.0" y="322" text-anchor="middle" font-size="10" fill="#333">API Senado</text>
+<text x="393.0" y="335" text-anchor="middle" font-size="10" fill="#333">(/plenario/agenda)</text>
+<text x="116" y="455.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Classificação</text>
+<line x1="122" y1="428" x2="122" y2="482" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="428" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="237.0" y="440" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="237.0" y="452" text-anchor="middle" font-size="10" fill="#333">Engine SEBRAE</text>
+<text x="237.0" y="465" text-anchor="middle" font-size="10" fill="#333">(relevância MPE)</text>
+<rect x="324.0" y="428" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="393.0" y="440" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="393.0" y="452" text-anchor="middle" font-size="10" fill="#333">Filtros</text>
+<text x="393.0" y="465" text-anchor="middle" font-size="10" fill="#333">(órgão/status)</text>
+<line x1="315.0" y1="92" x2="315.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="315.0" y1="130.0" x2="315.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-consultas)"/>
+<line x1="315.0" y1="222" x2="315.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="260.0" x2="393.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="237.0" y1="260.0" x2="237.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-consultas)"/>
+<line x1="393.0" y1="260.0" x2="393.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-consultas)"/>
+<line x1="237.0" y1="352" x2="237.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="393.0" y1="352" x2="393.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="390.0" x2="393.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="237.0" y1="390.0" x2="237.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-consultas)"/>
+<line x1="393.0" y1="390.0" x2="393.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-consultas)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Usuário:</strong> Usuário (seleciona período)</li>
+<li><strong>Dashboard (runtime fetch):</strong> index.html (monitor)</li>
+<li><strong>APIs Legislativas:</strong> API Câmara (/eventos audiências), API Senado (/plenario/agenda)</li>
+<li><strong>Classificação:</strong> Engine SEBRAE (relevância MPE), Filtros (órgão/status)</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-regulatorio" style="page-break-before:always;">
+      <div class="tool-number">20 / 21</div>
+      <h2>PIPPA Regulatório</h2>
+      <p class="tool-subtitle">Monitor do Diário Oficial da União</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>HTML standalone com fetch API DOU + heurística 3 eixos</td></tr>
+        <tr><th>Descrição</th><td>Monitor em tempo real do DOU. Consulta API da Imprensa Nacional, aplica heurística de 3 eixos (relevância MPE, alcance setorial, potência normativa) e apresenta normas com score justificado.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 616 606" width="616" height="606" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-regulatorio" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Usuário</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="304.0" y="38" width="138" height="54" rx="6" fill="#e0f7fa" stroke="#00695c" stroke-width="1.5"/>
+<text x="373.0" y="50" text-anchor="middle" font-size="8" fill="#00695c" font-weight="600">«ator»</text>
+<text x="373.0" y="62" text-anchor="middle" font-size="10" fill="#333">Usuário</text>
+<text x="373.0" y="75" text-anchor="middle" font-size="10" fill="#333">(seleciona datas)</text>
+<text x="116" y="195.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">API DOU</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="304.0" y="168" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="373.0" y="180" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="373.0" y="192" text-anchor="middle" font-size="10" fill="#333">Imprensa Nacional</text>
+<text x="373.0" y="205" text-anchor="middle" font-size="10" fill="#333">(in.gov.br/buscar)</text>
+<text x="116" y="319.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Classificação (3</text>
+<text x="116" y="331.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">eixos)</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="148.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="217.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="217.0" y="322" text-anchor="middle" font-size="10" fill="#333">Relevância MPE</text>
+<text x="217.0" y="335" text-anchor="middle" font-size="10" fill="#333">(0–0.5)</text>
+<rect x="304.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="373.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="373.0" y="322" text-anchor="middle" font-size="10" fill="#333">Alcance Setorial</text>
+<text x="373.0" y="335" text-anchor="middle" font-size="10" fill="#333">(0–0.3)</text>
+<rect x="460.0" y="298" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="529.0" y="310" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="529.0" y="322" text-anchor="middle" font-size="10" fill="#333">Potência Normativa</text>
+<text x="529.0" y="335" text-anchor="middle" font-size="10" fill="#333">(multiplicador)</text>
+<text x="116" y="455.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Saída</text>
+<line x1="122" y1="428" x2="122" y2="482" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="226.0" y="428" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="295.0" y="440" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="295.0" y="452" text-anchor="middle" font-size="10" fill="#333">Dashboard DOU</text>
+<text x="295.0" y="465" text-anchor="middle" font-size="10" fill="#333">(normas scored)</text>
+<rect x="382.0" y="428" width="138" height="54" rx="6" fill="#f5f5f5" stroke="#424242" stroke-width="1.5"/>
+<text x="451.0" y="440" text-anchor="middle" font-size="8" fill="#424242" font-weight="600">«componente»</text>
+<text x="451.0" y="452" text-anchor="middle" font-size="10" fill="#333">Justificativa</text>
+<text x="451.0" y="465" text-anchor="middle" font-size="10" fill="#333">transparente</text>
+<line x1="373.0" y1="92" x2="373.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="130.0" x2="373.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-regulatorio)"/>
+<line x1="373.0" y1="222" x2="373.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="260.0" x2="529.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="217.0" y1="260.0" x2="217.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-regulatorio)"/>
+<line x1="373.0" y1="260.0" x2="373.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-regulatorio)"/>
+<line x1="529.0" y1="260.0" x2="529.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-regulatorio)"/>
+<line x1="217.0" y1="352" x2="217.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="373.0" y1="352" x2="373.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="529.0" y1="352" x2="529.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="217.0" y1="390.0" x2="529.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="295.0" y1="390.0" x2="295.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-regulatorio)"/>
+<line x1="451.0" y1="390.0" x2="451.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-regulatorio)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Usuário:</strong> Usuário (seleciona datas)</li>
+<li><strong>API DOU:</strong> Imprensa Nacional (in.gov.br/buscar)</li>
+<li><strong>Classificação (3 eixos):</strong> Relevância MPE (0–0.5), Alcance Setorial (0–0.3), Potência Normativa (multiplicador)</li>
+<li><strong>Saída:</strong> Dashboard DOU (normas scored), Justificativa transparente</li>
+
+      </ul>
+    </div>
+
+
+    <div class="tool-section" id="tool-impostometro" style="page-break-before:always;">
+      <div class="tool-number">21 / 21</div>
+      <h2>PIPPA Impostômetro</h2>
+      <p class="tool-subtitle">Arrecadação Tributária Federal</p>
+      <table class="meta-table">
+        <tr><th>Padrão Arquitetural</th><td>Python script → patching de variáveis JS no HTML</td></tr>
+        <tr><th>Descrição</th><td>Script Python coleta dados RREO/SICONFI e IBGE SIDRA, depois faz regex replace para atualizar variáveis JS diretamente no index.html. Dashboard exibe contador animado com projeção linear.</td></tr>
+      </table>
+      <h3>Diagrama de Componentes UML</h3>
+      <div class="diagram-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 606" width="500" height="606" style="max-width:100%;height:auto;font-family:Segoe UI,Figtree,Arial,sans-serif;">
+<defs>
+<marker id="arrow-impostometro" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9e9e"/></marker>
+</defs>
+<text x="116" y="65.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Fontes de Dados</text>
+<line x1="122" y1="38" x2="122" y2="92" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="237.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="237.0" y="62" text-anchor="middle" font-size="10" fill="#333">Tesouro Nacional</text>
+<text x="237.0" y="75" text-anchor="middle" font-size="10" fill="#333">RREO/SICONFI</text>
+<rect x="324.0" y="38" width="138" height="54" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+<text x="393.0" y="50" text-anchor="middle" font-size="8" fill="#1565c0" font-weight="600">«api»</text>
+<text x="393.0" y="62" text-anchor="middle" font-size="10" fill="#333">IBGE SIDRA</text>
+<text x="393.0" y="75" text-anchor="middle" font-size="10" fill="#333">(Contas Nacionais)</text>
+<text x="116" y="195.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Pipeline Python</text>
+<line x1="122" y1="168" x2="122" y2="222" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="246.0" y="168" width="138" height="54" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+<text x="315.0" y="180" text-anchor="middle" font-size="8" fill="#e65100" font-weight="600">«script»</text>
+<text x="315.0" y="192" text-anchor="middle" font-size="10" fill="#333">atualizar_dados.py</text>
+<text x="315.0" y="205" text-anchor="middle" font-size="10" fill="#333">(fetch + patch HTML)</text>
+<text x="116" y="319.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Variáveis</text>
+<text x="116" y="331.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Patcheadas</text>
+<line x1="122" y1="298" x2="122" y2="352" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="298" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="237.0" y="310" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="237.0" y="322" text-anchor="middle" font-size="10" fill="#333">var RREO_DATA</text>
+<text x="237.0" y="335" text-anchor="middle" font-size="10" fill="#333">(no HTML)</text>
+<rect x="324.0" y="298" width="138" height="54" rx="6" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+<text x="393.0" y="310" text-anchor="middle" font-size="8" fill="#5e35b1" font-weight="600">«artefato»</text>
+<text x="393.0" y="322" text-anchor="middle" font-size="10" fill="#333">var IBGE_SETORES</text>
+<text x="393.0" y="335" text-anchor="middle" font-size="10" fill="#333">(no HTML)</text>
+<text x="116" y="455.0" text-anchor="end" font-size="10" fill="#6b7280" font-weight="600">Dashboard</text>
+<line x1="122" y1="428" x2="122" y2="482" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+<rect x="168.0" y="428" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="237.0" y="440" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="237.0" y="452" text-anchor="middle" font-size="10" fill="#333">Contador animado</text>
+<text x="237.0" y="465" text-anchor="middle" font-size="10" fill="#333">(projeção linear)</text>
+<rect x="324.0" y="428" width="138" height="54" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+<text x="393.0" y="440" text-anchor="middle" font-size="8" fill="#c62828" font-weight="600">«dashboard»</text>
+<text x="393.0" y="452" text-anchor="middle" font-size="10" fill="#333">Evolução bimestral</text>
+<text x="393.0" y="465" text-anchor="middle" font-size="10" fill="#333">+ comparativo</text>
+<line x1="237.0" y1="92" x2="237.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="393.0" y1="92" x2="393.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="130.0" x2="393.0" y2="130.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="315.0" y1="130.0" x2="315.0" y2="168" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-impostometro)"/>
+<line x1="315.0" y1="222" x2="315.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="260.0" x2="393.0" y2="260.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="237.0" y1="260.0" x2="237.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-impostometro)"/>
+<line x1="393.0" y1="260.0" x2="393.0" y2="298" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-impostometro)"/>
+<line x1="237.0" y1="352" x2="237.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="393.0" y1="352" x2="393.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="4,3"/>
+<line x1="237.0" y1="390.0" x2="393.0" y2="390.0" stroke="#bdbdbd" stroke-width="1.2"/>
+<line x1="237.0" y1="390.0" x2="237.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-impostometro)"/>
+<line x1="393.0" y1="390.0" x2="393.0" y2="428" stroke="#9e9e9e" stroke-width="1.2" marker-end="url(#arrow-impostometro)"/>
+</svg>
+      </div>
+      <h3>Camadas e Componentes</h3>
+      <ul class="layer-list">
+        <li><strong>Fontes de Dados:</strong> Tesouro Nacional RREO/SICONFI, IBGE SIDRA (Contas Nacionais)</li>
+<li><strong>Pipeline Python:</strong> atualizar_dados.py (fetch + patch HTML)</li>
+<li><strong>Variáveis Patcheadas:</strong> var RREO_DATA (no HTML), var IBGE_SETORES (no HTML)</li>
+<li><strong>Dashboard:</strong> Contador animado (projeção linear), Evolução bimestral + comparativo</li>
+
+      </ul>
+    </div>
+
+
+<div class="doc-footer">
+  PIPPA — Plataforma de Inteligência em Políticas Públicas Aplicadas · SEBRAE Nacional<br>
+  Documento gerado automaticamente · Novembro 2026
+</div>
+
+</body>
+</html>
