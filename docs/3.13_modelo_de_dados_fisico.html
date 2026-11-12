@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.13 Modelo de Dados Físico — PIPPA</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+@page { size: A4; margin: 16mm 18mm 20mm 18mm; }
+@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .page-break { page-break-before: always; } .no-print { display: none !important; } .schema-card { break-inside: avoid; } }
+:root { --azul:#2a4fda; --atlantico:#0b2574; --ceu:#65b7fb; --verde:#61b466; --laranja:#f39d72; --vermelho:#e0565d; --roxo:#be64e3; --font-heading:'Plus Jakarta Sans',sans-serif; --font-body:'Figtree',sans-serif; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:10pt; }
+body { font-family:var(--font-body); color:#1a1a1a; background:#fff; line-height:1.55; max-width:210mm; margin:0 auto; padding:16mm 18mm 20mm 18mm; }
+.doc-header { display:flex; align-items:flex-start; justify-content:space-between; border-bottom:3px solid var(--azul); padding-bottom:12px; margin-bottom:16px; }
+.brand-text { display:flex; flex-direction:column; }
+.brand-org { font-family:var(--font-heading); font-size:9.5pt; font-weight:700; color:var(--azul); }
+.brand-unit { font-size:7.5pt; color:#6b7280; }
+.doc-type { font-family:var(--font-heading); font-size:7.5pt; font-weight:700; color:#fff; background:var(--azul); padding:3px 10px; border-radius:4px; display:inline-block; }
+.doc-date { font-size:7pt; color:#6b7280; margin-top:3px; text-align:right; }
+.title-block { background:linear-gradient(45deg, var(--atlantico), var(--azul)); border-radius:8px; padding:20px 24px; margin-bottom:18px; color:#fff; }
+.title-block h1 { font-family:var(--font-heading); font-size:15pt; font-weight:800; letter-spacing:-1px; margin-bottom:3px; }
+.title-block .subtitle { font-size:9.5pt; color:rgba(255,255,255,.8); }
+.title-block .ref { font-size:7pt; color:rgba(255,255,255,.45); margin-top:8px; }
+h2 { font-family:var(--font-heading); font-size:12pt; font-weight:800; color:var(--atlantico); margin:20px 0 8px; padding-bottom:4px; border-bottom:2px solid var(--azul); }
+h3 { font-family:var(--font-heading); font-size:10pt; font-weight:700; color:var(--azul); margin:14px 0 5px; }
+p { margin-bottom:6px; text-align:justify; }
+code { background:#f3f4f6; padding:1px 4px; border-radius:3px; font-size:8.5pt; font-family:'Cascadia Code','Fira Code',monospace; }
+pre { background:#0f1a2e; color:#eff3ee; padding:12px 14px; border-radius:6px; font-size:8pt; font-family:'Cascadia Code','Fira Code',monospace; overflow-x:auto; margin:8px 0 14px; line-height:1.5; }
+pre .kw { color:#65b7fb; } pre .type { color:#61b466; } pre .str { color:#f39d72; } pre .comment { color:#6b7280; }
+table { width:100%; border-collapse:collapse; margin:6px 0 12px; font-size:8.5pt; }
+th { background:var(--azul); color:#fff; font-family:var(--font-heading); font-weight:700; text-align:left; padding:5px 8px; font-size:8pt; }
+td { padding:5px 8px; border-bottom:1px solid #e5e7eb; vertical-align:top; }
+tr:nth-child(even) td { background:#f9fafb; }
+.badge { font-size:6.5pt; font-weight:700; padding:2px 6px; border-radius:3px; display:inline-block; text-transform:uppercase; letter-spacing:.3px; }
+.badge-parquet { background:rgba(42,79,218,.1); color:var(--azul); }
+.badge-json { background:rgba(97,180,102,.1); color:#166534; }
+.badge-js { background:rgba(243,157,114,.1); color:#c2410c; }
+.badge-embed { background:rgba(190,100,227,.1); color:var(--roxo); }
+.badge-api { background:rgba(101,183,251,.12); color:#0369a1; }
+
+.schema-card { border:1px solid #e5e7eb; border-radius:6px; margin:8px 0; overflow:hidden; }
+.schema-card .schema-header { background:#f9fafb; padding:8px 12px; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center; }
+.schema-card .schema-name { font-family:var(--font-heading); font-weight:700; font-size:9pt; color:var(--atlantico); }
+.schema-card .schema-meta { font-size:7pt; color:#6b7280; display:flex; gap:8px; }
+.schema-card table { margin:0; }
+.schema-card th { font-size:7.5pt; }
+.schema-card td { font-size:8pt; }
+
+.summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:8px 0 14px; }
+.summary-item { border:1px solid #e5e7eb; border-radius:6px; padding:8px 10px; }
+.summary-item .val { font-family:var(--font-heading); font-size:14pt; font-weight:800; color:var(--azul); }
+.summary-item .lbl { font-size:7pt; color:#6b7280; text-transform:uppercase; }
+
+.doc-footer { margin-top:24px; padding-top:10px; border-top:2px solid var(--azul); display:flex; justify-content:space-between; font-size:7pt; color:#9ca3af; }
+.doc-footer .classification { font-family:var(--font-heading); font-weight:700; color:var(--azul); }
+.print-btn { position:fixed; bottom:24px; right:24px; background:var(--azul); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 16px rgba(42,79,218,.35); z-index:100; }
+.print-btn:hover { background:var(--atlantico); }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
+
+<div class="doc-header">
+  <div class="brand-text">
+    <span class="brand-org">PIPPA — Plataforma de Inteligência em Políticas Públicas Aplicadas</span>
+    <span class="brand-unit">Unidade de Políticas Públicas · Sebrae Nacional</span>
+  </div>
+  <div style="text-align:right;">
+    <span class="doc-type">DOCUMENTAÇÃO TÉCNICA</span>
+    <div class="doc-date">Novembro de 2026</div>
+  </div>
+</div>
+
+<div class="title-block">
+  <h1>3.13 — Modelo de Dados Físico</h1>
+  <div class="subtitle">Schemas reais dos arquivos Parquet, caches JSON/JS, dados embarcados em HTML e endpoints FastAPI, com mapeamento para Cloud SQL/BigQuery</div>
+  <div class="ref">Ref.: Item 3.13 do Parecer UTIC — Relatório de Aderência para Internalização — 09/11/2026</div>
+</div>
+
+<h2>1. Inventário de Armazenamento</h2>
+
+<div class="summary-grid">
+  <div class="summary-item"><div class="val">8</div><div class="lbl">Arquivos Parquet</div></div>
+  <div class="summary-item"><div class="val">5</div><div class="lbl">Caches JSON</div></div>
+  <div class="summary-item"><div class="val">2</div><div class="lbl">Caches JS</div></div>
+  <div class="summary-item"><div class="val">4</div><div class="lbl">Dados Embarcados em HTML</div></div>
+</div>
+
+<table>
+  <tr><th>Tipo</th><th>Arquivo</th><th>Caminho</th><th>Tamanho</th><th>Registros</th></tr>
+  <tr><td><span class="badge badge-parquet">Parquet</span></td><td>emendas_enriquecidas_completo</td><td><code>pippa-emendas/data/processed/</code></td><td>3.336 KB</td><td>83.614</td></tr>
+  <tr><td><span class="badge badge-parquet">Parquet</span></td><td>agg_por_municipio_completo</td><td><code>pippa-emendas/data/processed/</code></td><td>219 KB</td><td>4.933</td></tr>
+  <tr><td><span class="badge badge-parquet">Parquet</span></td><td>agg_por_autor_completo</td><td><code>pippa-emendas/data/processed/</code></td><td>138 KB</td><td>2.316</td></tr>
+  <tr><td><span class="badge badge-parquet">Parquet</span></td><td>agg_por_estado_completo</td><td><code>pippa-emendas/data/processed/</code></td><td>25 KB</td><td>348</td></tr>
+  <tr><td><span class="badge badge-parquet">Parquet</span></td><td>agg_por_partido_completo</td><td><code>pippa-emendas/data/processed/</code></td><td>23 KB</td><td>323</td></tr>
+  <tr><td><span class="badge badge-parquet">Parquet</span></td><td>agg_por_funcao_completo</td><td><code>pippa-emendas/data/processed/</code></td><td>21 KB</td><td>290</td></tr>
+  <tr><td><span class="badge badge-parquet">Parquet</span></td><td>agg_por_tipo_completo</td><td><code>pippa-emendas/data/processed/</code></td><td>9 KB</td><td>46</td></tr>
+  <tr><td><span class="badge badge-parquet">Parquet</span></td><td>agg_serie_temporal_completo</td><td><code>pippa-emendas/data/processed/</code></td><td>6 KB</td><td>12</td></tr>
+  <tr><td><span class="badge badge-js">JS</span></td><td>stakeholders_cache.js</td><td><code>pippa-stakeholders/</code></td><td>794 KB</td><td>~600 parlamentares</td></tr>
+  <tr><td><span class="badge badge-js">JS</span></td><td>candidatos_2026.js</td><td><code>pippa-stakeholders/</code></td><td>~15 KB</td><td>~200+ candidaturas</td></tr>
+  <tr><td><span class="badge badge-json">JSON</span></td><td>data.json</td><td><code>pippa-credito-fomento/</code></td><td>~50 KB</td><td>14 séries x ~24-500 obs</td></tr>
+  <tr><td><span class="badge badge-json">JSON</span></td><td>news_cache.json</td><td><code>pippa-reforma-dashboard/data/</code></td><td>~80 KB</td><td>~333 notícias</td></tr>
+  <tr><td><span class="badge badge-json">JSON</span></td><td>pncp_monitor_data.json</td><td><code>pippa-compras-dashboard/scripts/</code></td><td>~5 KB</td><td>27 registros/semestre</td></tr>
+  <tr><td><span class="badge badge-json">JSON</span></td><td>quality_report_completo.json</td><td><code>pippa-emendas/output/</code></td><td>~2 KB</td><td>QualityFlags + PipelineStats</td></tr>
+  <tr><td><span class="badge badge-json">JSON</span></td><td>pdde_cache.json</td><td><code>pippa-compras-dashboard/scripts/data/</code></td><td>~5 KB</td><td>PDDE por UF/ano</td></tr>
+  <tr><td><span class="badge badge-json">JSON</span></td><td>pnae_cache.json</td><td><code>pippa-compras-dashboard/scripts/data/</code></td><td>~5 KB</td><td>PNAE por UF/ano</td></tr>
+  <tr><td><span class="badge badge-embed">Embed</span></td><td>RAW_POLLS + PRES_AVGS + STATE_AVGS + SECOND_ROUND</td><td><code>pippa-pesquisas-eleitorais/index.html</code></td><td>~2 MB</td><td>Pesquisas eleitorais</td></tr>
+  <tr><td><span class="badge badge-embed">Embed</span></td><td>RREO_DATA + IBGE_SETORES</td><td><code>pippa-impostometro/index.html</code></td><td>~10 KB</td><td>Arrecadação + PIB setorial</td></tr>
+  <tr><td><span class="badge badge-embed">Embed</span></td><td>PNCP_MONITOR_CACHE + EXEC_CACHE</td><td><code>pippa-compras-dashboard/index.html</code></td><td>~100 KB</td><td>Compras + Orçamento</td></tr>
+  <tr><td><span class="badge badge-embed">Embed</span></td><td>PDDE_CACHE + PNAE_CACHE</td><td><code>pippa-compras-dashboard/index.html</code></td><td>~20 KB</td><td>Educação (FNDE)</td></tr>
+</table>
+
+<h2>2. Schemas Físicos — Arquivos Parquet (PyArrow)</h2>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">emendas_enriquecidas_completo.parquet</span>
+    <div class="schema-meta"><span>3.336 KB</span><span>83.614 linhas</span><span>33 colunas</span></div>
+  </div>
+  <table>
+    <tr><th>Coluna</th><th>Tipo PyArrow</th><th>Nullable</th><th>Exemplo</th></tr>
+    <tr><td><code>codigo_emenda</code></td><td>large_string</td><td>Sim</td><td>"100012024"</td></tr>
+    <tr><td><code>ano</code></td><td>int64</td><td>Sim</td><td>2024</td></tr>
+    <tr><td><code>tipo_emenda</code></td><td>large_string</td><td>Sim</td><td>"Emenda Individual - Transferências com Finalidade Definida"</td></tr>
+    <tr><td><code>codigo_autor</code></td><td>large_string</td><td>Sim</td><td>"12345"</td></tr>
+    <tr><td><code>nome_autor</code></td><td>large_string</td><td>Sim</td><td>"FULANO DE TAL"</td></tr>
+    <tr><td><code>numero_emenda</code></td><td>large_string</td><td>Sim</td><td>"10001"</td></tr>
+    <tr><td><code>localidade_aplicacao</code></td><td>large_string</td><td>Sim</td><td>"Brasília - DF"</td></tr>
+    <tr><td><code>cod_ibge_municipio</code></td><td>large_string</td><td>Sim</td><td>"5300108"</td></tr>
+    <tr><td><code>municipio</code></td><td>large_string</td><td>Sim</td><td>"Brasília"</td></tr>
+    <tr><td><code>cod_ibge_uf</code></td><td>large_string</td><td>Sim</td><td>"53"</td></tr>
+    <tr><td><code>uf_destino</code></td><td>large_string</td><td>Sim</td><td>"DF"</td></tr>
+    <tr><td><code>regiao</code></td><td>large_string</td><td>Sim</td><td>"Centro-Oeste"</td></tr>
+    <tr><td><code>cod_funcao</code></td><td>large_string</td><td>Sim</td><td>"10"</td></tr>
+    <tr><td><code>funcao</code></td><td>large_string</td><td>Sim</td><td>"Saúde"</td></tr>
+    <tr><td><code>cod_subfuncao</code></td><td>large_string</td><td>Sim</td><td>"301"</td></tr>
+    <tr><td><code>subfuncao</code></td><td>large_string</td><td>Sim</td><td>"Atenção Básica"</td></tr>
+    <tr><td><code>cod_programa</code></td><td>large_string</td><td>Sim</td><td>"5019"</td></tr>
+    <tr><td><code>programa</code></td><td>large_string</td><td>Sim</td><td>"Atenção Primária à Saúde"</td></tr>
+    <tr><td><code>cod_acao</code></td><td>large_string</td><td>Sim</td><td>"219A"</td></tr>
+    <tr><td><code>acao</code></td><td>large_string</td><td>Sim</td><td>"Piso da Atenção Primária em Saúde"</td></tr>
+    <tr><td><code>cod_plano_orcamentario</code></td><td>large_string</td><td>Sim</td><td>"0000"</td></tr>
+    <tr><td><code>plano_orcamentario</code></td><td>large_string</td><td>Sim</td><td>"Plano Orçamentário"</td></tr>
+    <tr><td><code>valor_empenhado</code></td><td>double</td><td>Sim</td><td>150000.00</td></tr>
+    <tr><td><code>valor_liquidado</code></td><td>double</td><td>Sim</td><td>150000.00</td></tr>
+    <tr><td><code>valor_pago</code></td><td>double</td><td>Sim</td><td>150000.00</td></tr>
+    <tr><td><code>valor_rp_inscrito</code></td><td>double</td><td>Sim</td><td>0.00</td></tr>
+    <tr><td><code>valor_rp_cancelado</code></td><td>double</td><td>Sim</td><td>0.00</td></tr>
+    <tr><td><code>valor_rp_pago</code></td><td>double</td><td>Sim</td><td>0.00</td></tr>
+    <tr><td><code>localidade_tipo</code></td><td>large_string</td><td>Sim</td><td>"municipal"</td></tr>
+    <tr><td><code>partido</code></td><td>large_string</td><td>Sim</td><td>"MDB"</td></tr>
+    <tr><td><code>uf_autor</code></td><td>large_string</td><td>Sim</td><td>"DF"</td></tr>
+    <tr><td><code>legislatura</code></td><td>int64</td><td>Sim</td><td>57</td></tr>
+    <tr><td><code>match_confianca</code></td><td>large_string</td><td>Sim</td><td>"exato"</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">agg_por_estado_completo.parquet</span>
+    <div class="schema-meta"><span>25 KB</span><span>348 linhas</span><span>9 colunas</span></div>
+  </div>
+  <table>
+    <tr><th>Coluna</th><th>Tipo PyArrow</th><th>Nullable</th></tr>
+    <tr><td><code>uf_destino</code></td><td>large_string</td><td>Sim</td></tr>
+    <tr><td><code>ano</code></td><td>int64</td><td>Sim</td></tr>
+    <tr><td><code>valor_empenhado</code></td><td>double</td><td>Sim</td></tr>
+    <tr><td><code>valor_liquidado</code></td><td>double</td><td>Sim</td></tr>
+    <tr><td><code>valor_pago</code></td><td>double</td><td>Sim</td></tr>
+    <tr><td><code>valor_rp_inscrito</code></td><td>double</td><td>Sim</td></tr>
+    <tr><td><code>valor_rp_cancelado</code></td><td>double</td><td>Sim</td></tr>
+    <tr><td><code>valor_rp_pago</code></td><td>double</td><td>Sim</td></tr>
+    <tr><td><code>qtd_emendas</code></td><td>int64</td><td>Sim</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">agg_por_autor_completo.parquet</span>
+    <div class="schema-meta"><span>138 KB</span><span>2.316 linhas</span><span>11 colunas</span></div>
+  </div>
+  <table>
+    <tr><th>Coluna</th><th>Tipo PyArrow</th><th>Nullable</th></tr>
+    <tr><td><code>nome_autor</code></td><td>large_string</td><td>Sim</td></tr>
+    <tr><td><code>partido</code></td><td>large_string</td><td>Sim</td></tr>
+    <tr><td><code>uf_autor</code></td><td>large_string</td><td>Sim</td></tr>
+    <tr><td><code>match_confianca</code></td><td>large_string</td><td>Sim</td></tr>
+    <tr><td><code>valor_empenhado ... valor_rp_pago</code></td><td>double (x6)</td><td>Sim</td></tr>
+    <tr><td><code>qtd_emendas</code></td><td>int64</td><td>Sim</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">agg_por_municipio_completo.parquet</span>
+    <div class="schema-meta"><span>219 KB</span><span>4.933 linhas</span><span>10 colunas</span></div>
+  </div>
+  <table>
+    <tr><th>Coluna</th><th>Tipo PyArrow</th><th>Nullable</th></tr>
+    <tr><td><code>cod_ibge_municipio</code></td><td>large_string</td><td>Sim</td></tr>
+    <tr><td><code>municipio</code></td><td>large_string</td><td>Sim</td></tr>
+    <tr><td><code>uf_destino</code></td><td>large_string</td><td>Sim</td></tr>
+    <tr><td><code>valor_empenhado ... valor_rp_pago</code></td><td>double (x6)</td><td>Sim</td></tr>
+    <tr><td><code>qtd_emendas</code></td><td>int64</td><td>Sim</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">agg_por_partido_completo.parquet / agg_por_funcao_completo.parquet / agg_por_tipo_completo.parquet</span>
+    <div class="schema-meta"><span>Estrutura idêntica</span><span>9 colunas cada</span></div>
+  </div>
+  <table>
+    <tr><th>Coluna agrupadora</th><th>Tipo</th><th>+ Colunas de valor</th></tr>
+    <tr><td><code>partido</code> / <code>funcao</code> / <code>tipo_emenda</code></td><td>large_string</td><td rowspan="2">valor_empenhado, valor_liquidado, valor_pago, valor_rp_inscrito, valor_rp_cancelado, valor_rp_pago (double) + qtd_emendas (int64)</td></tr>
+    <tr><td><code>ano</code></td><td>int64</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">agg_serie_temporal_completo.parquet</span>
+    <div class="schema-meta"><span>6 KB</span><span>12 linhas</span><span>8 colunas</span></div>
+  </div>
+  <table>
+    <tr><th>Coluna</th><th>Tipo</th><th>Descrição</th></tr>
+    <tr><td><code>ano</code></td><td>int64</td><td>Ano (2015-2026)</td></tr>
+    <tr><td><code>valor_empenhado ... valor_rp_pago</code></td><td>double (x6)</td><td>Totais nacionais por ano</td></tr>
+    <tr><td><code>qtd_emendas</code></td><td>int64</td><td>Total de emendas no ano</td></tr>
+  </table>
+</div>
+
+<div class="page-break"></div>
+
+<h2>3. Schemas Físicos — Caches JSON/JS</h2>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">stakeholders_cache.js <span class="badge badge-js">JS VAR</span></span>
+    <div class="schema-meta"><span>794 KB</span><span>var STAKEHOLDERS_CACHE = {...}</span></div>
+  </div>
+  <table>
+    <tr><th>Caminho JSON</th><th>Tipo</th><th>Descrição</th></tr>
+    <tr><td><code>.parlamentares[]</code></td><td>Array&lt;Object&gt;</td><td>~600 parlamentares (deputados + senadores)</td></tr>
+    <tr><td><code>.parlamentares[].id</code></td><td>Number</td><td>ID na API (Câmara/Senado)</td></tr>
+    <tr><td><code>.parlamentares[].nome</code></td><td>String</td><td>Nome parlamentar</td></tr>
+    <tr><td><code>.parlamentares[].partido</code></td><td>String</td><td>Sigla do partido</td></tr>
+    <tr><td><code>.parlamentares[].uf</code></td><td>String</td><td>UF (2 chars)</td></tr>
+    <tr><td><code>.parlamentares[].casa</code></td><td>String</td><td>"camara" | "senado"</td></tr>
+    <tr><td><code>.parlamentares[].foto</code></td><td>String (URL)</td><td>URL da foto oficial</td></tr>
+    <tr><td><code>.parlamentares[].email</code></td><td>String</td><td>E-mail parlamentar</td></tr>
+    <tr><td><code>.parlamentares[].frentes[]</code></td><td>Array&lt;String&gt;</td><td>Títulos das frentes relevantes</td></tr>
+    <tr><td><code>.parlamentares[].orgaos[]</code></td><td>Array&lt;String&gt;</td><td>Siglas das comissões</td></tr>
+    <tr><td><code>.parlamentares[].orgaoRoles{}</code></td><td>Object&lt;String, String&gt;</td><td>Mapa sigla -> papel (Titular/Suplente/Presidente)</td></tr>
+    <tr><td><code>.parlamentares[].eleicao2026</code></td><td>Object | null</td><td>Resultado eleitoral 2026 (se candidato)</td></tr>
+    <tr><td><code>.frentes[]</code></td><td>Array&lt;Object&gt;</td><td>Frentes parlamentares relevantes para o Sebrae</td></tr>
+    <tr><td><code>.comissoesChave{}</code></td><td>Object</td><td>Comissões-chave por sigla, com nome e membros</td></tr>
+    <tr><td><code>.autorias{}</code></td><td>Object&lt;String, Number&gt;</td><td>Mapa parlamentar_id -> contagem de autorias relevantes</td></tr>
+    <tr><td><code>.buildDate</code></td><td>String</td><td>"2026-10-30 15:09"</td></tr>
+    <tr><td><code>.legislatura</code></td><td>Number</td><td>57</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">candidatos_2026.js <span class="badge badge-js">JS VAR</span></span>
+    <div class="schema-meta"><span>~15 KB</span><span>var CANDIDATOS_2026 = {...}</span></div>
+  </div>
+  <table>
+    <tr><th>Caminho JSON</th><th>Tipo</th><th>Descrição</th></tr>
+    <tr><td><code>.{nome_normalizado}</code></td><td>Object</td><td>Chave: nome do parlamentar normalizado (sem acentos, minúsculo)</td></tr>
+    <tr><td><code>.{nome_normalizado}.cargo</code></td><td>String</td><td>"Presidente" | "Governador" | "Senador" | "Deputado Federal" | "Deputado Estadual"</td></tr>
+    <tr><td><code>.{nome_normalizado}.uf</code></td><td>String</td><td>UF da candidatura (2 chars) ou "BR" para presidente</td></tr>
+    <tr><td><code>.{nome_normalizado}.eleito</code></td><td>Boolean</td><td>true se eleito, false caso contrário</td></tr>
+    <tr><td><code>.{nome_normalizado}.urna</code></td><td>String</td><td>Nome de urna (TSE)</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">data.json <span class="badge badge-json">JSON</span></span>
+    <div class="schema-meta"><span>pippa-credito-fomento/</span><span>14 séries BCB</span></div>
+  </div>
+  <table>
+    <tr><th>Caminho JSON</th><th>Tipo</th><th>Descrição</th></tr>
+    <tr><td><code>.timestamp</code></td><td>String (ISO 8601)</td><td>"2026-10-30T16:32:03.754563+00:00"</td></tr>
+    <tr><td><code>.fonte</code></td><td>String</td><td>"IPEADATA (espelho BCB SGS)"</td></tr>
+    <tr><td><code>.series{}</code></td><td>Object</td><td>Chaves: IDs BCB SGS ("432", "433", ..., "20631")</td></tr>
+    <tr><td><code>.series["432"][]</code></td><td>Array&lt;Object&gt;</td><td>Série Selic Meta (até 500 observações)</td></tr>
+    <tr><td><code>.series["432"][].data</code></td><td>String</td><td>"DD/MM/AAAA" — data da observação</td></tr>
+    <tr><td><code>.series["432"][].valor</code></td><td>String</td><td>"14,75" — valor com vírgula decimal brasileira</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">news_cache.json <span class="badge badge-json">JSON</span></span>
+    <div class="schema-meta"><span>pippa-reforma-dashboard/data/</span><span>~333 notícias</span></div>
+  </div>
+  <table>
+    <tr><th>Caminho JSON</th><th>Tipo</th><th>Descrição</th></tr>
+    <tr><td><code>.updated</code></td><td>String (ISO 8601)</td><td>"2026-10-30T12:39:12Z"</td></tr>
+    <tr><td><code>.total</code></td><td>Number</td><td>333</td></tr>
+    <tr><td><code>.items[]</code></td><td>Array&lt;Object&gt;</td><td>Notícias deduplicadas</td></tr>
+    <tr><td><code>.items[].fullTitle</code></td><td>String</td><td>Título completo com fonte (do RSS)</td></tr>
+    <tr><td><code>.items[].title</code></td><td>String</td><td>Título sem fonte</td></tr>
+    <tr><td><code>.items[].source</code></td><td>String</td><td>Veículo de imprensa</td></tr>
+    <tr><td><code>.items[].link</code></td><td>String (URL)</td><td>URL da notícia</td></tr>
+    <tr><td><code>.items[].pubDate</code></td><td>String (RFC 2822)</td><td>Data de publicação</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">pncp_monitor_data.json <span class="badge badge-json">JSON</span></span>
+    <div class="schema-meta"><span>pippa-compras-dashboard/scripts/</span><span>27 registros/semestre</span></div>
+  </div>
+  <table>
+    <tr><th>Caminho JSON</th><th>Tipo</th><th>Descrição</th></tr>
+    <tr><td><code>[].uf</code></td><td>String</td><td>Sigla da UF (2 chars)</td></tr>
+    <tr><td><code>[].ano</code></td><td>Number</td><td>Ano da contratação</td></tr>
+    <tr><td><code>[].nome</code></td><td>String</td><td>Nome completo da UF</td></tr>
+    <tr><td><code>[].regiao</code></td><td>String</td><td>Código de região (NO, NE, SE, SU, CO)</td></tr>
+    <tr><td><code>[].estimado</code></td><td>Number</td><td>Valor total estimado (R$)</td></tr>
+    <tr><td><code>[].homologado</code></td><td>Number</td><td>Valor total homologado (R$)</td></tr>
+    <tr><td><code>[].qtd</code></td><td>Number</td><td>Quantidade de contratações</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">quality_report_completo.json <span class="badge badge-json">JSON</span></span>
+    <div class="schema-meta"><span>pippa-emendas/output/</span><span>PipelineStats + QualityFlags</span></div>
+  </div>
+  <table>
+    <tr><th>Caminho JSON</th><th>Tipo</th><th>Descrição</th></tr>
+    <tr><td><code>.stats.total_emendas</code></td><td>Number</td><td>Total de emendas processadas (83.614)</td></tr>
+    <tr><td><code>.stats.total_autores_unicos</code></td><td>Number</td><td>Autores únicos identificados</td></tr>
+    <tr><td><code>.stats.match_exato</code></td><td>Number</td><td>Quantidade de matches exatos (nome normalizado)</td></tr>
+    <tr><td><code>.stats.match_fuzzy</code></td><td>Number</td><td>Quantidade de matches fuzzy (score >= 85)</td></tr>
+    <tr><td><code>.stats.match_nao_encontrado</code></td><td>Number</td><td>Autores não encontrados nas APIs</td></tr>
+    <tr><td><code>.stats.match_nao_aplicavel</code></td><td>Number</td><td>Emendas de bancada/comissão/relator (sem autor individual)</td></tr>
+    <tr><td><code>.stats.quality_flags_alerta</code></td><td>Number</td><td>Pares UF/ano com divergência 5-15%</td></tr>
+    <tr><td><code>.stats.quality_flags_critico</code></td><td>Number</td><td>Pares UF/ano com divergência > 15%</td></tr>
+    <tr><td><code>.stats.timestamp</code></td><td>String (ISO 8601)</td><td>Data/hora da execução do pipeline</td></tr>
+    <tr><td><code>.flags[]</code></td><td>Array&lt;Object&gt;</td><td>Flags de validação cruzada CGU x Tesouro</td></tr>
+    <tr><td><code>.flags[].uf</code></td><td>String</td><td>Sigla da UF</td></tr>
+    <tr><td><code>.flags[].ano</code></td><td>Number</td><td>Ano do exercício</td></tr>
+    <tr><td><code>.flags[].valor_portal</code></td><td>Number</td><td>Total pago segundo Portal da Transparência</td></tr>
+    <tr><td><code>.flags[].valor_tesouro</code></td><td>Number</td><td>Total segundo Tesouro Transparente</td></tr>
+    <tr><td><code>.flags[].divergencia_pct</code></td><td>Number</td><td>Divergência percentual</td></tr>
+    <tr><td><code>.flags[].status</code></td><td>String</td><td>"OK" (&lt;5%) | "ALERTA" (5-15%) | "CRITICO" (&gt;15%)</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">pdde_cache.json <span class="badge badge-json">JSON</span></span>
+    <div class="schema-meta"><span>pippa-compras-dashboard/scripts/data/</span><span>PDDE por UF/ano</span></div>
+  </div>
+  <table>
+    <tr><th>Caminho JSON</th><th>Tipo</th><th>Descrição</th></tr>
+    <tr><td><code>[].uf</code></td><td>String</td><td>Sigla da UF (2 chars)</td></tr>
+    <tr><td><code>[].ano</code></td><td>Number</td><td>Ano/exercício</td></tr>
+    <tr><td><code>[].custeio</code></td><td>Number</td><td>Valor de custeio transferido (R$)</td></tr>
+    <tr><td><code>[].capital</code></td><td>Number</td><td>Valor de capital transferido (R$)</td></tr>
+    <tr><td><code>[].total</code></td><td>Number</td><td>Valor total (custeio + capital) (R$)</td></tr>
+    <tr><td><code>[].escolas</code></td><td>Number</td><td>Quantidade de escolas atendidas</td></tr>
+    <tr><td><code>[].municipios</code></td><td>Number</td><td>Quantidade de municípios atendidos</td></tr>
+    <tr><td><code>[].alunos</code></td><td>Number</td><td>Quantidade de alunos beneficiados</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">pnae_cache.json <span class="badge badge-json">JSON</span></span>
+    <div class="schema-meta"><span>pippa-compras-dashboard/scripts/data/</span><span>PNAE por UF/ano</span></div>
+  </div>
+  <table>
+    <tr><th>Caminho JSON</th><th>Tipo</th><th>Descrição</th></tr>
+    <tr><td><code>[].uf</code></td><td>String</td><td>Sigla da UF (2 chars)</td></tr>
+    <tr><td><code>[].ano</code></td><td>Number</td><td>Ano/exercício</td></tr>
+    <tr><td><code>[].valor</code></td><td>Number</td><td>Valor total transferido (R$)</td></tr>
+    <tr><td><code>[].alunos</code></td><td>Number</td><td>Quantidade de alunos beneficiados</td></tr>
+    <tr><td><code>[].escolas</code></td><td>Number</td><td>Quantidade de escolas atendidas</td></tr>
+    <tr><td><code>[].municipios</code></td><td>Number</td><td>Quantidade de municípios atendidos</td></tr>
+  </table>
+</div>
+
+<div class="page-break"></div>
+
+<h2>4. Dados Embarcados em HTML (const/var via regex)</h2>
+
+<p>Diversos dashboards PIPPA armazenam dados diretamente no HTML como variáveis JavaScript, atualizadas por scripts Python via substituição regex. Este padrão evita chamadas API em tempo de execução — os dados são pré-computados e servidos estaticamente.</p>
+
+<h3>4.1 pippa-pesquisas-eleitorais/index.html</h3>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">const RAW_POLLS = [...] <span class="badge badge-embed">Embed</span></span>
+    <div class="schema-meta"><span>Pesquisas eleitorais 1o turno</span><span>Fonte: ElectioLab API</span></div>
+  </div>
+  <table>
+    <tr><th>Campo</th><th>Tipo JS</th><th>Descrição</th></tr>
+    <tr><td><code>[].id</code></td><td>String | Number</td><td>ID da pesquisa na API ElectioLab</td></tr>
+    <tr><td><code>[].src</code></td><td>String</td><td>Nome do instituto de pesquisa</td></tr>
+    <tr><td><code>[].dt</code></td><td>String</td><td>Data de publicação (YYYY-MM-DD)</td></tr>
+    <tr><td><code>[].pos</code></td><td>String</td><td>Cargo: "presidente" | "governador" | "senador"</td></tr>
+    <tr><td><code>[].uf</code></td><td>String</td><td>"BR" para presidente ou sigla UF para estaduais</td></tr>
+    <tr><td><code>[].n</code></td><td>Number</td><td>Tamanho da amostra</td></tr>
+    <tr><td><code>[].me</code></td><td>Number</td><td>Margem de erro (pontos percentuais)</td></tr>
+    <tr><td><code>[].mt</code></td><td>String</td><td>Metodologia: "presencial" | "telefonica" | "mista" | "online"</td></tr>
+    <tr><td><code>[].c[]</code></td><td>Array&lt;Object&gt;</td><td>Candidatos com resultados</td></tr>
+    <tr><td><code>[].c[].n</code></td><td>String</td><td>Nome do candidato</td></tr>
+    <tr><td><code>[].c[].p</code></td><td>String</td><td>Partido</td></tr>
+    <tr><td><code>[].c[].v</code></td><td>Number</td><td>Percentual de intenção de voto</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">const PRES_AVGS = [...] <span class="badge badge-embed">Embed</span></span>
+    <div class="schema-meta"><span>Médias ponderadas — Presidente</span><span>Calculado por compute_weighted_averages()</span></div>
+  </div>
+  <table>
+    <tr><th>Campo</th><th>Tipo JS</th><th>Descrição</th></tr>
+    <tr><td><code>[].n</code></td><td>String</td><td>Nome do candidato</td></tr>
+    <tr><td><code>[].p</code></td><td>String</td><td>Partido</td></tr>
+    <tr><td><code>[].cl</code></td><td>String</td><td>Cor hex para visualização (ex.: "#e0565d")</td></tr>
+    <tr><td><code>[].avg</code></td><td>Number</td><td>Média ponderada (recência x amostra x metodologia)</td></tr>
+    <tr><td><code>[].lo</code></td><td>Number</td><td>Limite inferior do IC 95%</td></tr>
+    <tr><td><code>[].hi</code></td><td>Number</td><td>Limite superior do IC 95%</td></tr>
+    <tr><td><code>[].cnt</code></td><td>Number</td><td>Quantidade de pesquisas na média</td></tr>
+    <tr><td><code>[].smp</code></td><td>Number</td><td>Soma total de amostras</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">const STATE_AVGS = [...] <span class="badge badge-embed">Embed</span></span>
+    <div class="schema-meta"><span>Médias ponderadas — Governador + Senador</span></div>
+  </div>
+  <table>
+    <tr><th>Campo</th><th>Tipo JS</th><th>Descrição</th></tr>
+    <tr><td colspan="3"><em>Mesmos campos de PRES_AVGS, acrescidos de:</em></td></tr>
+    <tr><td><code>[].pos</code></td><td>String</td><td>Cargo: "governador" | "senador"</td></tr>
+    <tr><td><code>[].uf</code></td><td>String</td><td>Sigla da UF</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">const SECOND_ROUND = [...] <span class="badge badge-embed">Embed</span></span>
+    <div class="schema-meta"><span>Cenários de 2o turno</span></div>
+  </div>
+  <table>
+    <tr><th>Campo</th><th>Tipo JS</th><th>Descrição</th></tr>
+    <tr><td><code>[].source</code></td><td>String</td><td>Nome do instituto de pesquisa</td></tr>
+    <tr><td><code>[].date</code></td><td>String</td><td>Data de publicação (YYYY-MM-DD)</td></tr>
+    <tr><td><code>[].sample</code></td><td>Number</td><td>Tamanho da amostra</td></tr>
+    <tr><td><code>[].margin</code></td><td>Number | null</td><td>Margem de erro</td></tr>
+    <tr><td><code>[].position</code></td><td>String</td><td>Cargo disputado</td></tr>
+    <tr><td><code>[].state</code></td><td>String | null</td><td>UF (null para presidente)</td></tr>
+    <tr><td><code>[].candidates[]</code></td><td>Array&lt;Object&gt;</td><td>Candidatos do cenário</td></tr>
+    <tr><td><code>[].candidates[].name</code></td><td>String</td><td>Nome do candidato</td></tr>
+    <tr><td><code>[].candidates[].party</code></td><td>String</td><td>Partido</td></tr>
+    <tr><td><code>[].candidates[].pct</code></td><td>Number</td><td>Percentual de intenção de voto</td></tr>
+  </table>
+</div>
+
+<h3>4.2 pippa-impostometro/index.html</h3>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">var RREO_DATA = {...} <span class="badge badge-embed">Embed</span></span>
+    <div class="schema-meta"><span>Arrecadação tributária federal</span><span>Fonte: API SICONFI/Tesouro Nacional</span></div>
+  </div>
+  <table>
+    <tr><th>Caminho</th><th>Tipo JS</th><th>Descrição</th></tr>
+    <tr><td><code>.{ano}</code></td><td>Object</td><td>Exercício fiscal (ex.: "2025", "2026")</td></tr>
+    <tr><td><code>.{ano}.{bimestre}</code></td><td>Object</td><td>Período bimestral RREO (1 a 6)</td></tr>
+    <tr><td><code>.{ano}.{bimestre}.ReceitaTributaria</code></td><td>Number</td><td>Receita tributária acumulada (R$)</td></tr>
+    <tr><td><code>.{ano}.{bimestre}.Impostos</code></td><td>Number</td><td>Impostos (R$)</td></tr>
+    <tr><td><code>.{ano}.{bimestre}.Taxas</code></td><td>Number</td><td>Taxas (R$)</td></tr>
+    <tr><td><code>.{ano}.{bimestre}.ReceitaDeContribuicoes</code></td><td>Number</td><td>Receita de contribuições (R$)</td></tr>
+    <tr><td><code>.{ano}.{bimestre}.ContribuicoesSociais</code></td><td>Number</td><td>Contribuições sociais (R$)</td></tr>
+    <tr><td><code>.atualizado</code></td><td>String</td><td>Data da última atualização (YYYY-MM-DD)</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">var IBGE_SETORES = {...} <span class="badge badge-embed">Embed</span></span>
+    <div class="schema-meta"><span>Participação setorial no PIB</span><span>Fonte: API SIDRA/IBGE (Tabela 1846)</span></div>
+  </div>
+  <table>
+    <tr><th>Caminho</th><th>Tipo JS</th><th>Descrição</th></tr>
+    <tr><td><code>.periodo</code></td><td>String</td><td>"Últimos 4 trimestres anualizados"</td></tr>
+    <tr><td><code>.fonte</code></td><td>String</td><td>"IBGE — Contas Nacionais Trimestrais (Tabela 1846, var. 585)"</td></tr>
+    <tr><td><code>.shares.Servicos</code></td><td>Number</td><td>Participação de serviços no VA (0-1)</td></tr>
+    <tr><td><code>.shares.Industria</code></td><td>Number</td><td>Participação da indústria no VA (0-1)</td></tr>
+    <tr><td><code>.shares.Comercio</code></td><td>Number</td><td>Participação do comércio no VA (0-1)</td></tr>
+    <tr><td><code>.shares.Agropecuaria</code></td><td>Number</td><td>Participação da agropecuária no VA (0-1)</td></tr>
+    <tr><td><code>.va_total_mi</code></td><td>Number</td><td>Valor adicionado total (R$ milhões)</td></tr>
+    <tr><td><code>.atualizado</code></td><td>String</td><td>Data da última atualização (YYYY-MM-DD)</td></tr>
+  </table>
+</div>
+
+<div class="page-break"></div>
+
+<h3>4.3 pippa-compras-dashboard/index.html</h3>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">const PNCP_MONITOR_CACHE = [...] <span class="badge badge-embed">Embed</span></span>
+    <div class="schema-meta"><span>Monitor de contratações PNCP 5 anos</span><span>Atualizado via update_compras.py</span></div>
+  </div>
+  <table>
+    <tr><th>Campo</th><th>Tipo JS</th><th>Descrição</th></tr>
+    <tr><td><code>[].uf</code></td><td>String</td><td>Sigla da UF</td></tr>
+    <tr><td><code>[].ano</code></td><td>Number</td><td>Ano da contratação</td></tr>
+    <tr><td><code>[].nome</code></td><td>String</td><td>Nome completo da UF</td></tr>
+    <tr><td><code>[].regiao</code></td><td>String</td><td>Código da região (NO, NE, SE, SU, CO)</td></tr>
+    <tr><td><code>[].estimado</code></td><td>Number</td><td>Valor total estimado (R$)</td></tr>
+    <tr><td><code>[].homologado</code></td><td>Number</td><td>Valor total homologado (R$)</td></tr>
+    <tr><td><code>[].qtd</code></td><td>Number</td><td>Quantidade de contratações</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">const EXEC_CACHE = [...] <span class="badge badge-embed">Embed</span></span>
+    <div class="schema-meta"><span>Execução orçamentária estadual</span><span>Fonte: API SICONFI/RREO</span></div>
+  </div>
+  <table>
+    <tr><th>Campo</th><th>Tipo JS</th><th>Descrição</th></tr>
+    <tr><td><code>[].ano</code></td><td>Number</td><td>Exercício fiscal</td></tr>
+    <tr><td><code>[].uf</code></td><td>String</td><td>Sigla da UF</td></tr>
+    <tr><td><code>[].nome</code></td><td>String</td><td>Nome completo da UF</td></tr>
+    <tr><td><code>[].regiao</code></td><td>String</td><td>Código da região (NO, NE, SE, SU, CO)</td></tr>
+    <tr><td><code>[].empenhado</code></td><td>Number</td><td>Despesas empenhadas até o período (R$)</td></tr>
+    <tr><td><code>[].liquidado</code></td><td>Number</td><td>Despesas liquidadas até o período (R$)</td></tr>
+    <tr><td><code>[].pago</code></td><td>Number</td><td>Despesas pagas até o período (R$)</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">const PDDE_CACHE / PNAE_CACHE = [...] <span class="badge badge-embed">Embed</span></span>
+    <div class="schema-meta"><span>Programas educacionais FNDE</span><span>Injetados via --with-pdde</span></div>
+  </div>
+  <table>
+    <tr><th>Variável</th><th>Schema</th><th>Descrição</th></tr>
+    <tr><td><code>PDDE_CACHE</code></td><td>Mesmo schema de pdde_cache.json</td><td>PDDE por UF/ano (custeio, capital, total, escolas, alunos)</td></tr>
+    <tr><td><code>PNAE_CACHE</code></td><td>Mesmo schema de pnae_cache.json</td><td>PNAE por UF/ano (valor, alunos, escolas)</td></tr>
+    <tr><td><code>PDDE_MUN_RAW</code></td><td>Array&lt;Array&gt; — [uf, cod, nome, ano, total, custeio, capital, escolas]</td><td>PDDE por município (array compacto)</td></tr>
+    <tr><td><code>PNAE_MUN_RAW</code></td><td>Array&lt;Array&gt; — [uf, nome, ano, valor, alunos, escolas]</td><td>PNAE por município (array compacto)</td></tr>
+    <tr><td><code>*_CACHE_DATE</code></td><td>String</td><td>Data de atualização "DD/MM/YYYY"</td></tr>
+  </table>
+</div>
+
+<h2>5. API FastAPI — Schemas de Resposta</h2>
+
+<p>O módulo pippa-emendas expõe uma API FastAPI (porta 8050) que serve dados dos Parquets processados e permite re-execução do pipeline. Abaixo, os schemas de resposta dos endpoints.</p>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">GET /api/dados <span class="badge badge-api">FastAPI</span></span>
+    <div class="schema-meta"><span>Porta 8050</span><span>Query param: ?ano=2024 (opcional)</span></div>
+  </div>
+  <table>
+    <tr><th>Caminho JSON</th><th>Tipo</th><th>Descrição</th></tr>
+    <tr><td><code>.estados[]</code></td><td>Array&lt;Object&gt;</td><td>{uf, ano, empenhado, liquidado, pago, qtd}</td></tr>
+    <tr><td><code>.partidos[]</code></td><td>Array&lt;Object&gt;</td><td>{partido, ano, empenhado, pago, qtd}</td></tr>
+    <tr><td><code>.autores[]</code></td><td>Array&lt;Object&gt;</td><td>{nome, partido, uf, empenhado, pago, confianca, qtd}</td></tr>
+    <tr><td><code>.serie[]</code></td><td>Array&lt;Object&gt;</td><td>{ano, empenhado, pago, liquidado, qtd}</td></tr>
+    <tr><td><code>.tipos[]</code></td><td>Array&lt;Object&gt;</td><td>{tipo, tipo_original, ano, empenhado, pago, qtd}</td></tr>
+    <tr><td><code>.tipos_uf[]</code></td><td>Array&lt;Object&gt;</td><td>{tipo, ano, uf, empenhado, pago, qtd}</td></tr>
+    <tr><td><code>.funcoes[]</code></td><td>Array&lt;Object&gt;</td><td>{funcao, ano, empenhado, pago, qtd}</td></tr>
+    <tr><td><code>.funcoes_uf[]</code></td><td>Array&lt;Object&gt;</td><td>{funcao, ano, uf, empenhado, pago, qtd}</td></tr>
+    <tr><td><code>.municipios[]</code></td><td>Array&lt;Object&gt;</td><td>{municipio, uf, empenhado, liquidado, pago, qtd}</td></tr>
+    <tr><td><code>._stats</code></td><td>Object</td><td>{total_emendas: Number, total_autores_unicos: Number}</td></tr>
+  </table>
+</div>
+
+<div class="schema-card">
+  <div class="schema-header">
+    <span class="schema-name">POST /api/pipeline &amp; GET /api/pipeline/status <span class="badge badge-api">FastAPI</span></span>
+    <div class="schema-meta"><span>Controle do pipeline de dados</span></div>
+  </div>
+  <table>
+    <tr><th>Endpoint</th><th>Método</th><th>Resposta</th><th>Status</th></tr>
+    <tr><td><code>/api/pipeline</code></td><td>POST</td><td><code>{"status": "Pipeline iniciado em background"}</code></td><td>200 OK</td></tr>
+    <tr><td><code>/api/pipeline</code></td><td>POST</td><td><code>{"status": "Pipeline ja esta em execucao"}</code></td><td>409 Conflict</td></tr>
+    <tr><td><code>/api/pipeline/status</code></td><td>GET</td><td><code>{"running": false, "last_error": null}</code></td><td>200 OK</td></tr>
+  </table>
+</div>
+
+<div class="page-break"></div>
+
+<h2>6. Mapeamento para Cloud SQL / BigQuery (DDL Projetado)</h2>
+
+<p>Caso a migração para persistência gerenciada seja realizada (conforme item 1.1 do parecer UTIC), os schemas acima podem ser mapeados para Cloud SQL (PostgreSQL) ou BigQuery. Abaixo, o DDL projetado para as entidades principais:</p>
+
+<pre><span class="comment">-- Tabela principal: emendas enriquecidas</span>
+<span class="kw">CREATE TABLE</span> <span class="type">emendas</span> (
+    codigo_emenda     <span class="type">VARCHAR(20)</span> <span class="kw">PRIMARY KEY</span>,
+    ano               <span class="type">INTEGER</span> <span class="kw">NOT NULL</span>,
+    tipo_emenda       <span class="type">VARCHAR(80)</span>,
+    codigo_autor      <span class="type">VARCHAR(20)</span>,
+    nome_autor        <span class="type">VARCHAR(200)</span>,
+    numero_emenda     <span class="type">VARCHAR(20)</span>,
+    localidade_aplicacao <span class="type">TEXT</span>,
+    cod_ibge_municipio <span class="type">VARCHAR(7)</span>,
+    municipio         <span class="type">VARCHAR(100)</span>,
+    cod_ibge_uf       <span class="type">VARCHAR(2)</span>,
+    uf_destino        <span class="type">VARCHAR(2)</span>,
+    regiao            <span class="type">VARCHAR(20)</span>,
+    cod_funcao        <span class="type">VARCHAR(5)</span>,
+    funcao            <span class="type">VARCHAR(100)</span>,
+    cod_subfuncao     <span class="type">VARCHAR(5)</span>,
+    subfuncao         <span class="type">VARCHAR(100)</span>,
+    cod_programa      <span class="type">VARCHAR(10)</span>,
+    programa          <span class="type">VARCHAR(200)</span>,
+    cod_acao          <span class="type">VARCHAR(10)</span>,
+    acao              <span class="type">VARCHAR(200)</span>,
+    cod_plano_orcamentario <span class="type">VARCHAR(10)</span>,
+    plano_orcamentario <span class="type">VARCHAR(200)</span>,
+    valor_empenhado   <span class="type">NUMERIC(18,2)</span>,
+    valor_liquidado   <span class="type">NUMERIC(18,2)</span>,
+    valor_pago        <span class="type">NUMERIC(18,2)</span>,
+    valor_rp_inscrito <span class="type">NUMERIC(18,2)</span>,
+    valor_rp_cancelado <span class="type">NUMERIC(18,2)</span>,
+    valor_rp_pago     <span class="type">NUMERIC(18,2)</span>,
+    localidade_tipo   <span class="type">VARCHAR(20)</span>,
+    partido           <span class="type">VARCHAR(20)</span>,
+    uf_autor          <span class="type">VARCHAR(2)</span>,
+    legislatura       <span class="type">INTEGER</span>,
+    match_confianca   <span class="type">VARCHAR(20)</span>
+);
+
+<span class="kw">CREATE INDEX</span> idx_emendas_ano <span class="kw">ON</span> emendas(ano);
+<span class="kw">CREATE INDEX</span> idx_emendas_uf <span class="kw">ON</span> emendas(uf_destino);
+<span class="kw">CREATE INDEX</span> idx_emendas_autor <span class="kw">ON</span> emendas(nome_autor);
+<span class="kw">CREATE INDEX</span> idx_emendas_partido <span class="kw">ON</span> emendas(partido);
+
+<span class="comment">-- Validação cruzada CGU x Tesouro</span>
+<span class="kw">CREATE TABLE</span> <span class="type">quality_flags</span> (
+    uf              <span class="type">VARCHAR(2)</span>,
+    ano             <span class="type">INTEGER</span>,
+    valor_portal    <span class="type">NUMERIC(18,2)</span>,
+    valor_tesouro   <span class="type">NUMERIC(18,2)</span>,
+    divergencia_pct <span class="type">NUMERIC(6,2)</span>,
+    status          <span class="type">VARCHAR(10)</span>,
+    <span class="kw">PRIMARY KEY</span> (uf, ano)
+);
+
+<span class="comment">-- Stakeholders (parlamentares)</span>
+<span class="kw">CREATE TABLE</span> <span class="type">parlamentares</span> (
+    id        <span class="type">INTEGER</span> <span class="kw">PRIMARY KEY</span>,
+    nome      <span class="type">VARCHAR(200)</span> <span class="kw">NOT NULL</span>,
+    partido   <span class="type">VARCHAR(20)</span>,
+    uf        <span class="type">VARCHAR(2)</span>,
+    casa      <span class="type">VARCHAR(10)</span>,
+    foto_url  <span class="type">TEXT</span>,
+    email     <span class="type">VARCHAR(200)</span>
+);
+
+<span class="kw">CREATE TABLE</span> <span class="type">parlamentar_frentes</span> (
+    parlamentar_id <span class="type">INTEGER</span> <span class="kw">REFERENCES</span> parlamentares(id),
+    frente_titulo  <span class="type">TEXT</span>,
+    <span class="kw">PRIMARY KEY</span> (parlamentar_id, frente_titulo)
+);
+
+<span class="kw">CREATE TABLE</span> <span class="type">parlamentar_comissoes</span> (
+    parlamentar_id <span class="type">INTEGER</span> <span class="kw">REFERENCES</span> parlamentares(id),
+    comissao_sigla <span class="type">VARCHAR(20)</span>,
+    papel          <span class="type">VARCHAR(20)</span>,  <span class="comment">-- Titular, Suplente, Presidente</span>
+    <span class="kw">PRIMARY KEY</span> (parlamentar_id, comissao_sigla)
+);
+
+<span class="comment">-- Contratações PNCP (agregado)</span>
+<span class="kw">CREATE TABLE</span> <span class="type">contratacoes_pncp</span> (
+    uf         <span class="type">VARCHAR(2)</span>,
+    ano        <span class="type">INTEGER</span>,
+    nome_uf    <span class="type">VARCHAR(50)</span>,
+    regiao     <span class="type">VARCHAR(2)</span>,
+    estimado   <span class="type">NUMERIC(18,2)</span>,
+    homologado <span class="type">NUMERIC(18,2)</span>,
+    qtd        <span class="type">INTEGER</span>,
+    <span class="kw">PRIMARY KEY</span> (uf, ano)
+);
+
+<span class="comment">-- Séries econômicas BCB</span>
+<span class="kw">CREATE TABLE</span> <span class="type">series_bcb</span> (
+    serie_id   <span class="type">VARCHAR(10)</span>,
+    data_obs   <span class="type">DATE</span>,
+    valor      <span class="type">NUMERIC(18,4)</span>,
+    <span class="kw">PRIMARY KEY</span> (serie_id, data_obs)
+);
+
+<span class="comment">-- Notícias (reforma tributária)</span>
+<span class="kw">CREATE TABLE</span> <span class="type">noticias_reforma</span> (
+    link       <span class="type">TEXT</span> <span class="kw">PRIMARY KEY</span>,
+    titulo     <span class="type">TEXT</span>,
+    fonte      <span class="type">VARCHAR(200)</span>,
+    pub_date   <span class="type">TIMESTAMP</span>
+);
+
+<span class="comment">-- Execução orçamentária estadual (SICONFI/RREO)</span>
+<span class="kw">CREATE TABLE</span> <span class="type">exec_orcamentaria</span> (
+    uf         <span class="type">VARCHAR(2)</span>,
+    ano        <span class="type">INTEGER</span>,
+    nome_uf    <span class="type">VARCHAR(50)</span>,
+    regiao     <span class="type">VARCHAR(2)</span>,
+    empenhado  <span class="type">NUMERIC(18,2)</span>,
+    liquidado  <span class="type">NUMERIC(18,2)</span>,
+    pago       <span class="type">NUMERIC(18,2)</span>,
+    <span class="kw">PRIMARY KEY</span> (uf, ano)
+);
+
+<span class="comment">-- PDDE — Programa Dinheiro Direto na Escola</span>
+<span class="kw">CREATE TABLE</span> <span class="type">pdde</span> (
+    uf         <span class="type">VARCHAR(2)</span>,
+    ano        <span class="type">INTEGER</span>,
+    custeio    <span class="type">NUMERIC(18,2)</span>,
+    capital    <span class="type">NUMERIC(18,2)</span>,
+    total      <span class="type">NUMERIC(18,2)</span>,
+    escolas    <span class="type">INTEGER</span>,
+    municipios <span class="type">INTEGER</span>,
+    alunos     <span class="type">INTEGER</span>,
+    <span class="kw">PRIMARY KEY</span> (uf, ano)
+);
+
+<span class="comment">-- PNAE — Programa Nacional de Alimentação Escolar</span>
+<span class="kw">CREATE TABLE</span> <span class="type">pnae</span> (
+    uf         <span class="type">VARCHAR(2)</span>,
+    ano        <span class="type">INTEGER</span>,
+    valor      <span class="type">NUMERIC(18,2)</span>,
+    alunos     <span class="type">INTEGER</span>,
+    escolas    <span class="type">INTEGER</span>,
+    municipios <span class="type">INTEGER</span>,
+    <span class="kw">PRIMARY KEY</span> (uf, ano)
+);
+
+<span class="comment">-- Candidatos 2026 (cruzamento TSE x APIs legislativas)</span>
+<span class="kw">CREATE TABLE</span> <span class="type">candidatos_2026</span> (
+    parlamentar_nome <span class="type">VARCHAR(200)</span> <span class="kw">PRIMARY KEY</span>,
+    cargo            <span class="type">VARCHAR(30)</span>,
+    uf               <span class="type">VARCHAR(2)</span>,
+    eleito           <span class="type">BOOLEAN</span>,
+    nome_urna        <span class="type">VARCHAR(200)</span>
+);
+
+<span class="comment">-- Pesquisas eleitorais</span>
+<span class="kw">CREATE TABLE</span> <span class="type">pesquisas_eleitorais</span> (
+    id               <span class="type">VARCHAR(50)</span> <span class="kw">PRIMARY KEY</span>,
+    instituto        <span class="type">VARCHAR(100)</span>,
+    data_publicacao  <span class="type">DATE</span>,
+    cargo            <span class="type">VARCHAR(30)</span>,
+    uf               <span class="type">VARCHAR(5)</span>,
+    amostra          <span class="type">INTEGER</span>,
+    margem           <span class="type">NUMERIC(4,2)</span>,
+    metodologia      <span class="type">VARCHAR(20)</span>
+);</pre>
+
+<div class="doc-footer">
+  <div><span class="classification">USO INTERNO — SEBRAE NACIONAL</span></div>
+  <div>PIPPA — UPP · Sebrae Nacional · Artefato 3.13 · Novembro 2026</div>
+</div>
+
+</body>
+</html>

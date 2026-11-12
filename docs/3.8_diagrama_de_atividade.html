@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.8 Diagrama de Atividade — PIPPA</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<style>
+@page { size: A4 landscape; margin: 14mm 16mm 18mm 16mm; }
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .no-print { display: none !important; }
+  .diagram-section { break-inside: avoid; }
+}
+:root {
+  --azul:#2a4fda; --atlantico:#0b2574; --ceu:#65b7fb; --offwhite:#eff3ee;
+  --verde:#61b466; --laranja:#f39d72; --vermelho:#e0565d; --roxo:#be64e3;
+  --font-heading:'Plus Jakarta Sans',sans-serif;
+  --font-body:'Figtree',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:var(--font-body); color:#1a1a1a; background:#fff; line-height:1.55; max-width:290mm; margin:0 auto; padding:14mm 16mm 18mm 16mm; }
+
+.doc-header { display:flex; align-items:flex-start; justify-content:space-between; border-bottom:3px solid var(--azul); padding-bottom:12px; margin-bottom:18px; }
+.doc-brand { display:flex; align-items:center; gap:10px; }
+.brand-text { display:flex; flex-direction:column; }
+.brand-org { font-family:var(--font-heading); font-size:10pt; font-weight:700; color:var(--azul); letter-spacing:-.4px; }
+.brand-unit { font-size:7.5pt; color:#6b7280; font-weight:500; }
+.doc-type-box { text-align:right; }
+.doc-type { font-family:var(--font-heading); font-size:7.5pt; font-weight:700; color:#fff; background:var(--azul); padding:3px 10px; border-radius:4px; display:inline-block; letter-spacing:.5px; }
+.doc-date { font-size:7pt; color:#6b7280; margin-top:3px; }
+
+.title-block { background:linear-gradient(45deg, var(--atlantico), var(--azul)); border-radius:8px; padding:20px 24px; margin-bottom:24px; color:#fff; }
+.title-block h1 { font-family:var(--font-heading); font-size:16pt; font-weight:800; letter-spacing:-1px; margin-bottom:3px; }
+.title-block .subtitle { font-size:9.5pt; color:rgba(255,255,255,.8); }
+.title-block .ref { font-size:7pt; color:rgba(255,255,255,.45); margin-top:8px; }
+
+h2 { font-family:var(--font-heading); font-size:12pt; font-weight:800; color:var(--atlantico); margin:24px 0 6px; padding-bottom:4px; border-bottom:2px solid var(--azul); letter-spacing:-.5px; }
+h3 { font-family:var(--font-heading); font-size:10pt; font-weight:700; color:var(--azul); margin:14px 0 4px; }
+p { margin-bottom:8px; font-size:9.5pt; }
+.note { font-size:8pt; color:#6b7280; font-style:italic; margin-bottom:12px; }
+
+.diagram-section { margin:16px 0 28px; padding:16px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; }
+.diagram-section h3 { margin-top:0; }
+.mermaid { margin:12px 0; }
+
+.doc-footer { margin-top:28px; padding-top:10px; border-top:2px solid var(--azul); display:flex; justify-content:space-between; font-size:7pt; color:#9ca3af; }
+.doc-footer .classification { font-family:var(--font-heading); font-weight:700; color:var(--azul); font-size:7pt; }
+
+.print-btn { position:fixed; bottom:24px; right:24px; background:var(--azul); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 16px rgba(42,79,218,.35); z-index:100; }
+.print-btn:hover { background:var(--atlantico); }
+
+.toc { margin:0 0 24px; padding:16px 20px; background:#f0f4ff; border-radius:8px; border-left:4px solid var(--azul); }
+.toc h3 { margin:0 0 8px; font-size:9.5pt; color:var(--atlantico); }
+.toc ol { margin:0; padding-left:18px; font-size:9pt; line-height:1.8; }
+.toc a { color:var(--azul); text-decoration:none; }
+.toc a:hover { text-decoration:underline; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
+
+<div class="doc-header">
+  <div class="doc-brand">
+    <div class="brand-text">
+      <span class="brand-org">PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas</span>
+      <span class="brand-unit">Unidade de Politicas Publicas . Sebrae Nacional</span>
+    </div>
+  </div>
+  <div class="doc-type-box">
+    <span class="doc-type">DOCUMENTACAO TECNICA</span>
+    <div class="doc-date">Novembro de 2026</div>
+  </div>
+</div>
+
+<div class="title-block">
+  <h1>3.8 — Diagramas de Atividade</h1>
+  <div class="subtitle">Fluxos operacionais da plataforma PIPPA modelados em UML Activity Diagram</div>
+  <div class="ref">Item 3.8 da Tabela de Aderencia — Parecer UTIC 09/11/2026</div>
+</div>
+
+<div class="toc">
+  <h3>Indice de Diagramas</h3>
+  <ol>
+    <li><a href="#d1">Pipeline ETL — Emendas Parlamentares (5 fases)</a></li>
+    <li><a href="#d2">Classificacao Legislativa — classifyRelevance() P0-P4</a></li>
+    <li><a href="#d3">Resolucao de Partido — PartidoResolver (fuzzy matching)</a></li>
+    <li><a href="#d4">Classificacao MPE/MEI — Compras Publicas</a></li>
+    <li><a href="#d5">Motor de Credibilidade — Reforma Tributaria</a></li>
+    <li><a href="#d6">Scoring ICP/RIG — Stakeholders (CP = PB x MI x BC)</a></li>
+    <li><a href="#d7">Media Ponderada — Pesquisas Eleitorais</a></li>
+    <li><a href="#d8">Fluxo do Usuario em Dashboard — Consulta em Tempo Real</a></li>
+    <li><a href="#d9">Pipeline CI/CD Proposto — GitLab CI para GKE</a></li>
+    <li><a href="#d10">Fluxo de Autenticacao AMEI (Keycloak) — Proposto</a></li>
+  </ol>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 1: Pipeline ETL — Emendas -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="d1">
+  <h3>1. Pipeline ETL — Emendas Parlamentares (5 Fases)</h3>
+  <p>Fluxo extraido de <code>pippa-emendas/scripts/pipeline.py</code>. Funcao <code>run_pipeline()</code> orquestra Coleta, Enriquecimento, Filtro, Validacao Cruzada e Persistencia. Disparado por GitHub Actions (cron: segundas-feiras 11h UTC) ou <code>POST /api/pipeline</code>.</p>
+  <div class="mermaid">
+flowchart TD
+    A([Inicio: CronJob / POST /api/pipeline]) --> B["`**FASE 1 — COLETA**`"]
+    B --> B1["PortalTransparenciaCollector.collect()
+    Baixa EmendasParlamentares.zip ~32 MB
+    Parse CSV Latin-1, renomeia colunas
+    Limpa valores monetarios virgula para ponto
+    Filtra ano >= 2015"]
+    B1 --> B2["TesouroTransparenteCollector.collect()
+    Baixa emendas-parlamentares.csv ~67 MB
+    Parse CSV Latin-1, renomeia colunas
+    Limpa valores monetarios"]
+
+    B2 --> C["`**FASE 2 — ENRIQUECIMENTO**`"]
+    C --> C1["CamaraApiCollector.collect()
+    Coleta deputados das legislaturas 55a, 56a, 57a
+    API: dadosabertos.camara.leg.br/api/v2/deputados
+    Paginacao com sleep 0.2s, cache 7 dias"]
+    C1 --> C2["SenadoApiCollector.collect()
+    Coleta senadores: lista/legislatura + lista/atual
+    Merge de dados parciais + fallback detalhes individuais
+    API: legis.senado.leg.br/dadosabertos"]
+    C2 --> C3["PartidoResolver.enriquecer df
+    Indice nome_normalizado para Parlamentar por legislatura
+    Match exato e fuzzy RapidFuzz, threshold >= 85
+    Emendas de bancada/comissao/relator: NAO_APLICAVEL"]
+    C3 --> C4["IbgeNormalizer.normalizar df
+    Preenche UF e Regiao a partir do codigo IBGE
+    Codigo municipio 7 digitos para UF 2 primeiros"]
+
+    C4 --> D{Filtro por ano?}
+    D -->|Sim| D1["Filtra df pelo ano solicitado"]
+    D -->|Nao| E
+    D1 --> E["`**FASE 4 — VALIDACAO CRUZADA**`"]
+    E --> E1["_validar_cruzamento
+    Agrega valor_pago por UF/ano Portal
+    Agrega valor por UF/ano Tesouro
+    Calcula divergencia percentual
+    Classifica: OK menor 5 porcento
+    ALERTA 5-15 porcento
+    CRITICO maior 15 porcento
+    Gera lista de QualityFlag"]
+
+    E1 --> F["`**FASE 5 — PERSISTENCIA**`"]
+    F --> F1["Salva emendas_enriquecidas.parquet
+    data/processed/"]
+    F1 --> F2["Salva quality_report.json
+    output/"]
+    F2 --> F3["_salvar_agregacoes
+    7 Parquets: por_estado, por_municipio, por_autor,
+    por_partido, por_tipo, por_funcao, serie_temporal"]
+    F3 --> G["build_all_data e html_renderer
+    Gera pippa_emendas_completo.html"]
+    G --> H{"git diff output/?"}
+    H -->|Mudou| I["git commit + git push"]
+    H -->|Sem mudanca| J(["Fim — sem alteracoes"])
+    I --> J2(["Fim — dashboard atualizado"])
+
+    style A fill:#2a4fda,color:#fff,stroke:none
+    style B fill:#0b2574,color:#fff,stroke:none
+    style C fill:#0b2574,color:#fff,stroke:none
+    style E fill:#0b2574,color:#fff,stroke:none
+    style F fill:#0b2574,color:#fff,stroke:none
+    style J fill:#61b466,color:#fff,stroke:none
+    style J2 fill:#61b466,color:#fff,stroke:none
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 2: Classificacao Legislativa -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="d2">
+  <h3>2. Classificacao Legislativa — classifyRelevance() P0-P4</h3>
+  <p>Fluxo extraido de <code>pippa-legislativo-dashboard/index.html</code>, funcao <code>classifyRelevance(ementa, sigla, indexacao)</code>. Aplica 10 criterios para classificar proposicoes legislativas em graus de prioridade P0 a P4, com relevancia Central/Alta/Media/Baixa/Nula e scoring ponderado (core x3, eixo x1, institucional x4).</p>
+  <div class="mermaid">
+flowchart TD
+    A(["Entrada: ementa, sigla, indexacao"]) --> B["Normaliza texto: remove acentos, lowercase"]
+    B --> C{"Sigla processual?
+    REQ, RIC, RCP, MOC, INC,
+    DVS, RQS, AVS"}
+    C -->|Sim| C1(["Retorna: P4 / Nula / score 0
+    Early exit"])
+    C -->|Nao| D{"Texto contem keywords processuais?
+    sessao solene, mocao, homenagem..."}
+    D -->|Sim| C1
+    D -->|Nao| E["Match KEYWORDS_CORE
+    simples nacional, MEI, microempreendedor,
+    LC 123, MPE, EPP, FAMPE
+    Usa matchesKeyword com word-boundary
+    para termos curtos"]
+
+    E --> F["Match 8 EIXO_DEFINITIONS
+    MEI e Simples / Credito / Compras publicas /
+    Inovacao e digital / Educacao empreendedora /
+    Desenvolvimento territorial / Inclusao produtiva /
+    Ambiente de negocios"]
+    F --> F1{"hasMpeContext?
+    (core matches > 0)"}
+    F1 -->|Sim| F2["Ativa broadKeywords dos eixos
+    IA, transformacao digital,
+    tributacao, empreendedorismo..."]
+    F1 -->|Nao| G
+    F2 --> G["Match KEYWORDS_INSTITUTIONAL
+    Entidades: sebrae, sistema S, sesi, senai..."]
+    G --> G1{"Entidade encontrada E
+    contexto de governanca?
+    contribuicao, orcamento,
+    fiscalizacao, lei 8029..."}
+    G1 -->|Sim| G2["institucional = sim"]
+    G1 -->|Nao| G3["institucional = nao"]
+    G2 --> H["Determina relevancia"]
+    G3 --> H
+
+    H --> H1{"institucional = sim OU
+    matchedCore > 0?"}
+    H1 -->|Sim| H2["relevancia = Central"]
+    H1 -->|Nao| H3{"totalEixoMatches >= 2?"}
+    H3 -->|Sim| H4["relevancia = Alta"]
+    H3 -->|Nao| H5{"totalEixoMatches = 1?"}
+    H5 -->|Sim| H6["relevancia = Media"]
+    H5 -->|Nao| H7{"corporativo OU social?"}
+    H7 -->|Sim| H8["relevancia = Baixa"]
+    H7 -->|Nao| H9["relevancia = Nula"]
+
+    H2 --> I["Determina prioridade"]
+    H4 --> I
+    H6 --> I
+    H8 --> I
+    H9 --> I
+
+    I --> I1{"institucional = sim?"}
+    I1 -->|Sim| I2["P0 — Incidencia ativa"]
+    I1 -->|Nao| I3{"Central OU Alta?"}
+    I3 -->|Sim| I4["P1 — Monitoramento estrategico"]
+    I3 -->|Nao| I5{"Media?"}
+    I5 -->|Sim| I6["P2 — Subsidio tecnico"]
+    I5 -->|Nao| I7{"Baixa?"}
+    I7 -->|Sim| I8["P3 — Monitoramento passivo"]
+    I7 -->|Nao| I9["P4 — Fora do escopo"]
+
+    I2 --> J["score = core x 3 + eixo x 1 + institucional x 4"]
+    I4 --> J
+    I6 --> J
+    I8 --> J
+    I9 --> J
+    J --> K(["Retorna: prioridade, relevancia,
+    impacto, eixo, papel Sebrae,
+    grau Siga Lei, score"])
+
+    style A fill:#2a4fda,color:#fff,stroke:none
+    style C1 fill:#9ca3af,color:#fff,stroke:none
+    style I2 fill:#e0565d,color:#fff,stroke:none
+    style I4 fill:#f39d72,color:#fff,stroke:none
+    style I6 fill:#65b7fb,color:#fff,stroke:none
+    style I8 fill:#61b466,color:#fff,stroke:none
+    style I9 fill:#9ca3af,color:#fff,stroke:none
+    style K fill:#61b466,color:#fff,stroke:none
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 3: PartidoResolver -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="d3">
+  <h3>3. Resolucao de Partido — PartidoResolver (Fuzzy Matching)</h3>
+  <p>Fluxo extraido de <code>pippa-emendas/scripts/enrichment/partido_resolver.py</code>, classe <code>PartidoResolver</code>. Para cada emenda, identifica a legislatura pelo ano, busca o autor por nome exato normalizado, e se nao encontra, tenta fuzzy match via RapidFuzz com threshold >= 85.</p>
+  <div class="mermaid">
+flowchart TD
+    A(["Entrada: nome_autor, ano, tipo_emenda"]) --> B{"Tipo emenda e de
+    bancada/comissao/relator?
+    TIPOS_SEM_AUTOR_INDIVIDUAL"}
+    B -->|Sim| B1(["Retorna: NAO_APLICAVEL
+    partido=null, uf=null"])
+    B -->|Nao| C{"nome_autor valido?
+    nao nulo, nao NaN"}
+    C -->|Nao| C1(["Retorna: NAO_ENCONTRADO
+    partido=null, uf=null"])
+    C -->|Sim| D["normalizar_nome:
+    NFKD, remove diacriticos,
+    uppercase, colapsa espacos"]
+
+    D --> E["ano_para_legislatura:
+    Consulta dicionario LEGISLATURAS
+    inicio/fim por legislatura"]
+    E --> F{"Legislatura encontrada?"}
+    F -->|Nao| C1
+    F -->|Sim| G{"nome_norm existe no
+    indice da legislatura?
+    indice[legislatura][nome_norm]"}
+    G -->|Sim| H(["Retorna: EXATO
+    partido=p.partido, uf=p.uf"])
+    G -->|Nao| I{"RapidFuzz disponivel?
+    HAS_RAPIDFUZZ = True"}
+    I -->|Nao| C1
+    I -->|Sim| J["Loop por todos os nomes
+    da legislatura:
+    fuzz.ratio nome_norm, candidato
+    Guarda best_score e best_match"]
+    J --> K{"best_score >= 85?
+    FUZZY_MATCH_THRESHOLD"}
+    K -->|Sim| L(["Retorna: FUZZY
+    partido=p.partido, uf=p.uf
+    Log: nome original para match score"])
+    K -->|Nao| C1
+
+    style A fill:#2a4fda,color:#fff,stroke:none
+    style B1 fill:#9ca3af,color:#fff,stroke:none
+    style C1 fill:#f39d72,color:#fff,stroke:none
+    style H fill:#61b466,color:#fff,stroke:none
+    style L fill:#65b7fb,color:#fff,stroke:none
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 4: Classificacao MPE/MEI -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="d4">
+  <h3>4. Classificacao MPE/MEI — Compras Publicas</h3>
+  <p>Fluxo extraido de <code>pippa-compras-dashboard/index.html</code>, funcoes <code>classifyMPE(item)</code> e <code>classifyMEI(item)</code>. Classifica oportunidades de contratacao publica quanto a acessibilidade para Micro e Pequenas Empresas (LC 123/2006) e Microempreendedores Individuais (Lei 14.133/2021).</p>
+  <div class="mermaid">
+flowchart TD
+    A(["Entrada: item da API PNCP"]) --> B["sanitizeValor:
+    Detecta outliers valor > R$ 10 bi
+    Compara estimado vs homologado
+    Prefere valor mais razoavel"]
+    B --> C["Extrai objetoCompra lowercase
+    e _valor sanitizado"]
+
+    C --> D{"Objeto contem exclusiv E
+    me/epp OU mpe OU micro OU pequen?"}
+    D -->|Sim| E1["Exclusiva MPE"]
+    D -->|Nao| F{"valor > 0 E
+    valor <= R$ 80.000?
+    LC 123/2006, Art. 47"}
+    F -->|Sim| E1
+    F -->|Nao| G{"Objeto contem cota E
+    me/epp OU mpe OU micro OU pequen?"}
+    G -->|Sim| E2["Cota MPE"]
+    G -->|Nao| H{"item.srp = true?
+    Sistema Registro de Precos"}
+    H -->|Sim| E2
+    H -->|Nao| E3["Ampla concorrencia"]
+
+    E1 --> I{"classifyMEI
+    Exclusiva MPE apenas"}
+    E2 --> J["MEI nao aplicavel
+    para Cota/Ampla"]
+    E3 --> J
+
+    I --> K{"usuarioNome contem
+    contrata+brasil OU
+    compras.gov.br?"}
+    K -->|Sim| L["Portal MEI"]
+    K -->|Nao| M{"Modalidade = Dispensa E
+    valor > 0 E valor <= R$ 50.000?
+    Lei 14.133/2021, Art. 75 II"}
+    M -->|Sim| N["Dispensa MEI"]
+    M -->|Nao| O["MEI nao aplicavel"]
+
+    L --> P["Verifica setores MEI:
+    alimentacao, limpeza, grafica,
+    construcao, eletrico, agro"]
+    N --> P
+    O --> P
+    J --> P
+
+    P --> Q["classifyFaixaValor:
+    Ate R$ 80 mil / R$ 80-500 mil /
+    R$ 500 mil-2 mi / Acima R$ 2 mi"]
+    Q --> R["classifyUrgencia:
+    Encerrada / Urgente 3d /
+    Atencao 7d / Tranquilo"]
+    R --> S["detectSetores:
+    14 categorias por keywords
+    alimentacao, TI, saude, construcao..."]
+    S --> T(["Item classificado com:
+    oportunidadeMPE, acessivelMEI,
+    setorMEI, faixaValor, urgencia, setores"])
+
+    style A fill:#2a4fda,color:#fff,stroke:none
+    style E1 fill:#61b466,color:#fff,stroke:none
+    style E2 fill:#65b7fb,color:#fff,stroke:none
+    style E3 fill:#9ca3af,color:#fff,stroke:none
+    style L fill:#61b466,color:#fff,stroke:none
+    style N fill:#65b7fb,color:#fff,stroke:none
+    style T fill:#61b466,color:#fff,stroke:none
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 5: Motor de Credibilidade -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="d5">
+  <h3>5. Motor de Credibilidade — Reforma Tributaria</h3>
+  <p>Fluxo extraido de <code>pippa-reforma-dashboard/index.html</code>, funcao <code>classifyCredibility(source, title)</code>. Classifica noticias sobre reforma tributaria em Confiavel (score 100), Atencao (score 30-99) ou Risco (score 0-60), usando listas curadas de fontes e analise heuristica de titulos.</p>
+  <div class="mermaid">
+flowchart TD
+    A(["Entrada: source, title"]) --> B["normalize source:
+    Remove diacriticos, lowercase"]
+
+    B --> C{"Source esta em
+    FONTES_JORNALISTICAS?
+    ~55 veiculos: Folha, Estadao,
+    G1, Valor, Reuters, Bloomberg..."}
+    C -->|Sim| D(["Retorna: Confiavel
+    score=100
+    Veiculo jornalistico consolidado"])
+    C -->|Nao| E{"Source esta em
+    FONTES_INSTITUCIONAIS?
+    ~60 fontes: Sebrae, CNA, CNI,
+    Receita Federal, IBGE, FGV..."}
+    E -->|Sim| D2(["Retorna: Confiavel
+    score=100
+    Fonte institucional valida"])
+    E -->|Nao| F["riscoScore = 0
+    Inicia analise heuristica"]
+
+    F --> G{"Source = desconhecida
+    OU length < 3 caracteres?"}
+    G -->|Sim| G1["riscoScore += 40"]
+    G -->|Nao| H
+
+    G1 --> H{"Title match
+    FAKE_NEWS_PATTERNS?
+    12 regex: urgente!!+, bomba!!,
+    voce nao vai acreditar,
+    compartilhe antes que,
+    a midia nao quer, chocante..."}
+    H -->|Sim| H1["riscoScore += 50"]
+    H -->|Nao| I
+
+    H1 --> I["Conta CLICKBAIT_SIGNALS no title:
+    descubra, saiba o que, ninguem esperava,
+    a verdade sobre, isso muda tudo,
+    nunca mais, inacreditavel..."]
+    I --> I1{"2+ sinais clickbait?"}
+    I1 -->|Sim| I2["riscoScore += 30"]
+    I1 -->|Nao| I3{"1 sinal clickbait?"}
+    I3 -->|Sim| I4["riscoScore += 10"]
+    I3 -->|Nao| J
+
+    I2 --> J
+    I4 --> J
+
+    J{"Title > 50% UPPERCASE
+    E length > 20 chars?"}
+    J -->|Sim| J1["riscoScore += 20"]
+    J -->|Nao| K
+    J1 --> K
+
+    K{"3+ exclamacoes no title?"}
+    K -->|Sim| K1["riscoScore += 20"]
+    K -->|Nao| L
+    K1 --> L
+
+    L{"riscoScore >= 40?"}
+    L -->|Sim| M(["Retorna: Risco
+    score = max 0, 100 - riscoScore
+    Badge vermelho no card"])
+    L -->|Nao| N(["Retorna: Atencao
+    score = max 30, 100 - riscoScore
+    Badge ambar no card"])
+
+    style A fill:#2a4fda,color:#fff,stroke:none
+    style D fill:#61b466,color:#fff,stroke:none
+    style D2 fill:#61b466,color:#fff,stroke:none
+    style M fill:#e0565d,color:#fff,stroke:none
+    style N fill:#f39d72,color:#fff,stroke:none
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 6: ICP/RIG Scoring -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="d6">
+  <h3>6. Scoring ICP/RIG — Stakeholders (CP = PB x MI x BC)</h3>
+  <p>Fluxo extraido de <code>pippa-stakeholders/index.html</code>, funcao <code>computeICPRIG()</code>. Formula de tres camadas: Pontuacao-Base (PB, 5 dimensoes 0-100), Multiplicador Institucional (MI, 1-3x) e Bonus de Comissao (BC, 1.00-1.35). Resultado normalizado 0-100 com faixas alto/medio/baixo.</p>
+  <div class="mermaid">
+flowchart TD
+    A(["Entrada: parlamentar com
+    frentes, orgaos, roles, autorias"]) --> B["computeDimA: Amplitude da Rede 0-20
+    frentesRelevantes x 2 + orgaos.length x 3
+    Frentes filtradas por 3 tiers de keywords Sebrae
+    Cap: min 20"]
+    B --> C["computeDimB: Qualidade e Profundidade 0-30
+    Tier1 frentes x 8 + Tier2 frentes x 4 +
+    Tier1 comissoes x 10 + Tier2 comissoes x 5
+    Cap: min 30"]
+    C --> D["computeDimC: Relevancia Estrategica 0-20
+    Por comissao: base 8 Tier1 ou 4 Tier2
+    Bonus cargo: presidente/relator +5, titular +3
+    Cap: min 20"]
+    D --> E["computeDimD: Articulacao e Mobilizacao 0-20
+    autoCount / maxAutorias x 20
+    Normalizado pelo maior autor do dataset
+    Cap: min 20"]
+    E --> F["computeDimE: Inteligencia Institucional 0-10
+    +2 foto / +2 email / +2 frentes /
+    +2 comissoes / +2 eleicao2026
+    Max: 10"]
+
+    F --> G["PB = dimA + dimB + dimC + dimD + dimE
+    Range: 0-100"]
+
+    G --> H{"Senador em comissao
+    Tier1 estrategica?
+    CDE, CICS, CFT, CAE"}
+    H -->|Sim| H1["MI = 3x
+    Senador estrategico"]
+    H -->|Nao| I{"Deputado eleito
+    Senador em 2026?"}
+    I -->|Sim| I1["MI = 2x
+    Transicao Camara-Senado"]
+    I -->|Nao| I2["MI = 1x
+    Padrao"]
+
+    H1 --> J
+    I1 --> J
+    I2 --> J
+
+    J["Calcula BC: Bonus de Comissao
+    Por cada comissao prioritaria, maior bonus:
+    Presidente T1: 1.35 / T2: 1.25
+    Vice T1: 1.30 / T2: 1.20
+    Relator T1: 1.25 / T2: 1.15
+    Titular T1: 1.15 / T2: 1.05
+    Suplente T1: 1.05 / T2: 1.00
+    Usa apenas o maior bonus"]
+
+    J --> K["CP = PB x MI x BC"]
+    K --> L["Normaliza: icpNorm = CP / maxCP x 100
+    maxCP = maior CP de todos parlamentares"]
+    L --> M{"icpNorm >= 50?"}
+    M -->|Sim| M1(["Faixa ALTO"])
+    M -->|Nao| N{"icpNorm >= 20?"}
+    N -->|Sim| N1(["Faixa MEDIO"])
+    N -->|Nao| N2(["Faixa BAIXO"])
+
+    style A fill:#2a4fda,color:#fff,stroke:none
+    style M1 fill:#61b466,color:#fff,stroke:none
+    style N1 fill:#f39d72,color:#fff,stroke:none
+    style N2 fill:#e0565d,color:#fff,stroke:none
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 7: Media Ponderada — Pesquisas Eleitorais -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="d7">
+  <h3>7. Media Ponderada — Pesquisas Eleitorais</h3>
+  <p>Fluxo extraido de <code>pippa-pesquisas-eleitorais/index.html</code>, funcao <code>computeAggregated(polls)</code>, e <code>scripts/update_polls.py</code>, funcao <code>compute_weighted_averages()</code>. Combina tres fatores multiplicativos: recencia (meia-vida 14 dias), tamanho amostral (sqrt normalizado) e metodologia (presencial 1.0 a online 0.8).</p>
+  <div class="mermaid">
+flowchart TD
+    A(["Entrada: array de pesquisas filtradas"]) --> B["Calcula maxSample:
+    Maior tamanho amostral do conjunto"]
+
+    B --> C["Loop por cada pesquisa"]
+    C --> D["wRec = 2 elevado a -daysAgo/14
+    Decaimento exponencial com meia-vida 14 dias
+    14 dias: peso 0.5 / 28 dias: peso 0.25"]
+    D --> E["wSmp = sqrt amostra / sqrt maxSample
+    Normaliza raiz quadrada do tamanho amostral
+    pelo maior do conjunto"]
+    E --> F["wMet = lookup METHODOLOGY_WEIGHTS
+    presencial: 1.0
+    telefonica: 0.9
+    mista: 0.85
+    online: 0.8
+    default: 0.85"]
+
+    F --> G["weight = wRec x wSmp x wMet
+    Peso combinado multiplicativo"]
+
+    G --> H["Loop por cada candidato na pesquisa"]
+    H --> I["wSum += weight x percentual
+    wTotal += weight
+    Acumula por candidato"]
+    I --> J{"Mais pesquisas?"}
+    J -->|Sim| C
+    J -->|Nao| K
+
+    K["Para cada candidato:
+    weightedAvg = wSum / wTotal
+    Calcula tambem: media simples, mediana,
+    desvio padrao, min/max, contagem"]
+
+    K --> L["computeTrend: regressao linear
+    sobre ultimas pesquisas
+    Determina direcao: subindo/estavel/descendo"]
+
+    L --> M["Ordena candidatos por weightedAvg
+    decrescente"]
+
+    M --> N{"Backend Python tambem calcula?"}
+    N -->|Sim| O["compute_weighted_averages em update_polls.py
+    Mesma formula + intervalo de confianca 95%
+    ci = avg +/- 1.96 x SE
+    Resultado embarcado como PRES_AVGS e STATE_AVGS"]
+    N -->|Nao| P
+
+    O --> P(["Saida: ranking por media ponderada,
+    agregado estatistico, tendencia,
+    intervalo de confianca"])
+
+    style A fill:#2a4fda,color:#fff,stroke:none
+    style P fill:#61b466,color:#fff,stroke:none
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 8: Fluxo do Usuario em Dashboard -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="d8">
+  <h3>8. Fluxo do Usuario em Dashboard — Consulta em Tempo Real</h3>
+  <p>Fluxo generico dos dashboards que consultam APIs governamentais ao vivo (ex.: Radar Legislativo, Pauta Legislativa, Consultas Publicas, Compras, Stakeholders).</p>
+  <div class="mermaid">
+flowchart TD
+    A(["Usuario acessa dashboard via navegador"]) --> B["HTML carrega scripts, CSS, Chart.js/Plotly via CDN"]
+    B --> C["DOMContentLoaded init"]
+    C --> D["Verifica parametros da URL / estado inicial dos filtros"]
+    D --> E["fetchData — chamadas assincronas paralelas"]
+
+    E --> E1["fetch API Camara
+    dadosabertos.camara.leg.br/api/v2"]
+    E --> E2["fetch API Senado
+    legis.senado.leg.br/dadosabertos"]
+    E --> E3["fetch Outras APIs gov
+    PNCP, CGU, BCB, IBGE, DOU"]
+
+    E1 --> F["Promise.allSettled
+    Monta array unificado de dados"]
+    E2 --> F
+    E3 --> F
+
+    F --> G["Classificacao / Scoring
+    classifyRelevance ou computeScores
+    Aplica heuristicas e pesos do motor"]
+    G --> H["Aplica filtros do usuario
+    UF, partido, periodo, tema, tipo"]
+    H --> I["Renderiza visualizacoes
+    Chart.js / Plotly / SVG coropletico"]
+    I --> J["Calcula e exibe KPIs e insights
+    Atualiza contadores e badges"]
+    J --> K(["Dashboard interativo pronto"])
+
+    K --> L{"Usuario interage?"}
+    L -->|Altera filtro| H
+    L -->|Clica em grafico| M["Tooltip / drill-down
+    Exibe detalhes do ponto de dados"]
+    L -->|Exporta| N["Gera texto formatado
+    navigator.share ou clipboard"]
+    L -->|Muda aba| O["Troca de tab visivel
+    Renderiza graficos lazy"]
+
+    style A fill:#2a4fda,color:#fff,stroke:none
+    style K fill:#61b466,color:#fff,stroke:none
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 9: Pipeline CI/CD -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="d9">
+  <h3>9. Pipeline CI/CD Proposto — GitLab CI para GKE</h3>
+  <p>Esteira proposta para substituir os GitHub Actions e publicar no GKE corporativo do Sebrae Nacional.</p>
+  <div class="mermaid">
+flowchart TD
+    A(["git push branch main / MR"]) --> B["`**Stage: lint**`"]
+    B --> B1["ruff check Python
+    Validacao de sintaxe HTML"]
+
+    B1 --> C["`**Stage: test**`"]
+    C --> C1["pytest — testes unitarios
+    Classificadores, transformacoes, parsing"]
+    C1 --> C2["pytest + httpx — testes de integracao
+    Endpoints FastAPI, autenticacao AMEI"]
+    C2 --> C3["Playwright — testes E2E
+    Smoke test dos 20 dashboards"]
+
+    C3 --> D["`**Stage: build**`"]
+    D --> D1["docker build -f Dockerfile.frontend
+    registry.sebrae.com.br/pippa/frontend:tag"]
+    D1 --> D2["docker build -f Dockerfile.api
+    registry.sebrae.com.br/pippa/api:tag"]
+
+    D2 --> E{Branch?}
+    E -->|MR / feature| F(["Fim — artefatos disponiveis para review"])
+    E -->|main| G["`**Stage: deploy:staging**`"]
+    G --> G1["kubectl apply -f k8s/
+    Namespace: pippa-staging"]
+    G1 --> G2["Smoke test no staging
+    health check + curl endpoints"]
+
+    G2 --> H{Aprovacao manual}
+    H -->|Aprovado| I["`**Stage: deploy:production**`"]
+    I --> I1["kubectl apply -f k8s/
+    Namespace: pippa-production"]
+    I1 --> I2["Verifica rollout status
+    kubectl rollout status"]
+    I2 --> J(["Deploy concluido — pippa.sebrae.com.br"])
+    H -->|Rejeitado| K(["Rollback / correcao necessaria"])
+
+    style A fill:#2a4fda,color:#fff,stroke:none
+    style B fill:#0b2574,color:#fff,stroke:none
+    style C fill:#0b2574,color:#fff,stroke:none
+    style D fill:#0b2574,color:#fff,stroke:none
+    style G fill:#0b2574,color:#fff,stroke:none
+    style I fill:#0b2574,color:#fff,stroke:none
+    style F fill:#65b7fb,color:#fff,stroke:none
+    style J fill:#61b466,color:#fff,stroke:none
+    style K fill:#e0565d,color:#fff,stroke:none
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 10: Autenticacao AMEI -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="d10">
+  <h3>10. Fluxo de Autenticacao AMEI (Keycloak) — Proposto</h3>
+  <p>Integracao com o provedor corporativo de identidade AMEI para proteger rotas de escrita e paineis restritos.</p>
+  <div class="mermaid">
+flowchart TD
+    A(["Usuario acessa rota protegida"]) --> B{"Token JWT presente
+    no localStorage?"}
+    B -->|Nao| C["Redirect para AMEI/Keycloak
+    /auth/realms/sebrae/protocol/openid-connect/auth
+    + PKCE code_challenge"]
+    C --> D["Usuario faz login no AMEI
+    credenciais corporativas Sebrae"]
+    D --> E["Keycloak valida credenciais
+    Gera authorization_code"]
+    E --> F["Redirect de volta ao frontend
+    com code na URL"]
+    F --> G["Frontend troca code por tokens
+    POST /token com code_verifier PKCE"]
+    G --> H["Recebe access_token JWT RS256
+    + refresh_token
+    Armazena no localStorage"]
+
+    B -->|Sim| I{"Token expirado?"}
+    I -->|Nao| J["Inclui token no header Authorization
+    Bearer access_token"]
+    I -->|Sim| K["Tenta refresh via refresh_token
+    POST /token grant_type=refresh_token"]
+    K --> K1{Refresh valido?}
+    K1 -->|Sim| H
+    K1 -->|Nao| C
+
+    J --> L["Requisicao chega ao backend FastAPI"]
+    L --> M["Middleware JWT extrai token
+    Valida assinatura via JWKS do AMEI
+    Verifica exp, iss, aud"]
+    M --> N{Token valido?}
+    N -->|Sim| O["Processa requisicao
+    Ex: POST /api/pipeline"]
+    N -->|Nao| P["Retorna 401 Unauthorized"]
+    O --> Q(["Resposta ao frontend"])
+
+    style A fill:#2a4fda,color:#fff,stroke:none
+    style D fill:#be64e3,color:#fff,stroke:none
+    style Q fill:#61b466,color:#fff,stroke:none
+    style P fill:#e0565d,color:#fff,stroke:none
+  </div>
+</div>
+
+<div class="doc-footer">
+  <div><span class="classification">USO INTERNO — SEBRAE NACIONAL</span></div>
+  <div>PIPPA — UPP . Sebrae Nacional . Novembro 2026 . Artefato 3.8</div>
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  themeVariables: {
+    primaryColor: '#e8edff',
+    primaryTextColor: '#0b2574',
+    primaryBorderColor: '#2a4fda',
+    lineColor: '#2a4fda',
+    secondaryColor: '#f0f4ff',
+    tertiaryColor: '#f9fafb',
+    fontFamily: '"Figtree", sans-serif',
+    fontSize: '13px',
+  },
+  flowchart: {
+    htmlLabels: true,
+    curve: 'basis',
+    nodeSpacing: 30,
+    rankSpacing: 40,
+  }
+});
+</script>
+
+</body>
+</html>

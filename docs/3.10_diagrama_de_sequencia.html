@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.10 Diagrama de Sequencia — PIPPA</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<style>
+@page { size: A4 landscape; margin: 14mm 16mm 18mm 16mm; }
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .no-print { display: none !important; }
+  .diagram-section { break-inside: avoid; }
+}
+:root {
+  --azul:#2a4fda; --atlantico:#0b2574; --ceu:#65b7fb; --offwhite:#eff3ee;
+  --verde:#61b466; --laranja:#f39d72; --vermelho:#e0565d; --roxo:#be64e3;
+  --font-heading:'Plus Jakarta Sans',sans-serif;
+  --font-body:'Figtree',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:var(--font-body); color:#1a1a1a; background:#fff; line-height:1.55; max-width:290mm; margin:0 auto; padding:14mm 16mm 18mm 16mm; }
+
+.doc-header { display:flex; align-items:flex-start; justify-content:space-between; border-bottom:3px solid var(--azul); padding-bottom:12px; margin-bottom:18px; }
+.doc-brand { display:flex; align-items:center; gap:10px; }
+.brand-text { display:flex; flex-direction:column; }
+.brand-org { font-family:var(--font-heading); font-size:10pt; font-weight:700; color:var(--azul); letter-spacing:-.4px; }
+.brand-unit { font-size:7.5pt; color:#6b7280; font-weight:500; }
+.doc-type-box { text-align:right; }
+.doc-type { font-family:var(--font-heading); font-size:7.5pt; font-weight:700; color:#fff; background:var(--azul); padding:3px 10px; border-radius:4px; display:inline-block; letter-spacing:.5px; }
+.doc-date { font-size:7pt; color:#6b7280; margin-top:3px; }
+
+.title-block { background:linear-gradient(45deg, var(--atlantico), var(--azul)); border-radius:8px; padding:20px 24px; margin-bottom:24px; color:#fff; }
+.title-block h1 { font-family:var(--font-heading); font-size:16pt; font-weight:800; letter-spacing:-1px; margin-bottom:3px; }
+.title-block .subtitle { font-size:9.5pt; color:rgba(255,255,255,.8); }
+.title-block .ref { font-size:7pt; color:rgba(255,255,255,.45); margin-top:8px; }
+
+h2 { font-family:var(--font-heading); font-size:12pt; font-weight:800; color:var(--atlantico); margin:24px 0 6px; padding-bottom:4px; border-bottom:2px solid var(--azul); letter-spacing:-.5px; }
+h3 { font-family:var(--font-heading); font-size:10pt; font-weight:700; color:var(--azul); margin:14px 0 4px; }
+p { margin-bottom:8px; font-size:9.5pt; }
+
+.diagram-section { margin:16px 0 28px; padding:16px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; }
+.diagram-section h3 { margin-top:0; }
+.mermaid { margin:12px 0; }
+
+.doc-footer { margin-top:28px; padding-top:10px; border-top:2px solid var(--azul); display:flex; justify-content:space-between; font-size:7pt; color:#9ca3af; }
+.doc-footer .classification { font-family:var(--font-heading); font-weight:700; color:var(--azul); font-size:7pt; }
+
+.print-btn { position:fixed; bottom:24px; right:24px; background:var(--azul); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 16px rgba(42,79,218,.35); z-index:100; }
+.print-btn:hover { background:var(--atlantico); }
+
+.toc { margin:0 0 24px; padding:16px 20px; background:#f0f4ff; border-radius:8px; border-left:4px solid var(--azul); }
+.toc h3 { margin:0 0 8px; font-size:9.5pt; color:var(--atlantico); }
+.toc ol { margin:0; padding-left:18px; font-size:9pt; line-height:1.8; }
+.toc a { color:var(--azul); text-decoration:none; }
+.toc a:hover { text-decoration:underline; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
+
+<div class="doc-header">
+  <div class="doc-brand">
+    <div class="brand-text">
+      <span class="brand-org">PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas</span>
+      <span class="brand-unit">Unidade de Politicas Publicas . Sebrae Nacional</span>
+    </div>
+  </div>
+  <div class="doc-type-box">
+    <span class="doc-type">DOCUMENTACAO TECNICA</span>
+    <div class="doc-date">Novembro de 2026</div>
+  </div>
+</div>
+
+<div class="title-block">
+  <h1>3.10 — Diagramas de Sequencia</h1>
+  <div class="subtitle">Troca de mensagens entre atores, frontend, backend e APIs externas nos fluxos principais da PIPPA</div>
+  <div class="ref">Item 3.10 da Tabela de Aderencia — Parecer UTIC 09/11/2026</div>
+</div>
+
+<div class="toc">
+  <h3>Indice de Diagramas</h3>
+  <ol>
+    <li><a href="#s1">Consulta em Tempo Real — Radar Legislativo</a></li>
+    <li><a href="#s2">Pipeline de Atualizacao — Emendas Parlamentares</a></li>
+    <li><a href="#s3">API FastAPI — Consulta e Disparo de Pipeline</a></li>
+    <li><a href="#s4">Dashboard Compras Publicas — PNCP com Proxy CORS</a></li>
+    <li><a href="#s5">Stakeholders — Aquisicao de Dados e Scoring ICP/RIG</a></li>
+    <li><a href="#s6">Pesquisas Eleitorais — ElectioLab e Media Ponderada</a></li>
+    <li><a href="#s7">Reforma Tributaria — RSS News e Motor de Credibilidade</a></li>
+    <li><a href="#s8">PartidoResolver — Fuzzy Matching de Parlamentares</a></li>
+  </ol>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 1: Radar Legislativo -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="s1">
+  <h3>1. Consulta em Tempo Real — Radar Legislativo</h3>
+  <p>Fluxo extraido de <code>pippa-legislativo-dashboard/index.html</code>: funcoes <code>fetchCamara()</code>, <code>fetchSenado()</code>, <code>fetchComissoes()</code>, <code>classifyRelevance()</code>. O dashboard consulta 5 fontes em paralelo, classifica cada proposicao com 10 criterios (P0-P4), e enriquece com autores e tramitacao em background.</p>
+  <div class="mermaid">
+sequenceDiagram
+    actor U as Analista UPP
+    participant D as Dashboard HTML
+    participant CA as API Camara<br/>dadosabertos.camara.leg.br
+    participant SA as API Senado<br/>legis.senado.leg.br
+    participant CJ as Chart.js
+
+    U->>D: Acessa Radar Legislativo e seleciona periodo
+    activate D
+    D->>D: DOMContentLoaded - fetchData()
+
+    par Coleta paralela via Promise.all
+        D->>CA: GET /api/v2/proposicoes?dataInicio&dataFim&itens=100
+        CA-->>D: JSON dados: proposicoes
+        D->>CA: GET /api/v2/proposicoes?siglaUF&siglaTipo=PL,PLP,PEC,MPV
+        CA-->>D: JSON dados: proposicoes por tipo
+    and
+        D->>SA: GET /dadosabertos/materia/atualizadas?numdias=N
+        SA-->>D: JSON Materias atualizadas
+        D->>SA: GET /dadosabertos/materia/pesquisa/lista?sigla=PL,PLP,PEC
+        SA-->>D: JSON PesquisaBasicaMateria
+    and
+        D->>CA: GET /api/v2/eventos?tipoCodigo=100
+        CA-->>D: JSON dados: comissoes ativas
+    end
+
+    D->>D: classifyRelevance ementa, sigla, indexacao<br/>Match core x3 + eixo x1 + institucional x4<br/>Determina P0-P4, relevancia, impacto, eixo
+    D->>D: Separa proposicoes de acessorios<br/>PEC/PLP/PL/MPV vs REQ/RIC/PRL
+    D->>D: Ordena por prioridade P0 primeiro
+    D->>D: Aplica filtros: UF, partido, periodo, tipo, tema
+
+    D->>CJ: new Chart - proposicoes por tema
+    D->>CJ: new Chart - serie temporal semanal
+    D->>CJ: new Chart - distribuicao por grau de impacto
+    CJ-->>D: Canvas renderizado
+
+    D-->>U: Dashboard interativo pronto
+    deactivate D
+
+    Note over D,CA: Enriquecimento em background batch
+
+    D->>CA: GET /api/v2/proposicoes/id/autores (batch de 10)
+    CA-->>D: JSON autores com partido e UF
+    D->>D: Atualiza cards com autor/partido
+
+    D->>CA: GET /api/v2/proposicoes/id/tramitacoes
+    CA-->>D: JSON tramitacoes
+    D->>D: Filtra proposicoes arquivadas/transformadas em lei
+
+    U->>D: Clica em proposicao especifica
+    activate D
+    D-->>U: Card expandido com classificacao e tramitacao
+    deactivate D
+
+    U->>D: Reclassifica manualmente via dropdowns
+    activate D
+    D->>D: saveClassification - atualiza 12 criterios
+    D->>D: Re-ordena e reaplica filtros
+    D-->>U: Dashboard atualizado com nova classificacao
+    deactivate D
+
+    U->>D: Clica em Compartilhar via WhatsApp
+    activate D
+    D->>D: Gera texto formatado com dados do filtro
+    D->>D: navigator.share ou navigator.clipboard
+    D-->>U: Texto copiado / dialogo de compartilhamento
+    deactivate D
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 2: Pipeline Emendas -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="s2">
+  <h3>2. Pipeline de Atualizacao de Dados — Emendas Parlamentares</h3>
+  <p>Fluxo extraido de <code>pippa-emendas/scripts/pipeline.py</code>, <code>gerar_dashboard.py</code> e <code>.github/workflows/update-emendas-data.yml</code>. Pipeline de 5 fases com coleta de 4 APIs, enriquecimento via fuzzy matching, validacao cruzada Portal x Tesouro, e persistencia em 7 parquets agregados.</p>
+  <div class="mermaid">
+sequenceDiagram
+    participant GH as CronJob<br/>seg 11h UTC
+    participant P as pipeline.py
+    participant PT as Portal Transparencia<br/>dadosabertos-download.cgu.gov.br
+    participant TT as Tesouro Transparente<br/>tesourotransparente.gov.br
+    participant CA as API Camara
+    participant SA as API Senado
+    participant CM as CacheManager
+    participant FS as Sistema de Arquivos<br/>data/processed/
+
+    GH->>P: python gerar_dashboard.py
+
+    activate P
+    Note over P: FASE 1 - COLETA
+
+    P->>CM: is_fresh emendas_portal.csv?
+    CM-->>P: False TTL 24h expirado
+    P->>PT: GET EmendasParlamentares.zip ~32 MB
+    PT-->>P: ZIP com CSV ~94k linhas Latin-1
+    P->>P: _parse_csv + _limpar<br/>Renomeia colunas, converte valores,<br/>filtra ano >= 2015, classifica localidade
+
+    P->>TT: GET emendas-parlamentares.csv ~67 MB
+    TT-->>P: CSV Latin-1 delimitado por ;
+    P->>P: _parse_csv + _limpar
+
+    Note over P: FASE 2 - ENRIQUECIMENTO
+
+    P->>CM: get camara, legislatura=55/56/57?
+    CM-->>P: cache hit ou miss
+    opt Cache miss
+        P->>CA: GET /api/v2/deputados?idLegislatura=N paginacao sleep 0.2s
+        CA-->>P: JSON deputados
+        P->>CM: set camara, legislatura, deputados
+    end
+
+    P->>CM: get senado, legislatura=55/56/57?
+    CM-->>P: cache hit ou miss
+    opt Cache miss
+        P->>SA: GET /senador/lista/legislatura/N
+        SA-->>P: JSON senadores
+        P->>SA: GET /senador/lista/atual
+        SA-->>P: JSON em exercicio
+        P->>SA: GET /senador/codigo para incompletos
+        SA-->>P: JSON detalhes
+        P->>CM: set senado, legislatura, senadores
+    end
+
+    P->>P: PartidoResolver.enriquecer df<br/>Match exato normalizado - fuzzy >=85<br/>Bancada/Comissao/Relator: NAO_APLICAVEL
+    P->>P: IbgeNormalizer.normalizar df<br/>Codigo municipio - UF - Regiao
+
+    Note over P: FASE 4 - VALIDACAO CRUZADA
+    P->>P: _validar_cruzamento<br/>Agrega por UF/ano, calcula divergencia %<br/>OK menor 5% / ALERTA 5-15% / CRITICO maior 15%
+
+    Note over P: FASE 5 - PERSISTENCIA
+    P->>FS: df.to_parquet emendas_enriquecidas.parquet
+    P->>FS: json.dumps quality_report.json
+    P->>FS: 7x agg_*.parquet estado, municipio,<br/>autor, partido, tipo, funcao, serie
+
+    P->>P: build_all_data + html_renderer<br/>Gera pippa_emendas_completo.html
+    P->>FS: write output/pippa_emendas_completo.html
+
+    deactivate P
+    GH->>GH: git diff - git commit - git push
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 3: API FastAPI -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="s3">
+  <h3>3. API FastAPI — Consulta e Disparo de Pipeline</h3>
+  <p>Fluxo extraido de <code>pippa-emendas/api.py</code>: rotas <code>GET /api/dados</code>, <code>POST /api/pipeline</code>, <code>GET /api/pipeline/status</code>. O GET /api/dados le 7 parquets agregados e os transforma via <code>build_all_data()</code>. O POST /api/pipeline executa o pipeline completo em BackgroundTasks.</p>
+  <div class="mermaid">
+sequenceDiagram
+    actor U as Usuario / Dashboard
+    participant N as Nginx proposto
+    participant API as FastAPI<br/>pippa-emendas/api.py
+    participant DB as dashboard_builder.py
+    participant FS as data/processed/<br/>Parquets
+    participant PIP as pipeline.py
+
+    Note over U,FS: Fluxo A - Consulta de Dados GET /api/dados
+    U->>N: GET /api/dados?ano=2025
+    N->>API: Proxy pass localhost:8050
+    activate API
+    API->>FS: pd.read_parquet agg_por_estado_2025.parquet
+    API->>FS: pd.read_parquet agg_por_municipio_2025.parquet
+    API->>FS: pd.read_parquet agg_por_autor_2025.parquet
+    API->>FS: pd.read_parquet agg_por_partido_2025.parquet
+    API->>FS: pd.read_parquet agg_por_tipo_2025.parquet
+    API->>FS: pd.read_parquet agg_serie_temporal_2025.parquet
+    API->>FS: pd.read_parquet emendas_enriquecidas_2025.parquet
+    FS-->>API: DataFrames
+    API->>DB: build_all_data df_estado, df_mun, ...
+    DB-->>API: dict estados, partidos, autores, serie, tipos
+    API-->>N: JSONResponse data + _stats
+    N-->>U: 200 OK JSON com dados agregados
+    deactivate API
+
+    Note over U,PIP: Fluxo B - Disparo do Pipeline POST /api/pipeline
+    U->>N: POST /api/pipeline?ano=2025
+    N->>API: Proxy pass
+    activate API
+    API->>API: Verifica pipeline_status running
+    alt Pipeline ja em execucao
+        API-->>U: 409 Conflict Pipeline ja esta em execucao
+    else Pipeline livre
+        API->>API: pipeline_status running = True
+        API-->>U: 200 Pipeline iniciado em background
+        API->>PIP: BackgroundTasks.add_task _run_pipeline
+        activate PIP
+        PIP->>PIP: run_pipeline ano_filtro=2025<br/>Fases 1-5 completas
+        PIP-->>API: pipeline_status running = False
+        deactivate PIP
+    end
+    deactivate API
+
+    Note over U,API: Fluxo C - Status do Pipeline
+    U->>API: GET /api/pipeline/status
+    API-->>U: running: true/false, last_error: null
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 4: Compras PNCP -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="s4">
+  <h3>4. Dashboard Compras Publicas — Consulta PNCP com Proxy CORS</h3>
+  <p>Fluxo extraido de <code>pippa-compras-dashboard/index.html</code>: funcoes <code>fetchPNCP()</code>, <code>enrichItem()</code>, <code>classifyMPE()</code>, <code>classifyMEI()</code>. Consulta 5 modalidades (Pregao, Dispensa, Concorrencia, Inexigibilidade, Credenciamento) com ate 5 paginas cada, enriquece com classificacao MPE/MEI, setor, urgencia e faixa de valor.</p>
+  <div class="mermaid">
+sequenceDiagram
+    actor U as Analista UPP
+    participant D as Dashboard HTML
+    participant PX as Proxy CORS<br/>allorigins.win / corsproxy.io / codetabs.com
+    participant PNCP as API PNCP<br/>pncp.gov.br/api/consulta
+    participant CJ as Chart.js
+
+    U->>D: Acessa Compras Publicas, seleciona UF e periodo
+    activate D
+
+    loop 5 modalidades: Pregao 6, Dispensa 8, Concorrencia 5, Inexigibilidade 9, Credenciamento 12
+        loop Ate 5 paginas por modalidade, 50 itens/pagina
+            D->>PX: GET /get?url=pncp.gov.br/api/consulta/v1/contratacoes/publicacao<br/>?modalidadeId=N&pagina=P&uf=XX&codigoMunicipio=NNNN
+            PX->>PNCP: GET /api/consulta/v1/contratacoes/publicacao
+            PNCP-->>PX: JSON data: contratacoes, paginacao
+            PX-->>D: JSON wrapped em contents
+        end
+    end
+
+    Note over D: Proxy fallback: tenta allorigins, depois corsproxy, depois codetabs
+
+    D->>D: Deduplicacao por numeroControlePNCP
+    D->>D: Remove itens com proposta encerrada
+
+    loop Para cada item
+        D->>D: sanitizeValor: detecta outliers valor > R$ 10bi
+        D->>D: classifyMPE: Exclusiva MPE / Cota MPE / Ampla<br/>Texto exclusiv+mpe OU valor <= R$ 80k OU cota+mpe OU SRP
+        D->>D: classifyMEI somente se Exclusiva MPE<br/>Portal MEI contrata+brasil OU Dispensa valor <= R$ 50k
+        D->>D: detectSetores: 14 categorias por keywords
+        D->>D: classifyFaixaValor: 4 faixas ate R$ 80k a acima R$ 2mi
+        D->>D: classifyUrgencia: Encerrada/Urgente 3d/Atencao 7d/Tranquilo
+        D->>D: setorMEI: verifica 6 setores compativeis MEI
+    end
+
+    D->>D: Ordena por dias restantes crescente
+    D->>D: Aplica filtros: setor, modalidade, oportunidadeMPE, mei, faixaValor, urgencia, UF
+    D->>CJ: Renderiza graficos barras por UF, donut por tipo, serie temporal
+    CJ-->>D: Canvas renderizado
+    D-->>U: Dashboard com oportunidades classificadas
+    deactivate D
+
+    U->>D: Clica em contratacao especifica
+    D-->>U: Link externo para PNCP compras.gov.br/con/v1/cnpj/ano/seq
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 5: Stakeholders ICP/RIG -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="s5">
+  <h3>5. Stakeholders — Aquisicao de Dados e Scoring ICP/RIG</h3>
+  <p>Fluxo extraido de <code>pippa-stakeholders/index.html</code>: funcoes <code>fetchData()</code>, <code>computeScores()</code>, <code>computeICPRIG()</code>. Coleta dados de deputados, senadores, frentes parlamentares e comissoes, depois computa scoring em tres camadas: PB (5 dimensoes) x MI (1-3x) x BC (1.00-1.35), normalizado 0-100.</p>
+  <div class="mermaid">
+sequenceDiagram
+    actor U as Analista UPP
+    participant D as Dashboard HTML
+    participant CA as API Camara<br/>dadosabertos.camara.leg.br
+    participant SA as API Senado<br/>legis.senado.leg.br
+
+    U->>D: Acessa Stakeholders
+    activate D
+    D->>D: fetchData
+
+    par Coleta paralela
+        D->>CA: GET /api/v2/deputados?idLegislatura=57&itens=100
+        CA-->>D: JSON deputados paginados
+        loop Para cada deputado
+            D->>CA: GET /api/v2/deputados/id/orgaos
+            CA-->>D: JSON comissoes do deputado com cargo
+        end
+    and
+        D->>SA: GET /dadosabertos/senador/lista/atual
+        SA-->>D: JSON senadores em exercicio
+        loop Para cada senador
+            D->>SA: GET /dadosabertos/senador/codigo/comissoes
+            SA-->>D: JSON comissoes do senador com cargo
+        end
+    end
+
+    D->>CA: GET /api/v2/frentes?idLegislatura=57
+    CA-->>D: JSON todas as frentes parlamentares
+
+    loop Frentes com keywords Sebrae Tier1/2/3
+        D->>CA: GET /api/v2/frentes/id/membros
+        CA-->>D: JSON membros da frente
+        D->>D: Associa frente ao parlamentar<br/>Classifica tier: empreendedorismo, MEI,<br/>desburocratizacao, inovacao, etc.
+    end
+
+    D->>D: Match eleicao 2026 via CANDIDATOS_2026 lookup
+
+    Note over D: Passo 1: computeScores - alignment scoring
+
+    D->>CA: GET /api/v2/proposicoes?keywords=microempresa,MEI,...<br/>16 keywords tematicos, batch de 10
+    CA-->>D: JSON proposicoes por keyword
+    loop Para cada proposicao relevante
+        D->>CA: GET /api/v2/proposicoes/id/autores
+        CA-->>D: JSON autores
+        D->>D: Incrementa autoCount do parlamentar
+    end
+
+    D->>D: scoreFrentes 0-100 x 40%<br/>+ scoreComissoes 0-100 x 30%<br/>+ scoreAutorias 0-100 x 30%<br/>= Alignment Score total
+
+    Note over D: Passo 2: computeICPRIG - formula CP = PB x MI x BC
+
+    D->>D: dimA Amplitude da Rede 0-20:<br/>frentesRelevantes x 2 + orgaos.length x 3
+    D->>D: dimB Qualidade e Profundidade 0-30:<br/>Tier1 frentes x 8 + Tier2 x 4 + Tier1 comissoes x 10 + Tier2 x 5
+    D->>D: dimC Relevancia Estrategica 0-20:<br/>base tier + bonus cargo presidente/relator/titular
+    D->>D: dimD Articulacao e Mobilizacao 0-20:<br/>autoCount / maxAutorias x 20
+    D->>D: dimE Inteligencia Institucional 0-10:<br/>+2 foto, +2 email, +2 frentes, +2 orgaos, +2 eleicao
+    D->>D: PB = dimA + dimB + dimC + dimD + dimE
+    D->>D: MI: Senador Tier1 = 3x, Deputado eleito Senador = 2x, Padrao = 1x
+    D->>D: BC: Maior bonus por cargo em comissao prioritaria 1.00-1.35
+    D->>D: CP = PB x MI x BC
+    D->>D: icpNorm = CP / maxCP x 100<br/>Faixa: alto >=50, medio >=20, baixo menor 20
+
+    D-->>U: Ranking ICP/RIG com cards, badges e barras por dimensao
+    deactivate D
+
+    U->>D: Alterna para aba Mapa
+    activate D
+    D->>D: Renderiza SVG coropletico por UF<br/>Cor por concentracao de stakeholders alto
+    D-->>U: Mapa interativo com tooltip
+    deactivate D
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 6: Pesquisas Eleitorais -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="s6">
+  <h3>6. Pesquisas Eleitorais — ElectioLab e Media Ponderada</h3>
+  <p>Fluxo extraido de <code>pippa-pesquisas-eleitorais/index.html</code> e <code>scripts/update_polls.py</code>. Duas vias de calculo: pre-computado pelo backend Python com intervalo de confianca 95%, e ao vivo pelo frontend JavaScript quando filtros sao aplicados. Formula: peso = recencia x amostra x metodologia.</p>
+  <div class="mermaid">
+sequenceDiagram
+    participant GH as CronJob / Manual
+    participant PY as update_polls.py
+    participant EL as ElectioLab API<br/>electiolab.com/api/v1
+    participant FS as index.html<br/>JS constants
+    actor U as Analista UPP
+    participant D as Dashboard HTML
+    participant CJ as Chart.js
+
+    Note over GH,FS: Via Backend - Pre-computacao Python
+
+    GH->>PY: python update_polls.py
+    activate PY
+    PY->>EL: GET /api/v1/elections<br/>Lista eleicoes ativas 2026
+    EL-->>PY: JSON eleicoes presidente/governador/senador
+    loop Para cada eleicao
+        PY->>EL: GET /api/v1/polls?election_id=N&page=P
+        EL-->>PY: JSON pesquisas com instituto, data, amostra, metodo, candidatos
+    end
+
+    PY->>PY: compute_weighted_averages<br/>wRec = exp -ln2 x dias/14<br/>wSmp = sqrt amostra<br/>wMet = presencial 1.0 / telefonica 0.9 / mista 0.85 / online 0.8<br/>peso = wRec x wSmp x wMet
+    PY->>PY: Para cada candidato:<br/>avg = sum peso x pct / sum peso<br/>Calcula IC 95%: avg +/- 1.96 x SE
+
+    PY->>FS: replace_js_const RAW_POLLS = dados brutos
+    PY->>FS: replace_js_const PRES_AVGS = medias presidente
+    PY->>FS: replace_js_const STATE_AVGS = medias estaduais
+    PY->>FS: replace_js_const SECOND_ROUND = cenarios 2o turno
+    deactivate PY
+
+    Note over U,CJ: Via Frontend - Calculo ao Vivo
+
+    U->>D: Acessa dashboard e aplica filtros<br/>cargo, UF, periodo, instituto
+    activate D
+    D->>D: Carrega RAW_POLLS -> allPolls<br/>Carrega PRES_AVGS -> presidentialAverages
+
+    alt Sem filtros ativos
+        D->>D: getElectioLabAverages<br/>Usa medias pre-computadas com IC 95%
+    else Filtros aplicados
+        D->>D: computeAggregated polls filtrados<br/>maxSample = maior amostra do conjunto<br/>wRec = 2 elevado a -daysAgo/14<br/>wSmp = sqrt amostra / sqrt maxSample<br/>wMet = lookup METHODOLOGY_WEIGHTS<br/>peso = wRec x wSmp x wMet<br/>weightedAvg = wSum / wTotal
+        D->>D: computeTrend: regressao linear<br/>Determina direcao subindo/estavel/descendo
+        D->>D: Calcula media simples, mediana, desvio padrao, min/max
+    end
+
+    D->>D: Ordena candidatos por weightedAvg decrescente
+    D->>CJ: Renderiza ranking com barras coloridas
+    D->>CJ: Renderiza evolucao temporal por candidato
+    CJ-->>D: Canvas renderizado
+    D->>D: renderAgregado: tabela com avg, mediana, stdev, range, count, tendencia
+    D-->>U: Dashboard com ranking e agregado estatistico
+    deactivate D
+
+    U->>D: Clica em Compartilhar via WhatsApp
+    activate D
+    D->>D: Gera texto com ranking por media ponderada
+    D->>D: navigator.share
+    D-->>U: Texto formatado compartilhado
+    deactivate D
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 7: Reforma Tributaria -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="s7">
+  <h3>7. Reforma Tributaria — RSS News e Motor de Credibilidade</h3>
+  <p>Fluxo extraido de <code>pippa-reforma-dashboard/index.html</code>: funcoes <code>fetchData()</code>, <code>classifyNews()</code>, <code>classifyCredibility()</code>. Monitora noticias via Google News RSS com 4 queries tematicas, classifica conteudo (Fato/Proposta/Expectativa), tema (IBS/CBS/IS), impacto MPE, e credibilidade da fonte (Confiavel/Atencao/Risco).</p>
+  <div class="mermaid">
+sequenceDiagram
+    actor U as Analista UPP
+    participant D as Dashboard HTML
+    participant PX as Proxy CORS<br/>rss2json / allorigins / corsproxy
+    participant GN as Google News RSS<br/>news.google.com/rss/search
+    participant CACHE as news_cache.json<br/>fallback local
+
+    U->>D: Clica em Monitorar Noticias
+    activate D
+
+    loop 4 queries tematicas reforma tributaria
+        D->>PX: GET proxy?url=news.google.com/rss/search?q=reforma+tributaria+...
+        PX->>GN: GET /rss/search?q=...&hl=pt-BR&ceid=BR:pt-419
+        GN-->>PX: RSS XML com items
+        PX-->>D: JSON/XML convertido
+    end
+
+    alt Todos os proxies falharam
+        D->>CACHE: fetch data/news_cache.json
+        CACHE-->>D: JSON cache local de noticias
+    end
+
+    D->>D: extractSource title: separa no ultimo " - "<br/>extractTitle title: parte antes do " - "
+
+    loop Para cada noticia - processResults
+        D->>D: classifyNews title<br/>status: Fato OU Proposta OU Expectativa<br/>tema: IBS, CBS, IS, Comite Gestor, Transicao...<br/>impacto MPE: Alto / Medio / Baixo / Indefinido
+
+        D->>D: classifyCredibility source, title
+        Note over D: Fase 1 - Lookup fontes confiáveis
+        D->>D: normalize source: remove acentos, lowercase
+        alt Source em FONTES_JORNALISTICAS ~55 veiculos
+            D->>D: score=100, Confiavel, veiculo consolidado
+        else Source em FONTES_INSTITUCIONAIS ~60 fontes
+            D->>D: score=100, Confiavel, fonte institucional
+        else Source desconhecida - analise heuristica
+            D->>D: riscoScore = 0
+            D->>D: Source desconhecida ou < 3 chars? +40
+            D->>D: Match 12 FAKE_NEWS_PATTERNS regex? +50
+            D->>D: 2+ CLICKBAIT_SIGNALS? +30 / 1 sinal? +10
+            D->>D: > 50% UPPERCASE e length > 20? +20
+            D->>D: 3+ exclamacoes? +20
+            alt riscoScore >= 40
+                D->>D: Risco, score = max 0, 100-riscoScore
+            else riscoScore menor 40
+                D->>D: Atencao, score = max 30, 100-riscoScore
+            end
+        end
+    end
+
+    D->>D: Ordena: Fato > Proposta > Expectativa,<br/>depois Alto > Medio > Baixo impacto
+    D->>D: Aplica filtros: tema, status, impacto, credibilidade
+    D->>D: Renderiza cards com badges credibilidade<br/>Risco: borda vermelha / Atencao: borda ambar
+    D->>D: Atualiza KPI: Risco Fake News counter
+
+    D-->>U: Painel de noticias classificadas
+    deactivate D
+
+    U->>D: Clica Exportar WhatsApp
+    activate D
+    D->>D: Gera texto com filtros ativos
+    Note over D: Se itens Risco: inclui alerta credibilidade
+    D->>D: navigator.share
+    D-->>U: Texto formatado com alertas
+    deactivate D
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- DIAGRAMA 8: PartidoResolver -->
+<!-- ================================================================== -->
+<div class="diagram-section" id="s8">
+  <h3>8. PartidoResolver — Fuzzy Matching de Parlamentares</h3>
+  <p>Fluxo extraido de <code>pippa-emendas/scripts/enrichment/partido_resolver.py</code>. Para cada emenda do DataFrame, identifica o parlamentar autor via indice nome_normalizado por legislatura. Ordem: match exato normalizado, depois fuzzy match via RapidFuzz com threshold >= 85. Emendas de bancada/comissao/relator recebem flag NAO_APLICAVEL.</p>
+  <div class="mermaid">
+sequenceDiagram
+    participant PIP as pipeline.py
+    participant PR as PartidoResolver
+    participant IDX as Indice por Legislatura<br/>nome_normalizado -> Parlamentar
+    participant RF as RapidFuzz<br/>fuzz.ratio
+
+    PIP->>PR: PartidoResolver parlamentares_camara + senado
+    activate PR
+    PR->>IDX: Monta indice por legislatura<br/>Para cada parlamentar: normaliza nome,<br/>indexa por legislatura
+    IDX-->>PR: Indice pronto: N registros em M legislaturas
+    deactivate PR
+
+    PIP->>PR: enriquecer df_emendas
+    activate PR
+
+    loop Para cada linha do DataFrame ~94k emendas
+        PR->>PR: Verifica tipo_emenda
+        alt Tipo em TIPOS_SEM_AUTOR_INDIVIDUAL<br/>bancada, comissao, relator
+            PR->>PR: match_confianca = NAO_APLICAVEL<br/>partido = null, uf = null
+        else Tipo com autor individual
+            PR->>PR: normalizar_nome nome_autor<br/>NFKD, remove diacriticos,<br/>uppercase, colapsa espacos
+            PR->>PR: ano_para_legislatura ano<br/>Consulta dict LEGISLATURAS inicio/fim
+
+            alt Legislatura nao encontrada
+                PR->>PR: match_confianca = NAO_ENCONTRADO
+            else Legislatura encontrada
+                PR->>IDX: Busca nome_norm no indice legislatura
+                alt Match exato encontrado
+                    IDX-->>PR: Parlamentar p<br/>partido, uf
+                    PR->>PR: match_confianca = EXATO
+                else Match exato nao encontrado
+                    PR->>RF: fuzz.ratio nome_norm, cada candidato<br/>Loop por todos os nomes da legislatura
+                    RF-->>PR: best_score, best_match
+                    alt best_score >= 85 FUZZY_MATCH_THRESHOLD
+                        PR->>IDX: Busca best_match no indice
+                        IDX-->>PR: Parlamentar p
+                        PR->>PR: match_confianca = FUZZY<br/>Log: nome original -> match score
+                    else best_score menor 85
+                        PR->>PR: match_confianca = NAO_ENCONTRADO<br/>partido = null, uf = null
+                    end
+                end
+            end
+        end
+
+        Note over PR: A cada 10.000 linhas: log progresso N/total %
+    end
+
+    PR->>PR: Adiciona colunas ao DataFrame:<br/>partido, uf_autor, legislatura, match_confianca
+    PR->>PR: Log match stats: value_counts de match_confianca
+
+    PR-->>PIP: DataFrame enriquecido com 4 colunas novas
+    deactivate PR
+  </div>
+</div>
+
+<div class="doc-footer">
+  <div><span class="classification">USO INTERNO — SEBRAE NACIONAL</span></div>
+  <div>PIPPA — UPP . Sebrae Nacional . Novembro 2026 . Artefato 3.10</div>
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  themeVariables: {
+    actorBkg: '#2a4fda',
+    actorTextColor: '#ffffff',
+    actorBorder: '#0b2574',
+    actorLineColor: '#2a4fda',
+    signalColor: '#0b2574',
+    signalTextColor: '#1a1a1a',
+    noteBkgColor: '#e8edff',
+    noteTextColor: '#0b2574',
+    noteBorderColor: '#2a4fda',
+    activationBkgColor: '#e8edff',
+    activationBorderColor: '#2a4fda',
+    sequenceNumberColor: '#ffffff',
+    fontFamily: '"Figtree", sans-serif',
+    fontSize: '13px',
+  },
+  sequence: {
+    actorMargin: 60,
+    messageMargin: 30,
+    mirrorActors: false,
+    useMaxWidth: true,
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documento de Regras de Negócio — PIPPA</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+@page { size: A4; margin: 16mm 18mm 20mm 18mm; }
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page-break { page-break-before: always; }
+  .no-print { display: none !important; }
+  .rule-card { break-inside: avoid; }
+}
+:root {
+  --azul:#2a4fda; --atlantico:#0b2574; --ceu:#65b7fb; --offwhite:#eff3ee;
+  --verde:#61b466; --amarelo:#fbec76; --laranja:#f39d72; --vermelho:#e0565d;
+  --roxo:#be64e3; --jacaranda:#8f85f4;
+  --font-heading:'Plus Jakarta Sans',sans-serif;
+  --font-body:'Figtree',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:10pt; }
+body { font-family:var(--font-body); color:#1a1a1a; background:#fff; line-height:1.55; max-width:210mm; margin:0 auto; padding:16mm 18mm 20mm 18mm; }
+
+.doc-header { display:flex; align-items:flex-start; justify-content:space-between; border-bottom:3px solid var(--azul); padding-bottom:12px; margin-bottom:18px; }
+.brand-text { display:flex; flex-direction:column; }
+.brand-org { font-family:var(--font-heading); font-size:9.5pt; font-weight:700; color:var(--azul); letter-spacing:-.4px; }
+.brand-unit { font-size:7.5pt; color:#6b7280; font-weight:500; }
+.doc-type-box { text-align:right; }
+.doc-type { font-family:var(--font-heading); font-size:7.5pt; font-weight:700; color:#fff; background:var(--azul); padding:3px 10px; border-radius:4px; display:inline-block; letter-spacing:.5px; }
+.doc-date { font-size:7pt; color:#6b7280; margin-top:3px; }
+
+.title-block { background:linear-gradient(45deg, var(--atlantico), var(--azul)); border-radius:8px; padding:20px 24px; margin-bottom:20px; color:#fff; }
+.title-block h1 { font-family:var(--font-heading); font-size:15pt; font-weight:800; letter-spacing:-1px; margin-bottom:3px; line-height:1.2; }
+.title-block .subtitle { font-size:9.5pt; color:rgba(255,255,255,.8); font-weight:400; }
+.title-block .ref { font-size:7pt; color:rgba(255,255,255,.45); margin-top:8px; }
+
+h2 { font-family:var(--font-heading); font-size:12pt; font-weight:800; color:var(--atlantico); margin:22px 0 8px; padding-bottom:4px; border-bottom:2px solid var(--azul); letter-spacing:-.5px; }
+h3 { font-family:var(--font-heading); font-size:10pt; font-weight:700; color:var(--azul); margin:14px 0 5px; }
+h4 { font-family:var(--font-heading); font-size:9pt; font-weight:700; color:#374151; margin:10px 0 3px; }
+p { margin-bottom:6px; text-align:justify; hyphens:auto; }
+ul, ol { margin:0 0 8px 16px; }
+li { margin-bottom:2px; }
+code { background:#f3f4f6; padding:1px 4px; border-radius:3px; font-size:8.5pt; font-family:'Cascadia Code','Fira Code',monospace; }
+
+table { width:100%; border-collapse:collapse; margin:8px 0 14px; font-size:8.5pt; }
+th { background:var(--azul); color:#fff; font-family:var(--font-heading); font-weight:700; text-align:left; padding:6px 8px; font-size:8pt; letter-spacing:.3px; }
+td { padding:6px 8px; border-bottom:1px solid #e5e7eb; vertical-align:top; }
+tr:nth-child(even) td { background:#f9fafb; }
+
+.badge { font-size:6.5pt; font-weight:700; padding:2px 6px; border-radius:3px; display:inline-block; text-transform:uppercase; letter-spacing:.3px; white-space:nowrap; }
+.badge-engine { background:rgba(42,79,218,.08); color:var(--azul); border:1px solid rgba(42,79,218,.15); }
+.badge-python { background:rgba(97,180,102,.08); color:#166534; border:1px solid rgba(97,180,102,.15); }
+.badge-js { background:rgba(251,236,118,.2); color:#92400e; border:1px solid rgba(251,236,118,.4); }
+
+.rule-card { border:1px solid #e5e7eb; border-radius:6px; padding:12px 14px; margin:8px 0; border-left:4px solid var(--azul); }
+.rule-card .rule-header { display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+.rule-card .rule-title { font-family:var(--font-heading); font-weight:700; font-size:10pt; color:var(--atlantico); }
+.rule-card .source-ref { font-size:7.5pt; color:#6b7280; font-family:'Cascadia Code','Fira Code',monospace; margin-top:6px; padding-top:6px; border-top:1px dashed #e5e7eb; }
+
+.formula { background:#f3f4f6; border-radius:4px; padding:8px 12px; font-family:'Cascadia Code','Fira Code',monospace; font-size:9pt; margin:6px 0; line-height:1.7; }
+
+.highlight { background:rgba(42,79,218,.05); border-left:4px solid var(--azul); border-radius:0 6px 6px 0; padding:10px 14px; margin:10px 0 14px; font-size:8.5pt; }
+.highlight strong { color:var(--azul); }
+
+.toc { margin:12px 0 18px; padding:14px 18px; background:#f9fafb; border-radius:6px; border:1px solid #e5e7eb; }
+.toc a { color:var(--azul); text-decoration:none; font-size:9pt; }
+.toc a:hover { text-decoration:underline; }
+.toc ol { counter-reset:toc-section; list-style:none; margin:0; padding:0; }
+.toc ol li { counter-increment:toc-section; margin:3px 0; }
+.toc ol li::before { content:counter(toc-section) ". "; font-family:var(--font-heading); font-weight:700; color:var(--atlantico); }
+
+.doc-footer { margin-top:24px; padding-top:10px; border-top:2px solid var(--azul); display:flex; justify-content:space-between; font-size:7pt; color:#9ca3af; }
+.doc-footer .classification { font-family:var(--font-heading); font-weight:700; color:var(--azul); font-size:7pt; }
+
+.print-btn { position:fixed; bottom:24px; right:24px; background:var(--azul); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 16px rgba(42,79,218,.35); z-index:100; }
+.print-btn:hover { background:var(--atlantico); }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
+
+<div class="doc-header">
+  <div class="brand-text">
+    <span class="brand-org">PIPPA — Plataforma de Inteligência em Políticas Públicas Aplicadas</span>
+    <span class="brand-unit">Unidade de Políticas Públicas · Sebrae Nacional</span>
+  </div>
+  <div class="doc-type-box">
+    <span class="doc-type">DOCUMENTAÇÃO TÉCNICA</span>
+    <div class="doc-date">Novembro de 2026</div>
+  </div>
+</div>
+
+<div class="title-block">
+  <h1>Documento de Regras de Negócio — PIPPA</h1>
+  <div class="subtitle">Consolidação das regras de classificação, scoring, heurísticas e validações implementadas em código nas ferramentas da plataforma</div>
+  <div class="ref">Artefato 3.5 — Relatório de Aderência UTIC · Extraído do código-fonte do repositório gitlab.sebrae.com.br:na/upp/plataforma-de-inteligencia-em-politicas-publicas-aplicadas-pippa</div>
+</div>
+
+<div class="toc">
+  <strong style="font-family:var(--font-heading);color:var(--atlantico);">Sumário</strong>
+  <ol>
+    <li><a href="#sec1">Radar Legislativo — Classificação P0–P4 (10 critérios)</a></li>
+    <li><a href="#sec2">Stakeholders — Score de Alinhamento Sebrae (3 eixos)</a></li>
+    <li><a href="#sec3">Stakeholders — ICP/RIG — Índice de Capital Político (PB × MI × BC)</a></li>
+    <li><a href="#sec4">Regulatório DOU — Motor de Credibilidade de Fontes</a></li>
+    <li><a href="#sec5">Regulatório DOU — Classificação de Notícias (Status + Tema + Impacto)</a></li>
+    <li><a href="#sec6">Compras Públicas — Classificação MPE/MEI</a></li>
+    <li><a href="#sec7">Compras Públicas — Urgência e Faixa de Valor</a></li>
+    <li><a href="#sec8">Pesquisas Eleitorais — Média Ponderada com Decay Temporal</a></li>
+    <li><a href="#sec9">Emendas Parlamentares — Pipeline de Enriquecimento e Validação Cruzada</a></li>
+    <li><a href="#sec10">Emendas Parlamentares — Fuzzy Matching de Autores</a></li>
+  </ol>
+</div>
+
+<!-- ================================================================ -->
+<!-- 1. RADAR LEGISLATIVO -->
+<!-- ================================================================ -->
+<h2 id="sec1">1. Radar Legislativo — Classificação P0–P4</h2>
+
+<div class="rule-card">
+  <div class="rule-header">
+    <span class="rule-title">Sistema de Priorização em 10 Critérios</span>
+    <span class="badge badge-engine">Engine de Classificação</span>
+  </div>
+  <p>Cada proposição legislativa (PEC, PLP, PL, PDL/PDC) é avaliada segundo 10 critérios independentes que, combinados com regras de precedência, produzem uma prioridade final P0–P4. Documentos acessórios (requerimentos, pareceres, emendas) NÃO recebem classificação autônoma.</p>
+
+  <h4>Critério 1 — Papel efetivo do Sebrae Nacional</h4>
+  <table>
+    <tr><th>Classificação</th><th>Quando aplicar</th></tr>
+    <tr><td>Incidência institucional ativa</td><td>Atuação direta: posicionamento, articulação, diálogo com lideranças. Aplica-se a P0 e P1.</td></tr>
+    <tr><td>Monitoramento estratégico</td><td>Relevante, acompanhamento regular, sem incidência imediata.</td></tr>
+    <tr><td>Subsídio técnico eventual</td><td>Sem acompanhamento contínuo; Sebrae pode fornecer dados/estudos sob demanda.</td></tr>
+    <tr><td>Monitoramento passivo</td><td>Apenas em radar, por alertas de movimentação.</td></tr>
+    <tr><td>Delegar a Sebrae UF/parceiro</td><td>Impacto estadual, municipal ou restrito a cadeia produtiva.</td></tr>
+    <tr><td>Arquivar / retirar</td><td>Encerrada, ultrapassada, duplicada ou sem impacto.</td></tr>
+    <tr><td>Fora do escopo</td><td>Sem conexão com MPE, MEI, Simples, Sistema S ou eixos estratégicos.</td></tr>
+  </table>
+
+  <h4>Critério 2 — Relevância para o Sebrae Nacional</h4>
+  <table>
+    <tr><th>Nível</th><th>Quando aplicar</th></tr>
+    <tr><td>Central</td><td>Núcleo institucional: LC 123/2006, Simples Nacional, MEI, FAMPE, governança, orçamento. Inclui Agenda Legislativa 2026.</td></tr>
+    <tr><td>Alta</td><td>Impacto nacional/material: ambiente de negócios, crédito, compras públicas, inovação.</td></tr>
+    <tr><td>Média</td><td>Efeito relevante mas indireto, condicionado ou restrito a parte da carteira.</td></tr>
+    <tr><td>Baixa</td><td>Conexão periférica, setorial, retórica ou processual.</td></tr>
+    <tr><td>Nula ou residual</td><td>Sem impacto efetivo. Interesse histórico ou informacional.</td></tr>
+  </table>
+
+  <h4>Critério 3 — Aderência ao Planejamento Estratégico 2024–2027</h4>
+  <p>Escala: Alta aderência → Média → Baixa → Sem aderência clara.</p>
+
+  <h4>Critério 4 — Eixo estratégico predominante (apenas UM por proposição)</h4>
+  <table>
+    <tr><th>Eixo</th><th>Escopo</th></tr>
+    <tr><td>Ambiente de negócios</td><td>Abertura/fechamento empresas, licenciamento, desburocratização, custos regulatórios.</td></tr>
+    <tr><td>MEI, Simples, LC 123</td><td>Limites de receita, enquadramento, tributação, formalização.</td></tr>
+    <tr><td>Crédito e financiamento</td><td>FAMPE, fundos garantidores, microcrédito, inclusão financeira.</td></tr>
+    <tr><td>Compras públicas</td><td>Tratamento favorecido em licitações, cotas, subcontratação.</td></tr>
+    <tr><td>Produtividade e inovação</td><td>Digitalização, IA, propriedade intelectual, transformação digital.</td></tr>
+    <tr><td>Educação empreendedora</td><td>Formação gerencial, qualificação, cultura empreendedora.</td></tr>
+    <tr><td>Desenvolvimento territorial</td><td>Bioeconomia, economia circular, ecossistemas de inovação.</td></tr>
+    <tr><td>Inclusão produtiva</td><td>Empreendedorismo feminino, negro, jovem, periférico.</td></tr>
+    <tr><td>Setorial/corporativo</td><td>Benefício restrito a profissão/cadeia sem efeito transversal.</td></tr>
+    <tr><td>Sem conexão clara</td><td>Sem relação com eixo institucional acionável.</td></tr>
+  </table>
+
+  <h4>Critério 5 — Tipo de impacto</h4>
+  <p>Escala: Direto sobre MPE/MEI → Direto sobre sistema Sebrae → Indireto → Setorial → Corporativo → Social amplo → Processual/simbólico → Sem impacto.</p>
+
+  <h4>Critério 5A — Grau de impacto (escala Siga Lei)</h4>
+  <p>Escala: Muito alto → Alto → Médio → Baixo → Sem impacto. Deve ser consistente com classificação existente no Siga Lei.</p>
+
+  <h4>Critério 5B — Posicionamento do Sebrae</h4>
+  <p>Favorável | Favorável com ressalvas | Contrário | Neutro/em análise | Não aplicável. Aplicável apenas a P0, P1 e P2 de relevância Central ou Alta.</p>
+
+  <h4>Critério 6 — Abrangência do impacto</h4>
+  <p>Nacional e transversal → Nacional mas setorial → Regional/local → Categoria profissional → Empresa/cadeia específica → Indefinida.</p>
+
+  <h4>Critério 7 — Situação de tramitação</h4>
+  <table>
+    <tr><th>Classificação</th><th>Regra</th></tr>
+    <tr><td>Ativa e recente</td><td>Movimentação substantiva nos últimos 90 dias.</td></tr>
+    <tr><td>Ativa, mas lenta</td><td>Movimentação entre 91 e 365 dias.</td></tr>
+    <tr><td>Latente</td><td>Sem movimentação entre 1 e 2 anos, mas formalmente em tramitação.</td></tr>
+    <tr><td>Paralisada</td><td>Sem movimentação há mais de 2 anos.</td></tr>
+    <tr><td>Encerrada</td><td>Arquivada, retirada, aprovada, sancionada ou equivalente.</td></tr>
+  </table>
+
+  <h4>Critério 8 — Prioridade de acompanhamento (P0–P4)</h4>
+  <table>
+    <tr><th>Prioridade</th><th>Quando aplicar</th></tr>
+    <tr><td><strong>P0 — Crítica</strong></td><td>Agenda Legislativa 2026 OU impacto crítico sobre governança/orçamento/contribuições do Sebrae/Sistema S OU alteração estrutural de LC 123/2006, MEI, Simples com votação iminente.</td></tr>
+    <tr><td><strong>P1 — Alta</strong></td><td>Impacto institucional direto sem votação iminente; demanda nota técnica ou negociação preventiva.</td></tr>
+    <tr><td><strong>P2 — Média</strong></td><td>Relevância suficiente para monitoramento; atuação se houver avanço, parecer ou pauta.</td></tr>
+    <tr><td><strong>P3 — Baixa</strong></td><td>Radar passivo, sem alocação regular de esforço.</td></tr>
+    <tr><td><strong>P4 — Arquivar</strong></td><td>Fora da carteira ativa: encerrada, baixa relevância, duplicada, processual.</td></tr>
+  </table>
+
+  <h4>Critério 9 — Ação recomendada</h4>
+  <p>Elaborar nota técnica | Articular institucionalmente | Acompanhar relatoria | Monitorar movimentação | Consolidar com semelhantes | Delegar a UF/parceiro | Arquivar | Reclassificar manualmente.</p>
+
+  <h4>Critério 10 — Filtro institucional Sebrae/Sistema S</h4>
+  <p>Identifica proposições que merecem P0/P1 por atingirem a estrutura institucional. Dimensões: Governança, Organização, Orçamento/receitas, Destinação de recursos, Gestão, Controle/transparência, Contratações/pessoal, Sistema S, Lei 8.029/1990.</p>
+  <p><strong>NÃO aciona o filtro:</strong> menção genérica ao Sebrae, previsão facultativa de parceria, convite para audiência, elogio/homenagem.</p>
+
+  <h4>Regras de precedência</h4>
+  <ol>
+    <li><strong>Agenda Legislativa 2026:</strong> P0 automático, relevância Central, incidência ativa, articular institucionalmente.</li>
+    <li><strong>Governança/orçamento/gestão Sebrae:</strong> Elevação a P0 ou P1 independentemente de impacto sobre MPE.</li>
+    <li><strong>Sistema S:</strong> Alterações de regime comum → prioridade institucional.</li>
+    <li><strong>Encerramento processual:</strong> Retirar da carteira ativa (exceto Agenda 2026).</li>
+    <li><strong>Apensamento:</strong> Consolidar em torno do processo principal.</li>
+    <li><strong>Atos processuais:</strong> Requerimentos de P0 NÃO herdam prioridade — permanecem P3/P4.</li>
+  </ol>
+
+  <h4>Revisão humana obrigatória</h4>
+  <p>Toda proposição P0 ou P1 deve ser sinalizada como <strong>pendente de validação humana</strong>. A classificação automatizada é indicativa.</p>
+
+  <div class="source-ref">Fonte: <code>pippa-legislativo-dashboard/docs/pippa-legislativo-skill.md</code> (592 linhas, documento formal completo)</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- 2. STAKEHOLDERS — ALINHAMENTO -->
+<!-- ================================================================ -->
+<h2 id="sec2">2. Stakeholders — Score de Alinhamento Sebrae</h2>
+
+<div class="rule-card">
+  <div class="rule-header">
+    <span class="rule-title">Scoring 0–100 em 3 eixos ponderados</span>
+    <span class="badge badge-js">JavaScript</span>
+    <span class="badge badge-engine">Engine de Scoring</span>
+  </div>
+
+  <div class="formula">
+    Score_total = 0,40 × Score_Frentes + 0,30 × Score_Comissões + 0,30 × Score_Autorias
+  </div>
+
+  <h4>Eixo 1 — Frentes Parlamentares (peso 40%)</h4>
+  <p>Cada frente parlamentar do parlamentar é classificada por relevância para o Sebrae via keywords em 3 tiers:</p>
+  <table>
+    <tr><th>Tier</th><th>Keywords</th><th>Pontos por frente</th></tr>
+    <tr><td><strong>Tier 1 (alta)</strong></td><td>empreendedorismo, micro e pequen, microempresa, pequena empresa, simples nacional, mei, microempreendedor</td><td>20 pontos</td></tr>
+    <tr><td><strong>Tier 2 (média)</strong></td><td>desburocratiz, inovacao, startup, cooperativ, credito, livre iniciativa, fomento</td><td>12 pontos</td></tr>
+    <tr><td><strong>Tier 3 (apoio)</strong></td><td>comercio, industria, turismo, agronegocio, tecnologia, digital, exporta, desenvolvimento regional</td><td>5 pontos</td></tr>
+  </table>
+  <div class="formula">Score_Frentes = min(100, Σ tier1×20 + Σ tier2×12 + Σ tier3×5)</div>
+
+  <h4>Eixo 2 — Comissões (peso 30%)</h4>
+  <table>
+    <tr><th>Classificação</th><th>Comissões</th><th>Pontos</th></tr>
+    <tr><td><strong>Tier 1 (estratégicas)</strong></td><td>CDE, CICS, CFT, CAE</td><td>35 pontos cada</td></tr>
+    <tr><td><strong>Tier 2 (apoio)</strong></td><td>CCTI, CI, CDR, CAS, CAPADR, CE, CCT</td><td>18 pontos cada</td></tr>
+  </table>
+  <div class="formula">Score_Comissões = min(100, Σ tier1×35 + Σ tier2×18)</div>
+
+  <h4>Eixo 3 — Autorias Temáticas (peso 30%)</h4>
+  <p>Busca proposições na API da Câmara com keywords temáticas MPE (microempresa, simples nacional, empreendedorismo, MEI, pronampe, startup, cooperativa, etc.). Conta autorias por deputado e normaliza pelo máximo.</p>
+  <div class="formula">Score_Autorias = min(100, (autorias_parlamentar / max_autorias_global) × 100)</div>
+
+  <h4>Classificação em faixas</h4>
+  <table>
+    <tr><th>Faixa</th><th>Threshold</th></tr>
+    <tr><td><strong>Alto</strong></td><td>Score ≥ 50</td></tr>
+    <tr><td><strong>Médio</strong></td><td>Score ≥ 20 e &lt; 50</td></tr>
+    <tr><td><strong>Baixo</strong></td><td>Score &lt; 20</td></tr>
+  </table>
+
+  <div class="source-ref">Fonte: <code>pippa-stakeholders/index.html</code> — funções <code>scoreFrentes()</code> (linha 2096), <code>scoreComissoes()</code> (linha 2111), <code>computeScores()</code> (linha 2175)</div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 3. ICP/RIG -->
+<!-- ================================================================ -->
+<h2 id="sec3">3. Stakeholders — ICP/RIG (Índice de Capital Político)</h2>
+
+<div class="rule-card">
+  <div class="rule-header">
+    <span class="rule-title">Fórmula CP = PB × MI × BC</span>
+    <span class="badge badge-js">JavaScript</span>
+    <span class="badge badge-engine">Engine de Scoring</span>
+  </div>
+
+  <div class="formula">
+    CP (Capital Ponderado) = PB × MI × BC<br>
+    ICP/RIG normalizado = (CP / max_CP_global) × 100
+  </div>
+
+  <h4>PB — Pontuação-base (0–100): 5 dimensões</h4>
+  <table>
+    <tr><th>Dimensão</th><th>Máximo</th><th>Fórmula</th></tr>
+    <tr><td><strong>A. Amplitude</strong></td><td>20</td><td><code>min(20, frentes_relevantes × 2 + comissões × 3)</code></td></tr>
+    <tr><td><strong>B. Profundidade</strong></td><td>30</td><td><code>min(30, frentes_T1 × 8 + frentes_T2 × 4 + comissões_T1 × 10 + comissões_T2 × 5)</code></td></tr>
+    <tr><td><strong>C. Relevância</strong></td><td>20</td><td>Pontos por comissão estratégica com bônus por papel: Presidente/Relator +5, Titular +3. Base: T1 = 8, T2 = 4.</td></tr>
+    <tr><td><strong>D. Articulação</strong></td><td>20</td><td><code>min(20, round((autorias / max_autorias) × 20))</code></td></tr>
+    <tr><td><strong>E. Inteligência</strong></td><td>10</td><td>2 pontos por item disponível: foto, email, frentes, comissões, dados eleitorais 2026.</td></tr>
+  </table>
+
+  <h4>MI — Multiplicador Institucional (1×, 2× ou 3×)</h4>
+  <table>
+    <tr><th>Condição</th><th>MI</th></tr>
+    <tr><td>Padrão (sem condição especial)</td><td>1×</td></tr>
+    <tr><td>Deputado eleito Senador em 2026</td><td>2×</td></tr>
+    <tr><td>Senador em comissão estratégica (Tier 1)</td><td>3×</td></tr>
+  </table>
+  <p>Usa-se o maior multiplicador aplicável (não acumula).</p>
+
+  <h4>BC — Bônus de Comissão (1,00 a 1,35)</h4>
+  <table>
+    <tr><th>Papel na comissão</th><th>Comissão Tier 1</th><th>Comissão Tier 2</th></tr>
+    <tr><td>Presidente</td><td>1,35</td><td>1,25</td></tr>
+    <tr><td>Vice-Presidente</td><td>1,30</td><td>1,20</td></tr>
+    <tr><td>Relator</td><td>1,25</td><td>1,15</td></tr>
+    <tr><td>Titular</td><td>1,15</td><td>1,05</td></tr>
+    <tr><td>Suplente</td><td>1,05</td><td>1,00</td></tr>
+    <tr><td>Outro papel</td><td>1,10</td><td>1,00</td></tr>
+  </table>
+  <p>Usa-se o maior BC entre todas as comissões prioritárias do parlamentar.</p>
+
+  <h4>Faixas ICP/RIG</h4>
+  <table>
+    <tr><th>Faixa</th><th>Threshold (ICP normalizado)</th></tr>
+    <tr><td>Alto</td><td>≥ 50</td></tr>
+    <tr><td>Médio</td><td>≥ 20 e &lt; 50</td></tr>
+    <tr><td>Baixo</td><td>&lt; 20</td></tr>
+  </table>
+
+  <div class="source-ref">Fonte: <code>pippa-stakeholders/index.html</code> — funções <code>computeICPRIG()</code> (linha 2379), <code>computeDimA-E()</code> (linhas 2274–2333), <code>computeMI()</code> (linha 2335), <code>computeBC()</code> (linha 2352)</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- 4. CREDIBILIDADE DOU -->
+<!-- ================================================================ -->
+<h2 id="sec4">4. Regulatório DOU — Motor de Credibilidade de Fontes</h2>
+
+<div class="rule-card">
+  <div class="rule-header">
+    <span class="rule-title">Classificação de credibilidade por fonte e título</span>
+    <span class="badge badge-js">JavaScript</span>
+    <span class="badge badge-engine">Engine Heurístico</span>
+  </div>
+
+  <p>Cada notícia sobre reforma tributária é classificada em 3 níveis de credibilidade com base na fonte e sinais textuais do título.</p>
+
+  <h4>Passo 1 — Verificação de fonte confiável</h4>
+  <p>Se a fonte está em <code>FONTES_JORNALISTICAS</code> (37 veículos: Agência Brasil, Valor Econômico, Folha, Estadão, O Globo, CNN Brasil, BBC, Reuters, Bloomberg, Poder360, JOTA, etc.) ou <code>FONTES_INSTITUCIONAIS</code> (55 entidades: Sebrae, CNI, CNA, Receita Federal, Câmara, Senado, IBGE, IPEA, FGV, USP, bancos, etc.):</p>
+  <div class="formula">Resultado: <strong>Confiável</strong> (score = 100)</div>
+
+  <h4>Passo 2 — Detecção de risco (se fonte não reconhecida)</h4>
+  <table>
+    <tr><th>Sinal detectado</th><th>Pontos de risco acumulados</th></tr>
+    <tr><td>Fonte não identificada ou com &lt; 3 caracteres</td><td>+40</td></tr>
+    <tr><td>Padrão de desinformação no título (12 regex: "urgente!!!", "bomba!", "esquema bilhões", etc.)</td><td>+50</td></tr>
+    <tr><td>2+ sinais de clickbait (9 termos: "descubra", "saiba o que", "ninguém esperava", etc.)</td><td>+30</td></tr>
+    <tr><td>1 sinal de clickbait</td><td>+10</td></tr>
+    <tr><td>Caixa alta &gt; 50% do título (título com &gt; 20 chars)</td><td>+20</td></tr>
+    <tr><td>3+ exclamações no título</td><td>+20</td></tr>
+  </table>
+
+  <h4>Passo 3 — Classificação final</h4>
+  <table>
+    <tr><th>Condição</th><th>Resultado</th><th>Score</th></tr>
+    <tr><td>Fonte confiável</td><td><strong>Confiável</strong></td><td>100</td></tr>
+    <tr><td>risco_acumulado ≥ 40</td><td><strong>Risco</strong></td><td>max(0, 100 − risco)</td></tr>
+    <tr><td>risco_acumulado &lt; 40</td><td><strong>Atenção</strong></td><td>max(30, 100 − risco)</td></tr>
+  </table>
+
+  <div class="source-ref">Fonte: <code>pippa-reforma-dashboard/index.html</code> — função <code>classifyCredibility()</code> (linha 1079), constantes <code>FONTES_JORNALISTICAS</code> (linha 1018), <code>FONTES_INSTITUCIONAIS</code> (linha 1037), <code>FAKE_NEWS_PATTERNS</code> (linha 1058), <code>CLICKBAIT_SIGNALS</code> (linha 1073)</div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 5. CLASSIFICAÇÃO DE NOTÍCIAS -->
+<!-- ================================================================ -->
+<h2 id="sec5">5. Regulatório DOU — Classificação de Notícias</h2>
+
+<div class="rule-card">
+  <div class="rule-header">
+    <span class="rule-title">Classificação por Status, Tema e Impacto MPE</span>
+    <span class="badge badge-js">JavaScript</span>
+  </div>
+
+  <h4>Status da notícia (3 categorias)</h4>
+  <table>
+    <tr><th>Status</th><th>Keywords detectadas no título</th></tr>
+    <tr><td><strong>Fato Confirmado</strong></td><td>aprovado, sancionado, publicado, entrou em vigor, decidiu, definiu, instituiu, liminar, sentença, julgamento, acórdão</td></tr>
+    <tr><td><strong>Expectativa/Projeção</strong></td><td>deve, deverá, poderá, estima, projeção, previsão, cenário, tendência, pode impactar, especialistas apontam</td></tr>
+    <tr><td><strong>Proposta/Discussão</strong></td><td>Padrão (nenhum keyword anterior detectado)</td></tr>
+  </table>
+
+  <h4>Tema (10 categorias por keywords)</h4>
+  <p>IVA Dual, IBS, CBS, Imposto Seletivo, Split Payment, Comitê Gestor, Transição, Simples/MEI, Alíquotas, Regulamentação. Cada notícia pode ter múltiplos temas.</p>
+
+  <h4>Impacto sobre MPE (3 níveis)</h4>
+  <table>
+    <tr><th>Nível</th><th>Keywords</th></tr>
+    <tr><td><strong>Alto</strong></td><td>simples nacional, mei, microempreendedor, microempresa, pequeno porte, mpe, epp, obrigação acessória, nota fiscal, crédito tributário, cashback, cumulatividade</td></tr>
+    <tr><td><strong>Médio</strong></td><td>alíquota, tributação, carga tributária, regime diferenciado, benefício fiscal, isenção, split payment, transição, regulamentação</td></tr>
+    <tr><td><strong>Geral</strong></td><td>Nenhum keyword anterior detectado</td></tr>
+  </table>
+
+  <div class="source-ref">Fonte: <code>pippa-reforma-dashboard/index.html</code> — função <code>classifyNews()</code> (linha 1252), constantes <code>STATUS_KEYWORDS</code> (linha 1195), <code>TEMA_DEFINITIONS</code> (linha 1152), <code>IMPACTO_MPE_KEYWORDS</code> (linha 1204)</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- 6. COMPRAS — MPE/MEI -->
+<!-- ================================================================ -->
+<h2 id="sec6">6. Compras Públicas — Classificação MPE/MEI</h2>
+
+<div class="rule-card">
+  <div class="rule-header">
+    <span class="rule-title">Classificação de oportunidade para MPE</span>
+    <span class="badge badge-js">JavaScript</span>
+    <span class="badge badge-engine">Engine de Classificação</span>
+  </div>
+
+  <h4>classifyMPE(item) — Tipo de oportunidade</h4>
+  <table>
+    <tr><th>Resultado</th><th>Condição (avaliadas em ordem de precedência)</th></tr>
+    <tr><td><strong>Exclusiva MPE</strong></td><td>Objeto da compra contém "exclusiv" + ("me/epp" ou "mpe" ou "micro" ou "pequen") <strong>OU</strong> valor total estimado ≤ R$ 80.000</td></tr>
+    <tr><td><strong>Cota MPE</strong></td><td>Objeto contém "cota" + ("me/epp" ou "mpe" ou "micro" ou "pequen") <strong>OU</strong> contratação é SRP (Sistema de Registro de Preços)</td></tr>
+    <tr><td><strong>Ampla</strong></td><td>Nenhuma condição anterior atendida</td></tr>
+  </table>
+
+  <h4>classifyMEI(item) — Acessibilidade para MEI</h4>
+  <p>Aplicada apenas quando a classificação MPE é "Exclusiva MPE":</p>
+  <table>
+    <tr><th>Resultado</th><th>Condição</th></tr>
+    <tr><td><strong>Portal MEI</strong></td><td>Nome do usuário contém "contrata+brasil" ou "compras.gov.br"</td></tr>
+    <tr><td><strong>Dispensa MEI</strong></td><td>Modalidade é "Dispensa" e valor ≤ R$ 50.000</td></tr>
+    <tr><td><em>null</em></td><td>Nenhuma condição atendida</td></tr>
+  </table>
+
+  <h4>Detecção de setores (14 setores por keywords)</h4>
+  <p>Cada item tem seus setores detectados por keywords no objeto da compra:</p>
+  <ul>
+    <li><strong>Alimentação:</strong> aliment, refeição, merenda, cozinha, nutrição, gêneros alimentícios</li>
+    <li><strong>Construção:</strong> construção, engenharia, obra, reforma, pavimenta, concreto, cimento</li>
+    <li><strong>TI:</strong> software, computador, notebook, sistema, informática, servidor, cloud</li>
+    <li><strong>Saúde:</strong> medicament, farmac, hospitalar, odontolog, cirurgi, ambulânc</li>
+    <li><strong>Limpeza:</strong> limpeza, higien, desinfetant, conservação predial, jardinagem</li>
+    <li><strong>Mobiliário, Veículos, Gráfica, Têxtil, Combustível, Elétrico, Segurança, Educação, Agro</strong> (com keywords específicas)</li>
+  </ul>
+  <p>Setores com oportunidade MEI: alimentação, limpeza, gráfica, construção, elétrico, agro.</p>
+
+  <h4>Detecção de outliers de valor</h4>
+  <p>A função <code>sanitizeValor()</code> detecta outliers: se estimado/homologado &gt; 1000× ou estimado &gt; R$ 10 bilhões ou Dispensa &gt; R$ 1 bilhão, marca como outlier.</p>
+
+  <div class="source-ref">Fonte: <code>pippa-compras-dashboard/index.html</code> — funções <code>classifyMPE()</code> (linha 1983), <code>classifyMEI()</code> (linha 2057), <code>detectSetores()</code> (linha 2046), <code>sanitizeValor()</code> (linha 2032), constante <code>SETOR_KEYWORDS</code> (linha 1954)</div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 7. COMPRAS — URGÊNCIA -->
+<!-- ================================================================ -->
+<h2 id="sec7">7. Compras Públicas — Urgência e Faixa de Valor</h2>
+
+<div class="rule-card">
+  <div class="rule-header">
+    <span class="rule-title">Classificação temporal e por valor</span>
+    <span class="badge badge-js">JavaScript</span>
+  </div>
+
+  <h4>classifyUrgencia(item) — Prazo para encerramento</h4>
+  <table>
+    <tr><th>Resultado</th><th>Condição</th></tr>
+    <tr><td><strong>Encerrada</strong></td><td>Dias restantes ≤ 0</td></tr>
+    <tr><td><strong>Urgente</strong></td><td>Dias restantes ≤ 3</td></tr>
+    <tr><td><strong>Atenção</strong></td><td>Dias restantes ≤ 7</td></tr>
+    <tr><td><strong>Tranquilo</strong></td><td>Dias restantes &gt; 7</td></tr>
+    <tr><td><strong>Indefinido</strong></td><td>Sem data de encerramento</td></tr>
+  </table>
+
+  <h4>classifyFaixaValor(item) — Faixa de valor estimado</h4>
+  <table>
+    <tr><th>Faixa</th><th>Intervalo</th></tr>
+    <tr><td>Não informado</td><td>Valor ≤ 0</td></tr>
+    <tr><td>Até R$ 80 mil</td><td>0 &lt; valor ≤ 80.000</td></tr>
+    <tr><td>R$ 80 mil a R$ 500 mil</td><td>80.000 &lt; valor ≤ 500.000</td></tr>
+    <tr><td>R$ 500 mil a R$ 2 mi</td><td>500.000 &lt; valor ≤ 2.000.000</td></tr>
+    <tr><td>Acima de R$ 2 mi</td><td>valor &gt; 2.000.000</td></tr>
+  </table>
+
+  <div class="source-ref">Fonte: <code>pippa-compras-dashboard/index.html</code> — funções <code>classifyUrgencia()</code> (linha 2002), <code>classifyFaixaValor()</code> (linha 1993)</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- 8. PESQUISAS ELEITORAIS -->
+<!-- ================================================================ -->
+<h2 id="sec8">8. Pesquisas Eleitorais — Média Ponderada com Decay Temporal</h2>
+
+<div class="rule-card">
+  <div class="rule-header">
+    <span class="rule-title">Agregação ponderada por recência, amostra e metodologia</span>
+    <span class="badge badge-js">JavaScript</span>
+    <span class="badge badge-engine">Engine Estatístico</span>
+  </div>
+
+  <p>O ranking de candidatos é calculado por média ponderada, onde o peso de cada pesquisa combina 3 fatores:</p>
+
+  <div class="formula">
+    peso = w_recência × w_amostra × w_metodologia<br>
+    média_ponderada = Σ(peso × percentual) / Σ(peso)
+  </div>
+
+  <h4>Fator 1 — Recência (decay exponencial)</h4>
+  <div class="formula">w_recência = 2^(−dias_passados / RECENCY_HALF_LIFE)</div>
+  <p><code>RECENCY_HALF_LIFE = 14 dias</code>. Uma pesquisa de 14 dias atrás tem metade do peso de uma de hoje. Uma de 28 dias tem ¼.</p>
+
+  <h4>Fator 2 — Tamanho da amostra</h4>
+  <div class="formula">w_amostra = √(amostra) / √(max_amostra_global)</div>
+  <p>Normalizado pela raiz quadrada para evitar que amostras muito grandes dominem. A maior amostra do conjunto recebe peso 1.</p>
+
+  <h4>Fator 3 — Metodologia de coleta</h4>
+  <table>
+    <tr><th>Metodologia</th><th>Peso</th></tr>
+    <tr><td>Presencial</td><td>1,00</td></tr>
+    <tr><td>Telefônica</td><td>0,90</td></tr>
+    <tr><td>Mista</td><td>0,85</td></tr>
+    <tr><td>Online</td><td>0,80</td></tr>
+    <tr><td>Outra / não informada</td><td>0,85 (fallback)</td></tr>
+  </table>
+
+  <h4>Indicadores derivados</h4>
+  <p>Para cada candidato são calculados: média ponderada, média simples, mediana, desvio padrão, mínimo, máximo e contagem de pesquisas.</p>
+
+  <h4>Tendência (regressão linear)</h4>
+  <p>Se o candidato tem 3+ pesquisas, é calculada a inclinação da reta (slope) sobre dias × percentual:</p>
+  <table>
+    <tr><th>Direção</th><th>Condição (slope semanal)</th></tr>
+    <tr><td>Subindo (<strong>up</strong>)</td><td>slope &gt; +0,3 pp/semana</td></tr>
+    <tr><td>Estável (<strong>stable</strong>)</td><td>−0,3 ≤ slope ≤ +0,3</td></tr>
+    <tr><td>Descendo (<strong>down</strong>)</td><td>slope &lt; −0,3 pp/semana</td></tr>
+  </table>
+
+  <div class="source-ref">Fonte: <code>pippa-pesquisas-eleitorais/index.html</code> — funções <code>computeAggregated()</code> (linha 1801), <code>computeTrend()</code> (linha 1839), constantes <code>METHODOLOGY_WEIGHTS</code> (linha 931), <code>RECENCY_HALF_LIFE</code> (linha 932)</div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 9. EMENDAS — PIPELINE -->
+<!-- ================================================================ -->
+<h2 id="sec9">9. Emendas Parlamentares — Pipeline de Enriquecimento e Validação Cruzada</h2>
+
+<div class="rule-card">
+  <div class="rule-header">
+    <span class="rule-title">Pipeline em 5 fases com validação cruzada CGU × Tesouro</span>
+    <span class="badge badge-python">Python</span>
+    <span class="badge badge-engine">Pipeline ETL</span>
+  </div>
+
+  <h4>Fluxo do pipeline</h4>
+  <ol>
+    <li><strong>Coleta:</strong> Download CSV do Portal da Transparência (CGU) + Tesouro Transparente</li>
+    <li><strong>Enriquecimento:</strong> Cruzamento com APIs Câmara/Senado para adicionar partido, UF e legislatura ao autor</li>
+    <li><strong>Filtro temporal:</strong> Opcional por ano (<code>ANO_MINIMO = 2015</code>, pois 2014 tem dados incompletos)</li>
+    <li><strong>Validação cruzada:</strong> Comparação de totais pagos por UF/ano entre Portal da Transparência e Tesouro</li>
+    <li><strong>Persistência:</strong> Parquet principal + 7 agregações</li>
+  </ol>
+
+  <h4>Regra de validação cruzada</h4>
+  <div class="formula">divergência_pct = |valor_portal − valor_tesouro| / valor_tesouro × 100</div>
+  <table>
+    <tr><th>Status</th><th>Threshold</th></tr>
+    <tr><td><strong>OK</strong></td><td>divergência &lt; 5%</td></tr>
+    <tr><td><strong>ALERTA</strong></td><td>5% ≤ divergência &lt; 15%</td></tr>
+    <tr><td><strong>CRÍTICO</strong></td><td>divergência ≥ 15%</td></tr>
+  </table>
+  <p>Constantes: <code>DIVERGENCIA_ALERTA_PCT = 5.0</code>, <code>DIVERGENCIA_CRITICO_PCT = 15.0</code></p>
+
+  <h4>Tipos de emenda (modelo de dados)</h4>
+  <table>
+    <tr><th>Tipo</th><th>Requer autor individual?</th></tr>
+    <tr><td>Emenda Individual - Transferências com Finalidade Definida</td><td>Sim</td></tr>
+    <tr><td>Emenda Individual - Transferências Especiais</td><td>Sim</td></tr>
+    <tr><td>Emenda de Bancada</td><td>Não (flag NAO_APLICAVEL)</td></tr>
+    <tr><td>Emenda de Comissão</td><td>Não (flag NAO_APLICAVEL)</td></tr>
+    <tr><td>Emenda de Relator</td><td>Não (flag NAO_APLICAVEL)</td></tr>
+  </table>
+
+  <h4>Agregações geradas</h4>
+  <p>7 Parquets de agregação: por_estado, por_municipio, por_autor, por_partido, por_tipo, por_funcao, serie_temporal. Cada um agrega: valor_empenhado, valor_liquidado, valor_pago, valor_rp_inscrito, valor_rp_cancelado, valor_rp_pago, qtd_emendas.</p>
+
+  <h4>Legislaturas mapeadas</h4>
+  <table>
+    <tr><th>Legislatura</th><th>Período</th></tr>
+    <tr><td>55ª</td><td>2015–2018</td></tr>
+    <tr><td>56ª</td><td>2019–2022</td></tr>
+    <tr><td>57ª</td><td>2023–2026</td></tr>
+  </table>
+
+  <h4>Controle de execução (API)</h4>
+  <p>A rota <code>POST /api/pipeline</code> rejeita execução concorrente (HTTP 409 se <code>pipeline_status.running == True</code>). A execução ocorre em background via <code>BackgroundTasks</code> do FastAPI.</p>
+
+  <div class="source-ref">Fonte: <code>pippa-emendas/scripts/pipeline.py</code> (207 linhas), <code>pippa-emendas/scripts/config.py</code> (156 linhas), <code>pippa-emendas/scripts/models.py</code> (111 linhas), <code>pippa-emendas/api.py</code> (124 linhas)</div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 10. EMENDAS — FUZZY MATCHING -->
+<!-- ================================================================ -->
+<h2 id="sec10">10. Emendas Parlamentares — Fuzzy Matching de Autores</h2>
+
+<div class="rule-card">
+  <div class="rule-header">
+    <span class="rule-title">Resolução de autoria por nome (exato + fuzzy)</span>
+    <span class="badge badge-python">Python</span>
+    <span class="badge badge-engine">Engine de Matching</span>
+  </div>
+
+  <p>O <code>PartidoResolver</code> cruza o nome do autor da emenda (CGU) com o cadastro de parlamentares (APIs Câmara/Senado) para inferir partido e UF.</p>
+
+  <h4>Estratégia em 5 passos</h4>
+  <ol>
+    <li>Montar índice <code>nome_normalizado → Parlamentar</code> por legislatura</li>
+    <li>Para cada emenda, identificar legislatura pelo ano</li>
+    <li>Buscar autor por nome exato normalizado (NFKD, upper, whitespace)</li>
+    <li>Se não encontra, tentar fuzzy match via <code>rapidfuzz.fuzz.ratio()</code></li>
+    <li>Emendas de Bancada/Comissão/Relator recebem flag <code>NAO_APLICAVEL</code> automaticamente</li>
+  </ol>
+
+  <h4>Níveis de confiança</h4>
+  <table>
+    <tr><th>Match</th><th>Condição</th></tr>
+    <tr><td><strong>EXATO</strong></td><td>Nome normalizado encontrado diretamente no índice da legislatura</td></tr>
+    <tr><td><strong>FUZZY</strong></td><td>Score de similaridade ≥ <code>FUZZY_MATCH_THRESHOLD (85)</code></td></tr>
+    <tr><td><strong>NAO_ENCONTRADO</strong></td><td>Nenhum match atingiu o threshold</td></tr>
+    <tr><td><strong>NAO_APLICAVEL</strong></td><td>Emenda coletiva (Bancada, Comissão, Relator) — não tem autor individual</td></tr>
+  </table>
+
+  <h4>Parâmetros</h4>
+  <ul>
+    <li><code>FUZZY_MATCH_THRESHOLD = 85</code> (score mínimo 0–100 para aceitar match)</li>
+    <li>Cache de APIs: download CSVs = 24h, dados de parlamentares = 7 dias</li>
+    <li>Normalização: NFKD → remove diacríticos → uppercase → colapsa espaços</li>
+  </ul>
+
+  <div class="source-ref">Fonte: <code>pippa-emendas/scripts/enrichment/partido_resolver.py</code> (134 linhas), <code>pippa-emendas/scripts/config.py</code> — constantes <code>FUZZY_MATCH_THRESHOLD</code> (linha 155), <code>CACHE_TTL_DOWNLOAD</code> (linha 149), <code>CACHE_TTL_API</code> (linha 150)</div>
+</div>
+
+<!-- FOOTER -->
+<div class="doc-footer">
+  <div><span class="classification">USO INTERNO — SEBRAE NACIONAL</span></div>
+  <div>PIPPA — UPP · Sebrae Nacional · Novembro 2026 · Artefato 3.5</div>
+</div>
+
+</body>
+</html>

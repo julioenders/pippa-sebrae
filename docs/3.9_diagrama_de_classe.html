@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.9 Diagrama de Classes — PIPPA</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<style>
+@page { size: A4 landscape; margin: 14mm 16mm 18mm 16mm; }
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page-break { page-break-before: always; }
+  .no-print { display: none !important; }
+}
+:root {
+  --azul:#2a4fda; --atlantico:#0b2574; --ceu:#65b7fb;
+  --verde:#61b466; --laranja:#f39d72; --vermelho:#e0565d;
+  --roxo:#be64e3; --jacaranda:#8f85f4;
+  --font-heading:'Plus Jakarta Sans',sans-serif;
+  --font-body:'Figtree',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:10pt; }
+body { font-family:var(--font-body); color:#1a1a1a; background:#fff; line-height:1.55; max-width:297mm; margin:0 auto; padding:14mm 16mm 18mm 16mm; }
+
+.doc-header { display:flex; align-items:flex-start; justify-content:space-between; border-bottom:3px solid var(--azul); padding-bottom:10px; margin-bottom:16px; }
+.brand-text { display:flex; flex-direction:column; }
+.brand-org { font-family:var(--font-heading); font-size:9.5pt; font-weight:700; color:var(--azul); letter-spacing:-.4px; }
+.brand-unit { font-size:7.5pt; color:#6b7280; font-weight:500; }
+.doc-type-box { text-align:right; }
+.doc-type { font-family:var(--font-heading); font-size:7.5pt; font-weight:700; color:#fff; background:var(--azul); padding:3px 10px; border-radius:4px; display:inline-block; letter-spacing:.5px; }
+.doc-date { font-size:7pt; color:#6b7280; margin-top:3px; }
+
+.title-block { background:linear-gradient(45deg, var(--atlantico), var(--azul)); border-radius:8px; padding:18px 22px; margin-bottom:18px; color:#fff; }
+.title-block h1 { font-family:var(--font-heading); font-size:15pt; font-weight:800; letter-spacing:-1px; margin-bottom:3px; }
+.title-block .subtitle { font-size:9pt; color:rgba(255,255,255,.8); }
+.title-block .ref { font-size:7pt; color:rgba(255,255,255,.4); margin-top:6px; }
+
+h2 { font-family:var(--font-heading); font-size:12pt; font-weight:800; color:var(--atlantico); margin:20px 0 8px; padding-bottom:4px; border-bottom:2px solid var(--azul); letter-spacing:-.5px; }
+h3 { font-family:var(--font-heading); font-size:10pt; font-weight:700; color:var(--azul); margin:14px 0 5px; }
+p { margin-bottom:6px; }
+table { width:100%; border-collapse:collapse; margin:8px 0 14px; font-size:8.5pt; }
+th { background:var(--azul); color:#fff; font-family:var(--font-heading); font-weight:700; text-align:left; padding:5px 8px; font-size:8pt; }
+td { padding:5px 8px; border-bottom:1px solid #e5e7eb; vertical-align:top; }
+tr:nth-child(even) td { background:#f9fafb; }
+code { background:#f3f4f6; padding:1px 4px; border-radius:3px; font-size:8.5pt; font-family:'Cascadia Code','Fira Code',monospace; }
+.badge { font-size:6.5pt; font-weight:700; padding:2px 6px; border-radius:3px; display:inline-block; text-transform:uppercase; letter-spacing:.3px; }
+.badge-enum { background:rgba(190,100,227,.1); color:var(--roxo); }
+.badge-dc { background:rgba(42,79,218,.08); color:var(--azul); }
+.badge-cls { background:rgba(97,180,102,.1); color:#166534; }
+.badge-abc { background:rgba(243,157,114,.12); color:#c2410c; }
+.badge-fn { background:rgba(101,183,251,.1); color:#0369a1; }
+.badge-js { background:rgba(251,236,118,.2); color:#92400e; }
+
+.diagram-container { background:#fafbfc; border:1px solid #e5e7eb; border-radius:8px; padding:16px; margin:12px 0; overflow-x:auto; }
+.diagram-container .mermaid { display:flex; justify-content:center; }
+
+.module-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0; }
+.module-card { border:1px solid #e5e7eb; border-radius:6px; padding:10px 12px; }
+.module-card h4 { font-family:var(--font-heading); font-size:9pt; font-weight:700; color:var(--atlantico); margin-bottom:6px; }
+
+.highlight { background:rgba(42,79,218,.05); border-left:4px solid var(--azul); border-radius:0 6px 6px 0; padding:10px 14px; margin:10px 0 14px; font-size:8.5pt; }
+.highlight strong { color:var(--azul); }
+
+.doc-footer { margin-top:24px; padding-top:10px; border-top:2px solid var(--azul); display:flex; justify-content:space-between; font-size:7pt; color:#9ca3af; }
+.doc-footer .classification { font-family:var(--font-heading); font-weight:700; color:var(--azul); font-size:7pt; }
+
+.print-btn { position:fixed; bottom:24px; right:24px; background:var(--azul); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 16px rgba(42,79,218,.35); z-index:100; }
+.print-btn:hover { background:var(--atlantico); }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
+
+<!-- HEADER -->
+<div class="doc-header">
+  <div class="brand-text">
+    <span class="brand-org">PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas</span>
+    <span class="brand-unit">Unidade de Politicas Publicas / Sebrae Nacional</span>
+  </div>
+  <div class="doc-type-box">
+    <span class="doc-type">DOCUMENTACAO TECNICA</span>
+    <div class="doc-date">Novembro de 2026</div>
+  </div>
+</div>
+
+<div class="title-block">
+  <h1>3.9 — Diagrama de Classes UML</h1>
+  <div class="subtitle">Classes, dataclasses, enums e objetos de configuracao extraidos do codigo-fonte Python e JavaScript</div>
+  <div class="ref">Fonte: repositorio pippa-sebrae / Branch: main / Artefato 3.9 — Parecer UTIC</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- MODULO 1: CORE (Models + Config + Pipeline) -->
+<!-- ============================================================ -->
+<h2>1. Modulo Core — Models, Config e Pipeline</h2>
+<p>Localizacao: <code>pippa-emendas/scripts/models.py</code>, <code>config.py</code>, <code>pipeline.py</code></p>
+<p>O modulo core define as estruturas de dados centrais do PIPPA Emendas: 4 enums (tipos, confianca, localidade, qualidade), 4 dataclasses (parlamentar, emenda, quality flag, stats) e as constantes de configuracao.</p>
+
+<div class="diagram-container">
+<pre class="mermaid">
+classDiagram
+    direction LR
+
+    class TipoEmenda {
+        &lt;&lt;enumeration&gt;&gt;
+        INDIVIDUAL_DEFINIDA = "Emenda Individual - Transferencias com Finalidade Definida"
+        INDIVIDUAL_ESPECIAL = "Emenda Individual - Transferencias Especiais"
+        BANCADA = "Emenda de Bancada"
+        COMISSAO = "Emenda de Comissao"
+        RELATOR = "Emenda de Relator"
+        DESCONHECIDO = "Tipo nao identificado"
+    }
+
+    class MatchConfianca {
+        &lt;&lt;enumeration&gt;&gt;
+        EXATO = "exato"
+        FUZZY = "fuzzy"
+        NAO_ENCONTRADO = "nao_encontrado"
+        NAO_APLICAVEL = "nao_aplicavel"
+    }
+
+    class LocalidadeTipo {
+        &lt;&lt;enumeration&gt;&gt;
+        MUNICIPAL = "municipal"
+        ESTADUAL = "estadual"
+        NACIONAL = "nacional"
+        SEM_INFORMACAO = "sem_informacao"
+    }
+
+    class QualityStatus {
+        &lt;&lt;enumeration&gt;&gt;
+        OK = "OK"
+        ALERTA = "ALERTA"
+        CRITICO = "CRITICO"
+    }
+
+    class Parlamentar {
+        &lt;&lt;dataclass&gt;&gt;
+        +nome : str
+        +nome_normalizado : str
+        +partido : str
+        +uf : str
+        +legislatura : int
+        +casa : str
+        +id_externo : Optional~str~
+        +to_dict() dict
+    }
+
+    class Emenda {
+        &lt;&lt;dataclass&gt;&gt;
+        +codigo : str
+        +ano : int
+        +tipo : str
+        +nome_autor : str
+        +numero : str
+        +cod_ibge_municipio : Optional~str~
+        +municipio : Optional~str~
+        +cod_ibge_uf : Optional~str~
+        +uf_destino : Optional~str~
+        +regiao : Optional~str~
+        +localidade_tipo : str
+        +funcao : str
+        +subfuncao : str
+        +valor_empenhado : float
+        +valor_liquidado : float
+        +valor_pago : float
+        +valor_rp_inscrito : float
+        +valor_rp_cancelado : float
+        +valor_rp_pago : float
+        +partido : Optional~str~
+        +uf_autor : Optional~str~
+        +legislatura : Optional~int~
+        +match_confianca : str
+        +to_dict() dict
+    }
+
+    class QualityFlag {
+        &lt;&lt;dataclass&gt;&gt;
+        +uf : str
+        +ano : int
+        +valor_portal : float
+        +valor_tesouro : float
+        +divergencia_pct : float
+        +status : str
+        +to_dict() dict
+    }
+
+    class PipelineStats {
+        &lt;&lt;dataclass&gt;&gt;
+        +total_emendas : int
+        +total_autores_unicos : int
+        +match_exato : int
+        +match_fuzzy : int
+        +match_nao_encontrado : int
+        +match_nao_aplicavel : int
+        +quality_flags_alerta : int
+        +quality_flags_critico : int
+        +timestamp : str
+        +to_dict() dict
+    }
+
+    Emenda --> MatchConfianca : match_confianca
+    Emenda --> LocalidadeTipo : localidade_tipo
+    QualityFlag --> QualityStatus : status
+</pre>
+</div>
+
+<h3>1.1. Modulo Config (<code>config.py</code>)</h3>
+<p>Nao define classes, mas exporta constantes usadas por todos os modulos:</p>
+<table>
+  <tr><th>Constante</th><th>Tipo</th><th>Descricao</th></tr>
+  <tr><td><code>PORTAL_TRANSPARENCIA_CSV_URL</code></td><td>str</td><td>URL do ZIP do Portal da Transparencia (CGU)</td></tr>
+  <tr><td><code>TESOURO_TRANSPARENTE_CSV_URL</code></td><td>str</td><td>URL do CSV do Tesouro Transparente</td></tr>
+  <tr><td><code>CAMARA_API_BASE</code></td><td>str</td><td>Base URL da API da Camara dos Deputados (dadosabertos.camara.leg.br/api/v2)</td></tr>
+  <tr><td><code>SENADO_API_BASE</code></td><td>str</td><td>Base URL da API do Senado Federal (legis.senado.leg.br/dadosabertos)</td></tr>
+  <tr><td><code>LEGISLATURAS</code></td><td>dict[int, dict]</td><td>Legislaturas 55a-57a com periodo (inicio, fim, label)</td></tr>
+  <tr><td><code>UF_CODES</code></td><td>dict[str, str]</td><td>Sigla para Nome dos 27 estados</td></tr>
+  <tr><td><code>UF_SIGLAS</code></td><td>dict[str, str]</td><td>Nome para Sigla (inverso de UF_CODES)</td></tr>
+  <tr><td><code>REGIOES</code></td><td>dict[str, list]</td><td>Regiao para lista de UFs (Norte, Nordeste, Sudeste, Sul, Centro-Oeste)</td></tr>
+  <tr><td><code>UF_REGIAO</code></td><td>dict[str, str]</td><td>UF para Regiao (derivado de REGIOES)</td></tr>
+  <tr><td><code>TIPOS_EMENDA</code></td><td>dict[str, str]</td><td>Chave curta para descricao completa do tipo</td></tr>
+  <tr><td><code>TIPOS_SEM_AUTOR_INDIVIDUAL</code></td><td>set[str]</td><td>Bancada, Comissao, Relator (sem autor individual)</td></tr>
+  <tr><td><code>DIVERGENCIA_ALERTA_PCT</code></td><td>float</td><td>5.0% — limiar para alerta de qualidade</td></tr>
+  <tr><td><code>DIVERGENCIA_CRITICO_PCT</code></td><td>float</td><td>15.0% — limiar para flag critico</td></tr>
+  <tr><td><code>FUZZY_MATCH_THRESHOLD</code></td><td>int</td><td>85 — score minimo para aceitar fuzzy match</td></tr>
+  <tr><td><code>COLORS_LIGHT</code> / <code>COLORS_DARK</code></td><td>dict[str, str]</td><td>Paleta de cores light/dark mode (22 variaveis cada)</td></tr>
+  <tr><td><code>SERIES_COLORS</code></td><td>list[str]</td><td>15 cores para series de graficos</td></tr>
+  <tr><td><code>FONT_HEADING</code> / <code>FONT_BODY</code></td><td>str</td><td>Plus Jakarta Sans / Figtree</td></tr>
+  <tr><td><code>CACHE_TTL_DOWNLOAD</code></td><td>int</td><td>86400s (24h) para CSVs baixados</td></tr>
+  <tr><td><code>CACHE_TTL_API</code></td><td>int</td><td>604800s (7 dias) para dados de APIs legislativas</td></tr>
+  <tr><td><code>ANO_MINIMO</code></td><td>int</td><td>2015 — ano minimo aceito (2014 tem dados incompletos)</td></tr>
+</table>
+
+<h3>1.2. Funcoes do Pipeline (<code>pipeline.py</code>)</h3>
+<table>
+  <tr><th>Funcao</th><th>Assinatura</th><th>Descricao</th></tr>
+  <tr><td><code>run_pipeline</code></td><td><code>(ano_filtro: int | None) -> tuple[DataFrame, list[QualityFlag], PipelineStats]</code></td><td>Orquestra 5 fases: coleta, enriquecimento, filtro por ano, validacao cruzada, persistencia</td></tr>
+  <tr><td><code>_validar_cruzamento</code></td><td><code>(df_portal, df_tesouro) -> list[QualityFlag]</code></td><td>Compara totais Portal x Tesouro por UF/ano, aplica limiares ALERTA (5%) e CRITICO (15%)</td></tr>
+  <tr><td><code>_calcular_stats</code></td><td><code>(df, flags) -> PipelineStats</code></td><td>Calcula estatisticas: totais, match exato/fuzzy/nao encontrado/nao aplicavel, alertas</td></tr>
+  <tr><td><code>_salvar</code></td><td><code>(df, flags, stats, ano_filtro) -> None</code></td><td>Persiste Parquet enriquecido + JSON de qualidade</td></tr>
+  <tr><td><code>_salvar_agregacoes</code></td><td><code>(df, sufixo) -> None</code></td><td>Gera 7 Parquets agregados: por_estado, por_municipio, por_autor, por_partido, por_tipo, por_funcao, serie_temporal</td></tr>
+</table>
+
+<div class="page-break"></div>
+
+<!-- ============================================================ -->
+<!-- MODULO 2: COLLECTORS -->
+<!-- ============================================================ -->
+<h2>2. Modulo Collectors — Coletores de Dados</h2>
+<p>Localizacao: <code>pippa-emendas/scripts/collectors/</code></p>
+<p>Hierarquia de heranca com classe abstrata <code>BaseCollector</code> (ABC). Todos os coletores recebem um <code>CacheManager</code> no construtor para cache em filesystem com TTL configuravel.</p>
+
+<div class="diagram-container">
+<pre class="mermaid">
+classDiagram
+    direction TB
+
+    class BaseCollector {
+        &lt;&lt;abstract&gt;&gt;
+        +cache : CacheManager
+        +__init__(cache: CacheManager)
+        +collect(**kwargs)* DataFrame | list
+    }
+
+    class CacheManager {
+        +base_dir : Path
+        +ttl : int
+        +__init__(base_dir, ttl_seconds)
+        +get(params: dict) dict | list | None
+        +set(params: dict, data: dict | list) None
+        +get_file_path(name: str) Path
+        +is_fresh(name: str) bool
+        +clear() int
+        -_key(params: dict) str
+        -_path(key: str, ext: str) Path
+    }
+
+    class PortalTransparenciaCollector {
+        +collect(**kwargs) DataFrame
+        -_download_and_extract(output_path: Path) None
+        -_parse_csv(path: Path) DataFrame
+        -_limpar(df: DataFrame) DataFrame
+        -_classificar_localidade(row)$ str
+    }
+
+    class TesouroTransparenteCollector {
+        +collect(**kwargs) DataFrame
+        +agregar_por_uf_ano() DataFrame
+        -_download(output_path: Path) None
+        -_parse_csv(path: Path) DataFrame
+        -_limpar(df: DataFrame) DataFrame
+    }
+
+    class CamaraApiCollector {
+        +collect(**kwargs) list~Parlamentar~
+        -_collect_legislatura(legislatura: int) list~Parlamentar~
+    }
+
+    class SenadoApiCollector {
+        +collect(**kwargs) list~Parlamentar~
+        -_collect_legislatura(legislatura: int) list~Parlamentar~
+        -_fetch_lista_legislatura(legislatura: int) list~Parlamentar~
+        -_fetch_lista_atual() list~Parlamentar~
+        -_fetch_detalhe(codigo: str) dict | None
+        -_merge_senadores(lista_leg, lista_atual, legislatura) list~Parlamentar~
+        -_parse_parlamentar(sen: dict, legislatura: int)$ Parlamentar
+    }
+
+    BaseCollector <|-- PortalTransparenciaCollector
+    BaseCollector <|-- TesouroTransparenteCollector
+    BaseCollector <|-- CamaraApiCollector
+    BaseCollector <|-- SenadoApiCollector
+    BaseCollector o-- CacheManager : cache
+    CamaraApiCollector ..> Parlamentar : produces
+    SenadoApiCollector ..> Parlamentar : produces
+    PortalTransparenciaCollector ..> Emenda : produces via DataFrame
+</pre>
+</div>
+
+<div class="highlight">
+  <strong>Padrao de heranca:</strong> Todos os coletores herdam de <code>BaseCollector</code> (ABC) e implementam <code>collect()</code>. O <code>CacheManager</code> e injetado no construtor e fornece cache TTL-based em filesystem (SHA-256 das params como chave de arquivo). Coletores CSV usam TTL de 24h; coletores de API usam 7 dias.
+</div>
+
+<h3>2.1 Detalhamento dos Coletores</h3>
+<table>
+  <tr><th>Coletor</th><th>Fonte</th><th>Saida</th><th>Particularidades</th></tr>
+  <tr>
+    <td><code>PortalTransparenciaCollector</code></td>
+    <td>Portal da Transparencia (CGU) — CSV dentro de ZIP</td>
+    <td>DataFrame com 24+ colunas renomeadas</td>
+    <td>Encoding Latin-1, separador <code>;</code>, decimais com virgula. Renomeia 26 colunas. Converte valores monetarios. Classifica localidade (municipal/estadual/nacional). Filtro ANO_MINIMO=2015.</td>
+  </tr>
+  <tr>
+    <td><code>TesouroTransparenteCollector</code></td>
+    <td>Tesouro Transparente — CSV direto</td>
+    <td>DataFrame para validacao cruzada</td>
+    <td>Renomeia 15 colunas. Metodo extra <code>agregar_por_uf_ano()</code> para cruzamento com Portal.</td>
+  </tr>
+  <tr>
+    <td><code>CamaraApiCollector</code></td>
+    <td>API Camara dos Deputados (v2)</td>
+    <td>list[Parlamentar]</td>
+    <td>Paginacao com 100 itens/pagina. Coleta todas as legislaturas (55a-57a). Sleep 0.2s entre paginas.</td>
+  </tr>
+  <tr>
+    <td><code>SenadoApiCollector</code></td>
+    <td>API Senado Federal (dadosabertos)</td>
+    <td>list[Parlamentar]</td>
+    <td>3 endpoints: lista/legislatura, lista/atual, detalhe individual. Merge de dados entre listas. Fallback para senadores sem partido/UF.</td>
+  </tr>
+</table>
+
+<!-- ============================================================ -->
+<!-- MODULO 3: ENRICHMENT -->
+<!-- ============================================================ -->
+<h2>3. Modulo Enrichment — Enriquecimento de Dados</h2>
+<p>Localizacao: <code>pippa-emendas/scripts/enrichment/</code></p>
+
+<div class="diagram-container">
+<pre class="mermaid">
+classDiagram
+    direction LR
+
+    class PartidoResolver {
+        +indice : dict~int, dict~str, Parlamentar~~
+        +nomes_por_leg : dict~int, list~str~~
+        +__init__(parlamentares: list~Parlamentar~)
+        +resolver(nome_autor: str, ano: int) tuple~str|None, str|None, str~
+        +enriquecer(df: DataFrame) DataFrame
+    }
+
+    class IbgeNormalizer {
+        +normalizar(df: DataFrame) DataFrame
+    }
+
+    PartidoResolver ..> Parlamentar : indexes
+    PartidoResolver ..> MatchConfianca : returns
+    IbgeNormalizer ..> "config.UF_CODES" : uses
+    IbgeNormalizer ..> "config.UF_REGIAO" : uses
+</pre>
+</div>
+
+<table>
+  <tr><th>Classe</th><th>Responsabilidade</th><th>Estrategia</th></tr>
+  <tr>
+    <td><code>PartidoResolver</code></td>
+    <td>Resolve partido e UF do autor da emenda via cruzamento com APIs Camara/Senado</td>
+    <td>1. Monta indice nome_normalizado para Parlamentar por legislatura<br>2. Para cada emenda, identifica a legislatura pelo ano (via <code>ano_para_legislatura()</code>)<br>3. Busca autor por nome exato normalizado (unicode NFD, uppercase, whitespace normalization)<br>4. Se nao encontra, tenta fuzzy match via RapidFuzz (score >= 85)<br>5. Emendas de bancada/comissao/relator recebem flag NAO_APLICAVEL<br>6. Log de progresso a cada 10.000 emendas</td>
+  </tr>
+  <tr>
+    <td><code>IbgeNormalizer</code></td>
+    <td>Preenche UF e regiao a partir do codigo IBGE quando ausentes</td>
+    <td>Extrai os 2 primeiros digitos do codigo do municipio (7 digitos) para determinar a UF via tabela COD_UF_IBGE (27 mapeamentos). Preenche regiao via UF_REGIAO.</td>
+  </tr>
+</table>
+
+<h3>3.1 Funcoes auxiliares (<code>partido_resolver.py</code>)</h3>
+<table>
+  <tr><th>Funcao</th><th>Assinatura</th><th>Descricao</th></tr>
+  <tr><td><code>normalizar_nome</code></td><td><code>(nome: str) -> str</code></td><td>Remove acentos (NFKD), converte para maiusculo, normaliza espacos</td></tr>
+  <tr><td><code>ano_para_legislatura</code></td><td><code>(ano: int) -> int | None</code></td><td>Mapeia ano para legislatura (55a: 2015-2018, 56a: 2019-2022, 57a: 2023-2026)</td></tr>
+</table>
+
+<div class="page-break"></div>
+
+<!-- ============================================================ -->
+<!-- MODULO 4: API -->
+<!-- ============================================================ -->
+<h2>4. Modulo API — Backend FastAPI</h2>
+<p>Localizacao: <code>pippa-emendas/api.py</code></p>
+
+<div class="diagram-container">
+<pre class="mermaid">
+classDiagram
+    direction TB
+
+    class FastAPIApp {
+        &lt;&lt;FastAPI&gt;&gt;
+        +title : str = "PIPPA Emendas API"
+        +middleware : CORSMiddleware
+    }
+
+    class PipelineStatus {
+        &lt;&lt;dict in-memory&gt;&gt;
+        +running : bool
+        +last_error : str | None
+    }
+
+    class Routes {
+        &lt;&lt;endpoints&gt;&gt;
+        +GET_index() FileResponse
+        +GET_api_dados(ano: int|None) JSONResponse
+        +POST_api_pipeline(ano: int|None) JSONResponse
+        +GET_api_pipeline_status() dict
+    }
+
+    class DashboardBuilder {
+        &lt;&lt;module: dashboard_builder.py&gt;&gt;
+        +build_all_data(df_estado, df_municipio, df_autor, df_partido, df_tipo, df_serie, df_emendas, df_funcao) dict
+        +build_estado_data(df) list~dict~
+        +build_partido_data(df) list~dict~
+        +build_autor_data(df) list~dict~
+        +build_serie_data(df) list~dict~
+        +build_tipo_data(df) list~dict~
+        +build_tipo_uf_data(df) list~dict~
+        +build_funcao_data(df) list~dict~
+        +build_funcao_uf_data(df) list~dict~
+        +build_municipio_data(df) list~dict~
+        +fmt_reais(valor: float) str
+    }
+
+    class HtmlRenderer {
+        &lt;&lt;module: html_renderer.py&gt;&gt;
+        +render_dashboard(data, stats, quality_flags, df_estado, ano_filtro) str
+    }
+
+    FastAPIApp --> Routes
+    FastAPIApp --> PipelineStatus
+    Routes ..> DashboardBuilder : GET /api/dados
+    Routes ..> "pipeline.run_pipeline" : POST /api/pipeline background
+    HtmlRenderer ..> PipelineStats : receives
+    HtmlRenderer ..> QualityFlag : receives
+</pre>
+</div>
+
+<table>
+  <tr><th>Endpoint</th><th>Metodo</th><th>Descricao</th></tr>
+  <tr><td><code>/</code></td><td>GET</td><td>Serve o HTML do dashboard gerado (pippa_emendas_completo.html)</td></tr>
+  <tr><td><code>/api/dados</code></td><td>GET</td><td>Retorna dados agregados dos Parquets como JSON (aceita <code>?ano=</code>). Carrega 7 Parquets e monta dict com 9 chaves: estados, partidos, autores, serie, tipos, tipos_uf, funcoes, funcoes_uf, municipios.</td></tr>
+  <tr><td><code>/api/pipeline</code></td><td>POST</td><td>Dispara pipeline completo em background via BackgroundTasks (aceita <code>?ano=</code>). Retorna 409 se ja em execucao.</td></tr>
+  <tr><td><code>/api/pipeline/status</code></td><td>GET</td><td>Retorna estado atual do pipeline (running, last_error)</td></tr>
+</table>
+
+<h3>4.1 Funcoes do DashboardBuilder (<code>dashboard_builder.py</code>)</h3>
+<p>Modulo funcional que transforma DataFrames agregados em listas de dicts otimizadas para Chart.js. Cada funcao <code>build_*_data()</code> converte um DataFrame Parquet em formato JSON com campos tipados (empenhado, pago, liquidado, qtd, execucao).</p>
+<table>
+  <tr><th>Funcao</th><th>Entrada</th><th>Saida (chaves do dict)</th></tr>
+  <tr><td><code>build_estado_data</code></td><td>agg_por_estado</td><td>{uf, ano, empenhado, liquidado, pago, qtd}</td></tr>
+  <tr><td><code>build_partido_data</code></td><td>agg_por_partido</td><td>{partido, ano, empenhado, pago, qtd}</td></tr>
+  <tr><td><code>build_autor_data</code></td><td>agg_por_autor</td><td>{nome, partido, uf, empenhado, pago, confianca, qtd} (filtra match exato/fuzzy)</td></tr>
+  <tr><td><code>build_serie_data</code></td><td>agg_serie_temporal</td><td>{ano, empenhado, pago, liquidado, qtd}</td></tr>
+  <tr><td><code>build_tipo_data</code></td><td>agg_por_tipo</td><td>{tipo, tipo_original, ano, empenhado, pago, qtd}</td></tr>
+  <tr><td><code>build_tipo_uf_data</code></td><td>emendas_enriquecidas</td><td>{tipo, ano, uf, empenhado, pago, qtd}</td></tr>
+  <tr><td><code>build_funcao_data</code></td><td>agg_por_funcao</td><td>{funcao, ano, empenhado, pago, qtd}</td></tr>
+  <tr><td><code>build_funcao_uf_data</code></td><td>emendas_enriquecidas</td><td>{funcao, ano, uf, empenhado, pago, qtd}</td></tr>
+  <tr><td><code>build_municipio_data</code></td><td>agg_por_municipio</td><td>{municipio, uf, empenhado, liquidado, pago, qtd}</td></tr>
+</table>
+
+<div class="page-break"></div>
+
+<!-- ============================================================ -->
+<!-- MODULO 5: STAKEHOLDERS -->
+<!-- ============================================================ -->
+<h2>5. Modulo Stakeholders — Scoring ICP/RIG</h2>
+<p>Localizacao: <code>pippa-stakeholders/build_cache.py</code>, <code>build_eleicao_2026.py</code>, <code>index.html</code></p>
+<p>Sistema de scoring em duas camadas: Python para coleta e cache, JavaScript para calculo de indices em tempo real.</p>
+
+<h3>5.1 Camada Python — Build Cache</h3>
+<div class="diagram-container">
+<pre class="mermaid">
+classDiagram
+    direction TB
+
+    class StakeholdersCacheBuilder {
+        &lt;&lt;script: build_cache.py&gt;&gt;
+        +fetch_deputados() list~dict~
+        +fetch_senadores() list~dict~
+        +fetch_frentes(parlamentares) list~dict~
+        +fetch_comissoes_camara(parlamentares) dict
+        +fetch_comissoes_senado(parlamentares) None
+        +fetch_autorias() dict~int, int~
+        +load_candidatos() dict
+        +match_election(nome, candidatos) dict | None
+        +normalize(s) str
+        +safe_get(url, headers, retries, delay) Response | None
+        +main() None
+    }
+
+    class EleicaoBuilder {
+        &lt;&lt;script: build_eleicao_2026.py&gt;&gt;
+        +fetch_json(url, extra_headers) dict | None
+        +normalize(s) str
+        +tokenize(s) set~str~
+        +name_match_strict(parl_norm, tse_full_norm, tse_urna_norm) bool
+        +extract_candidates(data) list~dict~
+        +match_for_uf(cands, cargo_nome, uf, uf_parls) None
+    }
+
+    class StakeholderRecord {
+        &lt;&lt;dict structure&gt;&gt;
+        +id : int
+        +nome : str
+        +partido : str
+        +uf : str
+        +casa : str
+        +foto : str
+        +email : str
+        +frentes : list~str~
+        +orgaos : list~str~
+        +orgaoRoles : dict~str, str~
+        +eleicao2026 : dict | None
+    }
+
+    class CandidatoRecord {
+        &lt;&lt;dict structure&gt;&gt;
+        +cargo : str
+        +uf : str
+        +eleito : bool
+        +urna : str
+    }
+
+    class StakeholdersCacheJS {
+        &lt;&lt;stakeholders_cache.js&gt;&gt;
+        +parlamentares : list~StakeholderRecord~
+        +frentes : list~dict~
+        +comissoesChave : dict
+        +autorias : dict~str, int~
+        +buildDate : str
+        +legislatura : int
+    }
+
+    StakeholdersCacheBuilder ..> StakeholderRecord : produces
+    StakeholdersCacheBuilder ..> StakeholdersCacheJS : outputs
+    EleicaoBuilder ..> CandidatoRecord : produces
+    StakeholderRecord o-- CandidatoRecord : eleicao2026
+</pre>
+</div>
+
+<h3>5.2 Camada JavaScript — Engines de Scoring</h3>
+<div class="diagram-container">
+<pre class="mermaid">
+classDiagram
+    direction TB
+
+    class AlinhamentoScore {
+        &lt;&lt;JS: computeScores()&gt;&gt;
+        +scoreFrentes(p) int
+        +scoreComissoes(p) int
+        +fetchAutorias() dict~int, int~
+        -peso_frentes : 0.40
+        -peso_comissoes : 0.30
+        -peso_autorias : 0.30
+        -threshold_alto : 50
+        -threshold_medio : 20
+    }
+
+    class ICPRIGScore {
+        &lt;&lt;JS: computeICPRIG()&gt;&gt;
+        +computeDimA(p) int
+        +computeDimB(p) int
+        +computeDimC(p) int
+        +computeDimD(p, autoCount, maxAutorias) int
+        +computeDimE(p) int
+        +computeMI(p) object
+        +computeBC(p) object
+    }
+
+    class DimensaoA {
+        &lt;&lt;Abrangencia Tematica&gt;&gt;
+        +max : 20
+        +formula : frentes_relevantes * 2 + orgaos * 3
+    }
+
+    class DimensaoB {
+        &lt;&lt;Profundidade Engajamento&gt;&gt;
+        +max : 30
+        +formula : t1_frentes * 8 + t2_frentes * 4 + t1_comissoes * 10 + t2_comissoes * 5
+    }
+
+    class DimensaoC {
+        &lt;&lt;Posicao Institucional&gt;&gt;
+        +max : 20
+        +bonus_presidente : +5
+        +bonus_titular : +3
+    }
+
+    class DimensaoD {
+        &lt;&lt;Producao Legislativa&gt;&gt;
+        +max : 20
+        +formula : autoCount / maxAutorias * 20
+    }
+
+    class DimensaoE {
+        &lt;&lt;Completude Dados&gt;&gt;
+        +max : 10
+        +foto : +2
+        +email : +2
+        +frentes : +2
+        +orgaos : +2
+        +eleicao2026 : +2
+    }
+
+    class MultiplicadorMI {
+        &lt;&lt;Multiplicador de Impacto&gt;&gt;
+        +padrao : 1x
+        +dep_eleito_senador : 2x
+        +senador_comissao_estrategica : 3x
+    }
+
+    class BonusBC {
+        &lt;&lt;Bonus de Cargo&gt;&gt;
+        +presidente_t1 : 1.35x
+        +vice_t1 : 1.30x
+        +relator_t1 : 1.25x
+        +titular_t1 : 1.15x
+        +suplente_t1 : 1.05x
+    }
+
+    class ScoringKeywords {
+        &lt;&lt;JS config&gt;&gt;
+        +SEBRAE_FRENTE_KEYWORDS_tier1 : list~str~
+        +SEBRAE_FRENTE_KEYWORDS_tier2 : list~str~
+        +SEBRAE_FRENTE_KEYWORDS_tier3 : list~str~
+        +COMISSOES_TIER1 : list~str~
+        +COMISSOES_TIER2 : list~str~
+        +AUTORIA_KEYWORDS : list~str~
+    }
+
+    ICPRIGScore --> DimensaoA
+    ICPRIGScore --> DimensaoB
+    ICPRIGScore --> DimensaoC
+    ICPRIGScore --> DimensaoD
+    ICPRIGScore --> DimensaoE
+    ICPRIGScore --> MultiplicadorMI
+    ICPRIGScore --> BonusBC
+    AlinhamentoScore ..> ScoringKeywords : uses
+    ICPRIGScore ..> ScoringKeywords : uses
+    ICPRIGScore ..> AlinhamentoScore : depends on
+</pre>
+</div>
+
+<div class="highlight">
+  <strong>Formula ICP/RIG:</strong> Capital Politico = PB x MI x BC, onde PB = DimA + DimB + DimC + DimD + DimE (max 100), MI = Multiplicador de Impacto (1x-3x), BC = Bonus de Cargo (1.00x-1.35x). Tier 1 de comissoes: CDE, CICS, CFT, CAE. Tier 2: CCTI, CI, CDR, CAS, CAPADR, CE, CCT.
+</div>
+
+<div class="page-break"></div>
+
+<!-- ============================================================ -->
+<!-- MODULO 6: SCRIPTS DE ATUALIZACAO -->
+<!-- ============================================================ -->
+<h2>6. Modulo Scripts de Atualizacao — Compras, Pesquisas, Impostos, Credito, Reforma</h2>
+<p>Scripts procedurais para coleta de dados de fontes externas. Nao definem classes formais, mas operam com estruturas de dados consistentes.</p>
+
+<div class="diagram-container">
+<pre class="mermaid">
+classDiagram
+    direction TB
+
+    class ComprasUpdater {
+        &lt;&lt;script: update_compras.py&gt;&gt;
+        +collect_pncp_monitor() list~dict~
+        +collect_siconfi() list~dict~
+        +fetch_semester(uf, year, half) tuple~float, float, int~
+        +find_latest_period(year, ente) int | None
+        +replace_js_var(html, varname, value, is_string) str
+        +main() None
+    }
+
+    class PesquisasUpdater {
+        &lt;&lt;script: update_polls.py&gt;&gt;
+        +api_get(path, retries) dict
+        +fetch_all_polls(election_id) list~dict~
+        +normalize_method(m) str
+        +compute_weighted_averages(polls, cargo, state) list~dict~
+        +extract_existing(html, varname) list
+        +replace_js_const(html, varname, value) str
+        +main() None
+    }
+
+    class ImpostometroUpdater {
+        &lt;&lt;script: atualizar_dados.py&gt;&gt;
+        +fetch_rreo_period(year, period) dict | None
+        +fetch_rreo() dict
+        +fetch_ibge_setores() dict | None
+        +update_html(rreo_data, ibge_data) bool
+    }
+
+    class CreditoFetcher {
+        &lt;&lt;script: fetch_data.py&gt;&gt;
+        +fetch_ipeadata(ipea_code, ultimos) list~dict~
+        +fetch_bcb_direct(serie_id, ultimos) list~dict~
+        +main() None
+    }
+
+    class ReformaNewsFetcher {
+        &lt;&lt;script: fetch_news.py&gt;&gt;
+        +fetch_rss(query, days) list~dict~
+        +main() None
+    }
+
+    class PncpMonitorRecord {
+        &lt;&lt;dict structure&gt;&gt;
+        +uf : str
+        +ano : int
+        +nome : str
+        +regiao : str
+        +estimado : float
+        +homologado : float
+        +qtd : int
+    }
+
+    class SiconfiRecord {
+        &lt;&lt;dict structure&gt;&gt;
+        +ano : int
+        +uf : str
+        +nome : str
+        +regiao : str
+        +empenhado : float
+        +liquidado : float
+        +pago : float
+    }
+
+    class PollRecord {
+        &lt;&lt;dict structure&gt;&gt;
+        +id : str
+        +src : str
+        +dt : str
+        +pos : str
+        +uf : str
+        +n : int
+        +me : float
+        +mt : str
+        +c : list~CandidateResult~
+    }
+
+    class WeightedAverage {
+        &lt;&lt;dict structure&gt;&gt;
+        +n : str
+        +p : str
+        +cl : str
+        +avg : float
+        +lo : float
+        +hi : float
+        +cnt : int
+        +smp : int
+    }
+
+    class CreditoSerieRecord {
+        &lt;&lt;dict structure&gt;&gt;
+        +data : str
+        +valor : str
+    }
+
+    class NewsItem {
+        &lt;&lt;dict structure&gt;&gt;
+        +fullTitle : str
+        +title : str
+        +source : str
+        +link : str
+        +pubDate : str
+    }
+
+    ComprasUpdater ..> PncpMonitorRecord : produces
+    ComprasUpdater ..> SiconfiRecord : produces
+    PesquisasUpdater ..> PollRecord : produces
+    PesquisasUpdater ..> WeightedAverage : computes
+    CreditoFetcher ..> CreditoSerieRecord : produces
+    ReformaNewsFetcher ..> NewsItem : produces
+</pre>
+</div>
+
+<h3>6.1 APIs e Fontes de Dados</h3>
+<table>
+  <tr><th>Script</th><th>API / Fonte</th><th>Endpoint</th><th>Frequencia</th></tr>
+  <tr><td><code>update_compras.py</code></td><td>PNCP (pncp.gov.br)</td><td><code>/api/consulta/v1/contratacoes/publicacao</code></td><td>Manual (27 UFs x 5 anos x 2 semestres x 5 modalidades)</td></tr>
+  <tr><td><code>update_compras.py</code></td><td>SICONFI/RREO (Tesouro Nacional)</td><td><code>apidatalake.tesouro.gov.br/ords/siconfi/tt/rreo</code></td><td>Bimestral (27 UFs x 7 anos)</td></tr>
+  <tr><td><code>update_polls.py</code></td><td>ElectioLab</td><td><code>electiolab.com/api/v1/elections</code> e <code>/polls</code></td><td>Periodica (pesquisas eleitorais 2026)</td></tr>
+  <tr><td><code>atualizar_dados.py</code></td><td>RREO/SICONFI + IBGE SIDRA</td><td>RREO: arrecadacao tributaria / SIDRA: Tabela 1846 (PIB setorial)</td><td>Bimestral</td></tr>
+  <tr><td><code>fetch_data.py</code></td><td>IPEADATA (espelho BCB SGS)</td><td><code>ipeadata.gov.br/api/odata4/ValoresSerie</code></td><td>Mensal (14 series: Selic, IPCA, credito PJ, inadimplencia)</td></tr>
+  <tr><td><code>fetch_news.py</code></td><td>Google News RSS</td><td>RSS search com 4 queries sobre reforma tributaria</td><td>Diaria via GitHub Actions</td></tr>
+</table>
+
+<h3>6.2 Pesquisas Eleitorais — Media Ponderada</h3>
+<p>O <code>update_polls.py</code> implementa media ponderada com 3 fatores multiplicativos:</p>
+<table>
+  <tr><th>Fator</th><th>Formula</th><th>Valores</th></tr>
+  <tr><td>Recencia</td><td><code>e^(-ln(2) * dias_decorridos / HALF_LIFE)</code></td><td>HALF_LIFE = 14 dias</td></tr>
+  <tr><td>Amostra</td><td><code>sqrt(sample_size)</code></td><td>Default 100 se ausente</td></tr>
+  <tr><td>Metodologia</td><td>Peso por tipo</td><td>Presencial: 1.0, Telefonica: 0.9, Mista: 0.85, Online: 0.8</td></tr>
+</table>
+
+<div class="page-break"></div>
+
+<!-- ============================================================ -->
+<!-- MODULO 7: FRONTEND JS -->
+<!-- ============================================================ -->
+<h2>7. Modulo Frontend — Objetos JavaScript nos Dashboards</h2>
+<p>Localizacao: <code>pippa-portal/index.html</code> e <code>index.html</code> de cada ferramenta (18 dashboards)</p>
+
+<div class="diagram-container">
+<pre class="mermaid">
+classDiagram
+    direction TB
+
+    class ToolDefinition {
+        &lt;&lt;JS Object in pippa-portal&gt;&gt;
+        +id : string
+        +nome : string
+        +subtitulo : string
+        +accent : string
+        +icon : string
+        +url : string
+        +descricao : string
+        +features : string[]
+        +destaque : string
+    }
+
+    class QuestionDefinition {
+        &lt;&lt;JS Object in pippa-portal&gt;&gt;
+        +texto : string
+        +ferramentas : string[]
+        +macro : string
+    }
+
+    class MacroTemaDefinition {
+        &lt;&lt;JS Object in pippa-portal&gt;&gt;
+        +key : string
+        +nome : string
+        +icone : string
+    }
+
+    class ClassifyRelevance {
+        &lt;&lt;JS function in pippa-legislativo-dashboard&gt;&gt;
+        +classifyRelevance(ementa, sigla, indexacao) object
+    }
+
+    class ClassifyCredibility {
+        &lt;&lt;JS function in pippa-reforma-dashboard&gt;&gt;
+        +classifyCredibility(source, title) object
+        +classifyNews(title) string
+    }
+
+    class ClassifyCompras {
+        &lt;&lt;JS function in pippa-compras-dashboard&gt;&gt;
+        +classifyMPE(item) string
+        +classifyMEI(item) string
+        +classifyFaixaValor(item) string
+        +classifyUrgencia(item) string
+    }
+
+    class ComputeICPRIG {
+        &lt;&lt;JS async function in pippa-stakeholders&gt;&gt;
+        +computeICPRIG() void
+        +computeScores() void
+    }
+
+    class ClassifyPauta {
+        &lt;&lt;JS function in pippa-pauta-legislativa&gt;&gt;
+        +classifyTipoCamara(desc) string
+        +classifySituacao(sit) string
+        +classifySebrae(event) object
+    }
+
+    class ClassifyConsultas {
+        &lt;&lt;JS function in pippa-consultas-publicas&gt;&gt;
+        +classifyRelevancia(titulo, descricao) object
+    }
+
+    class DashboardFilters {
+        &lt;&lt;JS in pippa-emendas&gt;&gt;
+        +activeFilters : object
+        +applyAllFilters() void
+        +toggleFilter(el) void
+        +clearFilter(f) void
+        +filterByAno(items) list
+        +filterByUf(items) list
+        +aggregate(items, key) list
+    }
+
+    ToolDefinition "20" --> "1" MacroTemaDefinition : macro
+    QuestionDefinition "*" --> "*" ToolDefinition : ferramentas
+    QuestionDefinition "*" --> "1" MacroTemaDefinition : macro
+</pre>
+</div>
+
+<h3>7.1 Inventario de Engines de Classificacao por Dashboard</h3>
+<table>
+  <tr><th>Dashboard</th><th>Funcao</th><th>Responsabilidade</th></tr>
+  <tr><td>Radar Legislativo</td><td><code>classifyRelevance(ementa, sigla, indexacao)</code></td><td>Classificacao P0-P4 com 10 criterios, pesos e precedencia</td></tr>
+  <tr><td>Reforma Tributaria</td><td><code>classifyCredibility(source, title)</code></td><td>Motor de credibilidade de fonte + classificacao fato/proposta</td></tr>
+  <tr><td>Reforma Tributaria</td><td><code>classifyNews(title)</code></td><td>Classificacao tematica de noticias (IBS, CBS, seletivo, etc.)</td></tr>
+  <tr><td>Compras Publicas</td><td><code>classifyMPE(item)</code></td><td>Classificacao de oportunidade para MPE (LC 123/2006)</td></tr>
+  <tr><td>Compras Publicas</td><td><code>classifyMEI(item)</code></td><td>Classificacao de oportunidade para MEI</td></tr>
+  <tr><td>Compras Publicas</td><td><code>classifyFaixaValor(item)</code></td><td>Faixas de valor estimado da contratacao</td></tr>
+  <tr><td>Compras Publicas</td><td><code>classifyUrgencia(item)</code></td><td>Classificacao por prazo ate encerramento</td></tr>
+  <tr><td>Stakeholders</td><td><code>computeScores()</code></td><td>Alinhamento Sebrae: pesos 40% frentes + 30% comissoes + 30% autorias</td></tr>
+  <tr><td>Stakeholders</td><td><code>computeICPRIG()</code></td><td>Indice de Capital Politico: PB x MI x BC (5 dimensoes + 2 multiplicadores)</td></tr>
+  <tr><td>Pauta Legislativa</td><td><code>classifyTipoCamara(desc)</code></td><td>Tipificacao de item de pauta</td></tr>
+  <tr><td>Pauta Legislativa</td><td><code>classifySituacao(sit)</code></td><td>Situacao do item na pauta (prevista, aprovada, rejeitada)</td></tr>
+  <tr><td>Pauta Legislativa</td><td><code>classifySebrae(event)</code></td><td>Relevancia para o Sebrae</td></tr>
+  <tr><td>Consultas Publicas</td><td><code>classifyRelevancia(titulo, descricao)</code></td><td>Relevancia por palavras-chave MPE</td></tr>
+</table>
+
+<h3>7.2 Objetos do Dashboard Emendas (JavaScript)</h3>
+<p>O dashboard <code>pippa-emendas</code> embarca dados como JSON no HTML e opera inteiramente client-side com Chart.js. Principais estruturas:</p>
+<table>
+  <tr><th>Variavel</th><th>Tipo</th><th>Descricao</th></tr>
+  <tr><td><code>DATA</code></td><td>object</td><td>Objeto principal com 9 arrays: estados, partidos, autores, serie, tipos, tipos_uf, funcoes, funcoes_uf, municipios</td></tr>
+  <tr><td><code>SERIES_COLORS</code></td><td>string[]</td><td>15 cores do design system para series de graficos</td></tr>
+  <tr><td><code>UF_REGIAO</code></td><td>object</td><td>Mapeamento UF para Regiao (27 entradas)</td></tr>
+  <tr><td><code>activeFilters</code></td><td>object</td><td>{regiao: [], uf: [], partido: [], setor: []} — estado dos filtros laterais</td></tr>
+  <tr><td><code>charts</code></td><td>object</td><td>Instancias Chart.js ativas (destruidas e recriadas a cada filtro)</td></tr>
+</table>
+
+<div class="page-break"></div>
+
+<!-- ============================================================ -->
+<!-- DIAGRAMA CONSOLIDADO -->
+<!-- ============================================================ -->
+<h2>8. Diagrama Consolidado — Dependencias entre Modulos</h2>
+
+<div class="diagram-container">
+<pre class="mermaid">
+classDiagram
+    direction TB
+
+    namespace Core {
+        class models_py["models.py"] {
+            Parlamentar
+            Emenda
+            QualityFlag
+            PipelineStats
+            TipoEmenda
+            MatchConfianca
+            LocalidadeTipo
+            QualityStatus
+        }
+        class config_py["config.py"] {
+            URLs
+            LEGISLATURAS
+            UF_CODES
+            REGIOES
+            THRESHOLDS
+            COLORS
+        }
+    }
+
+    namespace Collectors {
+        class BaseCollector {
+            &lt;&lt;abstract&gt;&gt;
+        }
+        class PortalTransparenciaCollector
+        class TesouroTransparenteCollector
+        class CamaraApiCollector
+        class SenadoApiCollector
+        class CacheManager
+    }
+
+    namespace Enrichment {
+        class PartidoResolver
+        class IbgeNormalizer
+    }
+
+    namespace Pipeline {
+        class pipeline_py["pipeline.py"] {
+            run_pipeline()
+            _validar_cruzamento()
+            _calcular_stats()
+            _salvar()
+        }
+    }
+
+    namespace API {
+        class api_py["api.py FastAPI"] {
+            GET /
+            GET /api/dados
+            POST /api/pipeline
+            GET /api/pipeline/status
+        }
+        class DashboardBuilder
+        class HtmlRenderer
+    }
+
+    namespace UpdateScripts {
+        class ComprasUpdater
+        class PesquisasUpdater
+        class ImpostometroUpdater
+        class CreditoFetcher
+        class ReformaNewsFetcher
+        class StakeholdersCacheBuilder
+        class EleicaoBuilder
+    }
+
+    namespace Frontend_JS {
+        class PortalObjects["Portal TOOLS QUESTIONS MACRO_TEMAS"]
+        class ClassificationEngines["13 Engines de Classificacao"]
+        class ICPRIGScoring["ICP/RIG Scoring 5 Dim + 2 Mult"]
+        class DashboardFilters["Filtros Interativos"]
+    }
+
+    BaseCollector <|-- PortalTransparenciaCollector
+    BaseCollector <|-- TesouroTransparenteCollector
+    BaseCollector <|-- CamaraApiCollector
+    BaseCollector <|-- SenadoApiCollector
+    BaseCollector o-- CacheManager
+
+    pipeline_py ..> PortalTransparenciaCollector : uses
+    pipeline_py ..> TesouroTransparenteCollector : uses
+    pipeline_py ..> CamaraApiCollector : uses
+    pipeline_py ..> SenadoApiCollector : uses
+    pipeline_py ..> PartidoResolver : uses
+    pipeline_py ..> IbgeNormalizer : uses
+    pipeline_py ..> models_py : uses
+
+    api_py ..> DashboardBuilder : GET /api/dados
+    api_py ..> pipeline_py : POST /api/pipeline
+    api_py ..> HtmlRenderer : GET /
+    DashboardBuilder ..> config_py : uses
+    HtmlRenderer ..> models_py : uses
+    HtmlRenderer ..> config_py : uses
+
+    PartidoResolver ..> models_py : uses
+    PartidoResolver ..> config_py : uses
+    IbgeNormalizer ..> config_py : uses
+
+    PortalTransparenciaCollector ..> config_py : uses
+    TesouroTransparenteCollector ..> config_py : uses
+    CamaraApiCollector ..> config_py : uses
+    CamaraApiCollector ..> models_py : uses
+    SenadoApiCollector ..> config_py : uses
+    SenadoApiCollector ..> models_py : uses
+
+    StakeholdersCacheBuilder ..> "API Camara" : fetches
+    StakeholdersCacheBuilder ..> "API Senado" : fetches
+    EleicaoBuilder ..> "TSE CDN" : fetches
+
+    Frontend_JS ..> api_py : fetch /api/dados
+    ClassificationEngines ..> PortalObjects : referenced by
+    ICPRIGScoring ..> StakeholdersCacheBuilder : consumes cache
+</pre>
+</div>
+
+<!-- INVENTARIO -->
+<h2>9. Inventario Quantitativo</h2>
+
+<table>
+  <tr><th>Tipo</th><th>Qtd</th><th>Exemplos</th></tr>
+  <tr><td><span class="badge badge-enum">Enums Python</span></td><td>4</td><td>TipoEmenda (6 valores), MatchConfianca (4), LocalidadeTipo (4), QualityStatus (3)</td></tr>
+  <tr><td><span class="badge badge-dc">Dataclasses Python</span></td><td>4</td><td>Parlamentar (7 campos), Emenda (22 campos), QualityFlag (6), PipelineStats (9)</td></tr>
+  <tr><td><span class="badge badge-abc">ABC Python</span></td><td>1</td><td>BaseCollector (collect() abstrato)</td></tr>
+  <tr><td><span class="badge badge-cls">Classes concretas Python</span></td><td>7</td><td>CacheManager, PortalTransparenciaCollector, TesouroTransparenteCollector, CamaraApiCollector, SenadoApiCollector, PartidoResolver, IbgeNormalizer</td></tr>
+  <tr><td><span class="badge badge-fn">Modulos funcionais Python</span></td><td>10</td><td>pipeline.py, dashboard_builder.py (9 funcoes), html_renderer.py, gerar_dashboard.py, build_cache.py (7 funcoes), build_eleicao_2026.py, update_compras.py, update_polls.py, atualizar_dados.py, fetch_data.py</td></tr>
+  <tr><td><span class="badge badge-js">Engines de classificacao JS</span></td><td>13</td><td>classifyRelevance, classifyCredibility, classifyMPE, classifyMEI, classifyFaixaValor, classifyUrgencia, computeScores, computeICPRIG, classifyTipoCamara, classifySituacao, classifySebrae, classifyRelevancia, classifyNews</td></tr>
+  <tr><td><span class="badge badge-js">Objetos de configuracao JS</span></td><td>8</td><td>TOOLS (20 itens), QUESTIONS (45+ itens), MACRO_TEMAS (6 itens), SEBRAE_FRENTE_KEYWORDS, COMISSOES_TIER1/TIER2, AUTORIA_KEYWORDS, CANDIDATE_COLORS, METHODOLOGY_WEIGHTS</td></tr>
+  <tr><td><span class="badge badge-js">Estruturas de dados dict</span></td><td>8</td><td>StakeholderRecord, CandidatoRecord, PncpMonitorRecord, SiconfiRecord, PollRecord, WeightedAverage, CreditoSerieRecord, NewsItem</td></tr>
+</table>
+
+<h3>9.1 Metricas de Complexidade</h3>
+<table>
+  <tr><th>Metrica</th><th>Valor</th></tr>
+  <tr><td>Total de campos em dataclasses</td><td>44 (Parlamentar: 7, Emenda: 22, QualityFlag: 6, PipelineStats: 9)</td></tr>
+  <tr><td>Total de valores em enums</td><td>17 (TipoEmenda: 6, MatchConfianca: 4, LocalidadeTipo: 4, QualityStatus: 3)</td></tr>
+  <tr><td>Profundidade maxima de heranca</td><td>2 (BaseCollector -> *Collector)</td></tr>
+  <tr><td>APIs externas integradas</td><td>9 (Portal Transparencia, Tesouro Transparente, Camara, Senado, PNCP, SICONFI, IPEADATA/BCB, ElectioLab, Google News RSS)</td></tr>
+  <tr><td>Total de dashboards HTML</td><td>18 (portal + 17 ferramentas)</td></tr>
+  <tr><td>Dimensoes do scoring ICP/RIG</td><td>5 dimensoes (A-E) + 2 multiplicadores (MI, BC)</td></tr>
+</table>
+
+<div class="highlight">
+  <strong>Padrao arquitetural:</strong> O backend Python segue uma arquitetura em camadas (Collectors -> Enrichment -> Pipeline -> API/Renderer) com heranca no modulo de coleta e composicao via <code>CacheManager</code>. O frontend JavaScript e funcional (funcoes de classificacao puras) com objetos de configuracao declarativos. Scripts de atualizacao sao procedurais e operam sobre estruturas dict tipadas. O scoring ICP/RIG combina coleta server-side (Python) com calculo client-side (JavaScript) via arquivo de cache intermediario.
+</div>
+
+<!-- FOOTER -->
+<div class="doc-footer">
+  <div><span class="classification">USO INTERNO — SEBRAE NACIONAL</span> &middot; Artefato 3.9</div>
+  <div>PIPPA — UPP / Sebrae Nacional / Novembro 2026</div>
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  themeVariables: {
+    primaryColor: 'rgba(42,79,218,.08)',
+    primaryTextColor: '#0b2574',
+    primaryBorderColor: '#2a4fda',
+    lineColor: '#6b7280',
+    secondaryColor: 'rgba(101,183,251,.08)',
+    tertiaryColor: 'rgba(97,180,102,.06)',
+    fontFamily: '"Figtree", sans-serif',
+    fontSize: '12px'
+  },
+  classDiagram: { useMaxWidth: true }
+});
+</script>
+
+</body>
+</html>

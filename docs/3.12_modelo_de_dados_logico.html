@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.12 Modelo de Dados Logico — PIPPA</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+@page { size: A4; margin: 16mm 18mm 20mm 18mm; }
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page-break { page-break-before: always; }
+  .no-print { display: none !important; }
+  .entity-card { break-inside: avoid; }
+}
+:root {
+  --azul:#2a4fda; --atlantico:#0b2574; --ceu:#65b7fb;
+  --verde:#61b466; --laranja:#f39d72; --vermelho:#e0565d;
+  --roxo:#be64e3; --jacaranda:#8f85f4;
+  --font-heading:'Plus Jakarta Sans',sans-serif;
+  --font-body:'Figtree',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:10pt; }
+body { font-family:var(--font-body); color:#1a1a1a; background:#fff; line-height:1.55; max-width:210mm; margin:0 auto; padding:16mm 18mm 20mm 18mm; }
+
+.doc-header { display:flex; align-items:flex-start; justify-content:space-between; border-bottom:3px solid var(--azul); padding-bottom:12px; margin-bottom:16px; }
+.brand-text { display:flex; flex-direction:column; }
+.brand-org { font-family:var(--font-heading); font-size:9.5pt; font-weight:700; color:var(--azul); letter-spacing:-.4px; }
+.brand-unit { font-size:7.5pt; color:#6b7280; font-weight:500; }
+.doc-type { font-family:var(--font-heading); font-size:7.5pt; font-weight:700; color:#fff; background:var(--azul); padding:3px 10px; border-radius:4px; display:inline-block; }
+.doc-date { font-size:7pt; color:#6b7280; margin-top:3px; text-align:right; }
+
+.title-block { background:linear-gradient(45deg, var(--atlantico), var(--azul)); border-radius:8px; padding:20px 24px; margin-bottom:18px; color:#fff; }
+.title-block h1 { font-family:var(--font-heading); font-size:15pt; font-weight:800; letter-spacing:-1px; margin-bottom:3px; }
+.title-block .subtitle { font-size:9.5pt; color:rgba(255,255,255,.8); }
+.title-block .ref { font-size:7pt; color:rgba(255,255,255,.45); margin-top:8px; }
+
+h2 { font-family:var(--font-heading); font-size:12pt; font-weight:800; color:var(--atlantico); margin:20px 0 8px; padding-bottom:4px; border-bottom:2px solid var(--azul); }
+h3 { font-family:var(--font-heading); font-size:10pt; font-weight:700; color:var(--azul); margin:14px 0 5px; }
+p { margin-bottom:6px; text-align:justify; }
+ul { margin:0 0 8px 16px; }
+li { margin-bottom:2px; }
+code { background:#f3f4f6; padding:1px 4px; border-radius:3px; font-size:8.5pt; font-family:'Cascadia Code','Fira Code',monospace; }
+
+table { width:100%; border-collapse:collapse; margin:6px 0 12px; font-size:8.5pt; }
+th { background:var(--azul); color:#fff; font-family:var(--font-heading); font-weight:700; text-align:left; padding:5px 8px; font-size:8pt; }
+td { padding:5px 8px; border-bottom:1px solid #e5e7eb; vertical-align:top; }
+tr:nth-child(even) td { background:#f9fafb; }
+
+.badge { font-size:6.5pt; font-weight:700; padding:2px 6px; border-radius:3px; display:inline-block; text-transform:uppercase; letter-spacing:.3px; }
+.badge-pk { background:rgba(42,79,218,.12); color:var(--azul); }
+.badge-fk { background:rgba(190,100,227,.1); color:var(--roxo); }
+.badge-idx { background:rgba(97,180,102,.1); color:#166534; }
+
+.domain-header { display:flex; align-items:center; gap:10px; margin:16px 0 8px; padding:10px 14px; border-radius:8px; }
+.domain-header.legislativo { background:linear-gradient(45deg,rgba(42,79,218,.06),rgba(42,79,218,.1)); border:1px solid rgba(42,79,218,.15); }
+.domain-header.orcamentario { background:linear-gradient(45deg,rgba(97,180,102,.06),rgba(97,180,102,.1)); border:1px solid rgba(97,180,102,.15); }
+.domain-header.compras { background:linear-gradient(45deg,rgba(243,157,114,.06),rgba(243,157,114,.1)); border:1px solid rgba(243,157,114,.15); }
+.domain-header.economico { background:linear-gradient(45deg,rgba(190,100,227,.06),rgba(190,100,227,.1)); border:1px solid rgba(190,100,227,.15); }
+.domain-header.monitoramento { background:linear-gradient(45deg,rgba(101,183,251,.06),rgba(101,183,251,.1)); border:1px solid rgba(101,183,251,.15); }
+.domain-header h3 { margin:0; font-size:10.5pt; }
+.domain-header .meta { font-size:7.5pt; color:#6b7280; }
+
+.entity-card { border:1px solid #e5e7eb; border-radius:6px; margin:6px 0; overflow:hidden; }
+.entity-card .entity-name { background:#f9fafb; padding:6px 10px; font-family:var(--font-heading); font-weight:700; font-size:9pt; color:var(--atlantico); border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center; }
+.entity-card .entity-name .src { font-family:var(--font-body); font-size:7pt; color:#6b7280; font-weight:400; }
+.entity-card table { margin:0; }
+.entity-card th { font-size:7.5pt; }
+.entity-card td { font-size:8pt; }
+
+.rel-card { border:1px solid #e5e7eb; border-radius:6px; padding:8px 12px; margin:4px 0; display:flex; align-items:center; gap:8px; font-size:8.5pt; }
+.rel-card .rel-from, .rel-card .rel-to { font-family:var(--font-heading); font-weight:700; color:var(--azul); font-size:8pt; }
+.rel-card .rel-arrow { color:#6b7280; font-size:10pt; }
+.rel-card .rel-card-type { font-size:7pt; color:#6b7280; }
+
+.doc-footer { margin-top:24px; padding-top:10px; border-top:2px solid var(--azul); display:flex; justify-content:space-between; font-size:7pt; color:#9ca3af; }
+.doc-footer .classification { font-family:var(--font-heading); font-weight:700; color:var(--azul); font-size:7pt; }
+
+.print-btn { position:fixed; bottom:24px; right:24px; background:var(--azul); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 16px rgba(42,79,218,.35); z-index:100; }
+.print-btn:hover { background:var(--atlantico); }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
+
+<div class="doc-header">
+  <div class="brand-text">
+    <span class="brand-org">PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas</span>
+    <span class="brand-unit">Unidade de Politicas Publicas · Sebrae Nacional</span>
+  </div>
+  <div style="text-align:right;">
+    <span class="doc-type">DOCUMENTACAO TECNICA</span>
+    <div class="doc-date">Novembro de 2026</div>
+  </div>
+</div>
+
+<div class="title-block">
+  <h1>3.12 — Modelo de Dados Logico</h1>
+  <div class="subtitle">Entidades, atributos e relacionamentos logicos da plataforma PIPPA, organizados por dominio de negocio</div>
+  <div class="ref">Ref.: Item 3.12 do Parecer UTIC — Relatorio de Aderencia para Internalizacao — 09/11/2026</div>
+</div>
+
+<p>Este documento apresenta o modelo de dados logico da plataforma PIPPA, organizando as estruturas de dados em 5 dominios de negocio. Para cada entidade, sao listados os atributos, tipos logicos, chaves e relacionamentos. O modelo reflete as estruturas efetivamente implementadas no codigo-fonte (dataclasses Python, Parquets, caches JSON/JS e variaveis embarcadas em HTML).</p>
+
+<!-- ============================================ -->
+<!-- DOMINIO 1: ORCAMENTARIO (Emendas) -->
+<!-- ============================================ -->
+<div class="domain-header orcamentario">
+  <div>
+    <h3>Dominio Orcamentario — Emendas Parlamentares</h3>
+    <div class="meta">Fontes: Portal da Transparencia (CGU), Tesouro Transparente, API Camara, API Senado · Pipeline: pippa-emendas</div>
+  </div>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Emenda <span class="src">emendas_enriquecidas_completo.parquet · ~83.614 registros</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>codigo_emenda</code></td><td>Texto</td><td><span class="badge badge-pk">PK</span></td><td>Codigo unico da emenda no Portal da Transparencia</td></tr>
+    <tr><td><code>ano</code></td><td>Inteiro</td><td><span class="badge badge-idx">IDX</span></td><td>Ano do exercicio orcamentario (2015–presente)</td></tr>
+    <tr><td><code>tipo_emenda</code></td><td>Enumeracao</td><td></td><td>Individual Definida | Individual Especial | Bancada | Comissao | Relator</td></tr>
+    <tr><td><code>codigo_autor</code></td><td>Texto</td><td></td><td>Codigo do autor no Portal</td></tr>
+    <tr><td><code>nome_autor</code></td><td>Texto</td><td><span class="badge badge-fk">FK → Parlamentar</span></td><td>Nome do autor (enriquecido por fuzzy matching)</td></tr>
+    <tr><td><code>numero_emenda</code></td><td>Texto</td><td></td><td>Numero sequencial da emenda</td></tr>
+    <tr><td><code>localidade_aplicacao</code></td><td>Texto</td><td></td><td>Localidade de aplicacao textual (original CGU)</td></tr>
+    <tr><td><code>cod_ibge_municipio</code></td><td>Texto</td><td><span class="badge badge-fk">FK → Municipio</span></td><td>Codigo IBGE do municipio destino (7 digitos)</td></tr>
+    <tr><td><code>municipio</code></td><td>Texto</td><td></td><td>Nome do municipio destino (normalizado IBGE)</td></tr>
+    <tr><td><code>cod_ibge_uf</code></td><td>Texto</td><td></td><td>Codigo IBGE da UF destino (2 digitos)</td></tr>
+    <tr><td><code>uf_destino</code></td><td>Texto (2)</td><td><span class="badge badge-idx">IDX</span></td><td>Sigla da UF destino da emenda</td></tr>
+    <tr><td><code>regiao</code></td><td>Texto</td><td></td><td>Regiao geografica (Norte, Nordeste, Sudeste, Sul, Centro-Oeste)</td></tr>
+    <tr><td><code>cod_funcao</code></td><td>Texto</td><td></td><td>Codigo da funcao orcamentaria</td></tr>
+    <tr><td><code>funcao</code></td><td>Texto</td><td></td><td>Funcao orcamentaria (Saude, Educacao, Urbanismo, etc.)</td></tr>
+    <tr><td><code>cod_subfuncao</code></td><td>Texto</td><td></td><td>Codigo da subfuncao orcamentaria</td></tr>
+    <tr><td><code>subfuncao</code></td><td>Texto</td><td></td><td>Subfuncao orcamentaria</td></tr>
+    <tr><td><code>cod_programa</code></td><td>Texto</td><td></td><td>Codigo do programa orcamentario</td></tr>
+    <tr><td><code>programa</code></td><td>Texto</td><td></td><td>Nome do programa orcamentario</td></tr>
+    <tr><td><code>cod_acao</code></td><td>Texto</td><td></td><td>Codigo da acao orcamentaria</td></tr>
+    <tr><td><code>acao</code></td><td>Texto</td><td></td><td>Nome da acao orcamentaria</td></tr>
+    <tr><td><code>cod_plano_orcamentario</code></td><td>Texto</td><td></td><td>Codigo do plano orcamentario</td></tr>
+    <tr><td><code>plano_orcamentario</code></td><td>Texto</td><td></td><td>Nome do plano orcamentario</td></tr>
+    <tr><td><code>valor_empenhado</code></td><td>Decimal</td><td></td><td>Valor empenhado (R$)</td></tr>
+    <tr><td><code>valor_liquidado</code></td><td>Decimal</td><td></td><td>Valor liquidado (R$)</td></tr>
+    <tr><td><code>valor_pago</code></td><td>Decimal</td><td></td><td>Valor pago (R$)</td></tr>
+    <tr><td><code>valor_rp_inscrito</code></td><td>Decimal</td><td></td><td>Valor inscrito em Restos a Pagar (R$)</td></tr>
+    <tr><td><code>valor_rp_cancelado</code></td><td>Decimal</td><td></td><td>Valor de RP cancelado (R$)</td></tr>
+    <tr><td><code>valor_rp_pago</code></td><td>Decimal</td><td></td><td>Valor de RP pago (R$)</td></tr>
+    <tr><td><code>localidade_tipo</code></td><td>Enumeracao</td><td></td><td>municipal | estadual | nacional | sem_informacao</td></tr>
+    <tr><td><code>partido</code></td><td>Texto</td><td><span class="badge badge-fk">FK → Partido</span></td><td>Sigla do partido (enriquecido via API Camara/Senado)</td></tr>
+    <tr><td><code>uf_autor</code></td><td>Texto (2)</td><td></td><td>UF do autor (enriquecida)</td></tr>
+    <tr><td><code>legislatura</code></td><td>Inteiro</td><td></td><td>Numero da legislatura (55, 56, 57)</td></tr>
+    <tr><td><code>match_confianca</code></td><td>Enumeracao</td><td></td><td>exato | fuzzy | nao_encontrado | nao_aplicavel</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Parlamentar (Emendas) <span class="src">Dataclass Python · enriquecido via API Camara + Senado</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>nome</code></td><td>Texto</td><td><span class="badge badge-pk">PK (natural)</span></td><td>Nome civil do parlamentar</td></tr>
+    <tr><td><code>nome_normalizado</code></td><td>Texto</td><td><span class="badge badge-idx">IDX</span></td><td>Nome sem acentos, maiusculo (para fuzzy match, score >= 85)</td></tr>
+    <tr><td><code>partido</code></td><td>Texto</td><td></td><td>Sigla do partido</td></tr>
+    <tr><td><code>uf</code></td><td>Texto (2)</td><td></td><td>UF de representacao</td></tr>
+    <tr><td><code>legislatura</code></td><td>Inteiro</td><td></td><td>Legislatura (55–57)</td></tr>
+    <tr><td><code>casa</code></td><td>Enumeracao</td><td></td><td>camara | senado</td></tr>
+    <tr><td><code>id_externo</code></td><td>Texto</td><td></td><td>ID na API da Camara ou Senado</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">QualityFlag <span class="src">quality_report_completo.json → flags[] · Validacao cruzada CGU x Tesouro</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>uf</code></td><td>Texto (2)</td><td><span class="badge badge-pk">PK (composta)</span></td><td>UF da comparacao</td></tr>
+    <tr><td><code>ano</code></td><td>Inteiro</td><td><span class="badge badge-pk">PK (composta)</span></td><td>Ano da comparacao</td></tr>
+    <tr><td><code>valor_portal</code></td><td>Decimal</td><td></td><td>Total pago segundo Portal da Transparencia (CGU)</td></tr>
+    <tr><td><code>valor_tesouro</code></td><td>Decimal</td><td></td><td>Total segundo Tesouro Transparente</td></tr>
+    <tr><td><code>divergencia_pct</code></td><td>Decimal</td><td></td><td>Divergencia percentual entre fontes</td></tr>
+    <tr><td><code>status</code></td><td>Enumeracao</td><td></td><td>OK (&lt;5%) | ALERTA (5–15%) | CRITICO (&gt;15%)</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">PipelineStats <span class="src">quality_report_completo.json → stats · Dataclass Python models.py</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>timestamp</code></td><td>Data/Hora (ISO 8601)</td><td><span class="badge badge-pk">PK</span></td><td>Momento de execucao do pipeline</td></tr>
+    <tr><td><code>total_emendas</code></td><td>Inteiro</td><td></td><td>Total de emendas processadas no pipeline</td></tr>
+    <tr><td><code>total_autores_unicos</code></td><td>Inteiro</td><td></td><td>Quantidade de autores distintos (nome_autor)</td></tr>
+    <tr><td><code>match_exato</code></td><td>Inteiro</td><td></td><td>Emendas com match exato de autor (nome normalizado)</td></tr>
+    <tr><td><code>match_fuzzy</code></td><td>Inteiro</td><td></td><td>Emendas com match fuzzy (rapidfuzz, score >= 85)</td></tr>
+    <tr><td><code>match_nao_encontrado</code></td><td>Inteiro</td><td></td><td>Emendas cujo autor nao foi encontrado nas APIs</td></tr>
+    <tr><td><code>match_nao_aplicavel</code></td><td>Inteiro</td><td></td><td>Emendas de bancada/comissao/relator (sem autor individual)</td></tr>
+    <tr><td><code>quality_flags_alerta</code></td><td>Inteiro</td><td></td><td>QualityFlags com status ALERTA (divergencia 5–15%)</td></tr>
+    <tr><td><code>quality_flags_critico</code></td><td>Inteiro</td><td></td><td>QualityFlags com status CRITICO (divergencia &gt;15%)</td></tr>
+  </table>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ============================================ -->
+<!-- DOMINIO 2: LEGISLATIVO (Stakeholders) -->
+<!-- ============================================ -->
+<div class="domain-header legislativo">
+  <div>
+    <h3>Dominio Legislativo — Stakeholders e Radar</h3>
+    <div class="meta">Fontes: API Camara dos Deputados, API Senado Federal, TSE · Cache: stakeholders_cache.js · 794 KB</div>
+  </div>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Parlamentar (Stakeholders) <span class="src">stakeholders_cache.js → parlamentares[]</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>id</code></td><td>Inteiro</td><td><span class="badge badge-pk">PK</span></td><td>ID na API (Camara ou Senado)</td></tr>
+    <tr><td><code>nome</code></td><td>Texto</td><td></td><td>Nome parlamentar</td></tr>
+    <tr><td><code>partido</code></td><td>Texto</td><td></td><td>Sigla do partido atual</td></tr>
+    <tr><td><code>uf</code></td><td>Texto (2)</td><td><span class="badge badge-idx">IDX</span></td><td>UF de representacao</td></tr>
+    <tr><td><code>casa</code></td><td>Enumeracao</td><td></td><td>camara | senado</td></tr>
+    <tr><td><code>foto</code></td><td>URL</td><td></td><td>URL da foto oficial</td></tr>
+    <tr><td><code>email</code></td><td>Texto</td><td></td><td>E-mail parlamentar</td></tr>
+    <tr><td><code>frentes</code></td><td>Lista&lt;Texto&gt;</td><td></td><td>Frentes parlamentares relevantes (filtradas por keywords Sebrae)</td></tr>
+    <tr><td><code>orgaos</code></td><td>Lista&lt;Texto&gt;</td><td></td><td>Comissoes das quais e membro</td></tr>
+    <tr><td><code>orgaoRoles</code></td><td>Mapa&lt;Texto, Texto&gt;</td><td></td><td>Papel em cada comissao (Titular, Suplente, Presidente)</td></tr>
+    <tr><td><code>eleicao2026</code></td><td>Objeto (nullable)</td><td><span class="badge badge-fk">FK → Candidato 2026</span></td><td>Dados de candidatura 2026 (se houver match TSE)</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Frente Parlamentar <span class="src">stakeholders_cache.js → frentes[]</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>id</code></td><td>Inteiro</td><td><span class="badge badge-pk">PK</span></td><td>ID na API da Camara</td></tr>
+    <tr><td><code>titulo</code></td><td>Texto</td><td></td><td>Nome completo da frente parlamentar</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Comissao <span class="src">stakeholders_cache.js → comissoesChave{}</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>sigla</code></td><td>Texto</td><td><span class="badge badge-pk">PK</span></td><td>Sigla da comissao (CDE, CFT, CAE, etc.)</td></tr>
+    <tr><td><code>nome</code></td><td>Texto</td><td></td><td>Nome completo da comissao</td></tr>
+    <tr><td><code>membros</code></td><td>Lista&lt;Inteiro&gt;</td><td></td><td>IDs dos parlamentares membros</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Autoria Relevante <span class="src">stakeholders_cache.js → autorias{}</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>parlamentar_id</code></td><td>Inteiro</td><td><span class="badge badge-fk">FK → Parlamentar</span></td><td>ID do parlamentar autor</td></tr>
+    <tr><td><code>contagem</code></td><td>Inteiro</td><td></td><td>Quantidade de autorias com keywords relevantes para o Sebrae</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Candidato TSE 2026 <span class="src">candidatos_2026.js · build_eleicao_2026.py — Cruzamento TSE x APIs</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>parlamentar_nome</code></td><td>Texto (normalizado)</td><td><span class="badge badge-pk">PK</span></td><td>Nome normalizado do parlamentar (sem acentos, minusculo)</td></tr>
+    <tr><td><code>cargo2026</code></td><td>Enumeracao</td><td></td><td>Presidente | Governador | Senador | Deputado Federal | Deputado Estadual</td></tr>
+    <tr><td><code>uf2026</code></td><td>Texto (2)</td><td></td><td>UF da candidatura (ou "BR" para Presidente)</td></tr>
+    <tr><td><code>eleito</code></td><td>Booleano</td><td></td><td>Se o candidato foi eleito no pleito 2026</td></tr>
+    <tr><td><code>nome_urna</code></td><td>Texto</td><td></td><td>Nome de urna usado na eleicao</td></tr>
+    <tr><td><code>partido_tse</code></td><td>Texto</td><td></td><td>Sigla do partido no registro TSE</td></tr>
+  </table>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ============================================ -->
+<!-- DOMINIO 3: COMPRAS PUBLICAS -->
+<!-- ============================================ -->
+<div class="domain-header compras">
+  <div>
+    <h3>Dominio Compras Publicas — Monitor de Contratacoes e Execucao Orcamentaria</h3>
+    <div class="meta">Fontes: API PNCP, API SICONFI/Tesouro Nacional, FNDE (PDDE/PNAE) · Pipeline: pippa-compras-dashboard</div>
+  </div>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Contratacao Agregada (por UF/Ano) <span class="src">PNCP_MONITOR_CACHE[] · API PNCP · 27 UFs x 5 anos</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>uf</code></td><td>Texto (2)</td><td><span class="badge badge-pk">PK (composta)</span></td><td>Sigla da UF</td></tr>
+    <tr><td><code>ano</code></td><td>Inteiro</td><td><span class="badge badge-pk">PK (composta)</span></td><td>Ano da contratacao</td></tr>
+    <tr><td><code>nome</code></td><td>Texto</td><td></td><td>Nome completo da UF</td></tr>
+    <tr><td><code>regiao</code></td><td>Texto (2)</td><td></td><td>Codigo da regiao (NO, NE, SE, SU, CO)</td></tr>
+    <tr><td><code>estimado</code></td><td>Decimal</td><td></td><td>Valor total estimado das contratacoes (R$)</td></tr>
+    <tr><td><code>homologado</code></td><td>Decimal</td><td></td><td>Valor total homologado das contratacoes (R$)</td></tr>
+    <tr><td><code>qtd</code></td><td>Inteiro</td><td></td><td>Quantidade de contratacoes publicadas</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Execucao Orcamentaria (SICONFI/RREO) <span class="src">EXEC_CACHE[] · API SICONFI/Tesouro Nacional · 27 UFs x 7 anos</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>uf</code></td><td>Texto (2)</td><td><span class="badge badge-pk">PK (composta)</span></td><td>Sigla da UF</td></tr>
+    <tr><td><code>ano</code></td><td>Inteiro</td><td><span class="badge badge-pk">PK (composta)</span></td><td>Exercicio fiscal</td></tr>
+    <tr><td><code>nome</code></td><td>Texto</td><td></td><td>Nome completo da UF</td></tr>
+    <tr><td><code>regiao</code></td><td>Texto (2)</td><td></td><td>Codigo da regiao (NO, NE, SE, SU, CO)</td></tr>
+    <tr><td><code>empenhado</code></td><td>Decimal</td><td></td><td>Despesas empenhadas ate o bimestre (R$)</td></tr>
+    <tr><td><code>liquidado</code></td><td>Decimal</td><td></td><td>Despesas liquidadas ate o bimestre (R$)</td></tr>
+    <tr><td><code>pago</code></td><td>Decimal</td><td></td><td>Despesas pagas ate o bimestre (R$)</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">PDDE (Programa Dinheiro Direto na Escola) <span class="src">pdde_cache.json · FNDE/SIGEF · por UF/ano</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>uf</code></td><td>Texto (2)</td><td><span class="badge badge-pk">PK (composta)</span></td><td>Sigla da UF</td></tr>
+    <tr><td><code>ano</code></td><td>Inteiro</td><td><span class="badge badge-pk">PK (composta)</span></td><td>Exercicio</td></tr>
+    <tr><td><code>custeio</code></td><td>Decimal</td><td></td><td>Valor de custeio transferido (R$)</td></tr>
+    <tr><td><code>capital</code></td><td>Decimal</td><td></td><td>Valor de capital transferido (R$)</td></tr>
+    <tr><td><code>total</code></td><td>Decimal</td><td></td><td>Valor total transferido (custeio + capital, R$)</td></tr>
+    <tr><td><code>escolas</code></td><td>Inteiro</td><td></td><td>Quantidade de escolas beneficiadas</td></tr>
+    <tr><td><code>municipios</code></td><td>Inteiro</td><td></td><td>Quantidade de municipios alcancados</td></tr>
+    <tr><td><code>alunos</code></td><td>Inteiro</td><td></td><td>Quantidade de alunos beneficiados</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">PNAE (Programa Nacional de Alimentacao Escolar) <span class="src">pnae_cache.json · FNDE/SIGEF · por UF/ano</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>uf</code></td><td>Texto (2)</td><td><span class="badge badge-pk">PK (composta)</span></td><td>Sigla da UF</td></tr>
+    <tr><td><code>ano</code></td><td>Inteiro</td><td><span class="badge badge-pk">PK (composta)</span></td><td>Exercicio</td></tr>
+    <tr><td><code>valor</code></td><td>Decimal</td><td></td><td>Valor total transferido (R$)</td></tr>
+    <tr><td><code>alunos</code></td><td>Inteiro</td><td></td><td>Quantidade de alunos atendidos</td></tr>
+    <tr><td><code>escolas</code></td><td>Inteiro</td><td></td><td>Quantidade de escolas atendidas</td></tr>
+    <tr><td><code>municipios</code></td><td>Inteiro</td><td></td><td>Quantidade de municipios alcancados</td></tr>
+  </table>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ============================================ -->
+<!-- DOMINIO 4: ECONOMICO (Credito + Impostometro) -->
+<!-- ============================================ -->
+<div class="domain-header economico">
+  <div>
+    <h3>Dominio Economico — Credito, Fomento e Arrecadacao</h3>
+    <div class="meta">Fontes: IPEADATA (espelho BCB SGS), API SICONFI/Tesouro Nacional, API SIDRA/IBGE</div>
+  </div>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Serie Temporal BCB <span class="src">pippa-credito-fomento/data.json → series{}</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>serie_id</code></td><td>Texto</td><td><span class="badge badge-pk">PK</span></td><td>ID da serie BCB SGS (432, 433, 13522, 4390, 20542–20715, 25433–25434, 20631)</td></tr>
+    <tr><td><code>data</code></td><td>Data (DD/MM/AAAA)</td><td><span class="badge badge-pk">PK (composta)</span></td><td>Data da observacao</td></tr>
+    <tr><td><code>valor</code></td><td>Texto numerico</td><td></td><td>Valor da observacao (formato brasileiro: "14,75")</td></tr>
+  </table>
+  <table>
+    <tr><th>Serie ID</th><th>Nome</th><th>Unidade</th></tr>
+    <tr><td>432</td><td>Selic Meta</td><td>% a.a.</td></tr>
+    <tr><td>433</td><td>Selic Over (efetiva)</td><td>% a.m.</td></tr>
+    <tr><td>13522</td><td>IPCA Acumulado 12 meses</td><td>%</td></tr>
+    <tr><td>4390</td><td>CDI Over</td><td>% a.m.</td></tr>
+    <tr><td>20542</td><td>Saldo Credito PJ Total</td><td>R$ milhoes</td></tr>
+    <tr><td>20543</td><td>Saldo Credito PJ Rec. Livres</td><td>R$ milhoes</td></tr>
+    <tr><td>20544</td><td>Saldo Credito PJ Rec. Direcionados</td><td>R$ milhoes</td></tr>
+    <tr><td>21082</td><td>Inadimplencia PJ Total</td><td>%</td></tr>
+    <tr><td>21083</td><td>Inadimplencia PJ Rec. Livres</td><td>%</td></tr>
+    <tr><td>20714</td><td>Taxa Media Juros PJ Total</td><td>% a.a.</td></tr>
+    <tr><td>20715</td><td>Taxa Media Juros PJ Rec. Livres</td><td>% a.a.</td></tr>
+    <tr><td>25433</td><td>Concessoes Credito PJ Total</td><td>R$ milhoes</td></tr>
+    <tr><td>25434</td><td>Concessoes Credito PJ Rec. Livres</td><td>R$ milhoes</td></tr>
+    <tr><td>20631</td><td>Spread Medio PJ Total</td><td>p.p.</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Arrecadacao Tributaria (RREO) <span class="src">Embarcado via regex em pippa-impostometro/index.html · var RREO_DATA</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>ano</code></td><td>Inteiro</td><td><span class="badge badge-pk">PK (composta)</span></td><td>Exercicio fiscal</td></tr>
+    <tr><td><code>bimestre</code></td><td>Inteiro (1–6)</td><td><span class="badge badge-pk">PK (composta)</span></td><td>Periodo bimestral do RREO</td></tr>
+    <tr><td><code>ReceitaTributaria</code></td><td>Decimal</td><td></td><td>Receita tributaria acumulada (R$)</td></tr>
+    <tr><td><code>Impostos</code></td><td>Decimal</td><td></td><td>Impostos (R$)</td></tr>
+    <tr><td><code>Taxas</code></td><td>Decimal</td><td></td><td>Taxas (R$)</td></tr>
+    <tr><td><code>ReceitaDeContribuicoes</code></td><td>Decimal</td><td></td><td>Receita de contribuicoes (R$)</td></tr>
+    <tr><td><code>ContribuicoesSociais</code></td><td>Decimal</td><td></td><td>Contribuicoes sociais (R$)</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">PIB Setorial IBGE <span class="src">Embarcado via regex em pippa-impostometro/index.html · var IBGE_SETORES</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>setor</code></td><td>Texto</td><td><span class="badge badge-pk">PK</span></td><td>Nome do setor (Servicos, Industria, Comercio, Agropecuaria)</td></tr>
+    <tr><td><code>participacao_pct</code></td><td>Decimal</td><td></td><td>Participacao do setor no valor adicionado (0–1)</td></tr>
+    <tr><td><code>va_total_mi</code></td><td>Decimal</td><td></td><td>Valor adicionado total da economia (R$ milhoes)</td></tr>
+    <tr><td><code>periodo</code></td><td>Texto</td><td></td><td>Descricao do periodo (ex.: "Ultimos 4 trimestres anualizados")</td></tr>
+    <tr><td><code>fonte</code></td><td>Texto</td><td></td><td>Fonte: IBGE — Contas Nacionais Trimestrais (Tabela 1846, var. 585)</td></tr>
+  </table>
+</div>
+
+<!-- ============================================ -->
+<!-- DOMINIO 5: MONITORAMENTO -->
+<!-- ============================================ -->
+<div class="domain-header monitoramento">
+  <div>
+    <h3>Dominio Monitoramento — Noticias, Pesquisas e Regulatorio</h3>
+    <div class="meta">Fontes: Google News RSS, ElectioLab API, Imprensa Nacional (DOU)</div>
+  </div>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Noticia (Reforma Tributaria) <span class="src">pippa-reforma-dashboard/data/news_cache.json → items[] · ~333 registros</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>fullTitle</code></td><td>Texto</td><td></td><td>Titulo completo com fonte (original RSS)</td></tr>
+    <tr><td><code>title</code></td><td>Texto</td><td></td><td>Titulo sem fonte (parseado)</td></tr>
+    <tr><td><code>source</code></td><td>Texto</td><td></td><td>Nome da fonte (veiculo de imprensa)</td></tr>
+    <tr><td><code>link</code></td><td>URL</td><td><span class="badge badge-pk">PK (natural)</span></td><td>URL da noticia</td></tr>
+    <tr><td><code>pubDate</code></td><td>Data/Hora (RFC 2822)</td><td></td><td>Data de publicacao</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Pesquisa Eleitoral (1o Turno) <span class="src">Embarcado em pippa-pesquisas-eleitorais/index.html · const RAW_POLLS · ElectioLab API</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>id</code></td><td>Texto</td><td><span class="badge badge-pk">PK</span></td><td>ID na API ElectioLab</td></tr>
+    <tr><td><code>src</code></td><td>Texto</td><td></td><td>Nome do instituto de pesquisa</td></tr>
+    <tr><td><code>dt</code></td><td>Data</td><td></td><td>Data de publicacao da pesquisa</td></tr>
+    <tr><td><code>pos</code></td><td>Enumeracao</td><td></td><td>Cargo: presidente | governador | senador</td></tr>
+    <tr><td><code>uf</code></td><td>Texto (2)</td><td></td><td>UF da pesquisa (ou "BR" para presidente)</td></tr>
+    <tr><td><code>n</code></td><td>Inteiro</td><td></td><td>Tamanho da amostra</td></tr>
+    <tr><td><code>me</code></td><td>Decimal</td><td></td><td>Margem de erro</td></tr>
+    <tr><td><code>mt</code></td><td>Enumeracao</td><td></td><td>Metodologia: presencial | telefonica | mista | online</td></tr>
+    <tr><td><code>c[]</code></td><td>Lista&lt;Candidato&gt;</td><td></td><td>Candidatos com {n: nome, p: partido, v: percentual}</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Cenario Segundo Turno <span class="src">Embarcado em pippa-pesquisas-eleitorais/index.html · const SECOND_ROUND</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>source</code></td><td>Texto</td><td></td><td>Nome do instituto de pesquisa</td></tr>
+    <tr><td><code>date</code></td><td>Data</td><td></td><td>Data de publicacao</td></tr>
+    <tr><td><code>sample</code></td><td>Inteiro</td><td></td><td>Tamanho da amostra</td></tr>
+    <tr><td><code>margin</code></td><td>Decimal</td><td></td><td>Margem de erro</td></tr>
+    <tr><td><code>position</code></td><td>Texto</td><td></td><td>Cargo (presidente, governador, senador)</td></tr>
+    <tr><td><code>state</code></td><td>Texto (2)</td><td></td><td>UF do cenario (nullable para presidente)</td></tr>
+    <tr><td><code>candidates[]</code></td><td>Lista&lt;Candidato&gt;</td><td></td><td>Candidatos com {name, party, pct}</td></tr>
+  </table>
+</div>
+
+<div class="entity-card">
+  <div class="entity-name">Media Ponderada Eleitoral <span class="src">Embarcado · const PRES_AVGS / STATE_AVGS · Calculado por compute_weighted_averages()</span></div>
+  <table>
+    <tr><th>Atributo</th><th>Tipo Logico</th><th>Restricao</th><th>Descricao</th></tr>
+    <tr><td><code>n</code></td><td>Texto</td><td><span class="badge badge-pk">PK (composta)</span></td><td>Nome do candidato</td></tr>
+    <tr><td><code>p</code></td><td>Texto</td><td></td><td>Sigla do partido</td></tr>
+    <tr><td><code>cl</code></td><td>Texto</td><td></td><td>Cor hex do candidato (design system PIPPA)</td></tr>
+    <tr><td><code>avg</code></td><td>Decimal</td><td></td><td>Media ponderada (peso: recencia x amostra x metodologia)</td></tr>
+    <tr><td><code>lo</code></td><td>Decimal</td><td></td><td>Limite inferior do IC 95%</td></tr>
+    <tr><td><code>hi</code></td><td>Decimal</td><td></td><td>Limite superior do IC 95%</td></tr>
+    <tr><td><code>cnt</code></td><td>Inteiro</td><td></td><td>Quantidade de pesquisas usadas no calculo</td></tr>
+    <tr><td><code>smp</code></td><td>Inteiro</td><td></td><td>Soma total de amostras</td></tr>
+  </table>
+</div>
+
+<div class="page-break"></div>
+
+<h2>Relacionamentos entre Dominios</h2>
+
+<h3>Dominio Orcamentario</h3>
+
+<div class="rel-card">
+  <span class="rel-from">Emenda</span>
+  <span class="rel-arrow">→ N:1 →</span>
+  <span class="rel-to">Parlamentar (Emendas)</span>
+  <span class="rel-card-type">via nome_autor (fuzzy match com rapidfuzz, threshold >= 85; confianca: exato|fuzzy|nao_encontrado|nao_aplicavel)</span>
+</div>
+
+<div class="rel-card">
+  <span class="rel-from">Emenda</span>
+  <span class="rel-arrow">→ N:1 →</span>
+  <span class="rel-to">Municipio (IBGE)</span>
+  <span class="rel-card-type">via cod_ibge_municipio (normalizado pelo IbgeNormalizer; 7 digitos, primeiros 2 derivam UF)</span>
+</div>
+
+<div class="rel-card">
+  <span class="rel-from">Emenda</span>
+  <span class="rel-arrow">→ N:1 →</span>
+  <span class="rel-to">UF/Regiao</span>
+  <span class="rel-card-type">via uf_destino → REGIOES (mapeamento estatico em config.py)</span>
+</div>
+
+<div class="rel-card">
+  <span class="rel-from">QualityFlag</span>
+  <span class="rel-arrow">→ 1:N →</span>
+  <span class="rel-to">Emenda (agregada)</span>
+  <span class="rel-card-type">via (uf, ano) — compara totais pagos entre CGU e Tesouro; limiares: 5% alerta, 15% critico</span>
+</div>
+
+<div class="rel-card">
+  <span class="rel-from">PipelineStats</span>
+  <span class="rel-arrow">→ 1:N →</span>
+  <span class="rel-to">Emenda</span>
+  <span class="rel-card-type">resume estatisticas de matching (exato, fuzzy, nao_encontrado, nao_aplicavel) sobre todas as emendas processadas</span>
+</div>
+
+<div class="rel-card">
+  <span class="rel-from">PipelineStats</span>
+  <span class="rel-arrow">→ 1:N →</span>
+  <span class="rel-to">QualityFlag</span>
+  <span class="rel-card-type">contabiliza flags de alerta e critico geradas na validacao cruzada</span>
+</div>
+
+<h3>Dominio Legislativo</h3>
+
+<div class="rel-card">
+  <span class="rel-from">Parlamentar (Stakeholders)</span>
+  <span class="rel-arrow">→ N:M →</span>
+  <span class="rel-to">Frente Parlamentar</span>
+  <span class="rel-card-type">via parlamentar.frentes[] (lista de titulos, filtrada por keywords relevantes para o Sebrae)</span>
+</div>
+
+<div class="rel-card">
+  <span class="rel-from">Parlamentar (Stakeholders)</span>
+  <span class="rel-arrow">→ N:M →</span>
+  <span class="rel-to">Comissao</span>
+  <span class="rel-card-type">via parlamentar.orgaos[] + orgaoRoles{} (mapeamento sigla → papel: Titular/Suplente/Presidente)</span>
+</div>
+
+<div class="rel-card">
+  <span class="rel-from">Autoria Relevante</span>
+  <span class="rel-arrow">→ N:1 →</span>
+  <span class="rel-to">Parlamentar (Stakeholders)</span>
+  <span class="rel-card-type">via parlamentar_id; contagem de proposicoes com keywords relevantes (microempresa, MEI, pronampe, etc.)</span>
+</div>
+
+<div class="rel-card">
+  <span class="rel-from">Candidato TSE 2026</span>
+  <span class="rel-arrow">→ N:1 →</span>
+  <span class="rel-to">Parlamentar (Stakeholders)</span>
+  <span class="rel-card-type">via nome normalizado (match estrito TSE x APIs Camara/Senado com overlap de tokens, stopwords removidas)</span>
+</div>
+
+<h3>Dominio Compras Publicas</h3>
+
+<div class="rel-card">
+  <span class="rel-from">Contratacao Agregada</span>
+  <span class="rel-arrow">→ N:1 →</span>
+  <span class="rel-to">UF/Regiao</span>
+  <span class="rel-card-type">via uf → UF_REGIAO (mapeamento UF → NO/NE/SE/SU/CO)</span>
+</div>
+
+<div class="rel-card">
+  <span class="rel-from">Execucao Orcamentaria</span>
+  <span class="rel-arrow">→ N:1 →</span>
+  <span class="rel-to">UF/Regiao</span>
+  <span class="rel-card-type">via uf → UF_REGIAO; dados SICONFI/RREO agregados por UF e ultimo bimestre disponivel</span>
+</div>
+
+<div class="rel-card">
+  <span class="rel-from">PDDE</span>
+  <span class="rel-arrow">→ N:1 →</span>
+  <span class="rel-to">UF/Regiao</span>
+  <span class="rel-card-type">via uf → UF_REGIAO; transferencias FNDE do Programa Dinheiro Direto na Escola</span>
+</div>
+
+<div class="rel-card">
+  <span class="rel-from">PNAE</span>
+  <span class="rel-arrow">→ N:1 →</span>
+  <span class="rel-to">UF/Regiao</span>
+  <span class="rel-card-type">via uf → UF_REGIAO; transferencias FNDE do Programa Nacional de Alimentacao Escolar</span>
+</div>
+
+<h3>Dominio Economico</h3>
+
+<div class="rel-card">
+  <span class="rel-from">Arrecadacao RREO</span>
+  <span class="rel-arrow">→ 1:1 →</span>
+  <span class="rel-to">PIB Setorial IBGE</span>
+  <span class="rel-card-type">distribuicao setorial usada para estimar arrecadacao por setor economico (Servicos, Industria, Comercio, Agropecuaria)</span>
+</div>
+
+<h3>Dominio Monitoramento</h3>
+
+<div class="rel-card">
+  <span class="rel-from">Pesquisa Eleitoral</span>
+  <span class="rel-arrow">→ 1:N →</span>
+  <span class="rel-to">Media Ponderada Eleitoral</span>
+  <span class="rel-card-type">medias calculadas com peso: recencia (half-life 14 dias) x sqrt(amostra) x peso_metodologia (presencial=1.0, telefonica=0.9, mista=0.85, online=0.8)</span>
+</div>
+
+<div class="rel-card">
+  <span class="rel-from">Pesquisa Eleitoral</span>
+  <span class="rel-arrow">→ 1:N →</span>
+  <span class="rel-to">Cenario Segundo Turno</span>
+  <span class="rel-card-type">cenarios head-to-head do 2o turno, acumulados incrementalmente via ElectioLab API</span>
+</div>
+
+<div class="doc-footer">
+  <div><span class="classification">USO INTERNO — SEBRAE NACIONAL</span></div>
+  <div>PIPPA — UPP · Sebrae Nacional · Artefato 3.12 · Novembro 2026</div>
+</div>
+
+</body>
+</html>

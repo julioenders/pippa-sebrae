@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.14 Diagrama de Entidade e Relacionamento — PIPPA</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+@page { size: A4 landscape; margin: 14mm 16mm 18mm 16mm; }
+@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .no-print { display: none !important; } .page-break { page-break-before: always; } }
+:root { --azul:#2a4fda; --atlantico:#0b2574; --ceu:#65b7fb; --verde:#61b466; --laranja:#f39d72; --vermelho:#e0565d; --roxo:#be64e3; --font-heading:'Plus Jakarta Sans',sans-serif; --font-body:'Figtree',sans-serif; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:10pt; }
+body { font-family:var(--font-body); color:#1a1a1a; background:#fff; line-height:1.55; max-width:297mm; margin:0 auto; padding:14mm 16mm 18mm 16mm; }
+.doc-header { display:flex; align-items:flex-start; justify-content:space-between; border-bottom:3px solid var(--azul); padding-bottom:12px; margin-bottom:16px; }
+.brand-org { font-family:var(--font-heading); font-size:9.5pt; font-weight:700; color:var(--azul); }
+.brand-unit { font-size:7.5pt; color:#6b7280; }
+.doc-type { font-family:var(--font-heading); font-size:7.5pt; font-weight:700; color:#fff; background:var(--azul); padding:3px 10px; border-radius:4px; display:inline-block; }
+.doc-date { font-size:7pt; color:#6b7280; margin-top:3px; text-align:right; }
+.title-block { background:linear-gradient(45deg, var(--atlantico), var(--azul)); border-radius:8px; padding:18px 22px; margin-bottom:16px; color:#fff; }
+.title-block h1 { font-family:var(--font-heading); font-size:15pt; font-weight:800; letter-spacing:-1px; margin-bottom:3px; }
+.title-block .subtitle { font-size:9.5pt; color:rgba(255,255,255,.8); }
+.title-block .ref { font-size:7pt; color:rgba(255,255,255,.45); margin-top:6px; }
+h2 { font-family:var(--font-heading); font-size:12pt; font-weight:800; color:var(--atlantico); margin:18px 0 8px; padding-bottom:4px; border-bottom:2px solid var(--azul); }
+h3 { font-family:var(--font-heading); font-size:10pt; font-weight:700; color:var(--azul); margin:12px 0 5px; }
+p { margin-bottom:6px; text-align:justify; }
+
+.diagram-container { border:1px solid #e5e7eb; border-radius:8px; padding:16px; margin:10px 0; background:#fafbfc; overflow-x:auto; }
+.diagram-container .mermaid { display:flex; justify-content:center; }
+
+.legend { display:flex; gap:16px; flex-wrap:wrap; margin:8px 0 14px; font-size:8pt; }
+.legend-item { display:flex; align-items:center; gap:5px; }
+.legend-dot { width:12px; height:12px; border-radius:3px; }
+
+table { width:100%; border-collapse:collapse; margin:6px 0 12px; font-size:8.5pt; }
+th { background:var(--azul); color:#fff; font-family:var(--font-heading); font-weight:700; text-align:left; padding:5px 8px; font-size:8pt; }
+td { padding:5px 8px; border-bottom:1px solid #e5e7eb; vertical-align:top; }
+tr:nth-child(even) td { background:#f9fafb; }
+
+.doc-footer { margin-top:20px; padding-top:10px; border-top:2px solid var(--azul); display:flex; justify-content:space-between; font-size:7pt; color:#9ca3af; }
+.doc-footer .classification { font-family:var(--font-heading); font-weight:700; color:var(--azul); }
+.print-btn { position:fixed; bottom:24px; right:24px; background:var(--azul); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 16px rgba(42,79,218,.35); z-index:100; }
+.print-btn:hover { background:var(--atlantico); }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
+
+<div class="doc-header">
+  <div>
+    <div class="brand-org">PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas</div>
+    <div class="brand-unit">Unidade de Politicas Publicas · Sebrae Nacional</div>
+  </div>
+  <div style="text-align:right;">
+    <span class="doc-type">DOCUMENTACAO TECNICA</span>
+    <div class="doc-date">Novembro de 2026</div>
+  </div>
+</div>
+
+<div class="title-block">
+  <h1>3.14 — Diagrama de Entidade e Relacionamento (DER)</h1>
+  <div class="subtitle">Modelo ER completo da plataforma PIPPA, organizado por dominio de negocio, gerado a partir dos schemas reais (Parquet, JSON, JS)</div>
+  <div class="ref">Ref.: Item 3.14 do Parecer UTIC — Relatorio de Aderencia para Internalizacao — 09/11/2026</div>
+</div>
+
+<h2>1. DER Consolidado — Todos os Dominios</h2>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#61b466;"></div> Dominio Orcamentario</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#2a4fda;"></div> Dominio Legislativo</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f39d72;"></div> Dominio Compras Publicas</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#be64e3;"></div> Dominio Economico</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#65b7fb;"></div> Dominio Monitoramento</div>
+</div>
+
+<div class="diagram-container">
+<pre class="mermaid">
+erDiagram
+    %% ===== DOMINIO ORCAMENTARIO (Emendas) =====
+
+    EMENDA {
+        string codigo_emenda PK
+        int ano
+        string tipo_emenda
+        string codigo_autor
+        string nome_autor FK
+        string numero_emenda
+        string cod_ibge_municipio FK
+        string municipio
+        string uf_destino
+        string regiao
+        string funcao
+        string subfuncao
+        string programa
+        string acao
+        double valor_empenhado
+        double valor_liquidado
+        double valor_pago
+        double valor_rp_inscrito
+        double valor_rp_cancelado
+        double valor_rp_pago
+        string localidade_tipo
+        string partido FK
+        string uf_autor
+        int legislatura
+        string match_confianca
+    }
+
+    PARLAMENTAR_EMENDA {
+        string nome PK
+        string nome_normalizado
+        string partido
+        string uf
+        int legislatura
+        string casa
+        string id_externo
+    }
+
+    QUALITY_FLAG {
+        string uf PK
+        int ano PK
+        double valor_portal
+        double valor_tesouro
+        double divergencia_pct
+        string status
+    }
+
+    PIPELINE_STATS {
+        string timestamp PK
+        int total_emendas
+        int total_autores_unicos
+        int match_exato
+        int match_fuzzy
+        int match_nao_encontrado
+        int match_nao_aplicavel
+        int quality_flags_alerta
+        int quality_flags_critico
+    }
+
+    AGG_POR_ESTADO {
+        string uf_destino PK
+        int ano PK
+        double valor_empenhado
+        double valor_pago
+        int qtd_emendas
+    }
+
+    AGG_POR_MUNICIPIO {
+        string cod_ibge_municipio PK
+        string municipio
+        string uf_destino
+        double valor_pago
+        int qtd_emendas
+    }
+
+    AGG_POR_AUTOR {
+        string nome_autor PK
+        string partido
+        string uf_autor
+        string match_confianca
+        double valor_pago
+        int qtd_emendas
+    }
+
+    AGG_POR_PARTIDO {
+        string partido PK
+        int ano PK
+        double valor_pago
+        int qtd_emendas
+    }
+
+    %% ===== DOMINIO LEGISLATIVO (Stakeholders) =====
+
+    PARLAMENTAR_STAKEHOLDER {
+        int id PK
+        string nome
+        string partido
+        string uf
+        string casa
+        string foto_url
+        string email
+    }
+
+    FRENTE_PARLAMENTAR {
+        int id PK
+        string titulo
+    }
+
+    COMISSAO {
+        string sigla PK
+        string nome
+        string casa
+    }
+
+    AUTORIA_RELEVANTE {
+        int parlamentar_id FK
+        int contagem
+    }
+
+    CANDIDATO_2026 {
+        string parlamentar_nome PK
+        string cargo2026
+        string uf2026
+        boolean eleito
+        string nome_urna
+    }
+
+    %% ===== DOMINIO COMPRAS PUBLICAS =====
+
+    CONTRATACAO_PNCP {
+        string uf PK
+        int ano PK
+        string nome_uf
+        string regiao
+        double estimado
+        double homologado
+        int qtd
+    }
+
+    EXEC_ORCAMENTARIA {
+        string uf PK
+        int ano PK
+        string nome_uf
+        string regiao
+        double empenhado
+        double liquidado
+        double pago
+    }
+
+    PDDE {
+        string uf PK
+        int ano PK
+        double custeio
+        double capital
+        double total
+        int escolas
+        int alunos
+    }
+
+    PNAE {
+        string uf PK
+        int ano PK
+        double valor
+        int alunos
+        int escolas
+    }
+
+    %% ===== DOMINIO ECONOMICO =====
+
+    SERIE_BCB {
+        string serie_id PK
+        string data_obs PK
+        string valor
+    }
+
+    ARRECADACAO_RREO {
+        int ano PK
+        int bimestre PK
+        double receita_tributaria
+        double impostos
+        double taxas
+        double contribuicoes
+    }
+
+    PIB_SETORIAL_IBGE {
+        string setor PK
+        double participacao_pct
+        double va_total_mi
+    }
+
+    %% ===== DOMINIO MONITORAMENTO =====
+
+    NOTICIA_REFORMA {
+        string link PK
+        string titulo
+        string fonte
+        string pub_date
+    }
+
+    PESQUISA_ELEITORAL {
+        string id PK
+        string publication_date
+        string institute_name
+        string methodology
+        int sample_size
+    }
+
+    MEDIA_PONDERADA {
+        string candidato PK
+        string partido
+        double media_ponderada
+        double ci_inferior
+        double ci_superior
+        int num_pesquisas
+    }
+
+    %% ===== RELACIONAMENTOS =====
+
+    EMENDA }o--|| PARLAMENTAR_EMENDA : "autor (fuzzy match)"
+    EMENDA }o--o| AGG_POR_MUNICIPIO : "destino municipal"
+    EMENDA }o--|| AGG_POR_ESTADO : "destino estadual"
+    EMENDA }o--|| AGG_POR_PARTIDO : "partido do autor"
+    EMENDA }o--|| AGG_POR_AUTOR : "agregacao por autor"
+    QUALITY_FLAG ||--o{ EMENDA : "valida totais UF/ano"
+    PIPELINE_STATS ||--o{ QUALITY_FLAG : "contabiliza flags"
+    PARLAMENTAR_STAKEHOLDER }o--o{ FRENTE_PARLAMENTAR : "participa"
+    PARLAMENTAR_STAKEHOLDER }o--o{ COMISSAO : "membro"
+    AUTORIA_RELEVANTE }o--|| PARLAMENTAR_STAKEHOLDER : "autor"
+    CANDIDATO_2026 }o--|| PARLAMENTAR_STAKEHOLDER : "match TSE"
+    CONTRATACAO_PNCP }o--|| AGG_POR_ESTADO : "mesma UF"
+    EXEC_ORCAMENTARIA }o--|| AGG_POR_ESTADO : "mesma UF"
+    PDDE }o--|| AGG_POR_ESTADO : "mesma UF"
+    PNAE }o--|| AGG_POR_ESTADO : "mesma UF"
+    PESQUISA_ELEITORAL ||--o{ MEDIA_PONDERADA : "calcula medias"
+    ARRECADACAO_RREO ||--o| PIB_SETORIAL_IBGE : "distribuicao setorial"
+</pre>
+</div>
+
+<div class="page-break"></div>
+
+<h2>2. DER por Dominio — Detalhado</h2>
+
+<h3>2.1 Dominio Orcamentario (pippa-emendas)</h3>
+
+<div class="diagram-container">
+<pre class="mermaid">
+erDiagram
+    EMENDA ||--o{ AGG_POR_ESTADO : "agrega por UF/ano"
+    EMENDA ||--o{ AGG_POR_MUNICIPIO : "agrega por municipio"
+    EMENDA ||--o{ AGG_POR_AUTOR : "agrega por autor"
+    EMENDA ||--o{ AGG_POR_PARTIDO : "agrega por partido"
+    EMENDA ||--o{ AGG_POR_FUNCAO : "agrega por funcao"
+    EMENDA ||--o{ AGG_POR_TIPO : "agrega por tipo"
+    EMENDA ||--o{ AGG_SERIE_TEMPORAL : "agrega por ano"
+    EMENDA }o--|| PARLAMENTAR_EMENDA : "autor enriquecido"
+    QUALITY_FLAG ||--|{ EMENDA : "valida divergencia"
+    PIPELINE_STATS ||--|| QUALITY_FLAG : "contabiliza"
+    PIPELINE_STATS ||--|| EMENDA : "estatisticas matching"
+
+    EMENDA {
+        string codigo_emenda PK
+        int ano
+        string tipo_emenda
+        string nome_autor FK
+        string cod_ibge_municipio
+        string uf_destino
+        string funcao
+        double valor_empenhado
+        double valor_liquidado
+        double valor_pago
+        double valor_rp_inscrito
+        double valor_rp_cancelado
+        double valor_rp_pago
+        string partido FK
+        string match_confianca
+    }
+
+    PARLAMENTAR_EMENDA {
+        string nome PK
+        string nome_normalizado
+        string partido
+        string uf
+        int legislatura
+        string casa
+    }
+
+    QUALITY_FLAG {
+        string uf PK
+        int ano PK
+        double valor_portal
+        double valor_tesouro
+        double divergencia_pct
+        string status
+    }
+
+    PIPELINE_STATS {
+        string timestamp PK
+        int total_emendas
+        int total_autores_unicos
+        int match_exato
+        int match_fuzzy
+        int match_nao_encontrado
+        int match_nao_aplicavel
+        int quality_flags_alerta
+        int quality_flags_critico
+    }
+
+    AGG_POR_ESTADO {
+        string uf_destino PK
+        int ano PK
+        double valor_pago
+        int qtd_emendas
+    }
+
+    AGG_POR_MUNICIPIO {
+        string cod_ibge_municipio PK
+        string municipio
+        string uf_destino
+        double valor_pago
+        int qtd_emendas
+    }
+
+    AGG_POR_AUTOR {
+        string nome_autor PK
+        string partido
+        string uf_autor
+        double valor_pago
+        int qtd_emendas
+    }
+
+    AGG_POR_PARTIDO {
+        string partido PK
+        int ano PK
+        double valor_pago
+        int qtd_emendas
+    }
+
+    AGG_POR_FUNCAO {
+        string funcao PK
+        int ano PK
+        double valor_pago
+        int qtd_emendas
+    }
+
+    AGG_POR_TIPO {
+        string tipo_emenda PK
+        int ano PK
+        double valor_pago
+        int qtd_emendas
+    }
+
+    AGG_SERIE_TEMPORAL {
+        int ano PK
+        double valor_pago
+        int qtd_emendas
+    }
+</pre>
+</div>
+
+<h3>2.2 Dominio Legislativo (pippa-stakeholders)</h3>
+
+<div class="diagram-container">
+<pre class="mermaid">
+erDiagram
+    PARLAMENTAR }o--o{ FRENTE : "participa"
+    PARLAMENTAR }o--o{ COMISSAO : "membro com papel"
+    AUTORIA }o--|| PARLAMENTAR : "proposicoes relevantes"
+    CANDIDATO_2026 }o--|| PARLAMENTAR : "resultado TSE"
+    PARLAMENTAR ||--o{ PARLAMENTAR_COMISSAO : "tem papel"
+    COMISSAO ||--o{ PARLAMENTAR_COMISSAO : "tem membros"
+
+    PARLAMENTAR {
+        int id PK
+        string nome
+        string partido
+        string uf
+        string casa
+        string foto_url
+        string email
+    }
+
+    FRENTE {
+        int id PK
+        string titulo
+    }
+
+    COMISSAO {
+        string sigla PK
+        string nome
+        string casa
+    }
+
+    PARLAMENTAR_COMISSAO {
+        int parlamentar_id FK
+        string comissao_sigla FK
+        string papel
+    }
+
+    AUTORIA {
+        int parlamentar_id FK
+        int contagem
+    }
+
+    CANDIDATO_2026 {
+        string parlamentar_nome PK
+        string cargo2026
+        string uf2026
+        boolean eleito
+        string nome_urna
+    }
+</pre>
+</div>
+
+<h3>2.3 Dominio Economico (pippa-credito-fomento + pippa-impostometro)</h3>
+
+<div class="diagram-container">
+<pre class="mermaid">
+erDiagram
+    CACHE_CREDITO ||--|{ SERIE_BCB : "contem 14 series"
+    SERIE_BCB ||--|{ OBSERVACAO_BCB : "registros temporais"
+    ARRECADACAO_RREO ||--o| PIB_SETORIAL_IBGE : "distribuicao setorial"
+
+    CACHE_CREDITO {
+        string timestamp
+        string fonte
+    }
+
+    SERIE_BCB {
+        string serie_id PK
+        string nome
+        string unidade
+    }
+
+    OBSERVACAO_BCB {
+        string serie_id FK
+        string data PK
+        string valor
+    }
+
+    ARRECADACAO_RREO {
+        int ano PK
+        int bimestre PK
+        double receita_tributaria
+        double impostos
+        double taxas
+        double contribuicoes_sociais
+    }
+
+    PIB_SETORIAL_IBGE {
+        string setor PK
+        double participacao_pct
+        double va_total_mi
+        string periodo
+        string fonte
+    }
+</pre>
+</div>
+
+<div class="page-break"></div>
+
+<h3>2.4 Dominio Compras Publicas (pippa-compras-dashboard)</h3>
+
+<div class="diagram-container">
+<pre class="mermaid">
+erDiagram
+    CONTRATACAO_PNCP }o--|| EXEC_ORCAMENTARIA : "mesma UF e ano"
+    PDDE }o--|| CONTRATACAO_PNCP : "mesma UF"
+    PNAE }o--|| CONTRATACAO_PNCP : "mesma UF"
+
+    CONTRATACAO_PNCP {
+        string uf PK
+        int ano PK
+        string nome_uf
+        string regiao
+        double estimado
+        double homologado
+        int qtd
+    }
+
+    EXEC_ORCAMENTARIA {
+        string uf PK
+        int ano PK
+        string nome_uf
+        string regiao
+        double empenhado
+        double liquidado
+        double pago
+    }
+
+    PDDE {
+        string uf PK
+        int ano PK
+        double custeio
+        double capital
+        double total
+        int escolas
+        int municipios
+        int alunos
+    }
+
+    PNAE {
+        string uf PK
+        int ano PK
+        double valor
+        int alunos
+        int escolas
+        int municipios
+    }
+</pre>
+</div>
+
+<h3>2.5 Dominio Monitoramento (pippa-pesquisas-eleitorais + pippa-reforma-dashboard)</h3>
+
+<div class="diagram-container">
+<pre class="mermaid">
+erDiagram
+    PESQUISA_ELEITORAL ||--o{ MEDIA_PONDERADA : "calcula medias ponderadas"
+    PESQUISA_ELEITORAL ||--o{ CENARIO_2T : "cenarios segundo turno"
+
+    PESQUISA_ELEITORAL {
+        string id PK
+        string instituto
+        string data
+        string cargo
+        string uf
+        int amostra
+        string metodologia
+    }
+
+    MEDIA_PONDERADA {
+        string candidato PK
+        string partido
+        double media
+        double ci_inferior
+        double ci_superior
+        int num_pesquisas
+    }
+
+    CENARIO_2T {
+        string source PK
+        string date
+        string position
+        int sample
+    }
+
+    NOTICIA_REFORMA {
+        string link PK
+        string titulo
+        string fonte
+        string pub_date
+    }
+</pre>
+</div>
+
+<h2>3. Dicionario de Cardinalidades</h2>
+
+<table>
+  <tr><th>Relacionamento</th><th>Cardinalidade</th><th>Descricao</th></tr>
+  <tr><td>Emenda &rarr; Parlamentar (Emendas)</td><td>N:1</td><td>Cada emenda tem 1 autor (exceto bancada/comissao/relator &rarr; nao_aplicavel). Fuzzy match com confianca.</td></tr>
+  <tr><td>Emenda &rarr; Municipio IBGE</td><td>N:1</td><td>Cada emenda destina-se a 0 ou 1 municipio (emendas estaduais/nacionais sem municipio).</td></tr>
+  <tr><td>Emenda &rarr; UF/Regiao</td><td>N:1</td><td>Cada emenda tem 1 UF destino, derivando a regiao via mapeamento estatico.</td></tr>
+  <tr><td>Parlamentar (Stakeholders) &harr; Frente</td><td>N:M</td><td>Parlamentar participa de multiplas frentes; frente tem multiplos membros.</td></tr>
+  <tr><td>Parlamentar (Stakeholders) &harr; Comissao</td><td>N:M</td><td>Com atributo de papel (Titular, Suplente, Presidente) na associacao.</td></tr>
+  <tr><td>Autoria &rarr; Parlamentar (Stakeholders)</td><td>N:1</td><td>Contagem de proposicoes com keywords relevantes para o Sebrae.</td></tr>
+  <tr><td>Candidato TSE 2026 &rarr; Parlamentar (Stakeholders)</td><td>N:1</td><td>Match por nome normalizado entre resultado TSE e API Camara/Senado.</td></tr>
+  <tr><td>Contratacao PNCP &rarr; UF</td><td>N:1</td><td>Dados agregados por UF e ano a partir da API PNCP.</td></tr>
+  <tr><td>Execucao Orcamentaria &rarr; UF</td><td>N:1</td><td>Dados SICONFI/RREO agregados por UF e ano (Tesouro Nacional).</td></tr>
+  <tr><td>PDDE &rarr; UF</td><td>N:1</td><td>Transferencias FNDE por UF e ano (Programa Dinheiro Direto na Escola).</td></tr>
+  <tr><td>PNAE &rarr; UF</td><td>N:1</td><td>Transferencias FNDE por UF e ano (Programa Nacional de Alimentacao Escolar).</td></tr>
+  <tr><td>Serie BCB &rarr; Observacao</td><td>1:N</td><td>Cada serie (432, 433, etc.) tem multiplas observacoes temporais.</td></tr>
+  <tr><td>QualityFlag &rarr; Emenda (agregada)</td><td>1:N</td><td>Cada flag (UF, ano) compara totais de N emendas entre CGU e Tesouro.</td></tr>
+  <tr><td>PipelineStats &rarr; Emenda</td><td>1:N</td><td>Resume estatisticas de matching e qualidade do pipeline completo.</td></tr>
+  <tr><td>Pesquisa Eleitoral &rarr; Media Ponderada</td><td>1:N</td><td>Medias calculadas com peso por recencia, amostra e metodologia.</td></tr>
+  <tr><td>Arrecadacao RREO &rarr; PIB Setorial</td><td>1:1</td><td>Distribuicao setorial do PIB aplicada para estimativa de carga por setor.</td></tr>
+</table>
+
+<div class="doc-footer">
+  <div><span class="classification">USO INTERNO — SEBRAE NACIONAL</span></div>
+  <div>PIPPA — UPP · Sebrae Nacional · Artefato 3.14 · Novembro 2026</div>
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  themeVariables: {
+    primaryColor: '#e8edff',
+    primaryBorderColor: '#2a4fda',
+    primaryTextColor: '#0b2574',
+    lineColor: '#2a4fda',
+    secondaryColor: '#f0fdf0',
+    tertiaryColor: '#fef3ec',
+    fontFamily: '"Figtree", sans-serif',
+    fontSize: '12px'
+  },
+  er: {
+    diagramPadding: 20,
+    layoutDirection: 'TB',
+    minEntityWidth: 100,
+    minEntityHeight: 75,
+    entityPadding: 15,
+    useMaxWidth: true
+  }
+});
+</script>
+</body>
+</html>

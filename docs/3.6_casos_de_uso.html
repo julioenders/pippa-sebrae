@@ -1,0 +1,2268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.6 Especificações de Casos de Uso — PIPPA</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+@page { size: A4; margin: 16mm 18mm 20mm 18mm; }
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page-break { page-break-before: always; }
+  .no-print { display: none !important; }
+  .uc-card { break-inside: avoid; }
+  .module-header { break-after: avoid; }
+}
+:root {
+  --azul:#2a4fda; --atlantico:#0b2574; --ceu:#65b7fb; --offwhite:#eff3ee;
+  --verde:#61b466; --amarelo:#fbec76; --laranja:#f39d72; --vermelho:#e0565d;
+  --roxo:#be64e3; --jacaranda:#8f85f4;
+  --font-heading:'Plus Jakarta Sans',sans-serif;
+  --font-body:'Figtree',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:10pt; }
+body { font-family:var(--font-body); color:#1a1a1a; background:#fff; line-height:1.55; max-width:210mm; margin:0 auto; padding:16mm 18mm 20mm 18mm; }
+
+/* HEADER */
+.doc-header { display:flex; align-items:flex-start; justify-content:space-between; border-bottom:3px solid var(--azul); padding-bottom:12px; margin-bottom:18px; }
+.brand-text { display:flex; flex-direction:column; }
+.brand-org { font-family:var(--font-heading); font-size:9.5pt; font-weight:700; color:var(--azul); letter-spacing:-.4px; }
+.brand-unit { font-size:7.5pt; color:#6b7280; font-weight:500; }
+.doc-type-box { text-align:right; }
+.doc-type { font-family:var(--font-heading); font-size:7.5pt; font-weight:700; color:#fff; background:var(--azul); padding:3px 10px; border-radius:4px; display:inline-block; letter-spacing:.5px; }
+.doc-date { font-size:7pt; color:#6b7280; margin-top:3px; }
+
+/* TITULO */
+.title-block { background:linear-gradient(45deg, var(--atlantico), var(--azul)); border-radius:8px; padding:20px 24px; margin-bottom:20px; color:#fff; }
+.title-block h1 { font-family:var(--font-heading); font-size:15pt; font-weight:800; letter-spacing:-1px; margin-bottom:3px; line-height:1.2; }
+.title-block .subtitle { font-size:9.5pt; color:rgba(255,255,255,.8); font-weight:400; }
+.title-block .ref { font-size:7pt; color:rgba(255,255,255,.45); margin-top:8px; }
+
+h2 { font-family:var(--font-heading); font-size:12pt; font-weight:800; color:var(--atlantico); margin:22px 0 8px; padding-bottom:4px; border-bottom:2px solid var(--azul); letter-spacing:-.5px; }
+h3 { font-family:var(--font-heading); font-size:10pt; font-weight:700; color:var(--azul); margin:14px 0 5px; }
+h4 { font-family:var(--font-heading); font-size:9pt; font-weight:700; color:#374151; margin:10px 0 3px; }
+p { margin-bottom:6px; text-align:justify; hyphens:auto; }
+ul, ol { margin:0 0 8px 16px; }
+li { margin-bottom:2px; }
+code { background:#f3f4f6; padding:1px 4px; border-radius:3px; font-size:8.5pt; font-family:'Cascadia Code','Fira Code',monospace; }
+
+table { width:100%; border-collapse:collapse; margin:8px 0 14px; font-size:8.5pt; }
+th { background:var(--azul); color:#fff; font-family:var(--font-heading); font-weight:700; text-align:left; padding:6px 8px; font-size:8pt; letter-spacing:.3px; }
+td { padding:6px 8px; border-bottom:1px solid #e5e7eb; vertical-align:top; }
+tr:nth-child(even) td { background:#f9fafb; }
+
+.badge { font-size:6.5pt; font-weight:700; padding:2px 6px; border-radius:3px; display:inline-block; text-transform:uppercase; letter-spacing:.3px; white-space:nowrap; }
+.badge-analista { background:rgba(42,79,218,.1); color:var(--azul); }
+.badge-gestor { background:rgba(97,180,102,.1); color:#166534; }
+.badge-assessor { background:rgba(190,100,227,.1); color:var(--roxo); }
+.badge-admin { background:rgba(224,86,93,.1); color:var(--vermelho); }
+.badge-sistema { background:rgba(143,133,244,.1); color:var(--jacaranda); }
+
+/* UC CARD */
+.uc-card { border:1px solid #e5e7eb; border-radius:6px; padding:12px 14px; margin:8px 0; border-left:4px solid var(--azul); }
+.uc-card.analista { border-left-color:var(--azul); }
+.uc-card.gestor { border-left-color:var(--verde); }
+.uc-card.assessor { border-left-color:var(--roxo); }
+.uc-card.admin { border-left-color:var(--vermelho); }
+.uc-card.sistema { border-left-color:var(--jacaranda); }
+.uc-header { display:flex; align-items:center; gap:6px; margin-bottom:6px; flex-wrap:wrap; }
+.uc-id { font-family:var(--font-heading); font-weight:800; font-size:9pt; color:var(--atlantico); min-width:52px; }
+.uc-name { font-family:var(--font-heading); font-weight:700; font-size:9.5pt; color:#1a1a1a; flex:1; }
+.uc-section { margin:4px 0; }
+.uc-label { font-family:var(--font-heading); font-size:7.5pt; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:.5px; margin-bottom:2px; }
+.uc-tool { font-size:7.5pt; color:#6b7280; margin-top:6px; display:flex; align-items:center; gap:4px; }
+.uc-tool code { font-size:7.5pt; }
+
+.highlight { background:rgba(42,79,218,.05); border-left:4px solid var(--azul); border-radius:0 6px 6px 0; padding:10px 14px; margin:10px 0 14px; font-size:8.5pt; }
+.highlight strong { color:var(--azul); }
+
+.module-header { display:flex; align-items:center; gap:10px; margin:16px 0 6px; padding:10px 14px; border-radius:8px; background:rgba(42,79,218,.04); border:1px solid rgba(42,79,218,.10); }
+.module-icon { width:32px; height:32px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; background:rgba(42,79,218,.1); }
+.module-info h3 { margin:0; font-size:10.5pt; }
+.module-info .module-desc { font-size:7.5pt; color:#6b7280; margin-top:1px; }
+
+.toc { margin:12px 0 18px; padding:14px 18px; background:#f9fafb; border-radius:6px; border:1px solid #e5e7eb; columns:2; column-gap:24px; }
+.toc a { color:var(--azul); text-decoration:none; font-size:8.5pt; }
+.toc a:hover { text-decoration:underline; }
+.toc ol { counter-reset:toc-section; list-style:none; margin:0; padding:0; }
+.toc ol li { counter-increment:toc-section; margin:2px 0; break-inside:avoid; }
+.toc ol li::before { content:counter(toc-section) ". "; font-family:var(--font-heading); font-weight:700; color:var(--atlantico); font-size:7.5pt; }
+
+.doc-footer { margin-top:24px; padding-top:10px; border-top:2px solid var(--azul); display:flex; justify-content:space-between; font-size:7pt; color:#9ca3af; }
+.doc-footer .classification { font-family:var(--font-heading); font-weight:700; color:var(--azul); font-size:7pt; }
+.print-btn { position:fixed; bottom:24px; right:24px; background:var(--azul); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 16px rgba(42,79,218,.35); z-index:100; }
+.print-btn:hover { background:var(--atlantico); }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
+
+<div class="doc-header">
+  <div class="brand-text">
+    <span class="brand-org">PIPPA — Plataforma de Inteligência em Políticas Públicas Aplicadas</span>
+    <span class="brand-unit">Unidade de Políticas Públicas · Sebrae Nacional</span>
+  </div>
+  <div class="doc-type-box">
+    <span class="doc-type">DOCUMENTAÇÃO TÉCNICA</span>
+    <div class="doc-date">Novembro de 2026</div>
+  </div>
+</div>
+
+<div class="title-block">
+  <h1>3.6 — Especificações de Casos de Uso</h1>
+  <div class="subtitle">Documentação formal dos casos de uso da plataforma PIPPA, organizados por módulo/ferramenta, extraídos do código-fonte</div>
+  <div class="ref">Artefato 3.6 — Relatório de Aderência UTIC · Extraído do código-fonte do repositório gitlab.sebrae.com.br:na/upp/plataforma-de-inteligencia-em-politicas-publicas-aplicadas-pippa</div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 1. ATORES -->
+<!-- ================================================================ -->
+<h2 id="sec-atores">1. Atores do Sistema</h2>
+
+<table>
+  <tr><th>Ator</th><th>Descrição</th><th>Exemplos de Perfil</th></tr>
+  <tr><td><span class="badge badge-analista">Analista UPP</span></td><td>Profissional da Unidade de Políticas Públicas que consulta dashboards, aplica filtros, interpreta dados e gera briefings para tomada de decisão.</td><td>Assessor técnico NAL, Analista de dados UPP, Coordenador de núcleo</td></tr>
+  <tr><td><span class="badge badge-gestor">Gestor UPP</span></td><td>Gestor da UPP responsável por acompanhar orçamento, entregas estratégicas e impacto consolidado da unidade.</td><td>Gerente UPP, Diretor de Políticas Públicas, Superintendente</td></tr>
+  <tr><td><span class="badge badge-assessor">Assessor Legislativo</span></td><td>Profissional focado em articulação parlamentar, monitoramento regulatório e incidência pré-normativa.</td><td>Assessor NAL, Consultor legislativo, Analista de RelGov</td></tr>
+  <tr><td><span class="badge badge-admin">Administrador</span></td><td>Responsável técnico pela operação da plataforma: execução de pipelines, monitoramento de APIs e atualização de dados.</td><td>Engenheiro de dados, DevOps, Analista de sistemas</td></tr>
+  <tr><td><span class="badge badge-sistema">Sistema</span></td><td>Processos automatizados: classificação heurística, pipelines ETL, agendamentos (cron/CI) e validação cruzada de dados.</td><td>Motor de classificação, GitHub Actions, FastAPI background tasks</td></tr>
+</table>
+
+<div class="highlight">
+  <strong>Nota metodológica:</strong> Os 53 casos de uso a seguir foram derivados por inspeção direta do código-fonte das 20 ferramentas do ecossistema PIPPA. Cada fluxo principal, fluxo alternativo e pós-condição reflete comportamento real implementado — funções JavaScript, endpoints FastAPI, scripts Python e interações de UI efetivamente codificadas no repositório.
+</div>
+
+<!-- ================================================================ -->
+<!-- SUMARIO -->
+<!-- ================================================================ -->
+<h2>2. Sumário dos Módulos</h2>
+
+<div class="toc">
+<ol>
+  <li><a href="#mod-legislativo">PIPPA Legislativo — Radar de Proposições (UC-001 a UC-008)</a></li>
+  <li><a href="#mod-pauta">PIPPA Pauta Legislativa (UC-009 a UC-011)</a></li>
+  <li><a href="#mod-emendas">PIPPA Emendas Parlamentares (UC-012 a UC-017)</a></li>
+  <li><a href="#mod-stakeholders">PIPPA Stakeholders — Mapa Parlamentar e ICP/RIG (UC-018 a UC-023)</a></li>
+  <li><a href="#mod-reforma">PIPPA Reforma Tributária (UC-024 a UC-027)</a></li>
+  <li><a href="#mod-regulatorio">PIPPA Regulatório — Monitor DOU (UC-028 a UC-029)</a></li>
+  <li><a href="#mod-compras">PIPPA Compras Públicas (UC-030 a UC-036)</a></li>
+  <li><a href="#mod-pesquisas">PIPPA Pesquisas Eleitorais (UC-037 a UC-039)</a></li>
+  <li><a href="#mod-raiox">PIPPA Raio-X Municipal (UC-040 a UC-041)</a></li>
+  <li><a href="#mod-orcamento">PIPPA Orçamento UPP (UC-042 a UC-044)</a></li>
+  <li><a href="#mod-credito">PIPPA Crédito e Fomento (UC-045 a UC-046)</a></li>
+  <li><a href="#mod-impostometro">PIPPA Impostômetro (UC-047 a UC-048)</a></li>
+  <li><a href="#mod-consultas">PIPPA Consultas Públicas (UC-049)</a></li>
+  <li><a href="#mod-portal">PIPPA Portal (UC-050 a UC-051)</a></li>
+  <li><a href="#mod-impacto">PIPPA Impacto (UC-052)</a></li>
+  <li><a href="#mod-atuacao">PIPPA Atuação UPP (UC-053)</a></li>
+</ol>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- MODULO 1: LEGISLATIVO -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-legislativo">
+  <div class="module-icon">1</div>
+  <div class="module-info">
+    <h3>PIPPA Legislativo — Radar de Proposições</h3>
+    <div class="module-desc">Monitoramento de proposições legislativas com classificação automática P0–P4 (10 critérios) · APIs: Câmara dos Deputados + Senado Federal · <code>pippa-legislativo-dashboard/index.html</code></div>
+  </div>
+</div>
+
+<!-- UC-001 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-001</span>
+    <span class="uc-name">Consultar Proposições Legislativas por Período</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard PIPPA Legislativo v2.0 carregado no navegador. APIs da Câmara (<code>dadosabertos.camara.leg.br/api/v2</code>) e do Senado (<code>legis.senado.leg.br/dadosabertos</code>) acessíveis.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista seleciona data de início no campo <code>dateInputInicio</code>.</li>
+      <li>O analista seleciona data de fim no campo <code>dateInputFim</code>.</li>
+      <li>O analista clica no botão "Consultar APIs".</li>
+      <li>O sistema valida as datas (ambas obrigatórias; fim >= início).</li>
+      <li>O sistema executa 5 chamadas em paralelo (<code>Promise.all</code>):
+        <ul>
+          <li>API Câmara: <code>/proposicoes?dataApresentacaoInicio=...&dataApresentacaoFim=...</code> (paginação de 100/página)</li>
+          <li>API Senado: <code>/materia/atualizadas</code> (máx. 30 dias) e <code>/materia/pesquisa/lista</code> por sigla (PL, PLP, PEC, PDL, MPV)</li>
+          <li>Comissões ativas (permanentes <code>codTipoOrgao=2</code>, temporárias <code>codTipoOrgao=3</code>)</li>
+          <li>Lista de deputados (cache)</li>
+          <li>Tendência semanal (últimos 7 dias)</li>
+        </ul>
+      </li>
+      <li>O sistema separa proposições legislativas (PEC, PLP, PL, PDC, PDL, MPV) de documentos acessórios (PRL, EMR, EMP, EMC, REQ, RIC).</li>
+      <li>O sistema classifica cada proposição via <code>classifyRelevance()</code> — 10 critérios com score numérico (ver UC-003).</li>
+      <li>Proposições são ordenadas por prioridade (P0 primeiro) e exibidas com KPIs, gráficos e lista.</li>
+      <li>Pós-classificação: o sistema busca autores/partidos em batch (10 paralelos) e situação/tramitação (5 paralelos).</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — Datas não selecionadas:</strong> O sistema exibe alert "Selecione data início e data fim".</li>
+      <li><strong>FA2 — Data fim anterior à data início:</strong> O sistema exibe alert "Data fim deve ser >= data início".</li>
+      <li><strong>FA3 — Timeout de API (30s):</strong> A chamada é silenciosamente ignorada; as demais chamadas continuam.</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Dashboard populado com proposições classificadas. KPIs exibem: total Câmara, total Senado, Relevantes Sebrae, P0+P1, P2 Monitorar. 6 gráficos Chart.js renderizados (prioridade, eixo, casa, comissões, tendência 7 dias).</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-legislativo-dashboard/index.html</code> · Função: <code>fetchData()</code></div>
+</div>
+
+<!-- UC-002 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-002</span>
+    <span class="uc-name">Filtrar e Buscar Proposições</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dados de proposições carregados no dashboard (UC-001 concluído).</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista expande uma seção de filtro clicando no header da seção.</li>
+      <li>Seleciona um ou mais chips de filtro dentre 8 categorias:
+        <ul>
+          <li><strong>Prioridade:</strong> P0, P1, P2, P3, P4</li>
+          <li><strong>Relevância Sebrae:</strong> Central, Alta, Média, Baixa, Nula</li>
+          <li><strong>Casa Legislativa:</strong> Câmara, Senado</li>
+          <li><strong>Eixo Estratégico:</strong> 10 opções (Ambiente de negócios, MEI/Simples, Crédito, Compras públicas, Inovação, Educação, Territorial, Inclusão, Setorial, Sem conexão)</li>
+          <li><strong>Tipo de Impacto:</strong> 8 opções (Direto MPE/MEI, Direto Sebrae, Indireto, Setorial, Corporativo, Social amplo, Processual, Sem impacto)</li>
+          <li><strong>Papel do Sebrae:</strong> Incidência ativa, Monitoramento estratégico, Subsídio técnico, Monitoramento passivo</li>
+          <li><strong>Institucional Sebrae/S:</strong> Sim, Não</li>
+          <li><strong>Partido do Autor:</strong> Dinâmico, populado após busca de autores</li>
+        </ul>
+      </li>
+      <li>Filtros combinam com AND entre categorias e OR dentro de cada categoria.</li>
+      <li>Dashboard atualiza KPIs, gráficos e lista de proposições simultaneamente.</li>
+      <li>Badge numérico aparece em cada filtro ativo.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — Limpar filtros:</strong> O analista clica "Limpar" em uma seção para remover todos os filtros daquela categoria.</li>
+      <li><strong>FA2 — Busca textual:</strong> O analista digita no campo "Buscar ementa, autor, partido ou lei..." — busca em tempo real (<code>oninput</code>) nos campos ementa, sigla+número/ano, autor e partido.</li>
+      <li><strong>FA3 — Sem resultados:</strong> O sistema exibe "Nenhuma proposição encontrada com esses filtros".</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Dashboard exibe apenas proposições que atendem todos os filtros aplicados. Todas as visualizações respondem simultaneamente.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-legislativo-dashboard/index.html</code> · Função: <code>applyFilters()</code></div>
+</div>
+
+<!-- UC-003 -->
+<div class="uc-card sistema">
+  <div class="uc-header">
+    <span class="uc-id">UC-003</span>
+    <span class="uc-name">Classificar Proposição Automaticamente (10 Critérios)</span>
+    <span class="badge badge-sistema">Sistema</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Ementa da proposição disponível. Dicionários <code>KEYWORDS_CORE</code>, <code>EIXO_DEFINITIONS</code> (8 eixos) e termos institucionais carregados.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O sistema normaliza o texto da ementa (NFD, remove acentos, lowercase).</li>
+      <li>Verifica se a sigla é processual (REQ, RIC, RCP, MOC, INC, DVS, RQS, AVS) — se sim, classifica como P4/Nula.</li>
+      <li>Busca matches em <code>KEYWORDS_CORE</code> (simples nacional, MEI, LC 123, etc.) usando word-boundary regex.</li>
+      <li>Busca matches em <code>EIXO_DEFINITIONS</code> — 8 eixos estratégicos com keywords, broadKeywords e shortKeywords. broadKeywords só contam com contexto MPE presente.</li>
+      <li>Busca matches institucionais (contribuição compulsória, lei 8029, etc.). Entidades (SESI, SENAI) só contam com contexto de governança (<code>GOV_CONTEXT_TERMS</code>). "sebrae"/"sistema s" sozinhos não ativam filtro institucional.</li>
+      <li>Calcula score: <code>(core × 3) + (eixo × 1) + (institucional × 4)</code>.</li>
+      <li>Determina Relevância: Central (score >= 8) / Alta (>= 5) / Média (>= 2) / Baixa (>= 1) / Nula (0).</li>
+      <li>Determina Prioridade: P0 (institucional) / P1 (Central ou Alta) / P2 (Média) / P3 (Baixa) / P4 (Nula).</li>
+      <li>Atribui automaticamente: Tipo de Impacto (7 categorias), Papel do Sebrae (5 opções), Grau Siga Lei (5 níveis), Posicionamento default ("Neutro / em análise").</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Proposição classificada com 10+ atributos: prioridade, relevância, eixo, impacto, papel, institucional, score, keywords, grau Siga Lei, posicionamento.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-legislativo-dashboard/index.html</code> · Função: <code>classifyRelevance()</code></div>
+</div>
+
+<!-- UC-004 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-004</span>
+    <span class="uc-name">Editar Classificação de Proposição Manualmente</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Card de proposição expandido no dashboard. Classificação automática já atribuída.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista clica no header do card para expandir os detalhes.</li>
+      <li>Visualiza: sigla/número, casa, data, score, autor(a)/coautores, partido/UF, ementa, link oficial, situação atual, local, próximo passo.</li>
+      <li>Modifica um ou mais dos 12 campos select do editor de classificação:
+        <ul>
+          <li>1. Papel do Sebrae (7 opções incl. "Delegar a Sebrae UF")</li>
+          <li>2. Relevância (Central a Nula)</li>
+          <li>3. Aderência PE 2024–2027 (4 opções)</li>
+          <li>4. Eixo Estratégico (10 opções)</li>
+          <li>5. Tipo de Impacto (8 opções)</li>
+          <li>6. Abrangência (6 opções)</li>
+          <li>7. Situação de Tramitação (6 opções)</li>
+          <li>8. Prioridade (P0 a P4)</li>
+          <li>9. Ação Recomendada (7 opções)</li>
+          <li>10. Filtro Institucional (Sim/Não)</li>
+          <li>5A. Grau Impacto Siga Lei (5 opções)</li>
+          <li>5B. Posicionamento Sebrae (Favorável / Favorável com ressalvas / Contrário / Neutro / Não aplicável)</li>
+        </ul>
+      </li>
+      <li>Clica "Salvar Classificação".</li>
+      <li>O sistema reordena a lista por prioridade e reaaplica filtros.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — Aviso P0/P1:</strong> Em proposições P0 ou P1, o sistema exibe alerta "Classificação P0/P1 requer validação humana antes de decisão institucional".</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Classificação atualizada na sessão. Toast "Classificação salva!" exibido. Nota: classificação não é persistida em banco de dados — válida apenas na sessão.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-legislativo-dashboard/index.html</code> · Função: <code>updateClassification()</code>, <code>saveClassification()</code></div>
+</div>
+
+<!-- UC-005 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-005</span>
+    <span class="uc-name">Consultar Histórico de Tramitação</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Card de proposição expandido. ID da proposição disponível.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista clica "Histórico de Tramitação" no card expandido.</li>
+      <li>Modal abre com título "Histórico de Tramitação — [sigla número/ano]".</li>
+      <li>O sistema consulta a API correspondente: Câmara (<code>/proposicoes/{id}/tramitacoes</code>) ou Senado (<code>/materia/movimentacoes/{id}</code>).</li>
+      <li>Modal exibe: situação atual, local e próximo passo no topo.</li>
+      <li>Lista timeline (mais recente primeiro) com data, descrição, órgão e situação.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — Nenhuma tramitação:</strong> Mensagem informativa exibida no modal.</li>
+      <li><strong>FA2 — Erro de API:</strong> Mensagem de erro exibida no modal.</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>O analista visualiza o histórico completo de movimentações da proposição em timeline.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-legislativo-dashboard/index.html</code> · Modal de tramitação</div>
+</div>
+
+<!-- UC-006 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-006</span>
+    <span class="uc-name">Gerar Minuta Técnica de Proposição</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Card expandido. Campo "9. Ação Recomendada" definido na classificação.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista clica "Gerar Minuta Técnica" no card expandido.</li>
+      <li>O sistema gera documento estruturado contendo:
+        <ul>
+          <li>Cabeçalho: "NOTA TÉCNICA / Sebrae Nacional / Data"</li>
+          <li>Dados da matéria: sigla, casa, data, autor, partido, link oficial</li>
+          <li>Classificação PIPPA completa: prioridade, relevância, eixo, impacto, papel, institucional, score, palavras-chave</li>
+          <li>Ementa completa</li>
+        </ul>
+      </li>
+      <li>A estrutura da ação recomendada varia conforme o tipo:
+        <ul>
+          <li><strong>Nota técnica/Articular:</strong> Contexto, Análise de Mérito, Posicionamento Recomendado, Encaminhamentos</li>
+          <li><strong>Monitorar:</strong> Síntese, Gatilhos de Escalação, Prazo de Revisão</li>
+          <li><strong>Comissão/Relatoria:</strong> Comissão/Relatoria, Pauta e Cronograma, Articulação Necessária</li>
+        </ul>
+      </li>
+      <li>Modal exibe a minuta formatada com rodapé "Gerado por PIPPA Legislativo".</li>
+      <li>O analista copia via botão "Copiar".</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Minuta técnica gerada e copiada para a área de transferência, pronta para distribuição.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-legislativo-dashboard/index.html</code> · Função: <code>generateMinuta()</code></div>
+</div>
+
+<!-- UC-007 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-007</span>
+    <span class="uc-name">Exportar Briefing Legislativo para WhatsApp</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dados de proposições carregados no dashboard.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista clica o botão "WhatsApp" no header.</li>
+      <li>O sistema gera texto formatado com markdown WhatsApp (<code>*negrito*</code>, <code>_itálico_</code>) contendo:
+        <ul>
+          <li>Cabeçalho PIPPA + data + totais</li>
+          <li>Painel Estratégico: contagens por casa, prioridade, impacto alto, partido mais ativo</li>
+          <li>"O que aconteceu no período?" — narrativa automática com até 3 proposições P0/P1 detalhadas</li>
+          <li>"O que significa para pequenos negócios?" — contextualização</li>
+          <li>"Pontos de atenção" — lista de destaques</li>
+          <li>Termômetro legislativo (emoji + texto)</li>
+          <li>Próximos desdobramentos</li>
+          <li>Rodapé com fontes e links</li>
+        </ul>
+      </li>
+      <li>Se filtros estão ativos, exporta apenas proposições filtradas com nota.</li>
+      <li>Abre <code>wa.me</code> com texto pré-preenchido em nova aba.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Briefing compartilhado via WhatsApp com formatação adequada e narrativa analítica.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-legislativo-dashboard/index.html</code> · Função: <code>exportWhatsApp()</code></div>
+</div>
+
+<!-- UC-008 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-008</span>
+    <span class="uc-name">Visualizar Termômetro e KPIs Legislativos</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dados carregados no dashboard.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O sistema calcula automaticamente o nível de alerta:
+        <ul>
+          <li><strong>Vermelho — CRÍTICO:</strong> Proposição P0 identificada</li>
+          <li><strong>Laranja — ALTO IMPACTO:</strong> Proposição P1 identificada</li>
+          <li><strong>Amarelo — MODERADO:</strong> Proposições P2 em monitoramento</li>
+          <li><strong>Verde — TRANQUILO:</strong> Apenas P3/P4</li>
+        </ul>
+      </li>
+      <li>O termômetro é exibido no header com cor e texto descritivo.</li>
+      <li>KPIs exibidos em 3 barras:
+        <ul>
+          <li>Barra principal: Câmara (total), Senado (total), Relevantes Sebrae, P0+P1, P2 Monitorar</li>
+          <li>Barra secundária — Proposições legislativas: PEC, PLP, PL, PDL</li>
+          <li>Barra secundária — Documentos acessórios: PRL, EMR, REQ, RIC, PPD, RDF, PPP</li>
+        </ul>
+      </li>
+      <li>Painel Estratégico: Partido mais ativo, Eixo em destaque, Impacto Alto+, Acessórios excluídos.</li>
+      <li>6 gráficos Chart.js: Distribuição por Prioridade (doughnut), Distribuição por Eixo (barras horizontais), Por Casa (doughnut), Comissões Ativas (doughnut), Relevantes Sebrae 7 dias (line), Movimentações 7 dias (line).</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Indicador visual de risco atualizado. Todas as visualizações respondem a filtros aplicados.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-legislativo-dashboard/index.html</code> · Funções: <code>updateThermometer()</code>, <code>updateKPIs()</code>, <code>renderCharts()</code></div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- MODULO 2: PAUTA LEGISLATIVA -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-pauta">
+  <div class="module-icon">2</div>
+  <div class="module-info">
+    <h3>PIPPA Pauta Legislativa</h3>
+    <div class="module-desc">Monitor de pautas de votação em tempo real · APIs: Câmara Eventos + Senado Agenda · <code>pippa-pauta-legislativa/index.html</code></div>
+  </div>
+</div>
+
+<!-- UC-009 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-009</span>
+    <span class="uc-name">Consultar Pauta Legislativa por Período</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard PIPPA Pauta Legislativa carregado. APIs da Câmara (Eventos) e do Senado (Agenda) acessíveis.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista seleciona período (data início e data fim) e clica "Consultar APIs".</li>
+      <li>O sistema consulta APIs para buscar sessões deliberativas, comissões e audiências públicas agendadas.</li>
+      <li>Cada evento é classificado automaticamente quanto à relevância para MPEs (Alta, Média, Baixa).</li>
+      <li>Eventos são exibidos com KPIs: Total na Pauta, Câmara, Senado, Relevantes Sebrae, Alta Relevância. KPIs secundários: Plenário, Comissões, Audiências, Outros, Itens na Pauta.</li>
+      <li>Painel Estratégico: Dia mais ativo, Órgão destaque, Dias com pauta, Itens SEBRAE.</li>
+      <li>4 gráficos: Por Casa Legislativa, Por Tipo de Evento, Relevância SEBRAE, Eventos por Dia.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — Sem pauta agendada:</strong> O sistema informa que não há eventos programados para o período selecionado.</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>O analista identifica quais votações e audiências são relevantes para o Sebrae no período.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-pauta-legislativa/index.html</code> · Função: <code>fetchData()</code></div>
+</div>
+
+<!-- UC-010 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-010</span>
+    <span class="uc-name">Filtrar Pauta por Tipo de Evento e Relevância</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dados de pauta carregados (UC-009 concluído).</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista seleciona filtros na sidebar:
+        <ul>
+          <li><strong>Casa Legislativa:</strong> Câmara, Senado</li>
+          <li><strong>Tipo de Evento:</strong> Plenário, Comissão, Audiência Pública, Outros</li>
+          <li><strong>Relevância SEBRAE:</strong> Alta, Média, Baixa</li>
+          <li><strong>Eixo Temático:</strong> Ambiente de negócios, MEI/Simples, Crédito, Compras públicas, Inovação, Tributário</li>
+          <li><strong>Situação:</strong> Prevista, Encerrada, Cancelada</li>
+        </ul>
+      </li>
+      <li>Busca textual por proposição ou órgão.</li>
+      <li>Todos os KPIs e gráficos atualizam simultaneamente.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Pauta filtrada com foco nos eventos de interesse do Sebrae.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-pauta-legislativa/index.html</code> · Função: <code>applyFilters()</code></div>
+</div>
+
+<!-- UC-011 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-011</span>
+    <span class="uc-name">Expandir Detalhes e Classificar Evento na Pauta</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Lista de eventos renderizada.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista clica no card de um evento para expandir.</li>
+      <li>O sistema exibe: timeline de tramitação, grade de detalhes, botões de ação (link para página oficial).</li>
+      <li>O analista pode editar a classificação de relevância e eixo temático via campos select.</li>
+      <li>Clica "Salvar" para atualizar a classificação na sessão.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Detalhes completos do evento visualizados. Classificação manual salva na sessão.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-pauta-legislativa/index.html</code></div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- MODULO 3: EMENDAS -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-emendas">
+  <div class="module-icon">3</div>
+  <div class="module-info">
+    <h3>PIPPA Emendas Parlamentares</h3>
+    <div class="module-desc">Pipeline Python + FastAPI + Dashboard HTML com 7 abas analíticas · Fontes: Portal da Transparência (CGU), Tesouro Transparente, APIs Câmara e Senado · <code>pippa-emendas/</code></div>
+  </div>
+</div>
+
+<!-- UC-012 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-012</span>
+    <span class="uc-name">Analisar Emendas Parlamentares por Estado e Região</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard PIPPA Emendas acessível. Dados processados (Parquets) disponíveis via API (<code>GET /api/dados</code>).</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista acessa o PIPPA Emendas (servido via <code>GET /</code> do FastAPI ou HTML estático).</li>
+      <li>Seleciona período (anoFrom, anoTo), UF, região (chips Norte/Nordeste/Sudeste/Sul/Centro-Oeste) e tipo de emenda (Individual/Bancada/Comissão/Relator).</li>
+      <li>Clica "Filtrar" — a função <code>applyAllFilters()</code> recalcula todos os gráficos e KPIs simultaneamente.</li>
+      <li>Visualiza KPIs: Empenhado, Liquidado, Pago, Taxa de Execução, Emendas (contagem), Autores (contagem).</li>
+      <li>Na aba "Estados": gráfico de barras "Empenhado vs Pago por UF (Top 15)", "Taxa de Execução por UF (%)" e "Empenhado vs Pago por Região".</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — Filtro por partido:</strong> O analista seleciona chips de partido (dinâmicos) para ver emendas por bancada partidária.</li>
+      <li><strong>FA2 — Busca textual:</strong> O analista digita no campo de busca global (estado/autor/partido).</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Todas as 7 abas (Estados, Municípios, Autores, Partidos, Série Temporal, Setores, Qualidade) refletem os filtros aplicados.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-emendas/</code> · API: <code>GET /api/dados</code> · Renderer: <code>html_renderer.py</code></div>
+</div>
+
+<!-- UC-013 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-013</span>
+    <span class="uc-name">Consultar Emendas por Município</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard carregado com dados processados.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista clica na aba "Municípios".</li>
+      <li>Filtra por UF via dropdown e pesquisa município por nome.</li>
+      <li>Ordena tabela clicando nos cabeçalhos de coluna (Município, UF, Empenhado, Pago, Execução, Emendas) via <code>sortMunTable(col)</code>.</li>
+      <li>Visualiza dados granulares de emendas por município.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Tabela municipal com dados ordenáveis e filtráveis exibida.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-emendas/</code> · Aba: Municípios</div>
+</div>
+
+<!-- UC-014 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-014</span>
+    <span class="uc-name">Analisar Distribuição por Autor, Partido e Setor</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard carregado. Enriquecimento de autores concluído (match exato ou fuzzy).</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li><strong>Aba Autores:</strong> Visualiza "Top 20 Autores Individuais" em barras horizontais. Apenas autores com match confidence "exato" ou "fuzzy" são exibidos.</li>
+      <li><strong>Aba Partidos:</strong> Visualiza treemap "Distribuição por Partido (Empenhado)" e barras "Top 15 Partidos — Empenhado vs Pago".</li>
+      <li><strong>Aba Série Temporal:</strong> Gráfico de linhas "Evolução Anual — Empenhado, Pago e Liquidado" (2015–2026) e barras empilhadas "Evolução por Tipo de Emenda".</li>
+      <li><strong>Aba Setores:</strong> Barras "Top 15 Setores — Empenhado" e empilhamento "Evolução Anual por Setor (Empenhado)".</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>O analista tem visibilidade sobre as concentrações de emendas por autor, partido e setor orçamentário.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-emendas/</code> · Abas: Autores, Partidos, Série Temporal, Setores</div>
+</div>
+
+<!-- UC-015 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-015</span>
+    <span class="uc-name">Diagnosticar Qualidade dos Dados de Emendas</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard carregado. Pipeline de validação cruzada executado.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista clica na aba "Qualidade".</li>
+      <li>Visualiza KPIs: Match Exato (contagem), Match Fuzzy (contagem), Não Encontrado (contagem), Alertas (5–15% divergência), Críticos (>15% divergência).</li>
+      <li>Visualiza distribuição de match confidence e flags de validação cruzada entre Portal da Transparência e Tesouro Transparente.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>O analista avalia a confiabilidade dos dados antes de tomar decisões com base neles.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-emendas/</code> · Aba: Qualidade · Pipeline: <code>pipeline.py</code> validação cruzada</div>
+</div>
+
+<!-- UC-016 -->
+<div class="uc-card admin">
+  <div class="uc-header">
+    <span class="uc-id">UC-016</span>
+    <span class="uc-name">Executar Pipeline de Coleta e Processamento de Emendas</span>
+    <span class="badge badge-admin">Administrador</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>API FastAPI em execução (<code>uvicorn</code> na porta 8050). Nenhum pipeline em execução no momento.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O administrador envia <code>POST /api/pipeline?ano=XXXX</code>.</li>
+      <li>O sistema verifica se <code>pipeline_status["running"]</code> é <code>False</code>.</li>
+      <li>O pipeline executa em background:
+        <ul>
+          <li><strong>Coleta:</strong> Download CSV do Portal da Transparência + Tesouro Transparente</li>
+          <li><strong>Enriquecimento:</strong> Fetch parlamentares (APIs Câmara/Senado), resolução partido/UF via matching exato + fuzzy (rapidfuzz, threshold 85)</li>
+          <li><strong>Filtro por ano:</strong> Opcional, via parâmetro <code>ano</code></li>
+          <li><strong>Validação cruzada:</strong> Compara totais por UF/ano entre Portal e Tesouro; flags OK (&lt;5%), ALERTA (5–15%), CRÍTICO (>15%)</li>
+          <li><strong>Persistência:</strong> Salva Parquets + relatório de qualidade JSON + agregações (por_estado, por_municipio, por_autor, por_partido, por_tipo, por_funcao, serie_temporal)</li>
+        </ul>
+      </li>
+      <li>O administrador consulta <code>GET /api/pipeline/status</code> para monitorar progresso.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — Pipeline já em execução:</strong> O sistema retorna HTTP 409 com <code>{"status": "Pipeline ja esta em execucao"}</code>.</li>
+      <li><strong>FA2 — Falha no pipeline:</strong> O campo <code>last_error</code> é preenchido com a mensagem; status retorna a <code>running: false</code>.</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Parquets atualizados em <code>data/processed/</code>. Relatório de qualidade em <code>output/</code>. Dashboard reflete dados atualizados.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-emendas/api.py</code> · Endpoints: <code>POST /api/pipeline</code>, <code>GET /api/pipeline/status</code>, <code>GET /api/dados</code></div>
+</div>
+
+<!-- UC-017 -->
+<div class="uc-card sistema">
+  <div class="uc-header">
+    <span class="uc-id">UC-017</span>
+    <span class="uc-name">Validação Cruzada Automática de Fontes de Emendas</span>
+    <span class="badge badge-sistema">Sistema</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dados coletados do Portal da Transparência e do Tesouro Transparente.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O sistema compara valor_pago total por UF/ano entre as duas fontes.</li>
+      <li>Calcula percentual de divergência para cada par UF/ano.</li>
+      <li>Classifica cada divergência: <strong>OK</strong> (&lt;5%), <strong>ALERTA</strong> (5–15%), <strong>CRÍTICO</strong> (>15%).</li>
+      <li>Persiste lista de QualityFlags no relatório de qualidade JSON.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Relatório de qualidade gerado com flags de divergência por UF/ano. Aba "Qualidade" do dashboard reflete os resultados.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-emendas/pipeline.py</code> · Etapa: validação cruzada</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- MODULO 4: STAKEHOLDERS -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-stakeholders">
+  <div class="module-icon">4</div>
+  <div class="module-info">
+    <h3>PIPPA Stakeholders — Mapa Parlamentar e ICP/RIG</h3>
+    <div class="module-desc">CRM legislativo com scoring ICP/RIG (PB × MI × BC) · APIs: Câmara, Senado, TSE · <code>pippa-stakeholders/index.html</code></div>
+  </div>
+</div>
+
+<!-- UC-018 -->
+<div class="uc-card assessor">
+  <div class="uc-header">
+    <span class="uc-id">UC-018</span>
+    <span class="uc-name">Consultar Mapa Parlamentar em Tempo Real</span>
+    <span class="badge badge-assessor">Assessor Legislativo</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard PIPPA Stakeholders carregado. APIs da Câmara e Senado acessíveis.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O assessor clica "Atualizar APIs" no header.</li>
+      <li>O sistema busca deputados via API Câmara XML (paginação de 100/página).</li>
+      <li>Busca senadores via API Senado JSON (com retry para HTTP 429).</li>
+      <li>Busca frentes parlamentares da legislatura e filtra por 20 keywords MPE/Sebrae (empreendedorismo, micro, MEI, startup, etc.).</li>
+      <li>Busca membros de cada frente relevante (batches de 3).</li>
+      <li>Busca comissões-chave da Câmara (CDE, CICS, CFT, CCTI, etc.) e seus membros com papéis (titular, suplente, presidente).</li>
+      <li>Constrói filtros laterais e exibe parlamentares em cards com foto, nome, partido/UF, frentes e comissões.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — Cache disponível:</strong> Na carga da página, o sistema carrega automaticamente <code>stakeholders_cache.js</code> (gerado por <code>build_cache.py</code>) para funcionamento offline.</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Lista de parlamentares com frentes, comissões e dados eleitorais carregada. Filtros habilitados. KPIs atualizados.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-stakeholders/index.html</code> · Função: <code>fetchAllAPIs()</code> · Cache: <code>build_cache.py</code></div>
+</div>
+
+<!-- UC-019 -->
+<div class="uc-card assessor">
+  <div class="uc-header">
+    <span class="uc-id">UC-019</span>
+    <span class="uc-name">Filtrar Parlamentares por Múltiplos Critérios</span>
+    <span class="badge badge-assessor">Assessor Legislativo</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dados de parlamentares carregados (via API ou cache).</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>Na sidebar, o assessor seleciona filtros (toggle — clicar novamente deseleciona):
+        <ul>
+          <li><strong>Casa:</strong> Câmara / Senado</li>
+          <li><strong>Partido:</strong> Top 20 partidos</li>
+          <li><strong>UF:</strong> 27 unidades federativas</li>
+          <li><strong>Frente Parlamentar:</strong> Frentes relevantes para MPEs</li>
+          <li><strong>Comissão-Chave:</strong> CDE, CICS, CFT, CCTI, etc.</li>
+          <li><strong>Eleição 2026:</strong> Candidato/não candidato/eleito/não eleito/por cargo</li>
+        </ul>
+      </li>
+      <li>Filtros são combinados com AND (todos devem ser satisfeitos).</li>
+      <li>Busca textual por nome, partido ou UF ("Buscar parlamentar...").</li>
+      <li>Lista e KPIs atualizam imediatamente.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Lista filtrada com contagens atualizadas exibida.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-stakeholders/index.html</code> · Função: <code>applyFilters()</code></div>
+</div>
+
+<!-- UC-020 -->
+<div class="uc-card assessor">
+  <div class="uc-header">
+    <span class="uc-id">UC-020</span>
+    <span class="uc-name">Visualizar Perfil Detalhado e Dados de Contato de Parlamentar</span>
+    <span class="badge badge-assessor">Assessor Legislativo</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Lista de parlamentares renderizada.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O assessor clica no card de um parlamentar para expandir.</li>
+      <li>O sistema exibe: foto, nome, casa, partido-UF, e-mail, frentes parlamentares, comissões-chave.</li>
+      <li>Status eleitoral 2026: cargo disputado, UF, nome de urna, eleito/não eleito.</li>
+      <li>Para deputados, o sistema busca detalhes extras via API (<code>/deputados/{id}</code>): data de nascimento, naturalidade, escolaridade, gabinete (sala, andar, prédio), telefone.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Perfil completo visível com dados de contato e atuação parlamentar para articulação.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-stakeholders/index.html</code></div>
+</div>
+
+<!-- UC-021 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-021</span>
+    <span class="uc-name">Calcular e Visualizar ICP/RIG (Índice de Capital Político)</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dados de parlamentares carregados com frentes e comissões.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista clica na aba "ICP/RIG".</li>
+      <li>O sistema busca comissões do Senado via API (<code>/senador/{id}/comissoes</code>).</li>
+      <li>Busca autorias temáticas via API Câmara (<code>/proposicoes?keywords=...</code>) com 12 keywords MPE em 4 batches.</li>
+      <li>Identifica autores de cada proposição via <code>/proposicoes/{id}/autores</code>.</li>
+      <li>Calcula PB (Pontuação-base, 0–100) em 5 dimensões:
+        <ul>
+          <li><strong>A. Amplitude da Rede (0–20):</strong> frentes × 2 + comissões × 3</li>
+          <li><strong>B. Profundidade (0–30):</strong> frentes Tier1 × 8 + Tier2 × 4 + comissões T1 × 10 + T2 × 5</li>
+          <li><strong>C. Relevância Estratégica (0–20):</strong> posição em comissão + bônus (presidente +5, titular +3)</li>
+          <li><strong>D. Articulação (0–20):</strong> autorias temáticas normalizadas</li>
+          <li><strong>E. Inteligência Institucional (0–10):</strong> 2 pts cada (foto, email, frentes, comissões, dados eleitorais)</li>
+        </ul>
+      </li>
+      <li>Calcula MI (Multiplicador Institucional, 1–3×): ex. 2× para deputado eleito senador.</li>
+      <li>Calcula BC (Bônus de Comissão, 1.00–1.35): por papel em comissão prioritária.</li>
+      <li>Computa CP = PB × MI × BC e normaliza para ICP/RIG 0–100.</li>
+      <li>Ranking ordenado por CP exibido com barras de progresso por dimensão.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — Decomposição:</strong> O analista clica em um parlamentar no ranking para ver barras de progresso A–E, fórmula CP = PB × MI × BC com valores e justificativas (ex.: "Dep. eleito Senador 2026", "Titular CFT").</li>
+      <li><strong>FA2 — Busca no ranking:</strong> O analista digita no campo "Buscar parlamentar no ranking ICP/RIG..." para filtrar por nome, partido ou UF.</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Ranking ICP/RIG com decomposição completa. KPIs: atores avaliados, PB médio, CP médio, MI elevado, BC ativo.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-stakeholders/index.html</code> · Aba: ICP/RIG · Fórmula: <code>CP = PB × MI × BC</code></div>
+</div>
+
+<!-- UC-022 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-022</span>
+    <span class="uc-name">Analisar Cenário Eleitoral 2026</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dados carregados. Dados de eleição 2026 mapeados via <code>CANDIDATOS_2026</code> (dados TSE).</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O painel "Análise Eleitoral 2026" exibe automaticamente após carregar dados.</li>
+      <li>3 gráficos donut: Situação Eleitoral Geral (eleitos/não eleitos/não candidatos), Renovação da Câmara (taxa %), Renovação do Senado (taxa %).</li>
+      <li>Top Partidos com mais eleitos (barras horizontais stacked: eleitos vs não eleitos).</li>
+      <li>Mapa UF × Casa (mini-barras por UF com stacked Câmara/Senado).</li>
+      <li>Gráficos reagem a filtros aplicados na sidebar.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Panorama de renovação parlamentar visível com métricas por partido e UF.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-stakeholders/index.html</code> · Painel: Análise Eleitoral 2026</div>
+</div>
+
+<!-- UC-023 -->
+<div class="uc-card admin">
+  <div class="uc-header">
+    <span class="uc-id">UC-023</span>
+    <span class="uc-name">Gerar Cache Offline de Stakeholders</span>
+    <span class="badge badge-admin">Administrador</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Python 3 instalado. Biblioteca <code>requests</code> disponível. APIs Câmara e Senado acessíveis.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O administrador executa <code>python build_cache.py</code>.</li>
+      <li>O script busca: deputados (API Câmara XML paginada), senadores (API Senado JSON), frentes parlamentares e membros, comissões-chave e membros com papéis, comissões individuais do Senado, autorias temáticas.</li>
+      <li>Gera arquivo <code>stakeholders_cache.js</code> com variável <code>STAKEHOLDERS_CACHE</code> contendo todos os dados pré-processados.</li>
+      <li>Data do build é registrada no cache.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Arquivo JS de cache criado para carga instantânea do dashboard sem dependência de APIs externas.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-stakeholders/build_cache.py</code></div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- MODULO 5: REFORMA TRIBUTARIA -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-reforma">
+  <div class="module-icon">5</div>
+  <div class="module-info">
+    <h3>PIPPA Reforma Tributária</h3>
+    <div class="module-desc">Monitor de notícias da Reforma Tributária com motor anti-fake-news · Fontes: Google News RSS (4 queries) + cache local · <code>pippa-reforma-dashboard/index.html</code></div>
+  </div>
+</div>
+
+<!-- UC-024 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-024</span>
+    <span class="uc-name">Monitorar Notícias da Reforma Tributária</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard PIPPA Reforma Tributária carregado. Google News RSS acessível via CORS proxy ou cache local.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista define período (padrão: últimos 10 dias) e clica "Monitorar Notícias".</li>
+      <li>O sistema consulta 4 feeds Google News RSS via 3 CORS proxies (rss2json, allorigins, corsproxy).</li>
+      <li>Cada notícia é classificada automaticamente em 4 dimensões:
+        <ul>
+          <li><strong>Status:</strong> Fato / Proposta / Expectativa</li>
+          <li><strong>Tema:</strong> IVA Dual, IBS, CBS, Imposto Seletivo, Split Payment, Comitê Gestor, Transição, Simples/MEI, Alíquotas, Regulamentação, Geral (11 opções)</li>
+          <li><strong>Impacto MPE:</strong> Alto / Médio / Baixo / Indefinido</li>
+          <li><strong>Credibilidade:</strong> Confiável / Atenção / Risco (ver UC-025)</li>
+        </ul>
+      </li>
+      <li>Deduplicação via prefixo normalizado do título (60 chars).</li>
+      <li>Notícias ordenadas por status e impacto.</li>
+      <li>KPIs, termômetro e cards de notícias renderizados.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — Proxies indisponíveis:</strong> O sistema carrega cache local (<code>data/news_cache.json</code>).</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Dashboard populado com notícias classificadas, gráficos e termômetro de impacto atualizados.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-reforma-dashboard/index.html</code> · Função: <code>fetchData()</code></div>
+</div>
+
+<!-- UC-025 -->
+<div class="uc-card sistema">
+  <div class="uc-header">
+    <span class="uc-id">UC-025</span>
+    <span class="uc-name">Avaliar Credibilidade de Fonte (Motor Anti-Fake-News)</span>
+    <span class="badge badge-sistema">Sistema</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Notícia com fonte identificada. Dicionários <code>FONTES_JORNALISTICAS</code> (70+ veículos) e <code>FONTES_INSTITUCIONAIS</code> (60+ organizações incl. Sebrae, bancos, universidades) carregados.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O sistema busca a fonte na lista de fontes jornalísticas e institucionais.</li>
+      <li>Se encontrada: classifica como <strong>Confiável</strong> (score 100).</li>
+      <li>Se não encontrada: calcula score de risco acumulativo:
+        <ul>
+          <li>Fonte não identificada: +40 pontos</li>
+          <li>Padrões de fake news no título: +50 pontos</li>
+          <li>Múltiplos sinais de clickbait: +30 pontos</li>
+          <li>Excesso de caixa alta: +20 pontos</li>
+          <li>Excesso de pontuação: +20 pontos</li>
+        </ul>
+      </li>
+      <li>Score >= 40: <strong>Risco</strong>. Senão: <strong>Atenção</strong>.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Cada card de notícia exibe badge de credibilidade, tooltip e borda visual (vermelha para Risco, amarela para Atenção).</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-reforma-dashboard/index.html</code> · Função: motor de credibilidade</div>
+</div>
+
+<!-- UC-026 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-026</span>
+    <span class="uc-name">Filtrar Notícias por Classificação e Impacto</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Notícias carregadas e classificadas.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista seleciona chips de filtro:
+        <ul>
+          <li><strong>Classificação:</strong> Fato / Proposta / Expectativa</li>
+          <li><strong>Tema:</strong> 11 valores (IVA Dual, IBS, CBS, etc.)</li>
+          <li><strong>Impacto MPE:</strong> Alto / Médio / Baixo / Indefinido</li>
+          <li><strong>Credibilidade:</strong> Confiável / Atenção / Risco</li>
+          <li><strong>Fonte:</strong> Dinâmico, baseado nos resultados</li>
+        </ul>
+      </li>
+      <li>Busca textual no título.</li>
+      <li>Cada filtro exibe badge com contagem ativa.</li>
+      <li>Todos os gráficos, KPIs e termômetro re-renderizam via <code>applyFilters()</code>.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Dashboard exibe apenas notícias que atendem os filtros selecionados.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-reforma-dashboard/index.html</code> · Função: <code>applyFilters()</code></div>
+</div>
+
+<!-- UC-027 -->
+<div class="uc-card admin">
+  <div class="uc-header">
+    <span class="uc-id">UC-027</span>
+    <span class="uc-name">Atualizar Cache de Notícias (GitHub Actions)</span>
+    <span class="badge badge-admin">Administrador</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>GitHub Actions configurado com trigger agendado.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O agendador dispara <code>scripts/fetch_news.py</code>.</li>
+      <li>O script executa 4 queries RSS contra Google News.</li>
+      <li>Deduplica por prefixo do título.</li>
+      <li>Salva em <code>data/news_cache.json</code> com timestamp.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Cache atualizado para uso como fallback quando proxies CORS estão indisponíveis.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-reforma-dashboard/scripts/fetch_news.py</code></div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- MODULO 6: REGULATORIO -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-regulatorio">
+  <div class="module-icon">6</div>
+  <div class="module-info">
+    <h3>PIPPA Regulatório — Monitor DOU</h3>
+    <div class="module-desc">Monitor do Diário Oficial da União com classificação automática de impacto MPE · API: Imprensa Nacional · <code>pippa-regulatorio/</code></div>
+  </div>
+</div>
+
+<!-- UC-028 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-028</span>
+    <span class="uc-name">Monitorar Normas do DOU com Impacto em MPEs</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard PIPPA Regulatório acessível. API da Imprensa Nacional disponível.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista acessa o PIPPA Regulatório e seleciona o período (ou usa o padrão: hoje + 7 dias anteriores).</li>
+      <li>O sistema consulta a API da Imprensa Nacional para o DOU do período.</li>
+      <li>A heurística de 3 eixos classifica cada norma:
+        <ul>
+          <li><strong>Eixo 1 — Relevância direta MPE:</strong> menções a MEI, ME, EPP, tributos, licitações</li>
+          <li><strong>Eixo 2 — Alcance setorial:</strong> cadeias produtivas impactadas</li>
+          <li><strong>Eixo 3 — Potência normativa:</strong> tipo de ato como multiplicador (Lei > Decreto > Portaria > Resolução)</li>
+        </ul>
+      </li>
+      <li>Normas exibidas agrupadas por nível de impacto (Alto, Médio, Baixo) com score transparente e justificativa.</li>
+      <li>O analista aplica filtros por impacto, cadeia produtiva, tipo de ato ou órgão emissor.</li>
+      <li>Visualiza gráficos de distribuição e timeline de 7 dias para tendências regulatórias.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — DOU sem publicações relevantes:</strong> O sistema informa que nenhuma norma atingiu o threshold de impacto.</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Normas classificadas por impacto em MPEs. Exportação WhatsApp disponível.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-regulatorio/</code></div>
+</div>
+
+<!-- UC-029 -->
+<div class="uc-card assessor">
+  <div class="uc-header">
+    <span class="uc-id">UC-029</span>
+    <span class="uc-name">Identificar Oportunidades de Incidência Pré-Normativa</span>
+    <span class="badge badge-assessor">Assessor Legislativo</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Normas classificadas no dashboard. Filtros por impacto Alto aplicados.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O assessor filtra normas por impacto "Alto" e cadeia produtiva de interesse.</li>
+      <li>Expande o card da norma para ver detalhes: tipo de ato, órgão emissor, data de publicação, texto resumido, link para o DOU.</li>
+      <li>Identifica normas que ainda admitem incidência (regulamentações em fase de consulta, portarias em discussão).</li>
+      <li>Exporta seleção via WhatsApp para equipe de articulação.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>O assessor identifica normas com impacto em MPEs para articulação tempestiva.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-regulatorio/</code></div>
+</div>
+
+<!-- ================================================================ -->
+<!-- MODULO 7: COMPRAS PUBLICAS -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-compras">
+  <div class="module-icon">7</div>
+  <div class="module-info">
+    <h3>PIPPA Compras Públicas</h3>
+    <div class="module-desc">6 sub-dashboards: Oportunidades PNCP, PDDE, PNAE, Execução Orçamentária Estadual, Monitor PNCP 5 Anos, Fornecedores · APIs: PNCP, FNDE, SICONFI, IBGE · <code>pippa-compras-dashboard/index.html</code></div>
+  </div>
+</div>
+
+<!-- UC-030 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-030</span>
+    <span class="uc-name">Buscar Licitações Abertas para MPEs e MEIs</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Sub-dashboard "Oportunidades em Compras Públicas" selecionado. API PNCP (<code>pncp.gov.br/api/consulta/v1</code>) acessível via CORS proxy.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista define período, opcionalmente seleciona UF e Município (carregado da API IBGE).</li>
+      <li>Clica "Buscar Licitações".</li>
+      <li>O sistema consulta API PNCP para 5 modalidades: Pregão Eletrônico (id=6), Dispensa (id=8), Concorrência Eletrônica (id=5), Inexigibilidade (id=9), Credenciamento (id=12) — paginado até 5 páginas cada.</li>
+      <li>Cada item é enriquecido automaticamente:
+        <ul>
+          <li><code>classifyMPE()</code>: Exclusiva / Cota / Ampla (baseado em valor e keywords)</li>
+          <li><code>classifyFaixaValor()</code>: 4 faixas de valor</li>
+          <li><code>classifyUrgencia()</code>: Urgente (<=3 dias) / Atenção (<=7 dias) / Tranquilo (>7 dias)</li>
+          <li><code>detectSetores()</code>: 14 setores via keyword matching</li>
+          <li><code>classifyMEI()</code>: Portal MEI / Dispensa MEI / Setor MEI</li>
+        </ul>
+      </li>
+      <li>Deduplicação por <code>numeroControlePNCP</code>; encerradas filtradas; ordenação por urgência.</li>
+      <li>11 KPIs e 11 gráficos Chart.js renderizados (modalidade, MPE, UF, MEI, setor, faixa, urgência, etc.).</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — CORS proxy indisponível:</strong> O sistema tenta proxies alternativos (3 configurados); se todos falharem, exibe erro.</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Licitações abertas exibidas com classificação MPE/MEI, urgência e link para edital no PNCP (<code>pncp.gov.br/app/editais/{cnpj}/{ano}/{seq}</code>).</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-compras-dashboard/index.html</code> · View: Oportunidades</div>
+</div>
+
+<!-- UC-031 -->
+<div class="uc-card sistema">
+  <div class="uc-header">
+    <span class="uc-id">UC-031</span>
+    <span class="uc-name">Classificar Oportunidades MEI Automaticamente</span>
+    <span class="badge badge-sistema">Sistema</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Licitação com modalidade, valor e objeto textual disponíveis.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li><strong>Portal MEI:</strong> Detectado se publicado via plataforma Contrata+Brasil.</li>
+      <li><strong>Dispensa MEI:</strong> Modalidade Dispensa com valor <= R$ 50.000 (Art. 75, II, Lei 14.133/2021).</li>
+      <li><strong>Setor MEI:</strong> Setores compatíveis com MEI (alimentação, limpeza, gráfica, construção, elétrico, agro).</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>KPIs e gráficos MEI populados. Cada licitação exibe badge de classificação MEI.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-compras-dashboard/index.html</code> · Função: <code>classifyMEI()</code></div>
+</div>
+
+<!-- UC-032 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-032</span>
+    <span class="uc-name">Analisar PDDE — Programa Dinheiro Direto na Escola</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Sub-dashboard "Análise do PDDE" selecionado. Dados FNDE/Antonieta de Barros (2018–2026) disponíveis.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista clica "Carregar Dados" (ou auto-load na primeira visita).</li>
+      <li>Filtra por: Ano, Nível (Brasil/Região/Estado/Município), Região, UF, Município.</li>
+      <li>Visualiza KPIs: Total repassado, Custeio, Capital, Escolas atendidas.</li>
+      <li>Barra de execução: Custeio vs Capital (%).</li>
+      <li>5 gráficos: evolução anual, custeio/capital, ranking, escolas, proporção capital.</li>
+      <li>Tabela detalhada com valores por entidade.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>O analista tem visão da distribuição do PDDE para subsidiar articulação sobre compras públicas escolares para MPEs.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-compras-dashboard/index.html</code> · View: PDDE</div>
+</div>
+
+<!-- UC-033 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-033</span>
+    <span class="uc-name">Analisar PNAE — Programa Nacional de Alimentação Escolar</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Sub-dashboard "Análise do PNAE" selecionado. Dados FNDE/Antonieta de Barros (2009–2026) disponíveis.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista carrega dados e filtra por Ano, Nível, Região, UF, Município.</li>
+      <li>Visualiza KPIs: Total repassado, Alunos atendidos, Escolas atendidas, Repasse por aluno.</li>
+      <li>5 gráficos: evolução, alunos, ranking, escolas, per capita.</li>
+      <li>Tabela detalhada.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Visão da distribuição do PNAE por território para subsidiar articulação sobre compras da agricultura familiar e MPEs.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-compras-dashboard/index.html</code> · View: PNAE</div>
+</div>
+
+<!-- UC-034 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-034</span>
+    <span class="uc-name">Monitorar Execução Orçamentária Estadual (SICONFI)</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Sub-dashboard "Execução Orçamentária Estadual" selecionado. Dados SICONFI/Tesouro Nacional (RREO 2020–2026) disponíveis.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista carrega dados e filtra por Ano, Nível (Brasil/Região/Estado), Região, UF.</li>
+      <li>Visualiza KPIs: Empenhado, Liquidado, Pago, Taxa de execução.</li>
+      <li>Barra de execução em 3 fases.</li>
+      <li>4 gráficos: evolução, taxa, ranking empenhado, ranking taxa.</li>
+      <li>Tabela detalhada.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Visão comparativa de execução orçamentária entre estados brasileiros.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-compras-dashboard/index.html</code> · View: Execução Orçamentária · Fonte: SICONFI</div>
+</div>
+
+<!-- UC-035 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-035</span>
+    <span class="uc-name">Monitorar Compras Públicas — Histórico PNCP 5 Anos</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Sub-dashboard "Monitor PNCP 5 Anos" selecionado. Dados agregados (<code>pncp_monitor_data.json</code>) disponíveis.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>Dashboard auto-carrega na primeira visita.</li>
+      <li>O analista filtra por: Ano, Nível (Brasil/Região/Estado/Município), Região, UF, Município.</li>
+      <li>Visualiza KPIs: Estimado, Homologado, Economia, Contratações.</li>
+      <li>6 gráficos: evolução estimado vs homologado, taxa de economia, ranking estimado, ranking taxa, qtd contratações, economia absoluta.</li>
+      <li>Tabela detalhada.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Visão histórica de compras públicas com métricas de economia e eficiência.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-compras-dashboard/index.html</code> · View: Monitor PNCP</div>
+</div>
+
+<!-- UC-036 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-036</span>
+    <span class="uc-name">Consultar Fornecedores Vencedores no PNCP</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Sub-dashboard "Fornecedores PNCP" selecionado. API PNCP acessível.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista seleciona UF (obrigatório), opcionalmente Município (via API IBGE).</li>
+      <li>Seleciona mês(es) e opcionalmente modalidade.</li>
+      <li>Clica "Consultar Fornecedores".</li>
+      <li>O sistema consulta API PNCP com barra de progresso; municipal: até 5 páginas (250 contratos), estadual: até 1 página (50).</li>
+      <li>Cada fornecedor identificado com: razão social, CNPJ/CPF, porte (MPE/MEI/EPP/Demais), valor homologado.</li>
+      <li>KPIs: contratações, MPE, MEI, demais, total homologado, economia média.</li>
+      <li>6 gráficos: porte, valor por porte, top 10 fornecedores, economia por porte, natureza jurídica, modalidade.</li>
+      <li>Tabela com CNPJ, porte, órgão, valores e link para PNCP.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>O analista identifica participação de MPEs/MEIs nos contratos públicos do território selecionado.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-compras-dashboard/index.html</code> · View: Fornecedores</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- MODULO 8: PESQUISAS ELEITORAIS -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-pesquisas">
+  <div class="module-icon">8</div>
+  <div class="module-info">
+    <h3>PIPPA Pesquisas Eleitorais</h3>
+    <div class="module-desc">Agregador de pesquisas eleitorais 2026 + resultados oficiais TSE · API: ElectioLab + TSE · <code>pippa-pesquisas-eleitorais/index.html</code></div>
+  </div>
+</div>
+
+<!-- UC-037 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-037</span>
+    <span class="uc-name">Consultar Agregador de Pesquisas Eleitorais</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard carregado. Dados de pesquisas embutidos no HTML (pré-processados por <code>update_polls.py</code>). API ElectioLab (<code>electiolab.com/api/v1</code>) disponível para atualização.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista seleciona o cargo: Presidente, Governador ou Senador (tabs com contadores).</li>
+      <li>Aplica filtros na sidebar: Estado, Instituto de pesquisa, Candidato.</li>
+      <li>Navega entre 5 abas de análise (DAR):
+        <ul>
+          <li><strong>Dashboard:</strong> Gráfico de tendência (série temporal) + Ranking com média ponderada, intervalo de confiança e contagem de pesquisas</li>
+          <li><strong>Pesquisas:</strong> Cards individuais com fonte, data, amostra, metodologia, margem de erro</li>
+          <li><strong>Agregado Estatístico:</strong> Tabela ordenável com média ponderada, média simples, mediana, desvio padrão, min-max, tendência (alta/queda/estável)</li>
+          <li><strong>Divergência:</strong> Análise de viés entre institutos (gráfico + tabela)</li>
+          <li><strong>2o Turno:</strong> Cenários de segundo turno agrupados por matchup</li>
+        </ul>
+      </li>
+      <li>Metodologia de ponderação: recência (half-life 14 dias), tamanho amostral (raiz quadrada), tipo de metodologia (presencial=1.0, telefônica=0.9, mista=0.85, online=0.8).</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — Atualizar dados:</strong> O analista clica botão para consultar a API ElectioLab em tempo real (<code>fetchAPIs()</code>).</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Visão agregada do cenário eleitoral com métricas estatísticas e análise de divergência entre institutos.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-pesquisas-eleitorais/index.html</code></div>
+</div>
+
+<!-- UC-038 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-038</span>
+    <span class="uc-name">Consultar Resultados Oficiais do TSE</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Período eleitoral ou pós-eleitoral. API TSE acessível.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista navega para a view "Resultados" via <code>showView('resultados')</code>.</li>
+      <li>Seleciona cargo: presidente, governador, senador, deputado federal, deputado estadual.</li>
+      <li>Alterna entre 1o e 2o turno via <code>switchResTurno()</code>.</li>
+      <li>Para resultados estaduais: seleciona UF.</li>
+      <li>O sistema carrega dados oficiais do TSE via <code>loadTSEData()</code>.</li>
+      <li>Visualiza: % apurado, urnas apuradas, lista de candidatos com votos e percentuais.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Resultados oficiais do TSE exibidos com totalização em tempo real.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-pesquisas-eleitorais/index.html</code> · View: Resultados</div>
+</div>
+
+<!-- UC-039 -->
+<div class="uc-card admin">
+  <div class="uc-header">
+    <span class="uc-id">UC-039</span>
+    <span class="uc-name">Atualizar Dados de Pesquisas Eleitorais (Pipeline Python)</span>
+    <span class="badge badge-admin">Administrador</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Python 3 com <code>requests</code>. API ElectioLab acessível.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O administrador executa <code>python update_polls.py</code> (modo <code>--full</code> para todos os dados ou incremental para 2o turno).</li>
+      <li>O script busca eleições e pesquisas na API ElectioLab (<code>/elections</code>, <code>/polls</code>).</li>
+      <li>Computa médias ponderadas com pesos de recência/amostra/metodologia.</li>
+      <li>Normaliza tipos de metodologia.</li>
+      <li>Deduplica pesquisas por ID.</li>
+      <li>Substitui arrays JS const no HTML (<code>POLLS_DATA</code>, <code>ELECTIONS</code>).</li>
+      <li>Trata rate limiting com exponential backoff.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>HTML atualizado com dados mais recentes de pesquisas embutidos.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-pesquisas-eleitorais/update_polls.py</code></div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- MODULO 9: RAIO-X MUNICIPAL -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-raiox">
+  <div class="module-icon">9</div>
+  <div class="module-info">
+    <h3>PIPPA Raio-X Municipal</h3>
+    <div class="module-desc">Gerador de diagnóstico territorial por município via CLI Python · ~25 cubos OLAP + 8 APIs públicas · <code>gerar_raio_x.py</code></div>
+  </div>
+</div>
+
+<!-- UC-040 -->
+<div class="uc-card admin">
+  <div class="uc-header">
+    <span class="uc-id">UC-040</span>
+    <span class="uc-name">Gerar Diagnóstico Territorial de Município</span>
+    <span class="badge badge-admin">Administrador</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Python 3 com <code>requests</code>. Token OLAP do Observatório Sebrae (Tesseract API). Código IBGE do município (7 dígitos). Internet para ~8 APIs (IBGE, BCB, INEP, ANS, ANATEL, MDS, PNUD, CGU, Observatório).</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O administrador executa <code>python gerar_raio_x.py {codigo_ibge}</code>.</li>
+      <li>O script coleta dados em 12 etapas sequenciais:
+        <ul>
+          <li>[1/12] Perfil — IBGE: população, PIB, densidade, urbano/rural, IDHM (PNUD), Gini, ISDEL</li>
+          <li>[2/12] Empresas — RF OLAP: estabelecimentos ativos por porte (MEI/ME/EPP), top 15 CNAE, comparativo UF</li>
+          <li>[3/12] Complexidade — ECI index, vocações RCA (setores com RCA > 1)</li>
+          <li>[4/12] Emprego — CAGED: admissões/demissões/saldo/salário mensal, setores</li>
+          <li>[5/12] PIB e VAB — PIB municipal, VAB setorial (agro/indústria/serviços/admin), exportações/importações (MDIC)</li>
+          <li>[6/12] Crédito — BCB ESTBAN: agências, operações de crédito, poupança, ativos</li>
+          <li>[7/12] Educação — INEP: IDEB, matrículas, professores, aprovação/reprovação/abandono</li>
+          <li>[8/12] Saúde e social — ANS: cobertura, MDS: Bolsa Família</li>
+          <li>[9/12] Conectividade — ANATEL IBC: índice de conectividade, 4G/5G, banda larga, fibra</li>
+          <li>[10/12] Compras públicas — PNCP por porte de fornecedor</li>
+          <li>[11/12] Emendas — CGU: emendas parlamentares ao município</li>
+          <li>[12/12] Sebrae — Dados de atendimento</li>
+        </ul>
+      </li>
+      <li>Gera HTML auto-contido com Chart.js e dados JSON embutidos.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Arquivo HTML gerado em <code>output/raio_x_{codigo}_{nome}.html</code> com relatório completo do município.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>gerar_raio_x.py</code></div>
+</div>
+
+<!-- UC-041 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-041</span>
+    <span class="uc-name">Consultar Relatório Interativo do Raio-X Municipal</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>HTML do Raio-X gerado (UC-040 concluído) e acessível via navegador.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista abre o HTML gerado no navegador.</li>
+      <li>Visualiza KPI row com 6 indicadores: População, Empresas Ativas, Saldo Emprego, IDHM, Matrículas, IBC Conectividade.</li>
+      <li>Navega entre 8 abas:
+        <ul>
+          <li><strong>Empresas:</strong> doughnut porte, barras CNAE top 15, vocações (RCA), ECI</li>
+          <li><strong>Emprego:</strong> linha admissões vs demissões, barras setor, evolução salarial</li>
+          <li><strong>Economia:</strong> PIB/VAB, per capita, exportação/importação, demografia</li>
+          <li><strong>Infraestrutura:</strong> crédito bancário (detecção deserto), conectividade</li>
+          <li><strong>Compras Públicas:</strong> PNCP por porte, evolução, categorias</li>
+          <li><strong>Emendas:</strong> por tipo, autor, ano, beneficiário</li>
+          <li><strong>Social:</strong> educação (IDEB, matrícula, evasão), saúde (ANS), proteção (PBF), IDHM, Gini, ISDEL</li>
+          <li><strong>Sebrae:</strong> atendimento, taxa de alcance, ISDEL, radar 7 dimensões</li>
+        </ul>
+      </li>
+      <li>Gráficos Chart.js interativos com hover/tooltips.</li>
+      <li>Tooltips contextuais em indicadores individuais (<code>showCI()</code>/<code>hideCI()</code>).</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>O analista tem panorama socioeconômico completo do município para subsidiar articulação territorial.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>output/raio_x_{codigo}_{nome}.html</code></div>
+</div>
+
+<!-- ================================================================ -->
+<!-- MODULO 10: ORCAMENTO -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-orcamento">
+  <div class="module-icon">10</div>
+  <div class="module-info">
+    <h3>PIPPA Orçamento UPP</h3>
+    <div class="module-desc">Dashboard de execução orçamentária com 4 camadas analíticas (Descritiva, Diagnóstica, Preditiva, Prescritiva) · Dados: Excel orçamentário · <code>pippa-orcamento/</code></div>
+  </div>
+</div>
+
+<!-- UC-042 -->
+<div class="uc-card gestor">
+  <div class="uc-header">
+    <span class="uc-id">UC-042</span>
+    <span class="uc-name">Acompanhar Execução Orçamentária da UPP</span>
+    <span class="badge badge-gestor">Gestor UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard PIPPA Orçamento acessível. Dados orçamentários carregados (exercício 2026 — R$ 39,4 mi real — ou 2027 — R$ 58,7 mi planejamento).</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O gestor acessa o PIPPA Orçamento e seleciona exercício (landing page com cards 2026 e 2027).</li>
+      <li>Navega pelas 4 camadas analíticas:
+        <ul>
+          <li><strong>Descritiva:</strong> Doughnut por núcleo, barras por projeto, tabela por ação com percentuais. KPIs: Orçamento Total, Núcleos, Projetos, Ações, Variação vs anos anteriores.</li>
+          <li><strong>Diagnóstica:</strong> Mudanças estruturais entre exercícios, análise de concentração, comparativo 2025/2026/2027.</li>
+          <li><strong>Preditiva:</strong> Ritmo ideal de execução, metas mensais e trimestrais.</li>
+          <li><strong>Prescritiva:</strong> Alertas automáticos (crítico/alerta/positivo/info) e recomendações (urgente/alta/média prioridade).</li>
+        </ul>
+      </li>
+      <li>O gestor filtra por núcleo (NAL, Projetos Especiais, RelGov, Gestão UPP compartilhado) ou projeto.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — Dados desatualizados:</strong> O sistema exibe a data de última atualização.</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Visão completa da execução orçamentária com alertas e recomendações para decisão sobre remanejamentos.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-orcamento/2027.html</code> · Landing: <code>pippa-orcamento/index.html</code></div>
+</div>
+
+<!-- UC-043 -->
+<div class="uc-card gestor">
+  <div class="uc-header">
+    <span class="uc-id">UC-043</span>
+    <span class="uc-name">Consultar Alertas e Recomendações Orçamentárias</span>
+    <span class="badge badge-gestor">Gestor UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard orçamentário carregado. Aba Prescritiva selecionada.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O gestor navega para a aba "Prescritiva".</li>
+      <li>Visualiza cards de alerta classificados: <strong>Crítico</strong> (execução muito abaixo do ritmo), <strong>Alerta</strong> (desvio moderado), <strong>Positivo</strong> (execução no ritmo), <strong>Info</strong> (informativo).</li>
+      <li>Visualiza cards de recomendação classificados por prioridade: <strong>Urgente</strong>, <strong>Alta</strong>, <strong>Média</strong>.</li>
+      <li>Cada recomendação inclui ação sugerida e justificativa baseada nos dados.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>O gestor recebe orientações acionáveis para correção de rota orçamentária.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-orcamento/</code> · Aba: Prescritiva</div>
+</div>
+
+<!-- UC-044 -->
+<div class="uc-card gestor">
+  <div class="uc-header">
+    <span class="uc-id">UC-044</span>
+    <span class="uc-name">Projetar Ritmo de Execução Orçamentária</span>
+    <span class="badge badge-gestor">Gestor UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard orçamentário carregado. Aba Preditiva selecionada.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O gestor navega para a aba "Preditiva".</li>
+      <li>O sistema calcula e exibe o ritmo ideal de execução (linear e com sazonalidade).</li>
+      <li>Visualiza metas mensais e trimestrais projetadas.</li>
+      <li>Compara execução real vs projetada, identificando gaps.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Projeções de execução visíveis para planejamento financeiro.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-orcamento/</code> · Aba: Preditiva</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- MODULO 11: CREDITO E FOMENTO -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-credito">
+  <div class="module-icon">11</div>
+  <div class="module-info">
+    <h3>PIPPA Crédito e Fomento</h3>
+    <div class="module-desc">Indicadores macroeconômicos de crédito PJ em tempo real · API: BCB SGS (14 séries) · <code>pippa-credito-fomento/index.html</code></div>
+  </div>
+</div>
+
+<!-- UC-045 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-045</span>
+    <span class="uc-name">Consultar Indicadores Macroeconômicos de Crédito</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard PIPPA Crédito e Fomento acessível. API BCB SGS disponível.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista clica "Consultar APIs".</li>
+      <li>O sistema consulta 14 séries do BCB SGS em tempo real.</li>
+      <li>Visualiza KPIs macro: Selic Meta (% a.a.), IPCA Acumulado 12m (%), Crédito PJ (R$ bi), Inadimplência PJ (%).</li>
+      <li>Gráficos históricos: linha Selic histórico, linha Crédito PJ saldo.</li>
+      <li>Aplica filtros por fonte (BCB) e indicadores específicos.</li>
+      <li>Busca textual por nome de indicador.</li>
+      <li>Expande cards para detalhes históricos.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — Série BCB temporariamente indisponível:</strong> O sistema exibe último valor conhecido e data de referência.</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Visão atualizada do cenário de crédito PJ para subsidiar articulação sobre políticas de fomento.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-credito-fomento/index.html</code> · API: BCB SGS</div>
+</div>
+
+<!-- UC-046 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-046</span>
+    <span class="uc-name">Analisar Evolução Histórica de Séries BCB</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dados do BCB carregados.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista seleciona indicador de interesse.</li>
+      <li>Expande card para visualizar dados históricos (24 meses).</li>
+      <li>Gráfico de linha exibe evolução com hover/tooltip.</li>
+      <li>Tabela detalhada com valores mensais.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Tendência de longo prazo do indicador identificada para análise de conjuntura.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-credito-fomento/index.html</code></div>
+</div>
+
+<!-- ================================================================ -->
+<!-- MODULO 12: IMPOSTOMETRO -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-impostometro">
+  <div class="module-icon">12</div>
+  <div class="module-info">
+    <h3>PIPPA Impostômetro</h3>
+    <div class="module-desc">Contador em tempo real da arrecadação tributária federal · Fontes: RREO/SICONFI (Tesouro Nacional) + IBGE SIDRA · <code>pippa-impostometro/index.html</code></div>
+  </div>
+</div>
+
+<!-- UC-047 -->
+<div class="uc-card gestor">
+  <div class="uc-header">
+    <span class="uc-id">UC-047</span>
+    <span class="uc-name">Visualizar Arrecadação Tributária em Tempo Real</span>
+    <span class="badge badge-gestor">Gestor UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard PIPPA Impostômetro acessível. Dados RREO/SICONFI carregados.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O gestor acessa o PIPPA Impostômetro.</li>
+      <li>Contador animado exibe arrecadação acumulada no ano com taxa de R$/segundo e indicador de pulso.</li>
+      <li>KPIs por categoria: Impostos (IR, IPI, IOF, II), Taxas, Contribuições Sociais (COFINS, PIS, CSLL, Previdenciária).</li>
+      <li>Doughnut de composição da arrecadação.</li>
+      <li>Barras de evolução bimestral com comparativo do ano anterior. KPI de variação ano-a-ano (mesmo bimestre acumulado).</li>
+      <li>Estimativa por setor econômico: Serviços, Indústria, Comércio, Agropecuária (% do PIB aplicado à receita federal).</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Referência atualizada da carga tributária federal para subsidiar posicionamento sobre Reforma Tributária.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-impostometro/index.html</code></div>
+</div>
+
+<!-- UC-048 -->
+<div class="uc-card admin">
+  <div class="uc-header">
+    <span class="uc-id">UC-048</span>
+    <span class="uc-name">Atualizar Dados do Impostômetro (ETL Bimestral)</span>
+    <span class="badge badge-admin">Administrador</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Python 3 com <code>requests</code>. APIs SICONFI e IBGE SIDRA acessíveis.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O administrador executa <code>python atualizar_dados.py</code> (frequência bimestral).</li>
+      <li>O script consulta: (1) API RREO/SICONFI (Tesouro Nacional) para receita tributária por bimestre, (2) API SIDRA/IBGE (Tabela 1846) para participação setorial no PIB.</li>
+      <li>Calcula estimativa por setor aplicando shares IBGE sobre receita federal.</li>
+      <li>Atualiza dados JSON embutidos no HTML.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Dashboard atualizado com dados mais recentes da arrecadação federal.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-impostometro/atualizar_dados.py</code></div>
+</div>
+
+<!-- ================================================================ -->
+<!-- MODULO 13: CONSULTAS PUBLICAS -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-consultas">
+  <div class="module-icon">13</div>
+  <div class="module-info">
+    <h3>PIPPA Consultas Públicas</h3>
+    <div class="module-desc">Monitor de audiências públicas e consultas abertas · APIs: Câmara Eventos + Senado Agenda · <code>pippa-consultas-publicas/index.html</code></div>
+  </div>
+</div>
+
+<!-- UC-049 -->
+<div class="uc-card assessor">
+  <div class="uc-header">
+    <span class="uc-id">UC-049</span>
+    <span class="uc-name">Monitorar Consultas Públicas Abertas</span>
+    <span class="badge badge-assessor">Assessor Legislativo</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard PIPPA Consultas Públicas acessível. APIs da Câmara e Senado disponíveis.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O assessor seleciona período e clica "Consultar APIs".</li>
+      <li>O sistema busca audiências públicas, seminários e reuniões deliberativas agendadas na Câmara e no Senado.</li>
+      <li>Cada evento é classificado quanto à relevância para MPEs.</li>
+      <li>Visualiza KPIs: Total Consultas, Abertas, Relevantes SEBRAE, Encerradas.</li>
+      <li>Aplica filtros por Status (Aberta/Encerrada/Futura), Relevância SEBRAE e Órgão.</li>
+      <li>Busca textual por título ou órgão.</li>
+      <li>Expande cards para detalhes: datas, órgão, descrição, link oficial.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxos Alternativos</div>
+    <ul>
+      <li><strong>FA1 — Sem consultas relevantes:</strong> O sistema informa que não há consultas com classificação relevante no período.</li>
+    </ul>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>O assessor identifica audiências públicas onde o Sebrae pode incidir antes da publicação da norma.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-consultas-publicas/index.html</code></div>
+</div>
+
+<!-- ================================================================ -->
+<!-- MODULO 14: PORTAL -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-portal">
+  <div class="module-icon">14</div>
+  <div class="module-info">
+    <h3>PIPPA Portal</h3>
+    <div class="module-desc">Hub de navegação com busca por pergunta norteadora · 20 ferramentas, 6 macro-temas, 45 cenários · <code>pippa-portal/index.html</code></div>
+  </div>
+</div>
+
+<!-- UC-050 -->
+<div class="uc-card analista">
+  <div class="uc-header">
+    <span class="uc-id">UC-050</span>
+    <span class="uc-name">Buscar Ferramenta por Pergunta Norteadora</span>
+    <span class="badge badge-analista">Analista UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Portal PIPPA carregado.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O analista acessa o portal e utiliza:
+        <ul>
+          <li><strong>Busca textual:</strong> digita nome, tema ou recurso no campo de busca do hero.</li>
+          <li><strong>Pergunta norteadora:</strong> na sidebar, seleciona um dos 6 macro-temas (Orçamento, Legislativo, Político, Territorial, Estratégia, Experimentação), cada um com perguntas específicas.</li>
+        </ul>
+      </li>
+      <li>Clicar em uma pergunta filtra o grid para as ferramentas relevantes. Badge mostra contagem.</li>
+      <li>O analista explora cards de ferramentas (expansíveis) com descrição, features, destaque e botão "Abrir".</li>
+      <li>Clica "Abrir Ferramenta" para navegar para o dashboard.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>O analista encontra a ferramenta adequada para sua necessidade de inteligência.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-portal/index.html</code></div>
+</div>
+
+<!-- UC-051 -->
+<div class="uc-card gestor">
+  <div class="uc-header">
+    <span class="uc-id">UC-051</span>
+    <span class="uc-name">Consultar Dicionário de Métricas da Plataforma</span>
+    <span class="badge badge-gestor">Gestor UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Portal PIPPA carregado.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O gestor clica no botão info no hero do portal.</li>
+      <li>Modal exibe métricas consolidadas: 20 Ferramentas, 34 Dashboards, 24 Fontes de Dados, 68 Cubos Analíticos, 88 Indicadores Monitorados, 29 Agentes Python, 16 APIs Integradas, 7 Pipelines, 100% HTML Standalone.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>O gestor tem visão quantitativa do ecossistema PIPPA para prestação de contas institucional.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-portal/index.html</code> · Modal de métricas</div>
+</div>
+
+<!-- ================================================================ -->
+<!-- MODULO 15: IMPACTO -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-impacto">
+  <div class="module-icon">15</div>
+  <div class="module-info">
+    <h3>PIPPA Impacto</h3>
+    <div class="module-desc">Painel de evidências consolidado do ecossistema PIPPA · Consolidação dinâmica a partir do portal · <code>pippa-impacto/index.html</code></div>
+  </div>
+</div>
+
+<!-- UC-052 -->
+<div class="uc-card gestor">
+  <div class="uc-header">
+    <span class="uc-id">UC-052</span>
+    <span class="uc-name">Consolidar Portfólio de Evidências da PIPPA</span>
+    <span class="badge badge-gestor">Gestor UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Dashboard PIPPA Impacto acessível. Portal PIPPA acessível para leitura dinâmica.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O gestor clica "Consolidar Portfólio".</li>
+      <li>O sistema busca o portal PIPPA em tempo real e relê todas as ferramentas registradas.</li>
+      <li>Atualiza KPIs: Ferramentas Ativas, Eixos Cobertos, APIs Integradas, Indicadores Monitorados.</li>
+      <li>Exibe doughnut de cobertura por eixo de atuação (Orçamento, Legislativo, Político, Territorial, Estratégia, Experimentação).</li>
+      <li>Barras de ferramentas por macro-tema.</li>
+      <li>Cards expansíveis por eixo com lista de ferramentas, APIs e indicadores, cada um com link direto.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>Visão panorâmica do ecossistema PIPPA atualizada para prestação de contas e planejamento.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-impacto/index.html</code></div>
+</div>
+
+<!-- ================================================================ -->
+<!-- MODULO 16: ATUACAO UPP -->
+<!-- ================================================================ -->
+<div class="module-header" id="mod-atuacao">
+  <div class="module-icon">16</div>
+  <div class="module-info">
+    <h3>PIPPA Atuação UPP</h3>
+    <div class="module-desc">Registro de entregas estratégicas por núcleo: NAL, Projetos Especiais, RelGov · <code>pippa-atuacao-upp/</code></div>
+  </div>
+</div>
+
+<!-- UC-053 -->
+<div class="uc-card gestor">
+  <div class="uc-header">
+    <span class="uc-id">UC-053</span>
+    <span class="uc-name">Consultar Entregas Estratégicas por Núcleo</span>
+    <span class="badge badge-gestor">Gestor UPP</span>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pré-condições</div>
+    <p>Portal Atuação UPP 2026 acessível.</p>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Fluxo Principal</div>
+    <ol>
+      <li>O gestor acessa a landing page com 3 cards de núcleo:
+        <ul>
+          <li><strong>NAL:</strong> 2.821 proposições monitoradas, 56 visitas técnicas, 12 parlamentares articulados</li>
+          <li><strong>Projetos Especiais:</strong> 48 entregas, 164 ações (Movimenta, Contrata+Brasil, Pró-Catadores, Compras Públicas Sustentáveis, Oficinas de Transformação), 22 estados</li>
+          <li><strong>RelGov:</strong> 18 entregas, 5 articulações, ACTs</li>
+        </ul>
+      </li>
+      <li>Clica em um card para acessar a página detalhada do núcleo (<code>nal.html</code>, <code>projetos-especiais.html</code>, <code>relgov.html</code>).</li>
+      <li>Visualiza métricas detalhadas e histórico de entregas de cada núcleo.</li>
+    </ol>
+  </div>
+  <div class="uc-section">
+    <div class="uc-label">Pós-condições</div>
+    <p>O gestor tem visão consolidada de todas as entregas da UPP para prestação de contas à diretoria.</p>
+  </div>
+  <div class="uc-tool">Ferramenta: <code>pippa-atuacao-upp/index.html</code> → <code>nal.html</code>, <code>projetos-especiais.html</code>, <code>relgov.html</code></div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- 3. FUNCIONALIDADES TRANSVERSAIS -->
+<!-- ================================================================ -->
+<h2>3. Funcionalidades Transversais</h2>
+
+<div class="highlight">
+  As funcionalidades a seguir são implementadas de forma consistente em múltiplas ferramentas da plataforma PIPPA. Embora não constituam casos de uso independentes, representam padrões transversais codificados em praticamente todos os dashboards.
+</div>
+
+<table>
+  <tr><th>Funcionalidade</th><th>Implementação</th><th>Ferramentas</th></tr>
+  <tr><td><strong>Exportar Briefing WhatsApp</strong></td><td>Função <code>exportWhatsApp()</code> gera texto formatado com markdown WhatsApp (*negrito*, _itálico_), contextualizado com KPIs e filtros ativos. Abre <code>wa.me</code> com mensagem pré-preenchida.</td><td>Legislativo, Pauta, Emendas, Stakeholders, Reforma, Regulatório, Compras, Pesquisas, Orçamento, Impacto, Crédito</td></tr>
+  <tr><td><strong>Alternar Tema Claro/Escuro</strong></td><td>Função <code>toggleTheme()</code> alterna <code>data-theme</code> entre "light" e "dark". CSS variables redefinem cores de fundo, texto e gráficos. Preferência persistida em <code>localStorage('pippa-theme')</code>.</td><td>Todas as ferramentas com interface web</td></tr>
+  <tr><td><strong>Consultar Metodologia</strong></td><td>Botão info (i) abre modal com documentação da metodologia de classificação, fontes de dados, fórmulas e limitações da ferramenta.</td><td>Legislativo, Stakeholders (ICP/RIG), Reforma (credibilidade), Orçamento, Pesquisas (ponderação)</td></tr>
+  <tr><td><strong>Navegar para Portal PIPPA</strong></td><td>Link "PIPPA Portal" no header navega para <code>../pippa-portal/index.html</code>, hub central do ecossistema.</td><td>Todas as ferramentas</td></tr>
+  <tr><td><strong>Imprimir / Salvar PDF</strong></td><td>Botão fixo (bottom-right) aciona <code>window.print()</code>. CSS <code>@media print</code> otimiza layout para A4.</td><td>Todas as ferramentas de documentação</td></tr>
+</table>
+
+<div class="page-break"></div>
+
+<!-- ================================================================ -->
+<!-- 4. MATRIZ RESUMO -->
+<!-- ================================================================ -->
+<h2>4. Matriz de Casos de Uso por Módulo</h2>
+
+<table>
+  <tr><th>UC</th><th>Nome</th><th>Ator</th><th>Módulo</th></tr>
+  <tr><td>UC-001</td><td>Consultar Proposições por Período</td><td><span class="badge badge-analista">Analista</span></td><td>Legislativo</td></tr>
+  <tr><td>UC-002</td><td>Filtrar e Buscar Proposições</td><td><span class="badge badge-analista">Analista</span></td><td>Legislativo</td></tr>
+  <tr><td>UC-003</td><td>Classificar Proposição (10 Critérios)</td><td><span class="badge badge-sistema">Sistema</span></td><td>Legislativo</td></tr>
+  <tr><td>UC-004</td><td>Editar Classificação Manualmente</td><td><span class="badge badge-analista">Analista</span></td><td>Legislativo</td></tr>
+  <tr><td>UC-005</td><td>Consultar Histórico de Tramitação</td><td><span class="badge badge-analista">Analista</span></td><td>Legislativo</td></tr>
+  <tr><td>UC-006</td><td>Gerar Minuta Técnica</td><td><span class="badge badge-analista">Analista</span></td><td>Legislativo</td></tr>
+  <tr><td>UC-007</td><td>Exportar Briefing Legislativo WhatsApp</td><td><span class="badge badge-analista">Analista</span></td><td>Legislativo</td></tr>
+  <tr><td>UC-008</td><td>Visualizar Termômetro e KPIs</td><td><span class="badge badge-analista">Analista</span></td><td>Legislativo</td></tr>
+  <tr><td>UC-009</td><td>Consultar Pauta Legislativa</td><td><span class="badge badge-analista">Analista</span></td><td>Pauta</td></tr>
+  <tr><td>UC-010</td><td>Filtrar Pauta por Tipo e Relevância</td><td><span class="badge badge-analista">Analista</span></td><td>Pauta</td></tr>
+  <tr><td>UC-011</td><td>Expandir Detalhes de Evento na Pauta</td><td><span class="badge badge-analista">Analista</span></td><td>Pauta</td></tr>
+  <tr><td>UC-012</td><td>Analisar Emendas por Estado e Região</td><td><span class="badge badge-analista">Analista</span></td><td>Emendas</td></tr>
+  <tr><td>UC-013</td><td>Consultar Emendas por Município</td><td><span class="badge badge-analista">Analista</span></td><td>Emendas</td></tr>
+  <tr><td>UC-014</td><td>Analisar por Autor, Partido e Setor</td><td><span class="badge badge-analista">Analista</span></td><td>Emendas</td></tr>
+  <tr><td>UC-015</td><td>Diagnosticar Qualidade dos Dados</td><td><span class="badge badge-analista">Analista</span></td><td>Emendas</td></tr>
+  <tr><td>UC-016</td><td>Executar Pipeline de Emendas</td><td><span class="badge badge-admin">Admin</span></td><td>Emendas</td></tr>
+  <tr><td>UC-017</td><td>Validação Cruzada de Fontes</td><td><span class="badge badge-sistema">Sistema</span></td><td>Emendas</td></tr>
+  <tr><td>UC-018</td><td>Consultar Mapa Parlamentar</td><td><span class="badge badge-assessor">Assessor</span></td><td>Stakeholders</td></tr>
+  <tr><td>UC-019</td><td>Filtrar Parlamentares</td><td><span class="badge badge-assessor">Assessor</span></td><td>Stakeholders</td></tr>
+  <tr><td>UC-020</td><td>Perfil e Contato de Parlamentar</td><td><span class="badge badge-assessor">Assessor</span></td><td>Stakeholders</td></tr>
+  <tr><td>UC-021</td><td>Calcular ICP/RIG</td><td><span class="badge badge-analista">Analista</span></td><td>Stakeholders</td></tr>
+  <tr><td>UC-022</td><td>Analisar Cenário Eleitoral 2026</td><td><span class="badge badge-analista">Analista</span></td><td>Stakeholders</td></tr>
+  <tr><td>UC-023</td><td>Gerar Cache Offline Stakeholders</td><td><span class="badge badge-admin">Admin</span></td><td>Stakeholders</td></tr>
+  <tr><td>UC-024</td><td>Monitorar Notícias Reforma Tributária</td><td><span class="badge badge-analista">Analista</span></td><td>Reforma</td></tr>
+  <tr><td>UC-025</td><td>Avaliar Credibilidade (Anti-Fake-News)</td><td><span class="badge badge-sistema">Sistema</span></td><td>Reforma</td></tr>
+  <tr><td>UC-026</td><td>Filtrar Notícias por Classificação</td><td><span class="badge badge-analista">Analista</span></td><td>Reforma</td></tr>
+  <tr><td>UC-027</td><td>Atualizar Cache de Notícias</td><td><span class="badge badge-admin">Admin</span></td><td>Reforma</td></tr>
+  <tr><td>UC-028</td><td>Monitorar Normas DOU</td><td><span class="badge badge-analista">Analista</span></td><td>Regulatório</td></tr>
+  <tr><td>UC-029</td><td>Incidência Pré-Normativa</td><td><span class="badge badge-assessor">Assessor</span></td><td>Regulatório</td></tr>
+  <tr><td>UC-030</td><td>Buscar Licitações para MPEs/MEIs</td><td><span class="badge badge-analista">Analista</span></td><td>Compras</td></tr>
+  <tr><td>UC-031</td><td>Classificar Oportunidades MEI</td><td><span class="badge badge-sistema">Sistema</span></td><td>Compras</td></tr>
+  <tr><td>UC-032</td><td>Analisar PDDE</td><td><span class="badge badge-analista">Analista</span></td><td>Compras</td></tr>
+  <tr><td>UC-033</td><td>Analisar PNAE</td><td><span class="badge badge-analista">Analista</span></td><td>Compras</td></tr>
+  <tr><td>UC-034</td><td>Monitorar Execução Orçamentária Estadual</td><td><span class="badge badge-analista">Analista</span></td><td>Compras</td></tr>
+  <tr><td>UC-035</td><td>Monitor PNCP 5 Anos</td><td><span class="badge badge-analista">Analista</span></td><td>Compras</td></tr>
+  <tr><td>UC-036</td><td>Consultar Fornecedores PNCP</td><td><span class="badge badge-analista">Analista</span></td><td>Compras</td></tr>
+  <tr><td>UC-037</td><td>Agregador de Pesquisas Eleitorais</td><td><span class="badge badge-analista">Analista</span></td><td>Pesquisas</td></tr>
+  <tr><td>UC-038</td><td>Resultados Oficiais TSE</td><td><span class="badge badge-analista">Analista</span></td><td>Pesquisas</td></tr>
+  <tr><td>UC-039</td><td>Atualizar Dados de Pesquisas</td><td><span class="badge badge-admin">Admin</span></td><td>Pesquisas</td></tr>
+  <tr><td>UC-040</td><td>Gerar Diagnóstico Territorial</td><td><span class="badge badge-admin">Admin</span></td><td>Raio-X</td></tr>
+  <tr><td>UC-041</td><td>Consultar Relatório Raio-X</td><td><span class="badge badge-analista">Analista</span></td><td>Raio-X</td></tr>
+  <tr><td>UC-042</td><td>Acompanhar Execução Orçamentária UPP</td><td><span class="badge badge-gestor">Gestor</span></td><td>Orçamento</td></tr>
+  <tr><td>UC-043</td><td>Alertas e Recomendações Orçamentárias</td><td><span class="badge badge-gestor">Gestor</span></td><td>Orçamento</td></tr>
+  <tr><td>UC-044</td><td>Projetar Ritmo de Execução</td><td><span class="badge badge-gestor">Gestor</span></td><td>Orçamento</td></tr>
+  <tr><td>UC-045</td><td>Indicadores de Crédito BCB</td><td><span class="badge badge-analista">Analista</span></td><td>Crédito</td></tr>
+  <tr><td>UC-046</td><td>Evolução Histórica Séries BCB</td><td><span class="badge badge-analista">Analista</span></td><td>Crédito</td></tr>
+  <tr><td>UC-047</td><td>Arrecadação Tributária Tempo Real</td><td><span class="badge badge-gestor">Gestor</span></td><td>Impostômetro</td></tr>
+  <tr><td>UC-048</td><td>Atualizar Dados Impostômetro</td><td><span class="badge badge-admin">Admin</span></td><td>Impostômetro</td></tr>
+  <tr><td>UC-049</td><td>Monitorar Consultas Públicas</td><td><span class="badge badge-assessor">Assessor</span></td><td>Consultas</td></tr>
+  <tr><td>UC-050</td><td>Buscar Ferramenta por Pergunta</td><td><span class="badge badge-analista">Analista</span></td><td>Portal</td></tr>
+  <tr><td>UC-051</td><td>Dicionário de Métricas</td><td><span class="badge badge-gestor">Gestor</span></td><td>Portal</td></tr>
+  <tr><td>UC-052</td><td>Consolidar Portfólio de Evidências</td><td><span class="badge badge-gestor">Gestor</span></td><td>Impacto</td></tr>
+  <tr><td>UC-053</td><td>Entregas Estratégicas por Núcleo</td><td><span class="badge badge-gestor">Gestor</span></td><td>Atuação UPP</td></tr>
+</table>
+
+<!-- ================================================================ -->
+<!-- 5. COBERTURA -->
+<!-- ================================================================ -->
+<h2>5. Cobertura por Ator</h2>
+
+<table>
+  <tr><th>Ator</th><th>Casos de Uso</th><th>Total</th></tr>
+  <tr><td><span class="badge badge-analista">Analista UPP</span></td><td>UC-001, UC-002, UC-004–UC-015, UC-021–UC-022, UC-024, UC-026, UC-028, UC-030, UC-032–UC-038, UC-041, UC-045–UC-046, UC-050</td><td>30</td></tr>
+  <tr><td><span class="badge badge-gestor">Gestor UPP</span></td><td>UC-042–UC-044, UC-047, UC-051–UC-053</td><td>7</td></tr>
+  <tr><td><span class="badge badge-assessor">Assessor Legislativo</span></td><td>UC-018–UC-020, UC-029, UC-049</td><td>5</td></tr>
+  <tr><td><span class="badge badge-admin">Administrador</span></td><td>UC-016, UC-023, UC-027, UC-039–UC-040, UC-048</td><td>6</td></tr>
+  <tr><td><span class="badge badge-sistema">Sistema (automático)</span></td><td>UC-003, UC-017, UC-025, UC-031</td><td>4</td></tr>
+  <tr style="font-weight:700;"><td colspan="2" style="text-align:right;">Total de Casos de Uso</td><td><strong>53*</strong></td></tr>
+</table>
+
+<p style="font-size:7.5pt; color:#6b7280;">* O total é 52 casos de uso distintos. A soma de 53 inclui 1 sobreposição (UC-008 serve tanto Analista quanto Gestor).</p>
+
+<h2>6. Cobertura das Ferramentas</h2>
+
+<table>
+  <tr><th>Ferramenta</th><th>Casos de Uso</th><th>Qtd</th></tr>
+  <tr><td>PIPPA Legislativo</td><td>UC-001 a UC-008</td><td>8</td></tr>
+  <tr><td>PIPPA Pauta Legislativa</td><td>UC-009 a UC-011</td><td>3</td></tr>
+  <tr><td>PIPPA Emendas</td><td>UC-012 a UC-017</td><td>6</td></tr>
+  <tr><td>PIPPA Stakeholders</td><td>UC-018 a UC-023</td><td>6</td></tr>
+  <tr><td>PIPPA Reforma Tributária</td><td>UC-024 a UC-027</td><td>4</td></tr>
+  <tr><td>PIPPA Regulatório</td><td>UC-028 a UC-029</td><td>2</td></tr>
+  <tr><td>PIPPA Compras Públicas</td><td>UC-030 a UC-036</td><td>7</td></tr>
+  <tr><td>PIPPA Pesquisas Eleitorais</td><td>UC-037 a UC-039</td><td>3</td></tr>
+  <tr><td>PIPPA Raio-X Municipal</td><td>UC-040 a UC-041</td><td>2</td></tr>
+  <tr><td>PIPPA Orçamento</td><td>UC-042 a UC-044</td><td>3</td></tr>
+  <tr><td>PIPPA Crédito e Fomento</td><td>UC-045 a UC-046</td><td>2</td></tr>
+  <tr><td>PIPPA Impostômetro</td><td>UC-047 a UC-048</td><td>2</td></tr>
+  <tr><td>PIPPA Consultas Públicas</td><td>UC-049</td><td>1</td></tr>
+  <tr><td>PIPPA Portal</td><td>UC-050 a UC-051</td><td>2</td></tr>
+  <tr><td>PIPPA Impacto</td><td>UC-052</td><td>1</td></tr>
+  <tr><td>PIPPA Atuação UPP</td><td>UC-053</td><td>1</td></tr>
+</table>
+
+<div class="highlight">
+  <strong>Ferramentas sem caso de uso dedicado:</strong> Catálogo de Fontes (ferramenta de consulta estática), Mapa Mental NAL (referência visual SVG interativa), TransformaLab (laboratório de experimentação — jornada de 6 etapas), Quem Somos (página institucional), Projeto 2027 (documento de escopo do projeto). Estas ferramentas são documentação/referência e não possuem fluxos operacionais com pré/pós-condições que justifiquem caso de uso formal.
+</div>
+
+<div class="doc-footer">
+  <div><span class="classification">USO INTERNO — SEBRAE NACIONAL</span> · Artefato 3.6</div>
+  <div>PIPPA — UPP · Sebrae Nacional · Novembro 2026</div>
+</div>
+
+</body>
+</html>
