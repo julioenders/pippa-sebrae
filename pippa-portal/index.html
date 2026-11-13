@@ -255,7 +255,7 @@ body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-pri
   <div class="hero-stats-wrap">
     <button class="btn-info" onclick="openDictModal()" title="O que significam esses números?">i</button>
     <div class="hero-stats">
-      <div class="hero-stat"><div class="hero-stat-value" id="statTotal">20</div><div class="hero-stat-label">Ferramentas</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" id="statTotal">21</div><div class="hero-stat-label">Ferramentas</div></div>
       <div class="hero-stat"><div class="hero-stat-value">34</div><div class="hero-stat-label">Dashboards</div></div>
       <div class="hero-stat"><div class="hero-stat-value">24</div><div class="hero-stat-label">Fontes de Dados</div></div>
       <div class="hero-stat"><div class="hero-stat-value">68</div><div class="hero-stat-label">Cubos Analíticos</div></div>
@@ -277,7 +277,7 @@ body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-pri
     </div>
     <div class="modal-body">
       <div class="dict-item">
-        <div class="dict-term"><span class="dict-value">20</span><span class="dict-label">Ferramentas</span></div>
+        <div class="dict-term"><span class="dict-value">21</span><span class="dict-label">Ferramentas</span></div>
         <div class="dict-desc">Módulos independentes da plataforma PIPPA, cada um dedicado a um tema de inteligência (legislativo, orçamentário, territorial, tributário etc.). Cada ferramenta é um HTML standalone acessível via navegador.</div>
       </div>
       <div class="dict-item">
@@ -334,8 +334,8 @@ body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-pri
     <div class="sidebar-desc">Selecione uma necessidade para filtrar as ferramentas.</div>
     <div class="questions-wrap" id="questionsWrap"></div>
     <div class="sidebar-stats">
-      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">20</div><div class="sidebar-stat-lbl">Visíveis</div></div>
-      <div class="sidebar-stat"><div class="sidebar-stat-val">20</div><div class="sidebar-stat-lbl">Total</div></div>
+      <div class="sidebar-stat"><div class="sidebar-stat-val" id="statVisiveis">21</div><div class="sidebar-stat-lbl">Visíveis</div></div>
+      <div class="sidebar-stat"><div class="sidebar-stat-val">21</div><div class="sidebar-stat-lbl">Total</div></div>
     </div>
   </div>
 </aside>
@@ -343,7 +343,7 @@ body{font-family:var(--font-body);background:var(--bg-page);color:var(--text-pri
 <section class="grid-section">
   <div class="grid-header">
     <h2>Ferramentas Disponíveis</h2>
-    <div class="grid-count">Exibindo <span id="showCount">20</span> de 20</div>
+    <div class="grid-count">Exibindo <span id="showCount">21</span> de 21</div>
   </div>
   <div class="cards" id="cardsGrid"></div>
 </section>
@@ -577,6 +577,17 @@ const TOOLS = [
     descricao: "Contador em tempo real da arrecadacao tributaria federal com dados oficiais do Tesouro Nacional (RREO/SICONFI). Exibe impostos, taxas e contribuicoes sociais acumulados no ano com projecao linear para o dia atual, composicao por categoria e evolucao bimestral comparativa.",
     features: ["Contador animado em tempo real", "Dados oficiais RREO/SICONFI", "Composicao: impostos, taxas e contribuicoes", "Evolucao bimestral com ano anterior", "Projecao linear automatica", "Conexao com Reforma Tributaria"],
     destaque: "Acompanhe quanto o Brasil arrecada em tributos federais — em tempo real. Dados oficiais do Tesouro Nacional com breakdown por categoria (impostos, taxas, contribuicoes sociais) e comparativo bimestral com o ano anterior."
+  },
+  {
+    id: "cadunico",
+    nome: "PIPPA CadÚnico",
+    subtitulo: "Inteligência em Proteção Social",
+    accent: "#61b466",
+    icon: "🛡️",
+    url: "../pippa-cadunico/index.html",
+    descricao: "Dashboard de inteligência em proteção social com dados do Portal da Transparência (CGU) e IBGE Censo 2022. Monitora 5 programas vinculados ao Cadastro Único — Novo Bolsa Família, BPC, PETI, Garantia-Safra e Seguro Defeso — com indicadores de cobertura, classificação territorial de vulnerabilidade e nota técnica para decisores.",
+    features: ["5 programas sociais monitorados", "API Portal da Transparência (CGU)", "IBGE Censo 2022 (população)", "Cobertura e vulnerabilidade por UF/município", "Nota técnica para decisores", "Comparativo de até 5 municípios", "Série temporal e tendência", "Mapa coroplético por UF", "Classificação de vulnerabilidade", "Exportar texto de advocacy"],
+    destaque: "Descubra onde a proteção social é mais frágil e onde o empreendedorismo pode ser alternativa. Cruza dados de Bolsa Família, BPC e outros programas com população do Censo 2022 para gerar indicadores de cobertura, classificar vulnerabilidade territorial e produzir notas técnicas prontas para decisores."
   }
 ];
 
@@ -625,7 +636,10 @@ const QUESTIONS = [
   { texto: "Como esta a arrecadacao federal comparada ao ano passado?", ferramentas: ["impostometro", "reforma"], macro: "orcamento" },
   { texto: "Qual o impacto consolidado das ferramentas PIPPA?", ferramentas: ["impacto"], macro: "estrategia" },
   { texto: "Quantas APIs e indicadores o observatorio monitora?", ferramentas: ["impacto"], macro: "estrategia" },
-  { texto: "Quero uma visao de portfolio de evidencias da UPP", ferramentas: ["impacto", "atuacaoupp"], macro: "estrategia" }
+  { texto: "Quero uma visao de portfolio de evidencias da UPP", ferramentas: ["impacto", "atuacaoupp"], macro: "estrategia" },
+  { texto: "Qual a cobertura de programas sociais por município?", ferramentas: ["cadunico"], macro: "territorial" },
+  { texto: "Onde a proteção social é mais frágil no Brasil?", ferramentas: ["cadunico"], macro: "territorial" },
+  { texto: "Preciso de dados de Bolsa Família e BPC por território", ferramentas: ["cadunico", "raioxmunicipal"], macro: "territorial" }
 ];
 
 const MACRO_TEMAS = [
