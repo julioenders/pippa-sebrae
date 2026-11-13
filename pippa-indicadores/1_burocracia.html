@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PIPPA | Abertura e Formalizacao</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080f1e;--surface:#0f1a2e;--surface2:#162038;--border:rgba(255,255,255,.08);--text:#eff3ee;--text2:#8b9dc3;--muted:#8b9dc3;--accent:#65b7fb;--accent-light:#90ccfd;--green:#61b466;--yellow:#fbec76;--red:#e0565d;--purple:#be64e3;--cyan:#65b7fb;--orange:#f39d72;--radius:12px;--font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif}
+[data-theme="light"]{--bg:#eff3ee;--surface:#ffffff;--surface2:#e5eae4;--border:rgba(42,79,218,.1);--text:#000000;--text2:#4a5568;--muted:#6b7280;--accent:#2a4fda;--accent-light:#0b2574;--card:rgba(42,79,218,.04)}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+
+.header{background:var(--surface);padding:12px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem}
+.header-brand{display:flex;align-items:center;gap:.8rem}
+.header-logo{width:40px;height:40px;background:rgba(101,183,251,.08);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--accent)}
+.header h1{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.header h1 span{color:var(--accent)}
+.header-sub{font-size:.7rem;color:var(--muted);margin-top:.1rem}
+.header-controls{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.info-btn{width:30px;height:30px;border-radius:50%;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;font-family:inherit}
+.info-btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn{background:transparent;color:var(--muted);border:1px solid var(--border);padding:.4rem 1rem;border-radius:8px;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.nav-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.4rem .8rem;border-radius:8px;font-size:.7rem;font-weight:600;text-decoration:none;transition:all .2s}
+.nav-home{border:1px solid var(--border);color:var(--muted)}
+.nav-home:hover{border-color:var(--accent);color:var(--accent)}
+.nav-portal{border:1px solid var(--border);color:var(--muted)}
+.nav-portal:hover{border-color:var(--accent);color:var(--accent)}
+.nav-btn svg{width:13px;height:13px}
+.api-status{font-size:.65rem;padding:.2rem .5rem;border-radius:5px;display:none;font-weight:600}
+
+.main{max-width:1300px;margin:0 auto;padding:1.5rem 2rem}
+.narrative{background:rgba(101,183,251,.06);border:1px solid rgba(101,183,251,.12);border-radius:var(--radius);padding:1rem 1.3rem;margin-bottom:1.2rem;font-size:.82rem;color:var(--muted);line-height:1.8}
+.narrative strong{color:var(--text)}
+
+.tabs{display:flex;gap:.3rem;margin-bottom:1.2rem;border-bottom:1px solid var(--border);padding-bottom:.4rem}
+.tab{padding:.45rem 1.1rem;border-radius:8px 8px 0 0;font-size:.75rem;font-weight:600;cursor:pointer;color:var(--muted);background:transparent;border:none;transition:all .2s;font-family:inherit}
+.tab.active{color:var(--accent);background:rgba(101,183,251,.1);border-bottom:2px solid var(--accent)}
+.tab:hover:not(.active){color:var(--text)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin-bottom:1.2rem}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;text-align:center}
+.kpi-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem}
+.kpi-value{font-size:1.5rem;font-weight:800}
+.kpi-detail{font-size:.65rem;color:var(--muted);margin-top:.2rem;line-height:1.4}
+
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:1rem;margin-bottom:1rem}
+.chart-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem}
+.chart-box.full{grid-column:1/-1}
+.chart-title{font-size:.78rem;font-weight:600;margin-bottom:.6rem;color:var(--text)}
+
+.insight{background:rgba(97,180,102,.05);border-left:3px solid var(--green);border-radius:0 var(--radius) var(--radius) 0;padding:.7rem 1rem;margin:1rem 0;font-size:.75rem;color:var(--muted);line-height:1.7}
+.insight strong{color:var(--green)}
+
+.table-wrapper{overflow-x:auto;margin-top:.5rem;border-radius:var(--radius);border:1px solid var(--border);max-height:500px}
+table{width:100%;border-collapse:collapse;font-size:.72rem}
+th{text-align:left;padding:.5rem .7rem;background:rgba(255,255,255,.04);color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border);position:sticky;top:0}
+td{padding:.45rem .7rem;border-bottom:1px solid var(--border)}
+tr:hover td{background:rgba(255,255,255,.02)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+
+.info-overlay{display:none;position:fixed;inset:0;background:rgba(8,15,30,.85);z-index:999;justify-content:center;align-items:center;backdrop-filter:blur(4px)}
+.info-overlay.active{display:flex}
+.info-modal{background:var(--surface);border:1px solid rgba(255,255,255,.1);border-radius:16px;max-width:640px;width:92%;max-height:85vh;overflow-y:auto;padding:2rem;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.5)}
+.info-modal h2{font-size:1rem;font-weight:700;margin-bottom:.4rem;color:var(--accent)}
+.info-modal h3{font-size:.82rem;font-weight:600;margin:1rem 0 .3rem;color:var(--text);border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:.25rem}
+.info-modal p,.info-modal li{font-size:.75rem;color:var(--muted);line-height:1.7}
+.info-modal ul{padding-left:1.1rem;margin-bottom:.4rem}
+.info-close{position:absolute;top:10px;right:14px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.06);border:none;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.info-close:hover{background:rgba(224,86,93,.2);color:#e0565d}
+
+.footer{text-align:center;padding:1.2rem;border-top:1px solid var(--border);margin-top:2rem;color:var(--muted);font-size:.65rem}
+.theme-toggle{background:transparent;border:1px solid var(--border);color:var(--muted);width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.icon-moon{display:none}
+[data-theme="light"] .icon-sun{display:none}
+[data-theme="light"] .icon-moon{display:block}
+[data-theme="light"] .narrative{background:rgba(42,79,218,.06);border-color:rgba(42,79,218,.12)}
+[data-theme="light"] .insight{background:rgba(97,180,102,.05)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(42,79,218,.3);border-radius:3px}
+@media(max-width:900px){.grid-2{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}.header{padding:12px 16px}.main{padding:1rem}}
+@media(max-width:600px){.kpi-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="header-logo">AN</div>
+    <div>
+      <h1><span>PIPPA</span> Ambiente de Negocios</h1>
+      <div class="header-sub">Tema 1 — Abertura e Formalizacao de Empresas</div>
+    </div>
+  </div>
+  <div class="header-controls">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema"><svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    <button class="info-btn" onclick="openInfo()" title="Metodologia">i</button>
+    <button class="btn" id="btnApi" onclick="fetchAPIs()">Consultar APIs</button>
+    <span class="api-status" id="apiStatus"></span>
+    <button class="btn" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp">&#x1F4E4; WhatsApp</button>
+    <a href="index.html" class="nav-btn nav-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Inicio
+    </a>
+    <a href="../pippa-portal/index.html" class="nav-btn nav-portal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Portal
+    </a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="narrative">
+    <strong>Quanto tempo leva para abrir uma empresa no Brasil?</strong> Este painel mostra o tempo medio de abertura por estado, a evolucao nos ultimos meses e como se distribui a massa de micro e pequenas empresas ativas no pais. Dados da API publica do REDESIM Gov e da Receita Federal.
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="abertura" onclick="switchTab('abertura')">Abertura de Empresas</button>
+    <button class="tab" data-tab="massa" onclick="switchTab('massa')">Massa Empresarial</button>
+  </div>
+
+  <!-- Tab 1: Abertura -->
+  <div class="tab-content active" id="abertura">
+    <div class="kpi-row" id="kpiAbertura"></div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title">Tempo medio de abertura por estado (dias)</div>
+        <canvas id="chartRanking" height="450"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">Integracao ao REDESIM por estado (%)</div>
+        <canvas id="chartIntegracao" height="450"></canvas>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="chart-box full">
+        <div class="chart-title">Evolucao do tempo medio nacional (dias por empresa)</div>
+        <canvas id="chartEvolucao" height="160"></canvas>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>O que isso significa?</strong> O tempo de abertura de empresas vem caindo nos ultimos meses. Estados com maior integracao ao REDESIM tendem a ter processos mais rapidos. O botao "Consultar APIs" busca os dados mais recentes diretamente do REDESIM Gov.
+    </div>
+  </div>
+
+  <!-- Tab 2: Massa Empresarial -->
+  <div class="tab-content" id="massa">
+    <div class="kpi-row" id="kpiMassa"></div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title">Distribuicao nacional por porte</div>
+        <canvas id="chartPorte" height="250"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">Top 15 estados por total de empresas</div>
+        <canvas id="chartTop15" height="300"></canvas>
+      </div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Detalhamento por estado</div>
+      <div class="table-wrapper" id="tableMassa"></div>
+    </div>
+    <div class="insight">
+      <strong>O que isso significa?</strong> Os MEIs representam mais da metade das empresas ativas no Brasil, evidenciando a importancia do microempreendedorismo individual como porta de entrada para a formalizacao.
+    </div>
+  </div>
+</div>
+
+<div id="infoModal" class="info-overlay" onclick="if(event.target===this)closeInfo()">
+  <div class="info-modal">
+    <button class="info-close" onclick="closeInfo()">&times;</button>
+    <h2>Metodologia — Abertura e Formalizacao</h2>
+    <p>Este painel apresenta dados sobre o tempo de abertura de empresas e a composicao da massa empresarial brasileira.</p>
+
+    <h3>Tempo de Abertura</h3>
+    <ul>
+      <li><strong>Ranking por estado:</strong> Tempo medio em dias, do registro no REDESIM ate o CNPJ ativo. Verde = abaixo de 7 dias, amarelo = 7 a 11 dias, vermelho = acima de 11 dias.</li>
+      <li><strong>Integracao REDESIM:</strong> Percentual de municipios do estado integrados ao sistema. Quanto maior a integracao, mais rapido tende a ser o processo.</li>
+      <li><strong>Evolucao mensal:</strong> Media nacional em dias por empresa ao longo dos meses.</li>
+    </ul>
+
+    <h3>Massa Empresarial</h3>
+    <ul>
+      <li><strong>Distribuicao por porte:</strong> MEI (Microempreendedor Individual), ME (Microempresa), EPP (Empresa de Pequeno Porte) e demais.</li>
+      <li><strong>Top 15 estados:</strong> Barra empilhada com a quantidade de empresas por porte nos 15 estados com mais empresas ativas.</li>
+    </ul>
+
+    <h3>Fontes de Dados</h3>
+    <ul>
+      <li><strong>REDESIM Gov</strong> (estatistica.redesim.gov.br) — tempo de abertura e integracao municipal. API publica.</li>
+      <li><strong>Receita Federal</strong> — estoque de empresas ativas por porte e estado.</li>
+    </ul>
+
+    <h3>Botao "Consultar APIs"</h3>
+    <p>Busca dados atualizados em tempo real de 3 endpoints do REDESIM Gov. Os graficos de tempo de abertura e integracao sao atualizados automaticamente.</p>
+  </div>
+</div>
+
+<div class="footer">PIPPA Ambiente de Negocios | Sebrae Nacional | 2026</div>
+
+<script>
+function toggleTheme(){const html=document.documentElement;const t=html.getAttribute('data-theme')==='dark'?'light':'dark';html.setAttribute('data-theme',t);localStorage.setItem('pippa-theme',t);applyChartTheme()}
+const DATA = {"ranking":[{"uf":"Sergipe","tempo":119.7},{"uf":"Goiás","tempo":120.1},{"uf":"Tocantins","tempo":134.1},{"uf":"Paraná","tempo":136.5},{"uf":"Ceará","tempo":137.7},{"uf":"Mato Grosso","tempo":138.5},{"uf":"Roraima","tempo":145.8},{"uf":"Rondônia","tempo":146.8},{"uf":"Maranhão","tempo":150.7},{"uf":"Piauí","tempo":151.1},{"uf":"Mato Grosso do Sul","tempo":154.2},{"uf":"Espírito Santo","tempo":154.6},{"uf":"Distrito Federal","tempo":167.2},{"uf":"Rio Grande do Sul","tempo":167.5},{"uf":"Rio Grande do Norte","tempo":171.0},{"uf":"Alagoas","tempo":175.3},{"uf":"Paraíba","tempo":182.4},{"uf":"Amazonas","tempo":183.7},{"uf":"Amapá","tempo":186.5},{"uf":"Acre","tempo":187.3},{"uf":"Santa Catarina","tempo":215.7},{"uf":"São Paulo","tempo":224.1},{"uf":"Minas Gerais","tempo":232.5},{"uf":"Pernambuco","tempo":253.4},{"uf":"Pará","tempo":269.9},{"uf":"Rio de Janeiro","tempo":298.7},{"uf":"Bahia","tempo":327.5}],"tempo_nacional":[{"ano":2025,"mes":10,"total_h":27},{"ano":2025,"mes":11,"total_h":25},{"ano":2025,"mes":12,"total_h":27},{"ano":2026,"mes":1,"total_h":36},{"ano":2026,"mes":2,"total_h":41},{"ano":2026,"mes":3,"total_h":37},{"ano":2026,"mes":4,"total_h":40},{"ano":2026,"mes":5,"total_h":36},{"ano":2026,"mes":6,"total_h":34},{"ano":2026,"mes":7,"total_h":33},{"ano":2026,"mes":8,"total_h":29},{"ano":2026,"mes":9,"total_h":31}],"integracao":[{"uf":"MG","pct":37.4,"mun_int":319},{"uf":"PE","pct":57.3,"mun_int":106},{"uf":"BA","pct":63.1,"mun_int":263},{"uf":"PI","pct":64.7,"mun_int":145},{"uf":"MA","pct":67.7,"mun_int":147},{"uf":"PB","pct":68.6,"mun_int":153},{"uf":"RN","pct":70.1,"mun_int":117},{"uf":"TO","pct":71.2,"mun_int":99},{"uf":"GO","pct":72.4,"mun_int":178},{"uf":"AL","pct":76.5,"mun_int":78},{"uf":"ES","pct":76.9,"mun_int":60},{"uf":"PA","pct":81.2,"mun_int":117},{"uf":"SP","pct":82.8,"mun_int":534},{"uf":"MS","pct":88.6,"mun_int":70},{"uf":"SE","pct":89.3,"mun_int":67},{"uf":"AP","pct":93.8,"mun_int":15},{"uf":"SC","pct":94.9,"mun_int":280},{"uf":"PR","pct":95.5,"mun_int":381},{"uf":"RS","pct":98.6,"mun_int":490},{"uf":"RJ","pct":98.9,"mun_int":91},{"uf":"MT","pct":99.3,"mun_int":141},{"uf":"RR","pct":100.0,"mun_int":15},{"uf":"DF","pct":100.0,"mun_int":1},{"uf":"AC","pct":100.0,"mun_int":22},{"uf":"CE","pct":100.0,"mun_int":184},{"uf":"AM","pct":100.0,"mun_int":62},{"uf":"RO","pct":100.0,"mun_int":52}],"massa":[{"uf":"São Paulo","total":8532264,"mei":3922792,"me":2827952,"epp":531856,"demais":1249664,"pct_mei":46.0},{"uf":"Minas Gerais","total":2752706,"mei":1503005,"me":964234,"epp":131385,"demais":154082,"pct_mei":54.6},{"uf":"Rio de Janeiro","total":2213558,"mei":1306806,"me":654448,"epp":116161,"demais":136143,"pct_mei":59.0},{"uf":"Paraná","total":1918629,"mei":936282,"me":768765,"epp":96270,"demais":117312,"pct_mei":48.8},{"uf":"Rio Grande do Sul","total":1663900,"mei":853487,"me":606429,"epp":106227,"demais":97757,"pct_mei":51.3},{"uf":"Santa Catarina","total":1475648,"mei":745334,"me":531741,"epp":93540,"demais":105033,"pct_mei":50.5},{"uf":"Bahia","total":1182051,"mei":627728,"me":448810,"epp":52440,"demais":53073,"pct_mei":53.1},{"uf":"Goiás","total":1005638,"mei":529824,"me":371687,"epp":49731,"demais":54396,"pct_mei":52.7},{"uf":"Ceará","total":708499,"mei":358915,"me":280371,"epp":31328,"demais":37885,"pct_mei":50.7},{"uf":"Pernambuco","total":693788,"mei":383500,"me":226970,"epp":42608,"demais":40710,"pct_mei":55.3},{"uf":"Espírito Santo","total":585967,"mei":336437,"me":183663,"epp":31565,"demais":34302,"pct_mei":57.4},{"uf":"Mato Grosso","total":546704,"mei":266099,"me":191549,"epp":52405,"demais":36651,"pct_mei":48.7},{"uf":"Pará","total":479915,"mei":231801,"me":176782,"epp":49893,"demais":21439,"pct_mei":48.3},{"uf":"Distrito Federal","total":454108,"mei":208901,"me":180848,"epp":33874,"demais":30485,"pct_mei":46.0},{"uf":"Mato Grosso do Sul","total":361123,"mei":181374,"me":129605,"epp":26857,"demais":23287,"pct_mei":50.2},{"uf":"Maranhão","total":339115,"mei":144906,"me":152395,"epp":25651,"demais":16163,"pct_mei":42.7},{"uf":"Paraíba","total":318630,"mei":175986,"me":112476,"epp":16057,"demais":14111,"pct_mei":55.2},{"uf":"Rio Grande do Norte","total":294222,"mei":157095,"me":105714,"epp":15250,"demais":16163,"pct_mei":53.4},{"uf":"Amazonas","total":271002,"mei":131394,"me":95336,"epp":30351,"demais":13921,"pct_mei":48.5},{"uf":"Alagoas","total":218261,"mei":119845,"me":73561,"epp":13920,"demais":10935,"pct_mei":54.9},{"uf":"Piauí","total":214950,"mei":98476,"me":91780,"epp":14477,"demais":10217,"pct_mei":45.8},{"uf":"Tocantins","total":167192,"mei":86001,"me":59848,"epp":11834,"demais":9509,"pct_mei":51.4},{"uf":"Sergipe","total":165514,"mei":89225,"me":60416,"epp":8782,"demais":7091,"pct_mei":53.9},{"uf":"Rondônia","total":163972,"mei":82411,"me":60712,"epp":11689,"demais":9160,"pct_mei":50.3},{"uf":"Acre","total":49202,"mei":21987,"me":21311,"epp":3482,"demais":2422,"pct_mei":44.7},{"uf":"Roraima","total":48690,"mei":25148,"me":17507,"epp":3831,"demais":2204,"pct_mei":51.6},{"uf":"Amapá","total":47036,"mei":19332,"me":20030,"epp":5405,"demais":2269,"pct_mei":41.1}]};
+
+const charts = {};
+const isDark=()=>document.documentElement.getAttribute('data-theme')!=='light';
+const TC={get text(){return isDark()?'#eff3ee':'#1a202c'},get muted(){return isDark()?'#a8c4e0':'#4a5568'},get grid(){return isDark()?'rgba(255,255,255,.06)':'rgba(0,0,0,.08)'}};
+function applyChartTheme(){Chart.defaults.color=TC.muted;Object.values(Chart.instances||{}).forEach(c=>{(c.options.scales||{})&&Object.values(c.options.scales).forEach(s=>{if(s.ticks)s.ticks.color=s.ticks._isLabel?TC.text:TC.muted;if(s.grid)s.grid.color=s.grid.display===false?'transparent':TC.grid;if(s.title&&s.title.display)s.title.color=TC.muted});c.update('none')})}
+Chart.defaults.color=TC.muted;
+Chart.defaults.font.family="'Figtree','Segoe UI',system-ui,sans-serif";
+
+function fmt(v){if(v>=1e6)return(v/1e6).toFixed(1)+'M';if(v>=1e3)return(v/1e3).toFixed(1)+'k';return v.toLocaleString('pt-BR')}
+
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.id===id));
+}
+
+function init(){
+  renderAbertura();
+  renderMassa();
+}
+
+function renderAbertura(){
+  const rk=DATA.ranking;
+  const tn=DATA.tempo_nacional;
+  const ultimo=tn[tn.length-1];
+  const totalInt=DATA.integracao.reduce((s,i)=>s+i.mun_int,0);
+
+  document.getElementById('kpiAbertura').innerHTML=`
+    <div class="kpi"><div class="kpi-label">Tempo medio nacional</div><div class="kpi-value" style="color:var(--accent)">${(ultimo.total_h/24).toFixed(1)} dias</div><div class="kpi-detail">Dias por empresa — ${ultimo.ano}-${String(ultimo.mes).padStart(2,'0')}</div></div>
+    <div class="kpi"><div class="kpi-label">Estado mais rapido</div><div class="kpi-value" style="color:var(--green)">${rk[0].uf}</div><div class="kpi-detail">${(rk[0].tempo/24).toFixed(1)} dias em media</div></div>
+    <div class="kpi"><div class="kpi-label">Estado mais lento</div><div class="kpi-value" style="color:var(--red)">${rk[rk.length-1].uf}</div><div class="kpi-detail">${(rk[rk.length-1].tempo/24).toFixed(1)} dias em media</div></div>
+    <div class="kpi"><div class="kpi-label">Municipios integrados</div><div class="kpi-value" style="color:var(--cyan)">${fmt(totalInt)}</div><div class="kpi-detail">De 5.570 municipios no REDESIM</div></div>
+  `;
+
+  charts.ranking=new Chart(document.getElementById('chartRanking'),{
+    type:'bar',
+    data:{labels:rk.map(r=>r.uf),datasets:[{data:rk.map(r=>+(r.tempo/24).toFixed(1)),backgroundColor:rk.map(r=>r.tempo<168?'rgba(97,180,102,.6)':r.tempo<264?'rgba(251,236,118,.6)':'rgba(224,86,93,.6)'),borderRadius:4}]},
+    options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw.toFixed(1)+' dias'}}},
+      scales:{x:{grid:{color:TC.grid},ticks:{color:TC.muted,callback:v=>v+'d'}},y:{grid:{display:false},ticks:{color:TC.text,_isLabel:true,font:{size:10}}}}}
+  });
+
+  charts.integracao=new Chart(document.getElementById('chartIntegracao'),{
+    type:'bar',
+    data:{labels:DATA.integracao.map(i=>i.uf),datasets:[{data:DATA.integracao.map(i=>i.pct),backgroundColor:DATA.integracao.map(i=>i.pct>=80?'rgba(97,180,102,.6)':i.pct>=50?'rgba(251,236,118,.6)':'rgba(224,86,93,.6)'),borderRadius:4}]},
+    options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw.toFixed(1)+'% integrado'}}},
+      scales:{x:{grid:{color:TC.grid},ticks:{color:TC.muted,callback:v=>v+'%'},max:110},y:{grid:{display:false},ticks:{color:TC.text,_isLabel:true,font:{size:10}}}}}
+  });
+
+  charts.evolucao=new Chart(document.getElementById('chartEvolucao'),{
+    type:'line',
+    data:{labels:tn.map(t=>t.ano+'-'+String(t.mes).padStart(2,'0')),datasets:[{label:'Dias por empresa',data:tn.map(t=>+(t.total_h/24).toFixed(1)),borderColor:'#2a4fda',backgroundColor:'rgba(42,79,218,.08)',fill:true,tension:.3,pointRadius:4,borderWidth:2.5}]},
+    options:{responsive:true,plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:TC.grid},ticks:{color:TC.muted,font:{size:10}}},y:{grid:{color:TC.grid},ticks:{color:TC.muted,callback:v=>v+'d'}}}}
+  });
+}
+
+function renderMassa(){
+  const ms=DATA.massa;
+  const total=ms.reduce((s,m)=>s+m.total,0);
+  const mei=ms.reduce((s,m)=>s+m.mei,0);
+  const me=ms.reduce((s,m)=>s+m.me,0);
+  const epp=ms.reduce((s,m)=>s+m.epp,0);
+  const demais=ms.reduce((s,m)=>s+m.demais,0);
+
+  document.getElementById('kpiMassa').innerHTML=`
+    <div class="kpi"><div class="kpi-label">Total MPEs ativas</div><div class="kpi-value" style="color:var(--accent)">${fmt(total)}</div><div class="kpi-detail">Micro e pequenas empresas no Brasil</div></div>
+    <div class="kpi"><div class="kpi-label">MEI</div><div class="kpi-value" style="color:var(--green)">${fmt(mei)}</div><div class="kpi-detail">${(mei/total*100).toFixed(1)}% do total de empresas</div></div>
+    <div class="kpi"><div class="kpi-label">Microempresa (ME)</div><div class="kpi-value" style="color:var(--purple)">${fmt(me)}</div><div class="kpi-detail">${(me/total*100).toFixed(1)}% do total</div></div>
+    <div class="kpi"><div class="kpi-label">Pequeno porte (EPP)</div><div class="kpi-value" style="color:var(--cyan)">${fmt(epp)}</div><div class="kpi-detail">${(epp/total*100).toFixed(1)}% do total</div></div>
+  `;
+
+  charts.porte=new Chart(document.getElementById('chartPorte'),{
+    type:'doughnut',
+    data:{labels:['MEI','ME','EPP','Demais'],datasets:[{data:[mei,me,epp,demais],backgroundColor:['rgba(97,180,102,.7)','rgba(42,79,218,.7)','rgba(190,100,227,.7)','rgba(100,116,139,.5)'],borderWidth:0}]},
+    options:{responsive:true,plugins:{legend:{position:'bottom',labels:{color:TC.muted,boxWidth:12,padding:16}},tooltip:{callbacks:{label:c=>{const v=c.raw;return c.label+': '+fmt(v)+' ('+(v/total*100).toFixed(1)+'%)'}}}}}
+  });
+
+  const top15=[...ms].sort((a,b)=>a.total-b.total).slice(-15);
+  charts.top15=new Chart(document.getElementById('chartTop15'),{
+    type:'bar',
+    data:{labels:top15.map(m=>m.uf),datasets:[
+      {label:'MEI',data:top15.map(m=>m.mei),backgroundColor:'rgba(97,180,102,.6)',borderRadius:2},
+      {label:'ME',data:top15.map(m=>m.me),backgroundColor:'rgba(42,79,218,.6)',borderRadius:2},
+      {label:'EPP',data:top15.map(m=>m.epp),backgroundColor:'rgba(190,100,227,.6)',borderRadius:2},
+      {label:'Demais',data:top15.map(m=>m.demais),backgroundColor:'rgba(100,116,139,.4)',borderRadius:2}
+    ]},
+    options:{responsive:true,indexAxis:'y',plugins:{legend:{position:'bottom',labels:{color:TC.muted,boxWidth:12,font:{size:10}}}},
+      scales:{x:{stacked:true,grid:{color:TC.grid},ticks:{color:TC.muted,callback:v=>fmt(v)}},y:{stacked:true,grid:{display:false},ticks:{color:TC.text,_isLabel:true,font:{size:10}}}}}
+  });
+
+  let rows='';
+  [...ms].sort((a,b)=>b.total-a.total).forEach(m=>{
+    rows+=`<tr><td>${m.uf}</td><td class="num">${m.total.toLocaleString('pt-BR')}</td><td class="num">${m.mei.toLocaleString('pt-BR')}</td><td class="num">${m.me.toLocaleString('pt-BR')}</td><td class="num">${m.epp.toLocaleString('pt-BR')}</td><td class="num">${m.pct_mei.toFixed(1)}%</td></tr>`;
+  });
+  rows+=`<tr style="font-weight:700;background:rgba(255,255,255,.04)"><td>TOTAL</td><td class="num">${total.toLocaleString('pt-BR')}</td><td class="num">${mei.toLocaleString('pt-BR')}</td><td class="num">${me.toLocaleString('pt-BR')}</td><td class="num">${epp.toLocaleString('pt-BR')}</td><td class="num">${(mei/total*100).toFixed(1)}%</td></tr>`;
+  document.getElementById('tableMassa').innerHTML=`<table><thead><tr><th>Estado</th><th class="num">Total</th><th class="num">MEI</th><th class="num">ME</th><th class="num">EPP</th><th class="num">% MEI</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+/* === CONSULTAR APIs (REDESIM Gov) === */
+async function fetchAPIs(){
+  const btn=document.getElementById('btnApi');
+  const st=document.getElementById('apiStatus');
+  btn.disabled=true; btn.textContent='Consultando...';
+  st.style.display='none';
+
+  try{
+    const base='https://estatistica.redesim.gov.br';
+    const ano=new Date().getFullYear();
+    const [tempoR,intR]=await Promise.all([
+      fetch(base+'/tempos-abertura-redesim/tempo-medio-total-abertura').then(r=>r.json()),
+      fetch(base+'/tempos-abertura-redesim/tempos-abertura?ano='+ano+'&mes=').then(r=>r.json())
+    ]);
+
+    if(Array.isArray(tempoR)&&tempoR.length>0){
+      const byUF={};
+      const dadosAno=tempoR.filter(d=>{const a=d.ano||d.Ano;return a&&parseInt(a)===ano});
+      (dadosAno.length>0?dadosAno:tempoR.slice(-27)).forEach(d=>{
+        const uf=d.uf||d.UF||d.siglaUf||d.estado;
+        if(!uf)return;
+        if(!byUF[uf])byUF[uf]={soma:0,n:0};
+        const h=parseFloat(d.tempoTotal||d.tempo_total_horas||d.totalHoras||d.horas||0);
+        if(h>0){byUF[uf].soma+=h;byUF[uf].n++}
+      });
+      const nr=Object.entries(byUF).map(([uf,v])=>({uf,tempo:Math.round(v.soma/v.n*10)/10})).sort((a,b)=>a.tempo-b.tempo);
+      if(nr.length>0&&charts.ranking){
+        charts.ranking.data.labels=nr.map(r=>r.uf);
+        charts.ranking.data.datasets[0].data=nr.map(r=>+(r.tempo/24).toFixed(1));
+        charts.ranking.data.datasets[0].backgroundColor=nr.map(r=>r.tempo<168?'rgba(97,180,102,.6)':r.tempo<264?'rgba(251,236,118,.6)':'rgba(224,86,93,.6)');
+        charts.ranking.update();
+      }
+    }
+
+    if(Array.isArray(intR)&&intR.length>0){
+      const ni=intR.filter(d=>d.uf||d.siglaUf).map(d=>({uf:d.uf||d.siglaUf,pct:parseFloat(d.pct_integrados||d.percentualIntegracao||d.percentualMunicipiosIntegrados||0)})).filter(d=>d.pct>0).sort((a,b)=>a.pct-b.pct);
+      if(ni.length>0&&charts.integracao){
+        charts.integracao.data.labels=ni.map(i=>i.uf);
+        charts.integracao.data.datasets[0].data=ni.map(i=>i.pct);
+        charts.integracao.data.datasets[0].backgroundColor=ni.map(i=>i.pct>=80?'rgba(97,180,102,.6)':i.pct>=50?'rgba(251,236,118,.6)':'rgba(224,86,93,.6)');
+        charts.integracao.update();
+      }
+    }
+
+    st.style.display='inline';st.style.background='rgba(97,180,102,.15)';st.style.color='#61b466';
+    st.textContent='Atualizado (REDESIM Gov '+ano+')';
+  }catch(e){
+    st.style.display='inline';st.style.background='rgba(224,86,93,.15)';st.style.color='#e0565d';
+    st.textContent='Erro: '+(e.message||'falha na consulta');
+  }finally{
+    btn.disabled=false;btn.textContent='Consultar APIs';
+  }
+}
+
+function exportWhatsApp(){
+  var hoje=new Date(),dd=String(hoje.getDate()).padStart(2,'0'),mm=String(hoje.getMonth()+1).padStart(2,'0'),yyyy=hoje.getFullYear();
+  var kpis=[];
+  document.querySelectorAll('#kpiAbertura .kpi, #kpiMassa .kpi').forEach(function(k){
+    var label=k.querySelector('.kpi-label');var value=k.querySelector('.kpi-value');
+    if(label&&value)kpis.push({label:label.textContent.trim(),value:value.textContent.trim()});
+  });
+  var msg='\u{1F4CA} *PIPPA Indicadores — Abertura e Formalização*\n';
+  msg+='\u{1F4C5} Relatório gerado em '+dd+'/'+mm+'/'+yyyy+'\n\n';
+  msg+='*INDICADORES:*\n';
+  msg+='━━━━━━━━━━━━━━━━━━\n';
+  kpis.forEach(function(k){msg+='• '+k.label+': '+k.value+'\n'});
+  msg+='\n\u{1F517} 1_burocracia.html\n';
+  msg+='\u{1F4E1} PIPPA — Sebrae Nacional';
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+function openInfo(){document.getElementById('infoModal').classList.add('active')}
+function closeInfo(){document.getElementById('infoModal').classList.remove('active')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeInfo()});
+
+init();
+</script>
+</body>
+</html>

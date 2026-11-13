@@ -19,6 +19,7 @@ COPY pippa-credito-fomento/   /usr/share/nginx/html/pippa-credito-fomento/
 COPY pippa-emendas/      /usr/share/nginx/html/pippa-emendas/
 COPY pippa-impacto/      /usr/share/nginx/html/pippa-impacto/
 COPY pippa-impostometro/ /usr/share/nginx/html/pippa-impostometro/
+COPY pippa-indicadores/  /usr/share/nginx/html/pippa-indicadores/
 COPY pippa-legislativo/  /usr/share/nginx/html/pippa-legislativo/
 COPY pippa-legislativo-dashboard/ /usr/share/nginx/html/pippa-legislativo-dashboard/
 COPY pippa-mindmap-nal/  /usr/share/nginx/html/pippa-mindmap-nal/
@@ -26,6 +27,7 @@ COPY pippa-orcamento/    /usr/share/nginx/html/pippa-orcamento/
 COPY pippa-pauta-legislativa/ /usr/share/nginx/html/pippa-pauta-legislativa/
 COPY pippa-pesquisas-eleitorais/ /usr/share/nginx/html/pippa-pesquisas-eleitorais/
 COPY pippa-portal/       /usr/share/nginx/html/pippa-portal/
+COPY pippa-raio-x/       /usr/share/nginx/html/pippa-raio-x/
 COPY pippa-projeto-2027/ /usr/share/nginx/html/pippa-projeto-2027/
 COPY pippa-quem-somos/   /usr/share/nginx/html/pippa-quem-somos/
 COPY pippa-reforma-dashboard/ /usr/share/nginx/html/pippa-reforma-dashboard/

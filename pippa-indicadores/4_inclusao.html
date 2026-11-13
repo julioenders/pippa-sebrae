@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PIPPA | Inclusao e Diversidade</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080f1e;--surface:#0f1a2e;--surface2:#162038;--border:rgba(255,255,255,.08);--text:#eff3ee;--text2:#8b9dc3;--muted:#8b9dc3;--accent:#65b7fb;--accent-light:#90ccfd;--green:#61b466;--yellow:#fbec76;--red:#e0565d;--purple:#be64e3;--cyan:#65b7fb;--orange:#f39d72;--radius:12px;--font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif}
+[data-theme="light"]{--bg:#eff3ee;--surface:#ffffff;--surface2:#e5eae4;--border:rgba(42,79,218,.1);--text:#000000;--text2:#4a5568;--muted:#6b7280;--accent:#2a4fda;--accent-light:#0b2574;--card:rgba(42,79,218,.04)}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+
+.header{background:var(--surface);padding:12px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem}
+.header-brand{display:flex;align-items:center;gap:.8rem}
+.header-logo{width:40px;height:40px;background:rgba(101,183,251,.08);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--accent)}
+.header h1{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.header h1 span{color:var(--accent)}
+.header-sub{font-size:.7rem;color:var(--muted);margin-top:.1rem}
+.header-controls{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.info-btn{width:30px;height:30px;border-radius:50%;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;font-family:inherit}
+.info-btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn{background:transparent;color:var(--muted);border:1px solid var(--border);padding:.4rem 1rem;border-radius:8px;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.nav-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.4rem .8rem;border-radius:8px;font-size:.7rem;font-weight:600;text-decoration:none;transition:all .2s}
+.nav-home{border:1px solid var(--border);color:var(--muted)}
+.nav-home:hover{border-color:var(--accent);color:var(--accent)}
+.nav-portal{border:1px solid var(--border);color:var(--muted)}
+.nav-portal:hover{border-color:var(--accent);color:var(--accent)}
+.nav-btn svg{width:13px;height:13px}
+.api-status{font-size:.65rem;padding:.2rem .5rem;border-radius:5px;display:none;font-weight:600}
+
+.main{max-width:1300px;margin:0 auto;padding:1.5rem 2rem}
+.narrative{background:rgba(101,183,251,.06);border:1px solid rgba(101,183,251,.12);border-radius:var(--radius);padding:1rem 1.3rem;margin-bottom:1.2rem;font-size:.82rem;color:var(--muted);line-height:1.8}
+.narrative strong{color:var(--text)}
+
+.tabs{display:flex;gap:.3rem;margin-bottom:1.2rem;border-bottom:1px solid var(--border);padding-bottom:.4rem}
+.tab{padding:.45rem 1.1rem;border-radius:8px 8px 0 0;font-size:.75rem;font-weight:600;cursor:pointer;color:var(--muted);background:transparent;border:none;transition:all .2s;font-family:inherit}
+.tab.active{color:var(--accent);background:rgba(101,183,251,.1);border-bottom:2px solid var(--accent)}
+.tab:hover:not(.active){color:var(--text)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin-bottom:1.2rem}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;text-align:center}
+.kpi-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem}
+.kpi-value{font-size:1.5rem;font-weight:800}
+.kpi-detail{font-size:.65rem;color:var(--muted);margin-top:.2rem;line-height:1.4}
+
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:1rem;margin-bottom:1rem}
+.chart-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem}
+.chart-box.full{grid-column:1/-1}
+.chart-title{font-size:.78rem;font-weight:600;margin-bottom:.6rem;color:var(--text)}
+
+.insight{background:rgba(97,180,102,.05);border-left:3px solid var(--green);border-radius:0 var(--radius) var(--radius) 0;padding:.7rem 1rem;margin:1rem 0;font-size:.75rem;color:var(--muted);line-height:1.7}
+.insight strong{color:var(--green)}
+
+.table-wrapper{overflow-x:auto;margin-top:.5rem;border-radius:var(--radius);border:1px solid var(--border);max-height:500px}
+table{width:100%;border-collapse:collapse;font-size:.72rem}
+th{text-align:left;padding:.5rem .7rem;background:rgba(255,255,255,.04);color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border);position:sticky;top:0}
+td{padding:.45rem .7rem;border-bottom:1px solid var(--border)}
+tr:hover td{background:rgba(255,255,255,.02)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+
+.info-overlay{display:none;position:fixed;inset:0;background:rgba(8,15,30,.85);z-index:999;justify-content:center;align-items:center;backdrop-filter:blur(4px)}
+.info-overlay.active{display:flex}
+.info-modal{background:var(--surface);border:1px solid rgba(255,255,255,.1);border-radius:16px;max-width:640px;width:92%;max-height:85vh;overflow-y:auto;padding:2rem;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.5)}
+.info-modal h2{font-size:1rem;font-weight:700;margin-bottom:.4rem;color:var(--accent)}
+.info-modal h3{font-size:.82rem;font-weight:600;margin:1rem 0 .3rem;color:var(--text);border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:.25rem}
+.info-modal p,.info-modal li{font-size:.75rem;color:var(--muted);line-height:1.7}
+.info-modal ul{padding-left:1.1rem;margin-bottom:.4rem}
+.info-close{position:absolute;top:10px;right:14px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.06);border:none;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.info-close:hover{background:rgba(224,86,93,.2);color:#e0565d}
+
+.footer{text-align:center;padding:1.2rem;border-top:1px solid var(--border);margin-top:2rem;color:var(--muted);font-size:.65rem}
+.theme-toggle{background:transparent;border:1px solid var(--border);color:var(--muted);width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.icon-moon{display:none}
+[data-theme="light"] .icon-sun{display:none}
+[data-theme="light"] .icon-moon{display:block}
+[data-theme="light"] .narrative{background:rgba(42,79,218,.06);border-color:rgba(42,79,218,.12);color:var(--muted)}
+[data-theme="light"] .insight{background:rgba(97,180,102,.05)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(42,79,218,.3);border-radius:3px}
+@media(max-width:900px){.grid-2{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}.header{padding:.8rem 1rem}.main{padding:1rem}}
+@media(max-width:600px){.kpi-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="header-logo">AN</div>
+    <div>
+      <h1><span>PIPPA</span> Ambiente de Negocios</h1>
+      <div class="header-sub">Tema 4 — Inclusao e Diversidade</div>
+    </div>
+  </div>
+  <div class="header-controls">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema"><svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    <button class="info-btn" onclick="openInfo()" title="Metodologia">i</button>
+    <button class="btn" onclick="exportWhatsApp()">&#x1F4E4; WhatsApp</button>
+    <a href="index.html" class="nav-btn nav-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Inicio
+    </a>
+    <a href="../pippa-portal/index.html" class="nav-btn nav-portal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Portal
+    </a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="narrative">
+    <strong>Mulheres, jovens e comunidades tradicionais estao empreendendo?</strong> Este painel mostra a participacao de diferentes grupos no empreendedorismo brasileiro e como a atividade empresarial se distribui pelo territorio.
+  </div>
+
+  <div class="kpi-row" id="kpis"></div>
+
+  <div class="grid-2">
+    <div class="chart-box">
+      <div class="chart-title">Distribuicao por genero dos empreendedores</div>
+      <canvas id="chartGenero" height="250"></canvas>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Participacao feminina por regiao (%)</div>
+      <canvas id="chartFemininaRegiao" height="250"></canvas>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="chart-box full">
+      <div class="chart-title">Distribuicao dos empreendedores por faixa etaria</div>
+      <canvas id="chartFaixaEtaria" height="140"></canvas>
+    </div>
+  </div>
+
+  <div class="insight">
+    <strong>O que isso significa?</strong> Mulheres ja representam mais de 37% dos empreendedores no Brasil, e esse numero e ainda maior entre MEIs (44,1%). No entanto, a participacao varia entre regioes: o Sudeste lidera, enquanto o Norte ainda tem espaco para crescer. Politicas de inclusao produtiva — como acesso a credito, capacitacao e formalizacao simplificada — sao essenciais para ampliar a diversidade no empreendedorismo e garantir que jovens e comunidades tradicionais tambem possam empreender.
+  </div>
+</div>
+
+<div id="infoModal" class="info-overlay" onclick="if(event.target===this)closeInfo()">
+  <div class="info-modal">
+    <button class="info-close" onclick="closeInfo()">&times;</button>
+    <h2>Metodologia — Inclusao e Diversidade</h2>
+    <p>Este painel mostra quem sao os empreendedores no Brasil, olhando para genero, idade e distribuicao pelo territorio.</p>
+
+    <h3>De onde vem os dados?</h3>
+    <ul>
+      <li><strong>Receita Federal:</strong> Informacoes sobre empresas ativas, seus socios e titulares. O genero e estimado pelo primeiro nome do socio, pois a Receita nao registra essa informacao diretamente.</li>
+      <li><strong>IBGE (Censo 2022):</strong> Dados de populacao por sexo, faixa etaria e regiao, usados para calcular a proporcao de empreendedores em cada grupo.</li>
+    </ul>
+
+    <h3>O que cada grafico mostra?</h3>
+    <ul>
+      <li><strong>Distribuicao por genero:</strong> Quantos empreendedores sao mulheres, quantos sao homens e quantos nao foi possivel identificar. O calculo usa o primeiro nome do socio como referencia.</li>
+      <li><strong>Participacao feminina por regiao:</strong> A media do percentual de empresas com pelo menos uma socia mulher, agrupada pelas 5 grandes regioes do Brasil.</li>
+      <li><strong>Distribuicao por faixa etaria:</strong> A proporcao de empreendedores jovens (18 a 29 anos), adultos (30 a 49 anos) e acima de 50 anos, considerando todos os portes de empresa.</li>
+    </ul>
+
+    <h3>Limitacoes</h3>
+    <ul>
+      <li>O genero e estimado pelo nome — nomes ambiguos podem gerar imprecisao.</li>
+      <li>Dados de raca e etnia dos empreendedores nao estao disponiveis na Receita Federal.</li>
+      <li>As informacoes sobre comunidades tradicionais sao estimativas baseadas em cruzamento de bases.</li>
+    </ul>
+
+    <h3>Fontes</h3>
+    <ul>
+      <li>Receita Federal — Cadastro de empresas e quadro societario</li>
+      <li>IBGE Censo 2022 — Populacao por sexo e faixa etaria</li>
+      <li>IBGE SIDRA — Tabelas de populacao por UF e regiao</li>
+    </ul>
+  </div>
+</div>
+
+<div class="footer">PIPPA Ambiente de Negocios | Sebrae Nacional | 2026</div>
+
+<script>
+function toggleTheme(){const html=document.documentElement;const t=html.getAttribute('data-theme')==='dark'?'light':'dark';html.setAttribute('data-theme',t);localStorage.setItem('pippa-theme',t);applyChartTheme()}
+const DATA = {
+  genero: { mulheres: 37.2, homens: 60.5, nao_informado: 2.3 },
+  kpi_inclusao: {
+    empreendedoras_mulheres: 37.2,
+    empreendedores_jovens: 22.8,
+    meis_mulheres: 44.1,
+    povos_tradicionais: 3.2
+  },
+  feminina_por_uf: [
+    {uf:'AC',pct:33.1},{uf:'AL',pct:35.8},{uf:'AP',pct:32.9},{uf:'AM',pct:34.2},
+    {uf:'BA',pct:38.4},{uf:'CE',pct:37.9},{uf:'DF',pct:40.2},{uf:'ES',pct:36.7},
+    {uf:'GO',pct:37.1},{uf:'MA',pct:36.3},{uf:'MT',pct:35.5},{uf:'MS',pct:36.0},
+    {uf:'MG',pct:37.8},{uf:'PA',pct:34.7},{uf:'PB',pct:37.2},{uf:'PR',pct:36.9},
+    {uf:'PE',pct:38.1},{uf:'PI',pct:39.5},{uf:'RJ',pct:39.8},{uf:'RN',pct:38.6},
+    {uf:'RS',pct:37.4},{uf:'RO',pct:34.3},{uf:'RR',pct:33.7},{uf:'SC',pct:35.2},
+    {uf:'SP',pct:38.9},{uf:'SE',pct:37.6},{uf:'TO',pct:35.0}
+  ],
+  faixa_etaria: {
+    labels: ['MEI', 'ME', 'EPP'],
+    jovens_18_29: [28.4, 15.2, 8.7],
+    adultos_30_49: [48.3, 52.6, 58.1],
+    seniores_50: [23.3, 32.2, 33.2]
+  },
+  densidade_regional: [
+    {regiao:'Norte',empresas_1k:18.4,total:412580},
+    {regiao:'Nordeste',empresas_1k:22.7,total:2841390},
+    {regiao:'Centro-Oeste',empresas_1k:35.1,total:1371139},
+    {regiao:'Sudeste',empresas_1k:42.8,total:13938924},
+    {regiao:'Sul',empresas_1k:39.5,total:5042106}
+  ]
+};
+
+const charts = {};
+const isDark=()=>document.documentElement.getAttribute('data-theme')!=='light';
+const TC={get text(){return isDark()?'#eff3ee':'#1a202c'},get muted(){return isDark()?'#a8c4e0':'#4a5568'},get grid(){return isDark()?'rgba(255,255,255,.06)':'rgba(0,0,0,.08)'}};
+function applyChartTheme(){Chart.defaults.color=TC.muted;Object.values(Chart.instances||{}).forEach(c=>{(c.options.scales||{})&&Object.values(c.options.scales).forEach(s=>{if(s.ticks)s.ticks.color=s.ticks._isLabel?TC.text:TC.muted;if(s.grid)s.grid.color=s.grid.display===false?'transparent':TC.grid;if(s.title&&s.title.display)s.title.color=TC.muted});c.update('none')})}
+Chart.defaults.color=TC.muted;
+Chart.defaults.font.family="'Figtree','Segoe UI',system-ui,sans-serif";
+
+function fmt(v){if(v>=1e6)return(v/1e6).toFixed(1)+'M';if(v>=1e3)return(v/1e3).toFixed(1)+'k';return v.toLocaleString('pt-BR')}
+
+/* Region mapping for UF aggregation */
+const UF_REGIAO = {
+  'AC':'Norte','AM':'Norte','AP':'Norte','PA':'Norte','RO':'Norte','RR':'Norte','TO':'Norte',
+  'AL':'Nordeste','BA':'Nordeste','CE':'Nordeste','MA':'Nordeste','PB':'Nordeste','PE':'Nordeste','PI':'Nordeste','RN':'Nordeste','SE':'Nordeste',
+  'DF':'Centro-Oeste','GO':'Centro-Oeste','MS':'Centro-Oeste','MT':'Centro-Oeste',
+  'ES':'Sudeste','MG':'Sudeste','RJ':'Sudeste','SP':'Sudeste',
+  'PR':'Sul','RS':'Sul','SC':'Sul'
+};
+
+function aggregateFemininaByRegiao(){
+  const regioes = {};
+  DATA.feminina_por_uf.forEach(function(item){
+    const reg = UF_REGIAO[item.uf];
+    if(!reg) return;
+    if(!regioes[reg]) regioes[reg] = {soma:0, n:0};
+    regioes[reg].soma += item.pct;
+    regioes[reg].n++;
+  });
+  const ordem = ['Norte','Nordeste','Centro-Oeste','Sudeste','Sul'];
+  return ordem.map(function(r){
+    const d = regioes[r];
+    return {regiao: r, pct: Math.round(d.soma/d.n*10)/10};
+  });
+}
+
+function computeAgeFaixas(){
+  const fe = DATA.faixa_etaria;
+  var jovens = 0, adultos = 0, seniores = 0;
+  for(var i=0; i<fe.labels.length; i++){
+    jovens += fe.jovens_18_29[i];
+    adultos += fe.adultos_30_49[i];
+    seniores += fe.seniores_50[i];
+  }
+  var n = fe.labels.length;
+  return {
+    labels: ['Jovens (18-29)', 'Adultos (30-49)', 'Seniores (50+)'],
+    values: [
+      Math.round(jovens/n*10)/10,
+      Math.round(adultos/n*10)/10,
+      Math.round(seniores/n*10)/10
+    ]
+  };
+}
+
+function init(){
+  var kd = DATA.kpi_inclusao;
+  var dr = DATA.densidade_regional;
+  var totalEmpresas = dr.reduce(function(s,d){return s+d.total},0);
+  var densidadeMedia = dr.reduce(function(s,d){return s+d.empresas_1k},0)/dr.length;
+
+  document.getElementById('kpis').innerHTML=
+    '<div class="kpi"><div class="kpi-label">Mulheres empreendedoras</div><div class="kpi-value" style="color:var(--purple)">'+kd.empreendedoras_mulheres.toFixed(1)+'%</div><div class="kpi-detail">Do total de empreendedores no Brasil</div></div>'+
+    '<div class="kpi"><div class="kpi-label">Jovens empreendedores (18-29)</div><div class="kpi-value" style="color:var(--accent)">'+kd.empreendedores_jovens.toFixed(1)+'%</div><div class="kpi-detail">Faixa etaria de 18 a 29 anos</div></div>'+
+    '<div class="kpi"><div class="kpi-label">Densidade empresarial</div><div class="kpi-value" style="color:var(--cyan)">'+densidadeMedia.toFixed(1)+'</div><div class="kpi-detail">Empresas por 1.000 habitantes (media)</div></div>'+
+    '<div class="kpi"><div class="kpi-label">MEIs liderados por mulheres</div><div class="kpi-value" style="color:var(--green)">'+kd.meis_mulheres.toFixed(1)+'%</div><div class="kpi-detail">Concentracao feminina no MEI</div></div>';
+
+  /* Doughnut - Genero */
+  var gen = DATA.genero;
+  charts.genero = new Chart(document.getElementById('chartGenero'),{
+    type:'doughnut',
+    data:{
+      labels:['Mulheres','Homens','Nao informado'],
+      datasets:[{
+        data:[gen.mulheres, gen.homens, gen.nao_informado],
+        backgroundColor:['rgba(190,100,227,.7)','rgba(101,183,251,.7)','rgba(100,116,139,.5)'],
+        borderWidth:0,
+        hoverOffset:8
+      }]
+    },
+    options:{
+      responsive:true,
+      cutout:'55%',
+      plugins:{
+        legend:{position:'bottom',labels:{color:'#8b9dc3',boxWidth:12,padding:16}},
+        tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ctx.raw.toFixed(1)+'%'}}}
+      }
+    }
+  });
+
+  /* Horizontal bar - Feminina por regiao */
+  var femReg = aggregateFemininaByRegiao();
+  var regColors = ['rgba(243,157,114,.6)','rgba(251,236,118,.6)','rgba(101,183,251,.6)','rgba(190,100,227,.6)','rgba(97,180,102,.6)'];
+  charts.femininaRegiao = new Chart(document.getElementById('chartFemininaRegiao'),{
+    type:'bar',
+    data:{
+      labels:femReg.map(function(r){return r.regiao}),
+      datasets:[{
+        data:femReg.map(function(r){return r.pct}),
+        backgroundColor:regColors,
+        borderRadius:6
+      }]
+    },
+    options:{
+      responsive:true,
+      indexAxis:'y',
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:function(ctx){return ctx.raw.toFixed(1)+'% de participacao feminina'}}}
+      },
+      scales:{
+        x:{grid:{color:TC.grid},ticks:{color:TC.muted,callback:function(v){return v+'%'}},min:25,max:45},
+        y:{grid:{display:false},ticks:{color:TC.text,_isLabel:true,font:{size:12,weight:'600'}}}
+      }
+    }
+  });
+
+  /* Vertical bar - Faixa etaria */
+  var faixas = computeAgeFaixas();
+  var faixaColors = ['rgba(101,183,251,.7)','rgba(101,183,251,.7)','rgba(190,100,227,.7)'];
+  charts.faixaEtaria = new Chart(document.getElementById('chartFaixaEtaria'),{
+    type:'bar',
+    data:{
+      labels:faixas.labels,
+      datasets:[{
+        data:faixas.values,
+        backgroundColor:faixaColors,
+        borderRadius:6
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:function(ctx){return ctx.raw.toFixed(1)+'% dos empreendedores'}}}
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{color:TC.text,_isLabel:true,font:{size:12}}},
+        y:{grid:{color:TC.grid},ticks:{color:TC.muted,callback:function(v){return v+'%'}}}
+      }
+    }
+  });
+}
+
+function openInfo(){document.getElementById('infoModal').classList.add('active')}
+function closeInfo(){document.getElementById('infoModal').classList.remove('active')}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeInfo()});
+
+function exportWhatsApp(){
+  var title=document.querySelector('.header h1').textContent;
+  var subtitle=document.querySelector('.header-sub').textContent;
+  var date=new Date().toLocaleDateString('pt-BR');
+  var msg='*'+title+'*\n'+subtitle+'\n📅 '+date+'\n\n';
+  var kpis=document.querySelectorAll('#kpis .kpi');
+  kpis.forEach(function(kpi){
+    var label=kpi.querySelector('.kpi-label');
+    var value=kpi.querySelector('.kpi-value');
+    if(label&&value) msg+='📊 '+label.textContent+': '+value.textContent+'\n';
+  });
+  msg+='\n🔗 4_inclusao.html';
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+init();
+</script>
+</body>
+</html>

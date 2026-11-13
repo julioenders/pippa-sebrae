@@ -415,14 +415,14 @@ const TOOLS = [
   },
   {
     id: "prototipo",
-    nome: "PIPPA - Prototipo Paraiba",
-    subtitulo: "Plataforma Completa em Producao",
+    nome: "PIPPA — Protótipo Paraíba",
+    subtitulo: "Plataforma em Produção — Sebrae/PB",
     accent: "#2a4fda",
     icon: "🚀",
-    url: "https://pippa.sebrae.com.br/",
-    descricao: "Versao em producao da PIPPA implantada no SEBRAE Paraiba. Plataforma completa de inteligencia territorial com dados socioeconomicos, demograficos e empresariais integrados — o produto final que estas ferramentas alimentam.",
-    features: ["Plataforma em producao", "Inteligencia territorial", "Dados socioeconomicos integrados", "SEBRAE Paraiba", "Analise municipal", "Decisao baseada em evidencias"],
-    destaque: "A PIPPA em acao. Acesse a plataforma completa ja implantada no SEBRAE Paraiba — inteligencia territorial, dados integrados e interface pronta para tomada de decisao em politicas publicas."
+    url: "https://pippa-pb.sebrae.com.br/",
+    descricao: "Versão em produção da PIPPA implantada no Sebrae Paraíba. Plataforma completa de inteligência territorial com dados socioeconômicos, demográficos e empresariais integrados — o primeiro estado a operar a PIPPA em ambiente de produção.",
+    features: ["Plataforma em produção", "Inteligência territorial", "Dados socioeconômicos integrados", "Sebrae Paraíba", "Análise municipal", "Decisão baseada em evidências"],
+    destaque: "A PIPPA em ação. Acesse a plataforma completa já implantada no Sebrae Paraíba — inteligência territorial, dados integrados e interface pronta para tomada de decisão em políticas públicas."
   },
   {
     id: "catalogo",
@@ -485,7 +485,7 @@ const TOOLS = [
     subtitulo: "6 Temas de Indicadores Compostos",
     accent: "#cadf61",
     icon: "📊",
-    url: "https://julioenders.github.io/indicadores-ambiente-negocios/dashboard/index.html",
+    url: "../pippa-indicadores/index.html",
     descricao: "Painel de indicadores compostos de ambiente de negocios para municipios brasileiros. Cobre 6 temas — Burocracia e Formalizacao, Compras Publicas, Sobrevivencia e Emprego, Inclusao e Diversidade, Credito e Financiamento e Microempreendedor Individual (MEI) — com sub-indicadores cruzando dados do Observatorio Sebrae (OLAP) com APIs publicas (REDESIM Gov, PNCP, BCB SGS, IBGE SIDRA, IBGE Localidades). Cada tema possui dashboard interativo.",
     features: ["6 temas de indicadores", "Dashboard MEI por municipio, setor e CNAE", "Consultar APIs em tempo real", "REDESIM Gov (tempo de abertura)", "PNCP (compras publicas)", "BCB SGS (credito e Selic)", "IBGE SIDRA (demografia e PIB)", "14 scripts de coleta Python", "Dados por UF e municipio"],
     destaque: "Avalie o ambiente de negocios brasileiro em 6 dimensoes. Tempo de abertura de empresas, compras publicas para MPEs, sobrevivencia empresarial, inclusao produtiva, acesso a credito e panorama dos 13.5 milhoes de MEIs — com dados da Receita Federal e APIs publicas."
@@ -496,7 +496,7 @@ const TOOLS = [
     subtitulo: "Diagnostico Socioeconomico em Tempo Real",
     accent: "#f2afab",
     icon: "🔍",
-    url: "https://julioenders.github.io/pippa-raio-x/",
+    url: "../pippa-raio-x/index.html",
     descricao: "Dashboard interativo de diagnostico territorial com 4 niveis de navegacao (Brasil → Regiao → Estado → Municipio). Consulta APIs publicas em tempo real (IBGE Agregados, IBGE Localidades, Banco Central SGS) para apresentar populacao, PIB, VAB, empresas ativas (Receita Federal), emprego formal (CEMPRE), Selic, IPCA, credito e inadimplencia — com narrativa automatica e KPIs dinamicos por territorio selecionado.",
     features: ["4 niveis: Brasil, Regiao, Estado, Municipio", "APIs em tempo real (IBGE + BCB)", "Populacao e estimativas IBGE", "PIB e composicao do VAB", "Empresas ativas (Receita Federal)", "Emprego formal (CEMPRE/IBGE)", "Selic, IPCA, credito e inadimplencia (BCB)", "Narrativa automatica por territorio", "KPIs dinamicos e graficos Chart.js", "Exportar WhatsApp"],
     destaque: "Visao drill-down do Brasil ao municipio com dados oficiais em tempo real. Selecione qualquer territorio e receba um panorama completo com indicadores socioeconomicos, narrativa analitica e comparativos — tudo consultado ao vivo nas APIs do IBGE e Banco Central."
@@ -562,7 +562,7 @@ const TOOLS = [
     subtitulo: "Monitor do Diário Oficial da União",
     accent: "#e0565d",
     icon: "📰",
-    url: "../pippa-regulatorio/output/regulatorio_dou_20260928.html",
+    url: "../pippa-regulatorio/output/index.html",
     descricao: "Monitor em tempo real do Diário Oficial da União (DOU) com classificação automática de impacto em micro e pequenas empresas. Consulta a API da Imprensa Nacional, aplica heurística de 3 eixos (relevância direta MPE, alcance setorial e potência normativa) e apresenta normas agrupadas por nível de impacto com justificativa transparente do score.",
     features: ["Consulta ao vivo da API do DOU", "Classificação heurística v2 (3 eixos)", "Justificativa transparente de score", "Filtros por impacto, cadeia, tipo, órgão", "Gráficos de órgão, impacto e cadeias", "Timeline de 7 dias", "Agrupamento por nível de impacto", "Exportar WhatsApp"],
     destaque: "Fase 1 — Coleta e classificação do DOU. Identifica automaticamente quais normas publicadas no Diário Oficial impactam MPEs, com score baseado em relevância direta (menções a MEI/ME/EPP, tributos, licitações), alcance setorial (cadeias produtivas) e potência normativa (tipo de ato como multiplicador)."

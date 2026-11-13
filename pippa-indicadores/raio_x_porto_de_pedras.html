@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Raio-X Municipal — Porto de Pedras</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080f1e;--surface:#0f1a2e;--surface2:#162038;--border:rgba(255,255,255,.08);--text:#eff3ee;--text2:#8b9dc3;--muted:#8b9dc3;--accent:#65b7fb;--accent-light:#90ccfd;--green:#61b466;--yellow:#fbec76;--red:#e0565d;--purple:#be64e3;--cyan:#65b7fb;--orange:#f39d72;--radius:12px;--font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif;--card:rgba(255,255,255,.04)}
+[data-theme="light"]{--bg:#eff3ee;--surface:#ffffff;--surface2:#e5eae4;--border:rgba(42,79,218,.1);--text:#000000;--text2:#4a5568;--muted:#6b7280;--accent:#2a4fda;--accent-light:#0b2574;--card:rgba(42,79,218,.04)}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+.container{max-width:1400px;margin:0 auto;padding:1.5rem}
+header{display:flex;align-items:center;justify-content:space-between;background:var(--surface);padding:12px 24px;border-bottom:1px solid var(--border);margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+.header-brand{display:flex;align-items:center;gap:.8rem}
+.header-logo{width:40px;height:40px;background:rgba(101,183,251,.08);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--accent)}
+header h1{font-size:1.1rem;font-weight:700;color:var(--accent);font-family:var(--font-heading)}
+header h1 span{color:var(--accent)}
+.header-sub{font-size:.7rem;color:var(--muted);margin-top:.1rem}
+.badge{display:inline-block;padding:.2rem .6rem;border-radius:6px;font-size:.7rem;font-weight:600;background:transparent;color:var(--muted);border:1px solid var(--border)}
+.header-actions{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.portal-btn{background:transparent;color:var(--muted);border:1px solid var(--border);padding:.4rem 1rem;border-radius:8px;font-size:.72rem;font-weight:600;text-decoration:none;cursor:pointer;transition:all .2s;font-family:inherit}
+.portal-btn:hover{border-color:var(--accent);color:var(--accent)}
+.theme-toggle{background:transparent;border:1px solid var(--border);color:var(--muted);width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.icon-moon{display:none}
+[data-theme="light"] .icon-sun{display:none}
+[data-theme="light"] .icon-moon{display:block}
+
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem;margin-bottom:1.5rem}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem;text-align:center;transition:border-color .2s}
+.kpi:hover{border-color:rgba(101,183,251,.3)}
+.kpi-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem}
+.kpi-value{font-size:1.5rem;font-weight:800;color:var(--text)}
+.kpi-detail{font-size:.65rem;color:var(--muted);margin-top:.2rem}
+.kpi-blue .kpi-value{color:var(--accent)}
+.kpi-green .kpi-value{color:var(--green)}
+.kpi-purple .kpi-value{color:var(--purple)}
+.kpi-cyan .kpi-value{color:var(--cyan)}
+.kpi-yellow .kpi-value{color:var(--yellow)}
+
+.tabs{display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+.tab{padding:.5rem 1rem;border-radius:8px 8px 0 0;font-size:.75rem;font-weight:600;cursor:pointer;color:var(--muted);background:transparent;border:none;transition:all .2s}
+.tab.active{color:var(--accent);background:rgba(101,183,251,.1);border-bottom:2px solid var(--accent)}
+.tab:hover{color:var(--text)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:1rem;margin-bottom:1rem}
+.chart-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;min-height:300px}
+.chart-title{font-size:.8rem;font-weight:600;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+.section-title{font-size:.9rem;font-weight:700;font-family:var(--font-heading);margin:1.5rem 0 .8rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
+
+.table-wrapper{overflow-x:auto;margin-bottom:1rem}
+table{width:100%;border-collapse:collapse;font-size:.75rem}
+th{text-align:left;padding:.6rem .8rem;background:rgba(255,255,255,.03);color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border)}
+td{padding:.5rem .8rem;border-bottom:1px solid var(--border);color:var(--text)}
+tr:hover td{background:rgba(255,255,255,.02)}
+
+.tag{display:inline-block;padding:.15rem .5rem;border-radius:4px;font-size:.65rem;font-weight:600}
+.tag-green{background:rgba(97,180,102,.15);color:var(--green)}
+.tag-yellow{background:rgba(251,236,118,.15);color:var(--yellow)}
+.tag-red{background:rgba(224,86,93,.15);color:var(--red)}
+.tag-blue{background:rgba(101,183,251,.15);color:var(--accent)}
+
+.empty{text-align:center;color:var(--muted);padding:2rem;font-size:.8rem}
+
+.footer{text-align:center;padding:2rem 0;border-top:1px solid var(--border);margin-top:2rem;color:var(--muted);font-size:.7rem}
+
+.benchmark-bar{display:flex;align-items:center;gap:.5rem;margin:.4rem 0}
+.benchmark-label{font-size:.7rem;color:var(--muted);width:80px;text-align:right}
+.benchmark-track{flex:1;height:20px;background:rgba(255,255,255,.03);border-radius:4px;position:relative;overflow:hidden}
+.benchmark-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:.5rem;font-size:.6rem;font-weight:600;color:#fff;min-width:fit-content;white-space:nowrap}
+
+.ci{width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted);font-size:9px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;font-family:inherit;vertical-align:middle;margin-left:auto;line-height:1}
+.ci:hover{background:rgba(101,183,251,.2);color:var(--accent-light);border-color:rgba(101,183,251,.3)}
+
+.info-overlay{display:none;position:fixed;inset:0;background:rgba(8,15,30,.85);z-index:999;justify-content:center;align-items:center;backdrop-filter:blur(4px)}
+.info-overlay.active{display:flex}
+.info-modal{background:var(--surface);border:1px solid rgba(255,255,255,.1);border-radius:16px;max-width:640px;width:92%;max-height:85vh;overflow-y:auto;padding:2rem;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.5)}
+.info-close{position:absolute;top:10px;right:14px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.06);border:none;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.info-close:hover{background:rgba(224,86,93,.2);color:#e0565d}
+
+.info-btn{
+  width:30px;height:30px;border-radius:50%;background:transparent;
+  border:1px solid var(--border);color:var(--muted);font-size:14px;font-weight:700;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;
+  font-family:inherit;
+}
+.info-btn:hover{border-color:var(--accent);color:var(--accent)}
+.info-modal h2{font-size:1rem;font-weight:700;margin-bottom:.4rem;color:var(--accent)}
+.info-modal h3{font-size:.82rem;font-weight:600;margin:1rem 0 .3rem;color:var(--text);border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:.25rem}
+.info-modal p,.info-modal li{font-size:.75rem;color:var(--muted);line-height:1.7}
+.info-modal ul{padding-left:1.1rem;margin-bottom:.4rem}
+.info-source{
+  font-size:.72rem;padding:6px 12px;border-radius:6px;background:rgba(101,183,251,.08);
+  border-left:3px solid var(--accent);margin:.5rem 0;color:var(--muted);line-height:1.6;
+}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(42,79,218,.3);border-radius:3px}
+@media(max-width:900px){.grid-2{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}header{padding:12px 16px}.container{padding:1rem}}
+@media(max-width:600px){.kpi-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="header-brand">
+    <div class="header-logo">RX</div>
+    <div>
+      <h1><span>PIPPA</span> Raio-X Municipal — Porto de Pedras</h1>
+      <div class="header-sub">Alagoas (AL) | Codigo IBGE: 2707404 | Gerado em 06/10/2026 15:44</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema"><svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    <button class="info-btn" onclick="openInfo()" title="Metodologia e fontes">i</button>
+    <a href="../pippa-portal/index.html" class="portal-btn">Portal PIPPA</a>
+    <button class="portal-btn" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp">&#x1F4E4; WhatsApp</button>
+  </div>
+</header>
+
+<div class="kpi-row" id="kpiMain"></div>
+
+<div class="tabs" id="tabBar"></div>
+<div id="tabContents"></div>
+
+<div id="ciModal" class="info-overlay" onclick="if(event.target===this)hideCI()">
+  <div class="info-modal" style="max-width:520px">
+    <button class="info-close" onclick="hideCI()">&times;</button>
+    <div id="ciBody"></div>
+  </div>
+</div>
+
+<div id="infoModal" class="info-overlay" onclick="if(event.target===this)closeInfo()">
+  <div class="info-modal">
+    <button class="info-close" onclick="closeInfo()">&times;</button>
+    <h2>Raio-X Municipal — Metodologia e Fontes</h2>
+    <p>Diagnostico automatizado que cruza ~20 cubos OLAP do Observatorio Sebrae e APIs publicas (IBGE, BCB, MTE, INEP, ANS, ANATEL, MDS, PNUD, CGU) para tracar um panorama completo do municipio.</p>
+
+    <h3>Painel Principal (KPIs)</h3>
+    <ul>
+      <li><strong>Populacao:</strong> IBGE Censo / estimativas populacionais.</li>
+      <li><strong>Empresas ativas:</strong> estoque de empresas mercantis ativas (RF OLAP).</li>
+      <li><strong>Saldo empregos:</strong> admissoes - desligamentos no ano corrente (CAGED).</li>
+      <li><strong>IDHM:</strong> Indice de Desenvolvimento Humano Municipal (PNUD Atlas).</li>
+      <li><strong>Matriculas:</strong> total de matriculas na educacao basica (INEP Censo Escolar).</li>
+      <li><strong>IBC Conectividade:</strong> Indice Brasil de Conectividade, escala 0-100 (ANATEL).</li>
+    </ul>
+    <div class="info-source"><strong>Referencia:</strong> Populacao ${D.perfil.ano_pop} | IDHM ${D.perfil.ano_idhm} | Matriculas ${D.educacao.ano_censo_ed} | IBC ${D.conectividade.ibc_ano}</div>
+
+    <h3>Aba: Empresas</h3>
+    <ul>
+      <li><strong>Tecido empresarial:</strong> distribuicao por porte (MEI, ME, EPP, Outros) e top 15 setores CNAE.</li>
+      <li><strong>Complexidade economica (ECI):</strong> indice e ranking municipal de diversificacao produtiva.</li>
+      <li><strong>Vocacoes territoriais:</strong> setores com Vantagem Comparativa Revelada (RCA &gt; 1).</li>
+    </ul>
+    <div class="info-source"><strong>Fonte:</strong> Cubos OLAP RF, ECI, RCA — Observatorio Sebrae. <strong>Referencia:</strong> estoque atual de empresas ativas.</div>
+
+    <h3>Aba: Emprego</h3>
+    <ul>
+      <li><strong>CAGED:</strong> admissoes, desligamentos, saldo e salario medio de admissao — serie mensal.</li>
+      <li><strong>Saldo acumulado:</strong> evolucao do saldo liquido de empregos formais no periodo.</li>
+      <li><strong>Setores:</strong> saldo de emprego formal por divisao CNAE.</li>
+    </ul>
+    <div class="info-source"><strong>Fonte:</strong> Cubo OLAP CAGED_movements — MTE/PDET. <strong>Referencia:</strong> ${D.emprego.mensal.length>0?Math.floor(D.emprego.mensal[0].mes/100)+' a '+Math.floor(D.emprego.mensal[D.emprego.mensal.length-1].mes/100):'N/D'}.</div>
+
+    <h3>Aba: Economia</h3>
+    <ul>
+      <li><strong>PIB Municipal (VAB):</strong> Valor Adicionado Bruto total e composicao setorial (Agropecuaria, Industria, Servicos, Administracao Publica).</li>
+      <li><strong>PIB per capita:</strong> VAB / populacao.</li>
+      <li><strong>Comercio exterior:</strong> exportacoes e importacoes em USD FOB.</li>
+      <li><strong>Perfil demografico:</strong> distribuicao populacao urbana vs rural.</li>
+    </ul>
+    <div class="info-source"><strong>Fonte:</strong> Cubos OLAP IBGE_PIB_Municipal_VAB + mdic_exp_imp_mun. <strong>Referencia:</strong> PIB ${D.perfil.ano_pib} | Populacao ${D.perfil.ano_pop}.</div>
+
+    <h3>Aba: Infraestrutura</h3>
+    <ul>
+      <li><strong>Sistema financeiro:</strong> agencias bancarias, operacoes de credito, depositos poupanca, ativos totais (BCB/ESTBAN). Municipios sem agencias sao classificados como "Deserto Bancario".</li>
+      <li><strong>Conectividade digital:</strong> IBC (0-100), cobertura 4G/5G, banda larga fixa (SCM), fibra optica, telefonia movel (SMP), cobertura area agricola.</li>
+      <li><strong>Internet domiciliar:</strong> percentual de domicilios com acesso a internet.</li>
+    </ul>
+    <div class="info-source"><strong>Fonte:</strong> BCB ESTBAN (credito) | Cubo OLAP ANATEL_IBC_MUN (conectividade, ref. ${D.conectividade.ibc_ano}) | IBGE Censo 2022 (internet domiciliar).</div>
+
+    <h3>Aba: Compras Publicas</h3>
+    <ul>
+      <li><strong>PNCP:</strong> aquisicoes realizadas pela prefeitura, com valor homologado segmentado por porte do fornecedor (MEI, ME, EPP, MGE/Demais).</li>
+      <li><strong>Evolucao anual:</strong> serie historica de valor homologado.</li>
+      <li><strong>Categorias:</strong> ranking dos principais tipos de aquisicao.</li>
+    </ul>
+    <div class="info-source"><strong>Fonte:</strong> Cubo OLAP ComprasPublicas_PNCP — Observatorio Sebrae. <strong>Referencia:</strong> acumulado disponivel no PNCP.</div>
+
+    <h3>Aba: Emendas Parlamentares</h3>
+    <ul>
+      <li><strong>Emendas:</strong> repasses recebidos pelo municipio via emendas parlamentares, segmentados por tipo (Individual, Bancada, Comissao, Relator), autor/parlamentar, ano e favorecido.</li>
+    </ul>
+    <div class="info-source"><strong>Fonte:</strong> Portal da Transparencia / CGU — EmendasParlamentares_PorFavorecido.csv. <strong>Referencia:</strong> ${D.emendas.por_ano.length>0?D.emendas.por_ano[0].ano+' a '+D.emendas.por_ano[D.emendas.por_ano.length-1].ano:'N/D'}.</div>
+
+    <h3>Aba: Social</h3>
+    <ul>
+      <li><strong>Educacao:</strong> IDEB, matriculas, docentes, turmas, taxas de aprovacao/reprovacao/abandono, distorcao idade-serie.</li>
+      <li><strong>Saude:</strong> cobertura de saude suplementar e beneficiarios de planos (ANS).</li>
+      <li><strong>Protecao social:</strong> familias e valor do Bolsa Familia (MDS/PBF).</li>
+      <li><strong>Indices:</strong> IDHM e subdimensoes (Renda, Longevidade, Educacao), Gini (desigualdade), ISDEL (desenvolvimento local).</li>
+    </ul>
+    <div class="info-source"><strong>Fonte:</strong> INEP (IDEB ${D.educacao.ano_ideb}, Censo Escolar ${D.educacao.ano_censo_ed}) | ANS | MDS/PBF | PNUD Atlas (IDHM/Gini ${D.perfil.ano_idhm}) | Sebrae (ISDEL ${D.perfil.ano_isdel}).</div>
+
+    <h3>Aba: Sebrae</h3>
+    <ul>
+      <li><strong>Atendimentos:</strong> total acumulado de atendimentos Sebrae no municipio.</li>
+      <li><strong>Taxa de alcance:</strong> razao atendimentos / empresas ativas.</li>
+      <li><strong>ISDEL:</strong> Indice Sebrae de Desenvolvimento Economico Local (0-100).</li>
+      <li><strong>Radar panoramico:</strong> visao integrada de 7 dimensoes municipais normalizadas (Empresas, Emprego, PIB, IDHM, IDEB, ISDEL, Conectividade).</li>
+    </ul>
+    <div class="info-source"><strong>Fonte:</strong> Cubo OLAP Sebrae_Atendimento | ISDEL ${D.perfil.ano_isdel}.</div>
+  </div>
+</div>
+
+<div class="footer">
+  PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas | Sebrae Nacional<br>
+  Dados: Observatorio Sebrae (OLAP), IBGE, BCB, CAGED, INEP, ANS, ANATEL, MDS, PNUD, CGU | Gerado automaticamente
+</div>
+
+</div>
+
+<script>
+const D = {"municipio": {"nome": "Porto de Pedras", "uf_sigla": "AL", "uf_nome": "Alagoas", "uf_id": 27, "codigo": "2707404", "regiao": "Nordeste"}, "gerado_em": "06/10/2026 15:44", "perfil": {"populacao": 9520, "ano_pop": "2026", "pib_ibge": 451598000.0, "ano_pib": 2023, "densidade": 34.4, "pop_urbana": 4798, "pop_rural": 3631, "idhm": 0.541, "gini": 0.53, "idhm_renda": 0.542, "idhm_longevidade": 0.769, "idhm_educacao": 0.379, "ano_idhm": 2010, "isdel": 28.8, "ano_isdel": 2021}, "empresas": {"por_porte": [{"porte": "Empresa de Pequeno Porte (EPP)", "qtd": 63.0}, {"porte": "Microempresa (ME)", "qtd": 259.0}, {"porte": "Micro Empresário Individual (MEI)", "qtd": 371.0}, {"porte": "Outros", "qtd": 63.0}], "total": 756.0, "por_cnae": [{"divisao": "Comércio Varejista", "qtd": 202.0}, {"divisao": "Alimentação", "qtd": 92.0}, {"divisao": "Alojamento", "qtd": 90.0}, {"divisao": "Construção De Edifícios", "qtd": 50.0}, {"divisao": "Serviços Especializados Para Construção", "qtd": 45.0}, {"divisao": "Transporte Terrestre", "qtd": 32.0}, {"divisao": "Atividades Imobiliárias", "qtd": 23.0}, {"divisao": "Agências De Viagens, Operadores Turísticos E Serviços De Reservas", "qtd": 23.0}, {"divisao": "Serviços De Escritório, De Apoio Administrativo E Outros Serviços Prestados Principalmente Às Empresas", "qtd": 18.0}, {"divisao": "Serviços Para Edifícios E Atividades Paisagísticas", "qtd": 15.0}, {"divisao": "Outras Atividades De Serviços Pessoais", "qtd": 15.0}, {"divisao": "Fabricação De Produtos Alimentícios", "qtd": 10.0}, {"divisao": "Fabricação De Produtos De Madeira", "qtd": 10.0}, {"divisao": "Fabricação De Produtos Diversos", "qtd": 10.0}, {"divisao": "Comércio E Reparação De Veículos Automotores E Motocicletas", "qtd": 10.0}], "uf_total": 221007.0, "uf_por_porte": [{"porte": "Empresa de Pequeno Porte (EPP)", "qtd": 13831.0}, {"porte": "Microempresa (ME)", "qtd": 73749.0}, {"porte": "Micro Empresário Individual (MEI)", "qtd": 122650.0}, {"porte": "Outros", "qtd": 10777.0}]}, "complexidade": {"eci": -10.394, "eci_rank": 36210.0, "vocacoes": [{"divisao": "Transporte Aquaviário", "rca": 2718.39}, {"divisao": "Alojamento", "rca": 2360.64}, {"divisao": "Agricultura, Pecuária E Serviços Relacionados", "rca": 1542.74}, {"divisao": "Comércio Varejista", "rca": 555.78}, {"divisao": "Construção De Edifícios", "rca": 209.47}, {"divisao": "Fabricação De Produtos De Minerais Não Metálicos", "rca": 152.83}, {"divisao": "Atividades Jurídicas, De Contabilidade E De Auditoria", "rca": 95.13}, {"divisao": "Alimentação", "rca": 85.69}, {"divisao": "Pesca E Aqüicultura", "rca": 65.82}, {"divisao": "Fabricação De Produtos Diversos", "rca": 62.42}, {"divisao": "Serviços De Escritório, De Apoio Administrativo E Outros Serviços Prestados Principalmente Às Empresas", "rca": 49.11}, {"divisao": "Serviços Para Edifícios E Atividades Paisagísticas", "rca": 48.74}, {"divisao": "Correio E Outras Atividades De Entrega", "rca": 43.2}, {"divisao": "Outras Atividades De Serviços Pessoais", "rca": 35.71}, {"divisao": "Serviços Especializados Para Construção", "rca": 35.47}, {"divisao": "Fabricação De Produtos Alimentícios", "rca": 19.44}, {"divisao": "Atividades De Organizações Associativas", "rca": 19.35}, {"divisao": "Transporte Terrestre", "rca": 19.06}, {"divisao": "Agências De Viagens, Operadores Turísticos E Serviços De Reservas", "rca": 17.5}, {"divisao": "Outras Atividades Profissionais, Científicas E Técnicas", "rca": 13.63}]}, "emprego": {"mensal": [{"mes": 202501, "admissoes": 159.0, "desligamentos": 113.0, "saldo": 46.0, "salario": 1746.26}, {"mes": 202502, "admissoes": 136.0, "desligamentos": 101.0, "saldo": 35.0, "salario": 1711.53}, {"mes": 202503, "admissoes": 81.0, "desligamentos": 119.0, "saldo": -38.0, "salario": 1695.34}, {"mes": 202504, "admissoes": 129.0, "desligamentos": 95.0, "saldo": 34.0, "salario": 1763.07}, {"mes": 202505, "admissoes": 105.0, "desligamentos": 120.0, "saldo": -15.0, "salario": 1734.94}, {"mes": 202506, "admissoes": 153.0, "desligamentos": 96.0, "saldo": 57.0, "salario": 1737.07}, {"mes": 202507, "admissoes": 162.0, "desligamentos": 138.0, "saldo": 24.0, "salario": 1786.59}, {"mes": 202508, "admissoes": 151.0, "desligamentos": 157.0, "saldo": -6.0, "salario": 1915.03}, {"mes": 202509, "admissoes": 209.0, "desligamentos": 104.0, "saldo": 105.0, "salario": 1849.38}, {"mes": 202510, "admissoes": 163.0, "desligamentos": 132.0, "saldo": 31.0, "salario": 1797.34}, {"mes": 202511, "admissoes": 228.0, "desligamentos": 118.0, "saldo": 110.0, "salario": 1854.47}, {"mes": 202512, "admissoes": 72.0, "desligamentos": 105.0, "saldo": -33.0, "salario": 1748.74}, {"mes": 202601, "admissoes": 138.0, "desligamentos": 123.0, "saldo": 15.0, "salario": 1888.5}, {"mes": 202602, "admissoes": 147.0, "desligamentos": 158.0, "saldo": -11.0, "salario": 1913.83}, {"mes": 202603, "admissoes": 239.0, "desligamentos": 122.0, "saldo": 117.0, "salario": 1930.52}, {"mes": 202604, "admissoes": 179.0, "desligamentos": 128.0, "saldo": 51.0, "salario": 1896.79}, {"mes": 202605, "admissoes": 141.0, "desligamentos": 133.0, "saldo": 8.0, "salario": 1976.37}, {"mes": 202606, "admissoes": 134.0, "desligamentos": 124.0, "saldo": 10.0, "salario": 1845.99}], "por_setor": [{"divisao": "Construção De Edifícios", "saldo": 105.0, "admissoes": 554.0}, {"divisao": "Serviços Para Edifícios E Atividades Paisagísticas", "saldo": 52.0, "admissoes": 81.0}, {"divisao": "Atividades Imobiliárias", "saldo": 37.0, "admissoes": 58.0}, {"divisao": "Comércio Varejista", "saldo": 18.0, "admissoes": 44.0}, {"divisao": "Alimentação", "saldo": -16.0, "admissoes": 65.0}, {"divisao": "Alojamento", "saldo": -6.0, "admissoes": 128.0}, {"divisao": "Agricultura, Pecuária E Serviços Relacionados", "saldo": -5.0, "admissoes": 10.0}, {"divisao": "Atividades De Organizações Associativas", "saldo": 4.0, "admissoes": 7.0}, {"divisao": "Atividades Jurídicas, De Contabilidade E De Auditoria", "saldo": -3.0, "admissoes": 0.0}, {"divisao": "Fabricação De Produtos Alimentícios", "saldo": 2.0, "admissoes": 2.0}, {"divisao": "Serviços De Escritório, De Apoio Administrativo E Outros Serviços Prestados Principalmente Às Empresas", "saldo": -2.0, "admissoes": 11.0}, {"divisao": "Fabricação De Produtos De Minerais Não Metálicos", "saldo": 1.0, "admissoes": 3.0}], "saldo_total": 190.0, "salario_medio": 1821.76}, "pib": {"vab_total": 325394000.0, "vab_setores": [{"setor": "Agropecuária", "valor": 191257000.0}, {"setor": "Indústria", "valor": 16263000.0}, {"setor": "Serviços", "valor": 61847000.0}, {"setor": "Administração", "valor": 56027000.0}], "exportacoes": 1799.0, "importacoes": 384.0, "pib_per_capita": 0}, "credito": {"agencias": 0, "operacoes_credito": 0, "depositos_poupanca": 0, "ativos_totais": 0, "credito_rural_valor": 0, "credito_rural_contratos": 0, "tem_estban": false}, "educacao": {"ideb": 3.2, "matriculas": 8110.0, "docentes": 665.0, "turmas": 459.0, "aprovacao": 64.2, "reprovacao": 1.1, "abandono": 2.9, "distorcao": 11.4, "ano_ideb": 2023, "ano_censo_ed": 2025}, "saude_social": {"cobertura_saude": 2.6, "beneficiarios_saude": 247.0, "pop_estimada_ans": 9517.0, "pbf_familias": 3482.0, "pbf_valor": 2403602.0, "pbf_mes": 202510}, "conectividade": {"ibc": 41.9, "ibc_ano": 2024, "cobertura_4g5g": 79.3, "densidade_scm": 2.31, "densidade_smp": 26.7, "fibra": 50.0, "cobertura_agro": 52.2, "domicilios_internet": 2088, "domicilios_total": 2823}, "compras": {"por_porte": [], "total_homologado": 0, "total_estimado": 0, "por_ano": [], "por_categoria": [], "tem_dados": false}, "emendas": {"total_recebido": 25942516.29, "por_tipo": [{"tipo": "Individual (Especial)", "valor": 11042839.0}, {"tipo": "Comissão", "valor": 6621407.6}, {"tipo": "Individual (Definida)", "valor": 5926213.14}, {"tipo": "Relator", "valor": 1752056.55}, {"tipo": "Bancada", "valor": 600000.0}], "por_autor": [{"autor": "COM. DA SAUDE", "valor": 3999999.0}, {"autor": "MARX BELTRAO", "valor": 3800000.0}, {"autor": "FERNANDO FARIAS", "valor": 3195000.0}, {"autor": "ISNALDO BULHOES JR.", "valor": 2900711.0}, {"autor": "RENAN CALHEIROS", "valor": 2523304.0}, {"autor": "RELATOR GERAL", "valor": 1752056.55}, {"autor": "COM. DESENV REGIONAL E TURISMO", "valor": 1692746.6}, {"autor": "FERNANDO COLLOR", "valor": 1399128.0}, {"autor": "PEDRO VILELA", "valor": 771087.38}, {"autor": "COM. TURISMO", "valor": 713662.0}, {"autor": "RODRIGO CUNHA", "valor": 700000.0}, {"autor": "BANCADA DE ALAGOAS", "valor": 600000.0}, {"autor": "DELEGADO FABIO COSTA", "valor": 500000.0}, {"autor": "ALFREDO GASPAR", "valor": 400000.0}, {"autor": "Sem informação", "valor": 342965.76}], "por_ano": [{"ano": "2015", "valor": 342965.76}, {"ano": "2019", "valor": 110777.0}, {"ano": "2020", "valor": 477700.52}, {"ano": "2021", "valor": 872788.47}, {"ano": "2022", "valor": 3293618.54}, {"ano": "2023", "valor": 3822964.0}, {"ano": "2024", "valor": 5073438.4}, {"ano": "2025", "valor": 5589264.6}, {"ano": "2026", "valor": 6358999.0}], "por_favorecido": [{"favorecido": "MUNICIPIO DE PORTO DE PEDRAS", "valor": 17128280.34}, {"favorecido": "FUNDO MUNICIPAL DE SAUDE", "valor": 7786964.76}, {"favorecido": "FUNDO MUNICIPAL DE ASSISTENCIA SOCIAL - FMAS", "valor": 815000.0}, {"favorecido": "ONG FILHOS DO PATACHO", "valor": 200000.0}, {"favorecido": "RITA DE KACIA SANTOS LIMA", "valor": 12271.19}], "qtd_registros": 70}, "sebrae": {"atendimentos": 2269.0}};
+
+function fmt(v,dec=0){if(v==null||v===undefined)return'N/D';if(v===0)return'0';if(Math.abs(v)>=1e9)return'R$ '+(v/1e9).toFixed(1)+'B';if(Math.abs(v)>=1e6)return(v/1e6).toFixed(1)+'M';if(Math.abs(v)>=1e3)return(v/1e3).toFixed(dec>0?dec:1)+'k';return dec>0?v.toFixed(dec):v.toLocaleString('pt-BR')}
+function pct(v){return v!=null&&v!==undefined?v.toFixed(1)+'%':'N/D'}
+
+function toggleTheme(){const html=document.documentElement;const t=html.getAttribute('data-theme')==='dark'?'light':'dark';html.setAttribute('data-theme',t);localStorage.setItem('pippa-theme',t)}
+
+const CHART_COLORS = ['#65b7fb','#61b466','#be64e3','#fbec76','#e0565d','#65b7fb','#f39d72','#ec4899','#14b8a6','#6366f1','#84cc16','#f43f5e'];
+
+// ── KPIs ────────────────────────────────────────────────────
+function renderKPIs(){
+  const p=D.perfil,e=D.empresas,em=D.emprego,ed=D.educacao,c=D.conectividade;
+  document.getElementById('kpiMain').innerHTML=`
+    <div class="kpi kpi-blue"><div class="kpi-label">Populacao</div><div class="kpi-value">${fmt(p.populacao)}</div><div class="kpi-detail">IBGE Censo (${p.ano_pop})</div></div>
+    <div class="kpi kpi-green"><div class="kpi-label">Empresas ativas</div><div class="kpi-value">${fmt(e.total)}</div><div class="kpi-detail">RF OLAP — estoque atual</div></div>
+    <div class="kpi kpi-purple"><div class="kpi-label">Saldo empregos ${new Date().getFullYear()}</div><div class="kpi-value">${em.saldo_total>=0?'+':''}${fmt(em.saldo_total)}</div><div class="kpi-detail">CAGED (${new Date().getFullYear()})</div></div>
+    <div class="kpi kpi-cyan"><div class="kpi-label">IDHM</div><div class="kpi-value">${p.idhm||'N/D'}</div><div class="kpi-detail">PNUD (${p.ano_idhm})</div></div>
+    <div class="kpi kpi-yellow"><div class="kpi-label">Matriculas</div><div class="kpi-value">${ed.matriculas?fmt(ed.matriculas):'N/D'}</div><div class="kpi-detail">INEP Censo Escolar (${ed.ano_censo_ed})</div></div>
+    <div class="kpi"><div class="kpi-label">IBC Conectividade</div><div class="kpi-value">${c.ibc||'N/D'}</div><div class="kpi-detail">ANATEL (${c.ibc_ano})</div></div>
+  `;
+}
+
+// ── Tabs ─────────────────────────────────────────────────────
+const TABS=[
+  {id:'empresas',label:'Empresas'},
+  {id:'emprego',label:'Emprego'},
+  {id:'economia',label:'Economia'},
+  {id:'infra',label:'Infraestrutura'},
+  {id:'compras',label:'Compras Publicas'},
+  {id:'emendas',label:'Emendas'},
+  {id:'social',label:'Social'},
+  {id:'sebrae',label:'Sebrae'}
+];
+
+function renderTabs(){
+  const bar=document.getElementById('tabBar');
+  const cont=document.getElementById('tabContents');
+  TABS.forEach((t,i)=>{
+    const btn=document.createElement('button');
+    btn.className='tab'+(i===0?' active':'');
+    btn.textContent=t.label;
+    btn.onclick=()=>switchTab(t.id);
+    btn.dataset.tab=t.id;
+    bar.appendChild(btn);
+
+    const div=document.createElement('div');
+    div.className='tab-content'+(i===0?' active':'');
+    div.id='tab-'+t.id;
+    cont.appendChild(div);
+  });
+}
+
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.id==='tab-'+id));
+}
+
+// ── Empresas ────────────────────────────────────────────────
+function renderEmpresas(){
+  const el=document.getElementById('tab-empresas');
+  const e=D.empresas, cx=D.complexidade;
+
+  let vocHtml='<div class="empty">Sem vocacoes identificadas (RCA &gt; 1)</div>';
+  if(cx.vocacoes&&cx.vocacoes.length>0){
+    vocHtml='<div class="table-wrapper"><table><thead><tr><th>Divisao CNAE</th><th>RCA</th><th>Classificacao</th></tr></thead><tbody>';
+    cx.vocacoes.forEach(v=>{
+      const cls=v.rca>=3?'tag-green':v.rca>=2?'tag-yellow':'tag-blue';
+      const lbl=v.rca>=3?'Forte':v.rca>=2?'Moderada':'Emergente';
+      vocHtml+=`<tr><td>${v.divisao}</td><td>${v.rca}</td><td><span class="tag ${cls}">${lbl}</span></td></tr>`;
+    });
+    vocHtml+='</tbody></table></div>';
+  }
+
+  el.innerHTML=`
+    <div class="section-title">Tecido Empresarial</div>
+    <div class="kpi-row" style="margin-bottom:1rem">
+      <div class="kpi kpi-blue"><div class="kpi-label">Total de empresas</div><div class="kpi-value">${fmt(e.total)}</div><div class="kpi-detail">RF OLAP — estoque atual</div></div>
+      <div class="kpi kpi-green"><div class="kpi-label">ECI (complexidade)</div><div class="kpi-value">${cx.eci||'N/D'}</div><div class="kpi-detail">Ranking: ${cx.eci_rank||'N/D'}o — ECI OLAP</div></div>
+      <div class="kpi kpi-purple"><div class="kpi-label">Participacao na UF</div><div class="kpi-value">${e.uf_total>0?((e.total/e.uf_total)*100).toFixed(1)+'%':'N/D'}</div><div class="kpi-detail">${fmt(e.uf_total)} empresas na UF</div></div>
+      <div class="kpi kpi-cyan"><div class="kpi-label">Vocacoes (RCA&gt;1)</div><div class="kpi-value">${cx.vocacoes?cx.vocacoes.length:0}</div><div class="kpi-detail">setores especializados — RCA OLAP</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Distribuicao por Porte</div>
+        <canvas id="chartPorte"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Top 15 Setores (CNAE)</div>
+        <canvas id="chartCnae"></canvas>
+      </div>
+    </div>
+    <div class="section-title">Vocacoes Territoriais (RCA &gt; 1)</div>
+    ${vocHtml}
+  `;
+
+  if(e.por_porte&&e.por_porte.length>0){
+    new Chart(document.getElementById('chartPorte'),{type:'doughnut',data:{labels:e.por_porte.map(p=>p.porte),datasets:[{data:e.por_porte.map(p=>p.qtd),backgroundColor:CHART_COLORS.slice(0,e.por_porte.length),borderWidth:0}]},options:{responsive:true,plugins:{legend:{position:'right',labels:{color:'#8b9dc3',font:{size:11}}}}}});
+  }
+  if(e.por_cnae&&e.por_cnae.length>0){
+    new Chart(document.getElementById('chartCnae'),{type:'bar',data:{labels:e.por_cnae.map(c=>c.divisao.length>30?c.divisao.substring(0,30)+'...':c.divisao),datasets:[{label:'Empresas',data:e.por_cnae.map(c=>c.qtd),backgroundColor:'rgba(101,183,251,.7)',borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b9dc3'},grid:{color:'rgba(255,255,255,.05)'}},y:{ticks:{color:'#8b9dc3',font:{size:10}},grid:{display:false}}}}});
+  }
+}
+
+// ── Emprego ──────────────────────────────────────────────────
+function renderEmprego(){
+  const el=document.getElementById('tab-emprego');
+  const em=D.emprego;
+
+  el.innerHTML=`
+    <div class="section-title">Mercado de Trabalho Formal</div>
+    <div class="kpi-row" style="margin-bottom:1rem">
+      <div class="kpi kpi-blue"><div class="kpi-label">Saldo ${new Date().getFullYear()}</div><div class="kpi-value">${em.saldo_total>=0?'+':''}${fmt(em.saldo_total)}</div><div class="kpi-detail">CAGED — admissoes - desligamentos</div></div>
+      <div class="kpi kpi-green"><div class="kpi-label">Salario medio admissao</div><div class="kpi-value">R$ ${em.salario_medio?em.salario_medio.toLocaleString('pt-BR',{minimumFractionDigits:0}):'N/D'}</div><div class="kpi-detail">CAGED (${em.mensal.length>0?Math.floor(em.mensal[0].mes/100)+'-'+Math.floor(em.mensal[em.mensal.length-1].mes/100):''})</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Evolucao Mensal — Admissoes vs Desligamentos</div>
+        <canvas id="chartCaged"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Saldo por Setor (${new Date().getFullYear()})</div>
+        <canvas id="chartSetorEmprego"></canvas>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--purple)"></span>Evolucao do Salario Medio de Admissao</div>
+        <canvas id="chartSalario"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Saldo Acumulado</div>
+        <canvas id="chartSaldoAcum"></canvas>
+      </div>
+    </div>
+  `;
+
+  if(em.mensal&&em.mensal.length>0){
+    const labels=em.mensal.map(m=>m.mes);
+    new Chart(document.getElementById('chartCaged'),{type:'line',data:{labels,datasets:[
+      {label:'Admissoes',data:em.mensal.map(m=>m.admissoes),borderColor:'#61b466',backgroundColor:'rgba(97,180,102,.1)',fill:true,tension:.3},
+      {label:'Desligamentos',data:em.mensal.map(m=>m.desligamentos),borderColor:'#e0565d',backgroundColor:'rgba(224,86,93,.1)',fill:true,tension:.3}
+    ]},options:{responsive:true,plugins:{legend:{labels:{color:'#8b9dc3'}}},scales:{x:{ticks:{color:'#8b9dc3',maxRotation:45},grid:{color:'rgba(255,255,255,.05)'}},y:{ticks:{color:'#8b9dc3'},grid:{color:'rgba(255,255,255,.05)'}}}}});
+
+    let acum=0;
+    const acumData=em.mensal.map(m=>{acum+=m.saldo;return acum});
+    new Chart(document.getElementById('chartSaldoAcum'),{type:'bar',data:{labels,datasets:[{label:'Saldo acumulado',data:acumData,backgroundColor:acumData.map(v=>v>=0?'rgba(97,180,102,.6)':'rgba(224,86,93,.6)'),borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b9dc3',maxRotation:45},grid:{color:'rgba(255,255,255,.05)'}},y:{ticks:{color:'#8b9dc3'},grid:{color:'rgba(255,255,255,.05)'}}}}});
+
+    new Chart(document.getElementById('chartSalario'),{type:'line',data:{labels,datasets:[{label:'Salario medio (R$)',data:em.mensal.map(m=>m.salario),borderColor:'#be64e3',backgroundColor:'rgba(190,100,227,.1)',fill:true,tension:.3,pointRadius:3}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b9dc3',maxRotation:45},grid:{color:'rgba(255,255,255,.05)'}},y:{ticks:{color:'#8b9dc3',callback:v=>'R$ '+v.toLocaleString('pt-BR')},grid:{color:'rgba(255,255,255,.05)'}}}}});
+  }
+
+  if(em.por_setor&&em.por_setor.length>0){
+    new Chart(document.getElementById('chartSetorEmprego'),{type:'bar',data:{labels:em.por_setor.map(s=>s.divisao.length>25?s.divisao.substring(0,25)+'...':s.divisao),datasets:[{label:'Saldo',data:em.por_setor.map(s=>s.saldo),backgroundColor:em.por_setor.map(s=>s.saldo>=0?'rgba(97,180,102,.6)':'rgba(224,86,93,.6)'),borderRadius:3}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b9dc3'},grid:{color:'rgba(255,255,255,.05)'}},y:{ticks:{color:'#8b9dc3',font:{size:10}},grid:{display:false}}}}});
+  }
+}
+
+// ── Economia ────────────────────────────────────────────────
+function renderEconomia(){
+  const el=document.getElementById('tab-economia');
+  const p=D.pib, pf=D.perfil;
+  const pibPC=pf.populacao>0&&p.vab_total>0?Math.round(p.vab_total/pf.populacao):0;
+
+  el.innerHTML=`
+    <div class="section-title">Economia Municipal</div>
+    <div class="kpi-row" style="margin-bottom:1rem">
+      <div class="kpi kpi-blue"><div class="kpi-label">PIB Municipal (VAB)</div><div class="kpi-value">${fmt(p.vab_total)}</div><div class="kpi-detail">IBGE PIB Municipal (${pf.ano_pib})</div></div>
+      <div class="kpi kpi-green"><div class="kpi-label">PIB per capita</div><div class="kpi-value">R$ ${pibPC?pibPC.toLocaleString('pt-BR'):'N/D'}</div><div class="kpi-detail">VAB / populacao (${pf.ano_pib})</div></div>
+      <div class="kpi kpi-purple"><div class="kpi-label">Exportacoes</div><div class="kpi-value">${p.exportacoes>0?'US$ '+fmt(p.exportacoes):'N/D'}</div><div class="kpi-detail">MDIC COMEX (ultimo disponivel)</div></div>
+      <div class="kpi kpi-cyan"><div class="kpi-label">Importacoes</div><div class="kpi-value">${p.importacoes>0?'US$ '+fmt(p.importacoes):'N/D'}</div><div class="kpi-detail">MDIC COMEX (ultimo disponivel)</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Composicao do PIB — VAB (${pf.ano_pib})</div>
+        <canvas id="chartVAB"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Perfil Demografico</div>
+        <canvas id="chartDemog"></canvas>
+      </div>
+    </div>
+  `;
+
+  if(p.vab_setores&&p.vab_setores.length>0){
+    new Chart(document.getElementById('chartVAB'),{type:'doughnut',data:{labels:p.vab_setores.map(s=>s.setor),datasets:[{data:p.vab_setores.map(s=>s.valor),backgroundColor:['#61b466','#65b7fb','#be64e3','#fbec76','#e0565d'],borderWidth:0}]},options:{responsive:true,plugins:{legend:{position:'right',labels:{color:'#8b9dc3',font:{size:11}}}}}});
+  }
+
+  const urb=pf.pop_urbana||0,rur=pf.pop_rural||0;
+  if(urb>0||rur>0){
+    new Chart(document.getElementById('chartDemog'),{type:'doughnut',data:{labels:['Urbana','Rural'],datasets:[{data:[urb,rur],backgroundColor:['#65b7fb','#61b466'],borderWidth:0}]},options:{responsive:true,plugins:{legend:{position:'right',labels:{color:'#8b9dc3'}}}}});
+  }
+}
+
+// ── Infraestrutura ──────────────────────────────────────────
+function renderInfra(){
+  const el=document.getElementById('tab-infra');
+  const cr=D.credito, cn=D.conectividade;
+  const temBanco=cr.tem_estban;
+  const ibcAno=cn.ibc_ano?' ('+cn.ibc_ano+')':'';
+  const txInternet=cn.domicilios_total>0?((cn.domicilios_internet/cn.domicilios_total)*100).toFixed(1)+'%':'N/D';
+
+  let bancoHTML='';
+  if(!temBanco){
+    bancoHTML=`
+      <div style="background:rgba(224,86,93,.1);border:1px solid rgba(224,86,93,.3);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;text-align:center">
+        <div style="font-size:2rem;margin-bottom:.5rem">🏦</div>
+        <div style="font-size:1.1rem;font-weight:600;color:var(--red)">Deserto Bancario</div>
+        <div style="color:var(--muted);font-size:.85rem;margin-top:.5rem">Este municipio nao possui agencias bancarias registradas no BCB/ESTBAN.<br>Populacao depende de municipios vizinhos ou canais digitais para servicos financeiros.</div>
+      </div>
+    `;
+  } else {
+    bancoHTML=`
+      <div class="kpi-row" style="margin-bottom:1rem">
+        <div class="kpi kpi-green"><div class="kpi-label">Operacoes de credito</div><div class="kpi-value">${fmt(cr.operacoes_credito)}</div><div class="kpi-detail">BCB ESTBAN</div></div>
+        <div class="kpi kpi-purple"><div class="kpi-label">Depositos poupanca</div><div class="kpi-value">${fmt(cr.depositos_poupanca)}</div><div class="kpi-detail">BCB ESTBAN</div></div>
+        <div class="kpi kpi-cyan"><div class="kpi-label">Ativos totais</div><div class="kpi-value">${fmt(cr.ativos_totais)}</div><div class="kpi-detail">BCB ESTBAN</div></div>
+      </div>
+    `;
+  }
+
+  el.innerHTML=`
+    <div class="section-title">Infraestrutura Financeira</div>
+    ${bancoHTML}
+    <div class="section-title">Conectividade Digital</div>
+    <div class="kpi-row" style="margin-bottom:1rem">
+      <div class="kpi kpi-cyan"><div class="kpi-label">IBC Conectividade</div><div class="kpi-value">${cn.ibc||'N/D'}</div><div class="kpi-detail">ANATEL${ibcAno} (0-100)</div></div>
+      <div class="kpi kpi-green"><div class="kpi-label">Cobertura 4G/5G</div><div class="kpi-value">${cn.cobertura_4g5g?pct(cn.cobertura_4g5g):'N/D'}</div><div class="kpi-detail">ANATEL — pop. coberta (${cn.ibc_ano})</div></div>
+      <div class="kpi kpi-purple"><div class="kpi-label">Banda larga fixa</div><div class="kpi-value">${cn.densidade_scm||'N/D'}</div><div class="kpi-detail">ANATEL — acessos/100 hab (${cn.ibc_ano})</div></div>
+      <div class="kpi kpi-blue"><div class="kpi-label">Fibra optica</div><div class="kpi-value">${cn.fibra?pct(cn.fibra):'N/D'}</div><div class="kpi-detail">ANATEL — cobertura (${cn.ibc_ano})</div></div>
+    </div>
+    <div class="kpi-row" style="margin-bottom:1rem">
+      <div class="kpi kpi-yellow"><div class="kpi-label">Domicilios c/ internet</div><div class="kpi-value">${txInternet}</div><div class="kpi-detail">${fmt(cn.domicilios_internet)} de ${fmt(cn.domicilios_total)} — IBGE Censo 2022</div></div>
+      <div class="kpi"><div class="kpi-label">Movel (SMP)</div><div class="kpi-value">${cn.densidade_smp||'N/D'}</div><div class="kpi-detail">ANATEL — acessos/100 hab (${cn.ibc_ano})</div></div>
+      <div class="kpi kpi-green"><div class="kpi-label">Cobertura area agricola</div><div class="kpi-value">${cn.cobertura_agro?pct(cn.cobertura_agro):'N/D'}</div><div class="kpi-detail">ANATEL (${cn.ibc_ano})</div></div>
+    </div>
+    <div class="grid-2">
+      ${temBanco?`<div class="chart-box"><div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Indicadores Financeiros</div><canvas id="chartFinanceiro"></canvas></div>`:''}
+      <div class="chart-box" style="display:flex;flex-direction:column;align-items:center">
+        <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Conectividade Digital — ANATEL (${cn.ibc_ano})</div>
+        <div style="max-width:300px;max-height:300px;width:100%"><canvas id="chartConect"></canvas></div>
+      </div>
+    </div>
+  `;
+
+  if(temBanco){
+    const finLabels=['Operacoes Credito','Depositos Poupanca','Ativos Totais'];
+    const finData=[cr.operacoes_credito,cr.depositos_poupanca,cr.ativos_totais];
+    if(finData.some(v=>v>0)){
+      new Chart(document.getElementById('chartFinanceiro'),{type:'bar',data:{labels:finLabels,datasets:[{label:'Valor (R$)',data:finData,backgroundColor:['#65b7fb','#61b466','#be64e3'],borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b9dc3'},grid:{display:false}},y:{ticks:{color:'#8b9dc3',callback:v=>fmt(v)},grid:{color:'rgba(255,255,255,.05)'}}}}});
+    }
+  }
+
+  const cLabels=['IBC','4G/5G (%)','Fibra (%)','Internet dom. (%)','Cobert. agro (%)'];
+  const cData=[cn.ibc,cn.cobertura_4g5g,cn.fibra,cn.domicilios_total>0?(cn.domicilios_internet/cn.domicilios_total)*100:0,cn.cobertura_agro];
+  new Chart(document.getElementById('chartConect'),{type:'radar',data:{labels:cLabels,datasets:[{label:D.municipio.nome,data:cData,borderColor:'#65b7fb',backgroundColor:'rgba(101,183,251,.15)',pointBackgroundColor:'#65b7fb'}]},options:{responsive:true,plugins:{legend:{labels:{color:'#8b9dc3'}}},scales:{r:{max:100,ticks:{display:false},grid:{color:'rgba(255,255,255,.1)'},pointLabels:{color:'#8b9dc3',font:{size:10}}}}}});
+}
+
+// ── Compras Publicas ────────────────────────────────────────
+function renderCompras(){
+  const el=document.getElementById('tab-compras');
+  const cp=D.compras;
+
+  if(!cp.tem_dados){
+    el.innerHTML=`
+      <div class="section-title">Compras Publicas (PNCP)</div>
+      <div style="background:rgba(251,236,118,.08);border:1px solid rgba(251,236,118,.25);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;text-align:center">
+        <div style="font-size:2rem;margin-bottom:.5rem">📋</div>
+        <div style="font-size:1.1rem;font-weight:600;color:var(--yellow)">Municipio sem dados no PNCP</div>
+        <div style="color:var(--muted);font-size:.85rem;margin-top:.5rem">A prefeitura de ${D.municipio.nome} ainda nao publicou licitacoes no Portal Nacional de Contratacoes Publicas.<br>Dados de compras governamentais indisponiveis.</div>
+      </div>`;
+    return;
+  }
+
+  const mpe=cp.por_porte.filter(p=>['MEI','ME','EPP'].includes(p.porte)).reduce((s,p)=>s+p.valor,0);
+  const mge=cp.por_porte.filter(p=>['MGE','Demais','Não identificado','Pessoa Física'].includes(p.porte)).reduce((s,p)=>s+p.valor,0);
+  const pctMPE=cp.total_homologado>0?((mpe/cp.total_homologado)*100).toFixed(1):0;
+
+  el.innerHTML=`
+    <div class="section-title">Compras Publicas (PNCP) — Aquisicoes</div>
+    <div class="kpi-row" style="margin-bottom:1rem">
+      <div class="kpi kpi-blue"><div class="kpi-label">Total homologado</div><div class="kpi-value">${fmt(cp.total_homologado)}</div><div class="kpi-detail">PNCP (${cp.por_ano.length>0?cp.por_ano[0].ano+'-'+cp.por_ano[cp.por_ano.length-1].ano:'acumulado'})</div></div>
+      <div class="kpi kpi-green"><div class="kpi-label">MPEs (MEI+ME+EPP)</div><div class="kpi-value">${fmt(mpe)}</div><div class="kpi-detail">${pctMPE}% do total</div></div>
+      <div class="kpi kpi-purple"><div class="kpi-label">MGE / Demais</div><div class="kpi-value">${fmt(mge)}</div><div class="kpi-detail">${cp.total_homologado>0?((mge/cp.total_homologado)*100).toFixed(1):0}%</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Valor Homologado por Porte do Fornecedor</div>
+        <canvas id="chartPortePNCP"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Evolucao Anual</div>
+        <canvas id="chartAnoPNCP"></canvas>
+      </div>
+    </div>
+    ${cp.por_categoria.length>0?`<div class="chart-box" style="margin-top:1rem"><div class="chart-title"><span class="dot" style="background:var(--purple)"></span>Top Categorias</div><canvas id="chartCatPNCP"></canvas></div>`:''}
+  `;
+
+  if(cp.por_porte.length>0){
+    new Chart(document.getElementById('chartPortePNCP'),{type:'doughnut',data:{labels:cp.por_porte.map(p=>p.porte),datasets:[{data:cp.por_porte.map(p=>p.valor),backgroundColor:CHART_COLORS.slice(0,cp.por_porte.length),borderWidth:0}]},options:{responsive:true,plugins:{legend:{position:'right',labels:{color:'#8b9dc3',font:{size:11}}}}}});
+  }
+  if(cp.por_ano.length>0){
+    new Chart(document.getElementById('chartAnoPNCP'),{type:'bar',data:{labels:cp.por_ano.map(a=>a.ano),datasets:[{label:'Valor Homologado (R$)',data:cp.por_ano.map(a=>a.valor),backgroundColor:'rgba(101,183,251,.7)',borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b9dc3'},grid:{display:false}},y:{ticks:{color:'#8b9dc3',callback:v=>fmt(v)},grid:{color:'rgba(255,255,255,.05)'}}}}});
+  }
+  if(cp.por_categoria.length>0){
+    new Chart(document.getElementById('chartCatPNCP'),{type:'bar',data:{labels:cp.por_categoria.map(c=>c.categoria.length>35?c.categoria.substring(0,35)+'...':c.categoria),datasets:[{label:'Valor (R$)',data:cp.por_categoria.map(c=>c.valor),backgroundColor:'rgba(190,100,227,.7)',borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b9dc3',callback:v=>fmt(v)},grid:{color:'rgba(255,255,255,.05)'}},y:{ticks:{color:'#8b9dc3',font:{size:10}},grid:{display:false}}}}});
+  }
+}
+
+// ── Emendas Parlamentares ───────────────────────────────────
+function renderEmendas(){
+  const el=document.getElementById('tab-emendas');
+  const em=D.emendas;
+
+  if(!em.qtd_registros){
+    el.innerHTML=`
+      <div class="section-title">Emendas Parlamentares</div>
+      <div style="background:rgba(251,236,118,.08);border:1px solid rgba(251,236,118,.25);border-radius:12px;padding:1.5rem;text-align:center">
+        <div style="font-size:2rem;margin-bottom:.5rem">🏛️</div>
+        <div style="font-size:1.1rem;font-weight:600;color:var(--yellow)">Sem registros de emendas</div>
+        <div style="color:var(--muted);font-size:.85rem;margin-top:.5rem">Nenhuma emenda parlamentar identificada para ${D.municipio.nome} no Portal da Transparencia.</div>
+      </div>`;
+    return;
+  }
+
+  let autorHTML='<div class="table-wrapper"><table><thead><tr><th>Autor</th><th>Valor recebido</th></tr></thead><tbody>';
+  em.por_autor.forEach(a=>{autorHTML+=`<tr><td>${a.autor}</td><td>${fmt(a.valor)}</td></tr>`;});
+  autorHTML+='</tbody></table></div>';
+
+  let favHTML='<div class="table-wrapper"><table><thead><tr><th>Favorecido</th><th>Valor</th></tr></thead><tbody>';
+  em.por_favorecido.forEach(f=>{favHTML+=`<tr><td>${f.favorecido}</td><td>${fmt(f.valor)}</td></tr>`;});
+  favHTML+='</tbody></table></div>';
+
+  el.innerHTML=`
+    <div class="section-title">Emendas Parlamentares</div>
+    <div class="kpi-row" style="margin-bottom:1rem">
+      <div class="kpi kpi-blue"><div class="kpi-label">Total recebido</div><div class="kpi-value">${fmt(em.total_recebido)}</div><div class="kpi-detail">CGU (${em.por_ano.length>0?em.por_ano[0].ano+'-'+em.por_ano[em.por_ano.length-1].ano:''})</div></div>
+      <div class="kpi kpi-green"><div class="kpi-label">Registros</div><div class="kpi-value">${em.qtd_registros}</div><div class="kpi-detail">repasses identificados</div></div>
+      <div class="kpi kpi-purple"><div class="kpi-label">Autores</div><div class="kpi-value">${em.por_autor.length}</div><div class="kpi-detail">parlamentares / comissoes</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Por Tipo de Emenda</div>
+        <canvas id="chartTipoEmenda"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Evolucao Anual</div>
+        <canvas id="chartAnoEmenda"></canvas>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top:1rem">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--purple)"></span>Por Autor / Parlamentar</div>
+        ${autorHTML}
+      </div>
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Favorecidos</div>
+        ${favHTML}
+      </div>
+    </div>
+  `;
+
+  if(em.por_tipo.length>0){
+    new Chart(document.getElementById('chartTipoEmenda'),{type:'doughnut',data:{labels:em.por_tipo.map(t=>t.tipo),datasets:[{data:em.por_tipo.map(t=>t.valor),backgroundColor:CHART_COLORS.slice(0,em.por_tipo.length),borderWidth:0}]},options:{responsive:true,plugins:{legend:{position:'right',labels:{color:'#8b9dc3',font:{size:11}}}}}});
+  }
+  if(em.por_ano.length>0){
+    new Chart(document.getElementById('chartAnoEmenda'),{type:'bar',data:{labels:em.por_ano.map(a=>a.ano),datasets:[{label:'Valor (R$)',data:em.por_ano.map(a=>a.valor),backgroundColor:'rgba(97,180,102,.7)',borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b9dc3'},grid:{display:false}},y:{ticks:{color:'#8b9dc3',callback:v=>fmt(v)},grid:{color:'rgba(255,255,255,.05)'}}}}});
+  }
+}
+
+// ── Social ──────────────────────────────────────────────────
+function renderSocial(){
+  const el=document.getElementById('tab-social');
+  const ed=D.educacao, ss=D.saude_social, pf=D.perfil;
+
+  el.innerHTML=`
+    <div class="section-title">Educacao</div>
+    <div class="kpi-row" style="margin-bottom:1rem">
+      <div class="kpi kpi-blue"><div class="kpi-label">IDEB</div><div class="kpi-value">${ed.ideb||'N/D'}</div><div class="kpi-detail">INEP ${ed.ano_ideb||''}</div></div>
+      <div class="kpi kpi-green"><div class="kpi-label">Matriculas</div><div class="kpi-value">${ed.matriculas?fmt(ed.matriculas):'N/D'}</div><div class="kpi-detail">INEP Censo ${ed.ano_censo_ed||''}</div></div>
+      <div class="kpi kpi-purple"><div class="kpi-label">Docentes</div><div class="kpi-value">${ed.docentes?fmt(ed.docentes):'N/D'}</div><div class="kpi-detail">INEP Censo Escolar (${ed.ano_censo_ed})</div></div>
+      <div class="kpi kpi-cyan"><div class="kpi-label">Turmas</div><div class="kpi-value">${ed.turmas?fmt(ed.turmas):'N/D'}</div><div class="kpi-detail">INEP Censo Escolar (${ed.ano_censo_ed})</div></div>
+    </div>
+    <div class="kpi-row" style="margin-bottom:1rem">
+      <div class="kpi kpi-yellow"><div class="kpi-label">Alunos / 1.000 hab</div><div class="kpi-value">${ed.matriculas&&pf.populacao?(ed.matriculas/pf.populacao*1000).toFixed(0):'N/D'}</div><div class="kpi-detail">proxy cobertura escolar</div></div>
+      <div class="kpi"><div class="kpi-label">Alunos por docente</div><div class="kpi-value">${ed.matriculas&&ed.docentes?(ed.matriculas/ed.docentes).toFixed(1):'N/D'}</div><div class="kpi-detail">razao matriculas/docentes</div></div>
+      <div class="kpi kpi-blue"><div class="kpi-label">Distorcao idade-serie</div><div class="kpi-value">${ed.distorcao?pct(ed.distorcao):'N/D'}</div><div class="kpi-detail">INEP (${ed.ano_censo_ed})</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Taxas Educacionais — INEP (${ed.ano_censo_ed})</div>
+        <canvas id="chartTaxasEdu"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--green)"></span>IDHM — Subdimensoes (${pf.ano_idhm||''})</div>
+        <canvas id="chartIDHM"></canvas>
+      </div>
+    </div>
+    <div class="section-title">Saude e Protecao Social</div>
+    <div class="kpi-row" style="margin-bottom:1rem">
+      <div class="kpi kpi-blue"><div class="kpi-label">Cobertura saude suplementar</div><div class="kpi-value">${pct(ss.cobertura_saude)}</div><div class="kpi-detail">ANS (ultimo disponivel)</div></div>
+      <div class="kpi kpi-green"><div class="kpi-label">Beneficiarios planos</div><div class="kpi-value">${fmt(ss.beneficiarios_saude)}</div><div class="kpi-detail">ANS (ultimo disponivel)</div></div>
+      <div class="kpi kpi-purple"><div class="kpi-label">Familias Bolsa Familia</div><div class="kpi-value">${fmt(ss.pbf_familias)}</div><div class="kpi-detail">MDS ${ss.pbf_mes||''}</div></div>
+      <div class="kpi kpi-cyan"><div class="kpi-label">Valor transferido (BF)</div><div class="kpi-value">${ss.pbf_valor?fmt(ss.pbf_valor):'N/D'}</div><div class="kpi-detail">MDS mensal</div></div>
+    </div>
+    <div class="kpi-row">
+      <div class="kpi kpi-yellow"><div class="kpi-label">IDHM</div><div class="kpi-value">${pf.idhm||'N/D'}</div><div class="kpi-detail">PNUD ${pf.ano_idhm||''}</div></div>
+      <div class="kpi"><div class="kpi-label">Gini</div><div class="kpi-value">${pf.gini||'N/D'}</div><div class="kpi-detail">PNUD (${pf.ano_idhm}) — 0=igual, 1=desigual</div></div>
+      <div class="kpi kpi-blue"><div class="kpi-label">ISDEL</div><div class="kpi-value">${pf.isdel||'N/D'}</div><div class="kpi-detail">Sebrae ${pf.ano_isdel||''} (0-100)</div></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;justify-content:center">
+      <div class="chart-box" style="max-width:400px;display:flex;flex-direction:column;align-items:center">
+        <div class="chart-title"><span class="dot" style="background:var(--purple)"></span>Indicadores Sociais</div>
+        <div style="max-width:300px;max-height:300px;width:100%"><canvas id="chartSocial"></canvas></div>
+      </div>
+    </div>
+  `;
+
+  if(ed.aprovacao>0||ed.reprovacao>0){
+    new Chart(document.getElementById('chartTaxasEdu'),{type:'bar',data:{labels:['Aprovacao','Reprovacao','Abandono','Distorcao'],datasets:[{data:[ed.aprovacao,ed.reprovacao,ed.abandono,ed.distorcao],backgroundColor:['#61b466','#fbec76','#e0565d','#f39d72'],borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b9dc3'},grid:{display:false}},y:{max:100,ticks:{color:'#8b9dc3',callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.05)'}}}}});
+  }
+
+  if(pf.idhm_renda||pf.idhm_longevidade||pf.idhm_educacao){
+    new Chart(document.getElementById('chartIDHM'),{type:'bar',data:{labels:['IDHM Geral','Renda','Longevidade','Educacao'],datasets:[{data:[pf.idhm,pf.idhm_renda,pf.idhm_longevidade,pf.idhm_educacao],backgroundColor:['#65b7fb','#61b466','#be64e3','#fbec76'],borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b9dc3'},grid:{display:false}},y:{max:1,ticks:{color:'#8b9dc3'},grid:{color:'rgba(255,255,255,.05)'}}}}});
+  }
+
+  const socialLabels=['IDHM','Gini (inv.)','ISDEL','Cobertura Saude (%)','IBC Conectividade'];
+  const socialData=[pf.idhm*100,(1-pf.gini)*100,pf.isdel,ss.cobertura_saude,D.conectividade.ibc];
+  new Chart(document.getElementById('chartSocial'),{type:'radar',data:{labels:socialLabels,datasets:[{label:D.municipio.nome,data:socialData,borderColor:'#65b7fb',backgroundColor:'rgba(101,183,251,.15)',pointBackgroundColor:'#65b7fb'}]},options:{responsive:true,plugins:{legend:{labels:{color:'#8b9dc3'}}},scales:{r:{max:100,ticks:{display:false},grid:{color:'rgba(255,255,255,.1)'},pointLabels:{color:'#8b9dc3',font:{size:10}}}}}});
+}
+
+// ── Sebrae ───────────────────────────────────────────────────
+function renderSebrae(){
+  const el=document.getElementById('tab-sebrae');
+  const sb=D.sebrae, e=D.empresas, pf=D.perfil;
+
+  const taxa = e.total>0&&sb.atendimentos>0?((sb.atendimentos/e.total)*100).toFixed(1):0;
+
+  el.innerHTML=`
+    <div class="section-title">Presenca Sebrae no Municipio</div>
+    <div class="kpi-row" style="margin-bottom:1rem">
+      <div class="kpi kpi-blue"><div class="kpi-label">Atendimentos</div><div class="kpi-value">${fmt(sb.atendimentos)}</div><div class="kpi-detail">Sebrae OLAP (acumulado)</div></div>
+      <div class="kpi kpi-green"><div class="kpi-label">Taxa de alcance</div><div class="kpi-value">${taxa}%</div><div class="kpi-detail">atendimentos / empresas ativas</div></div>
+      <div class="kpi kpi-purple"><div class="kpi-label">ISDEL</div><div class="kpi-value">${pf.isdel||'N/D'}</div><div class="kpi-detail">Sebrae ${pf.ano_isdel||''} (0-100)</div></div>
+    </div>
+    <div class="chart-box" style="max-width:400px;display:flex;flex-direction:column;align-items:center">
+      <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Panorama do Municipio</div>
+      <div style="max-width:300px;max-height:300px;width:100%"><canvas id="chartRadar"></canvas></div>
+    </div>
+  `;
+
+  const dims=['Empresas','Emprego','PIB','IDHM','IDEB','ISDEL','Conectividade'];
+  const maxEmpresas=e.uf_total>0?e.uf_total:e.total*50;
+  const vals=[
+    Math.min((e.total/Math.max(maxEmpresas*.01,1))*100,100),
+    Math.min(Math.max(D.emprego.saldo_total+50,0),100),
+    Math.min(D.pib.vab_total>0?50:0,100),
+    (pf.idhm||0)*100,
+    (D.educacao.ideb||0)*20,
+    pf.isdel||0,
+    D.conectividade.ibc||0
+  ];
+
+  new Chart(document.getElementById('chartRadar'),{type:'radar',data:{labels:dims,datasets:[{label:D.municipio.nome,data:vals,borderColor:'#65b7fb',backgroundColor:'rgba(101,183,251,.15)',pointBackgroundColor:'#65b7fb'}]},options:{responsive:true,plugins:{legend:{labels:{color:'#8b9dc3'}}},scales:{r:{max:100,ticks:{display:false},grid:{color:'rgba(255,255,255,.1)'},pointLabels:{color:'#8b9dc3',font:{size:11}}}}}});
+}
+
+// ── CI Modal ────────────────────────────────────────────────
+function showCI(html){document.getElementById('ciBody').innerHTML=html;document.getElementById('ciModal').classList.add('active')}
+function hideCI(){document.getElementById('ciModal').classList.remove('active')}
+function openInfo(){document.getElementById('infoModal').classList.add('active')}
+function closeInfo(){document.getElementById('infoModal').classList.remove('active')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){hideCI();closeInfo()}});
+
+function exportWhatsApp(){
+  var kpis=document.querySelectorAll('#kpiMain .kpi');
+  var lines=['*Raio-X Municipal — Porto de Pedras*','_Alagoas (AL) | PIPPA Indicadores_',''];
+  kpis.forEach(function(k){
+    var label=k.querySelector('.kpi-label');
+    var value=k.querySelector('.kpi-value');
+    if(label&&value) lines.push('• '+label.textContent.trim()+': *'+value.textContent.trim()+'*');
+  });
+  lines.push('');
+  lines.push('📅 '+new Date().toLocaleDateString('pt-BR'));
+  lines.push('🔗 raio_x_porto_de_pedras.html');
+  window.open('https://wa.me/?text='+encodeURIComponent(lines.join('\n')),'_blank');
+}
+
+// ── Init ────────────────────────────────────────────────────
+renderKPIs();
+renderTabs();
+renderEmpresas();
+renderEmprego();
+renderEconomia();
+renderInfra();
+renderCompras();
+renderEmendas();
+renderSocial();
+renderSebrae();
+</script>
+</body>
+</html>

@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PIPPA Raio-X — Diagnóstico Territorial</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080f1e;--surface:#0f1a2e;--surface2:#162038;--card:rgba(255,255,255,.04);--border:rgba(255,255,255,.08);--text:#eff3ee;--text2:#8b9dc3;--muted:#8b9dc3;--accent:#65b7fb;--accent-light:#90ccfd;--green:#61b466;--yellow:#fbec76;--red:#e0565d;--purple:#be64e3;--cyan:#65b7fb;--orange:#f39d72;--font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,0.3)}
+[data-theme="light"]{--bg:#eff3ee;--surface:#ffffff;--surface2:#e5eae4;--card:rgba(42,79,218,.04);--border:rgba(42,79,218,.1);--text:#000000;--text2:#4a5568;--muted:#6b7280;--accent:#2a4fda;--accent-light:#0b2574;--green:#2d8f35;--yellow:#b8960a;--red:#c0343b;--purple:#8b3fbf;--cyan:#0a7e96;--orange:#c97a3a;--shadow:0 2px 12px rgba(0,0,0,0.08)}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+.container{max-width:1400px;margin:0 auto;padding:0 1.5rem 1.5rem}
+
+header{background:var(--surface);display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border);margin-bottom:1.5rem;flex-wrap:nowrap;gap:1rem}
+header h1{font-size:1.375rem;font-weight:800;letter-spacing:-.5px;font-family:var(--font-heading);color:var(--accent)}
+header h1 span{color:var(--accent)}
+.badge{display:inline-block;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(101,183,251,.08);color:var(--accent);border:1px solid var(--border)}
+.subtitle{color:var(--muted);font-size:13px;margin-top:.1rem;font-weight:400}
+.header-actions{display:flex;gap:12px;align-items:center}
+.info-btn{width:32px;height:32px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;font-family:'Segoe UI',system-ui,sans-serif;flex-shrink:0}
+.info-btn:hover{border-color:var(--accent);color:var(--accent)}
+.portal-btn{display:flex;align-items:center;gap:6px;border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .2s;white-space:nowrap;background:transparent}
+.portal-btn:hover{border-color:var(--accent);color:var(--accent)}
+.theme-toggle{background:transparent;border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.icon-moon{display:none}
+[data-theme="light"] .icon-sun{display:none}
+[data-theme="light"] .icon-moon{display:block}
+[data-theme="light"] .narrative{background:rgba(42,79,218,.05);border-color:rgba(42,79,218,.12)}
+[data-theme="light"] .insight-box{background:rgba(45,143,53,.05)}
+[data-theme="light"] .insight-box.warn{background:rgba(184,150,10,.05)}
+[data-theme="light"] .insight-box.info{background:rgba(42,79,218,.05)}
+[data-theme="light"] .ranking-item{background:rgba(42,79,218,.03)}
+[data-theme="light"] .selector-row{background:rgba(42,79,218,.03)}
+[data-theme="light"] .selector-group select{background:var(--surface);color:var(--text)}
+
+.selector-row{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:flex-end;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.2rem}
+.selector-group{display:flex;flex-direction:column;gap:.3rem;min-width:180px;flex:1}
+.selector-group label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.selector-group select{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:.5rem .8rem;font-size:.8rem;font-family:inherit;cursor:pointer;transition:border-color .2s;appearance:auto}
+.selector-group select:hover{border-color:rgba(59,130,246,.4)}
+.selector-group select:disabled{opacity:.4;cursor:not-allowed}
+.territory-label{display:flex;align-items:center;gap:.5rem;padding:6px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-weight:600;color:var(--text);white-space:nowrap}
+.territory-label .level-icon{font-size:1rem}
+
+.narrative{background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.12);border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;font-size:.82rem;line-height:1.9;color:var(--text2)}
+.narrative strong{color:var(--text)}
+.narrative .hl{color:var(--accent);font-weight:600}
+.pos{color:var(--green);font-weight:600}
+.neg{color:var(--red);font-weight:600}
+
+.loading-overlay{text-align:center;padding:3rem;color:var(--muted);font-size:.85rem}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top:3px solid var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto .8rem}
+@keyframes spin{100%{transform:rotate(360deg)}}
+
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin-bottom:1.5rem}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.2rem;text-align:center;transition:border-color .2s}
+.kpi:hover{border-color:rgba(59,130,246,.3)}
+.kpi-label{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem}
+.kpi-value{font-size:1.4rem;font-weight:800;color:var(--text)}
+.kpi-detail{font-size:.62rem;color:var(--muted);margin-top:.2rem}
+.kpi-blue .kpi-value{color:var(--accent)}
+.kpi-green .kpi-value{color:var(--green)}
+.kpi-purple .kpi-value{color:var(--purple)}
+.kpi-cyan .kpi-value{color:var(--cyan)}
+.kpi-yellow .kpi-value{color:var(--yellow)}
+.kpi-red .kpi-value{color:var(--red)}
+
+.tabs{display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+.tab{padding:.5rem 1rem;border-radius:8px 8px 0 0;font-size:.75rem;font-weight:600;cursor:pointer;color:var(--muted);background:transparent;border:none;transition:all .2s;font-family:inherit}
+.tab.active{color:var(--accent);background:rgba(59,130,246,.1);border-bottom:2px solid var(--accent)}
+.tab:hover{color:var(--text)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:1rem;margin-bottom:1rem}
+.chart-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;min-height:280px}
+.chart-title{font-size:.8rem;font-weight:600;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+.insight-box{background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.12);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1rem;font-size:.78rem;line-height:1.7;color:var(--text2)}
+.insight-box.warn{background:rgba(234,179,8,.05);border-color:rgba(234,179,8,.12)}
+.insight-box.info{background:rgba(59,130,246,.05);border-color:rgba(59,130,246,.12)}
+.insight-title{font-weight:700;color:var(--text);margin-bottom:.3rem;font-size:.82rem}
+
+.ranking-list{display:flex;flex-direction:column;gap:.5rem}
+.ranking-item{display:flex;align-items:center;gap:.8rem;padding:.5rem .8rem;background:rgba(255,255,255,.02);border-radius:8px;font-size:.75rem}
+.ranking-pos{width:24px;height:24px;border-radius:50%;background:rgba(59,130,246,.15);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.65rem;flex-shrink:0}
+.ranking-name{flex:1;color:var(--text)}
+.ranking-value{font-weight:700;color:var(--accent);white-space:nowrap}
+.ranking-bar{flex:2;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.ranking-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .5s}
+
+.section-title{font-size:.85rem;font-weight:700;margin:1.2rem 0 .8rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+
+
+.footer{text-align:center;padding:2rem 0;border-top:1px solid var(--border);margin-top:2rem;color:var(--muted);font-size:.68rem;line-height:1.8}
+
+.info-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.info-overlay.active{display:flex}
+.info-modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;max-width:560px;width:90%;max-height:80vh;overflow-y:auto}
+.info-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer}
+.info-close:hover{color:var(--text)}
+.info-modal h2{font-size:1.1rem;font-weight:700;margin-bottom:.8rem;color:var(--accent)}
+.info-modal h3{font-size:.85rem;font-weight:600;margin:1rem 0 .4rem;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:.3rem}
+.info-modal p,.info-modal li{font-size:.78rem;color:var(--text2);line-height:1.7}
+.info-modal ul{padding-left:1.2rem;margin-bottom:.5rem}
+.info-source{font-size:.7rem;padding:5px 10px;border-radius:6px;background:rgba(59,130,246,.06);border-left:3px solid var(--accent);margin:.4rem 0;color:var(--text2);line-height:1.6}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(42,79,218,.3);border-radius:3px}
+
+@media(max-width:768px){
+  .grid-2{grid-template-columns:1fr}
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+  .selector-row{flex-direction:column}
+  .selector-group{min-width:100%}
+  header{padding:12px 16px;flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div>
+    <h1>PIPPA <span>Raio-X</span></h1>
+    <div class="subtitle">Diagnostico Territorial com Dados Publicos em Tempo Real</div>
+  </div>
+  <div class="header-actions">
+    <div class="territory-label"><span class="level-icon" id="levelIcon">🇧🇷</span><span id="levelLabel">Brasil</span></div>
+    <span class="badge">PIPPA — Indicadores</span>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema"><svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    <button class="info-btn" onclick="openInfo()" title="Metodologia e fontes">i</button>
+    <button class="portal-btn" onclick="exportWhatsApp()" title="Compartilhar via WhatsApp">📤 WhatsApp</button>
+    <a href="../pippa-portal/index.html" class="portal-btn">Portal PIPPA</a>
+  </div>
+</header>
+
+<div class="selector-row">
+  <div class="selector-group">
+    <label for="selRegiao">Regiao</label>
+    <select id="selRegiao" onchange="onRegiaoChange()">
+      <option value="">Brasil (todo o pais)</option>
+      <option value="1">Norte</option>
+      <option value="2">Nordeste</option>
+      <option value="3">Sudeste</option>
+      <option value="4">Sul</option>
+      <option value="5">Centro-Oeste</option>
+    </select>
+  </div>
+  <div class="selector-group">
+    <label for="selEstado">Estado</label>
+    <select id="selEstado" onchange="onEstadoChange()" disabled>
+      <option value="">Todos os estados</option>
+    </select>
+  </div>
+  <div class="selector-group">
+    <label for="selMunicipio">Municipio</label>
+    <select id="selMunicipio" onchange="onMunicipioChange()" disabled>
+      <option value="">Todos os municipios</option>
+    </select>
+  </div>
+</div>
+
+<div class="narrative" id="narrative">Carregando dados...</div>
+
+<div id="loadingArea" class="loading-overlay">
+  <div class="spinner"></div>
+  <span>Consultando IBGE e Banco Central...</span>
+</div>
+
+<div id="mainContent" style="display:none">
+  <div class="kpi-row" id="kpiRow"></div>
+  <div class="tabs" id="tabBar"></div>
+  <div id="tabContents"></div>
+</div>
+
+<div class="footer">
+  PIPPA — Plataforma de Inteligencia em Politicas Publicas Aplicadas | Sebrae Nacional<br>
+  Dados: IBGE (Agregados v3, Localidades) · BCB (SGS) | Consulta em tempo real via APIs publicas<br>
+  Populacao: IBGE Estimativas · PIB: IBGE Contas Municipais · Empresas: Receita Federal (Observatorio Sebrae) · Emprego: IBGE CEMPRE · Financeiro: Banco Central do Brasil
+</div>
+
+</div>
+
+<div id="infoModal" class="info-overlay" onclick="if(event.target===this)closeInfo()">
+  <div class="info-modal" style="position:relative">
+    <button class="info-close" onclick="closeInfo()">&times;</button>
+    <h2>PIPPA Raio-X — Metodologia e Fontes</h2>
+    <p>Dashboard de diagnostico territorial que consulta APIs publicas em tempo real para apresentar um panorama socioeconomico do territorio selecionado.</p>
+
+    <h3>Populacao</h3>
+    <ul>
+      <li><strong>Fonte:</strong> IBGE — Estimativas de Populacao (Tabela 6579, variavel 9324).</li>
+      <li><strong>Niveis:</strong> Brasil, Grandes Regioes, UFs e Municipios.</li>
+      <li><strong>Atualizacao:</strong> anual, publicada pelo IBGE em julho/agosto.</li>
+    </ul>
+    <div class="info-source">API: servicodados.ibge.gov.br/api/v3/agregados/6579</div>
+
+    <h3>Produto Interno Bruto (PIB)</h3>
+    <ul>
+      <li><strong>Fonte:</strong> IBGE — PIB dos Municipios (Tabela 5938).</li>
+      <li><strong>Variaveis:</strong> PIB total (R$ mil), VAB Agropecuaria, VAB Industria, VAB Servicos, VAB Administracao Publica.</li>
+      <li><strong>Nota:</strong> PIB total refere-se ao ultimo ano disponivel; composicao setorial (VAB) disponivel ate 2021.</li>
+    </ul>
+    <div class="info-source">API: servicodados.ibge.gov.br/api/v3/agregados/5938</div>
+
+    <h3>Empresas (Receita Federal)</h3>
+    <ul>
+      <li><strong>Fonte:</strong> Receita Federal do Brasil — Cadastro Nacional de Pessoa Juridica (CNPJ), via Observatorio Sebrae.</li>
+      <li><strong>Filtros:</strong> apenas empresas ativas (Situacao Cadastral = 2) e mercantis (Indicador Sebrae = 1).</li>
+      <li><strong>Variaveis:</strong> total de estabelecimentos por porte (MEI, ME, EPP, Outros), setor economico e divisao CNAE.</li>
+      <li><strong>Atualizacao:</strong> base atualizada periodicamente pela Receita Federal (dados correntes).</li>
+    </ul>
+    <div class="info-source">API: Observatorio Sebrae / Tesseract — Cubo RF</div>
+
+    <h3>Emprego (IBGE CEMPRE)</h3>
+    <ul>
+      <li><strong>Fonte:</strong> IBGE — Cadastro Central de Empresas / CEMPRE (Tabela 6450).</li>
+      <li><strong>Variaveis:</strong> pessoal ocupado total e assalariado, salarios e remuneracoes por secao CNAE.</li>
+    </ul>
+    <div class="info-source">API: servicodados.ibge.gov.br/api/v3/agregados/6450</div>
+
+    <h3>Indicadores Financeiros (Cenario Nacional)</h3>
+    <ul>
+      <li><strong>Selic:</strong> taxa meta diaria anualizada (serie 432).</li>
+      <li><strong>IPCA:</strong> variacao mensal acumulada em 12 meses (serie 433).</li>
+      <li><strong>Credito livre PJ:</strong> saldo de operacoes de credito livre para pessoa juridica (serie 20631).</li>
+      <li><strong>Inadimplencia:</strong> taxa de inadimplencia de credito livre PJ (serie 21112).</li>
+      <li><strong>Emprego formal:</strong> saldo mensal calculado a partir do estoque de emprego formal CAGED (serie 28763).</li>
+    </ul>
+    <div class="info-source">API: api.bcb.gov.br/dados/serie/bcdata.sgs</div>
+
+    <h3>Niveis Territoriais</h3>
+    <p>O dashboard permite navegacao em 4 niveis: Brasil &rarr; Regiao &rarr; Estado &rarr; Municipio. Os dados se ajustam automaticamente ao nivel selecionado. Os indicadores financeiros do BCB referem-se sempre ao cenario nacional.</p>
+  </div>
+</div>
+
+<script>
+function toggleTheme(){const html=document.documentElement;const t=html.getAttribute('data-theme')==='dark'?'light':'dark';html.setAttribute('data-theme',t);localStorage.setItem('pippa-theme',t);applyChartTheme()}
+const isDark=()=>document.documentElement.getAttribute('data-theme')!=='light';
+const TC={get text(){return isDark()?'#eff3ee':'#1a202c'},get muted(){return isDark()?'#8b9dc3':'#4a5568'},get grid(){return isDark()?'rgba(255,255,255,.06)':'rgba(0,0,0,.08)'}};
+function applyChartTheme(){Object.values(charts||{}).forEach(c=>{if(!c||!c.options)return;Object.values(c.options.scales||{}).forEach(s=>{if(s.ticks)s.ticks.color=TC.muted;if(s.grid&&s.grid.display!==false)s.grid.color=TC.grid;if(s.title&&s.title.display)s.title.color=TC.muted});if(c.options.plugins&&c.options.plugins.legend&&c.options.plugins.legend.labels)c.options.plugins.legend.labels.color=TC.muted;c.update('none')})}
+
+const IBGE_LOC='https://servicodados.ibge.gov.br/api/v1/localidades';
+const IBGE_AGG='https://servicodados.ibge.gov.br/api/v3/agregados';
+const BCB='https://api.bcb.gov.br/dados/serie/bcdata.sgs';
+const OLAP='https://apiv2-observatorio.sebrae.com.br/tesseract/data.jsonrecords';
+const OLAP_TOKEN='f38eaf2bd57685d925db8db0a91979db';
+const RF_MAND='Registration%20Status=2&Sebrae%20Commercial%20Company%20Indicator=1';
+const REGIOES={1:'Norte',2:'Nordeste',3:'Sudeste',4:'Sul',5:'Centro-Oeste'};
+const REGIAO_UFS={1:'11,12,13,14,15,16,17',2:'21,22,23,24,25,26,27,28,29',3:'31,32,33,35',4:'41,42,43',5:'50,51,52,53'};
+const LEVEL_ICONS={brasil:'🇧🇷',regiao:'🗺️',estado:'📍',municipio:'🏘️'};
+const LEVEL_NAMES={brasil:'Brasil',regiao:'Regiao',estado:'Estado',municipio:'Municipio'};
+const IBGE_NIVEL={brasil:'N1',regiao:'N2',estado:'N3',municipio:'N6'};
+const CHART_COLORS=['#3b82f6','#22c55e','#a855f7','#eab308','#ef4444','#06b6d4','#f97316','#ec4899'];
+
+let allEstados=[];
+let statesPopPib={};
+let bcbData={};
+let nationalData=null;
+let currentView={level:'brasil',code:'all',name:'Brasil'};
+let charts={};
+let cempreCache={};
+let statesRF={};
+
+const CNAE_SECTIONS='117897,116830,116880,116910,117296,117307,117329,117363,117484,117543,117555,117608,117666,117673,117714,117774,117788,117810,117838,117861';
+const CNAE_LABELS={
+'116830':'Agropecuaria','116880':'Ind. Extrativa','116910':'Ind. Transformacao',
+'117296':'Eletricidade/Gas','117307':'Agua/Esgoto','117329':'Construcao',
+'117363':'Comercio','117484':'Transporte','117543':'Alojamento/Alimentacao',
+'117555':'Info/Comunicacao','117608':'Financeiro','117666':'Imobiliario',
+'117673':'Profissional/Cientifico','117714':'Administrativo','117774':'Adm. Publica',
+'117788':'Educacao','117810':'Saude','117838':'Artes/Cultura',
+'117861':'Outros Servicos','117888':'Serv. Domesticos','117892':'Org. Internacionais'
+};
+
+function fN(v){if(v==null)return'N/D';if(Math.abs(v)>=1e12)return(v/1e12).toFixed(1)+' tri';if(Math.abs(v)>=1e9)return(v/1e9).toFixed(1)+' bi';if(Math.abs(v)>=1e6)return(v/1e6).toFixed(1)+' mi';if(Math.abs(v)>=1e3)return(v/1e3).toFixed(1)+' mil';return v.toLocaleString('pt-BR')}
+function fC(v){return v!=null?'R$ '+fN(v):'N/D'}
+function pct(v){return v!=null?v.toFixed(1)+'%':'N/D'}
+
+function showLoading(){document.getElementById('loadingArea').style.display='block';document.getElementById('mainContent').style.display='none'}
+function hideLoading(){document.getElementById('loadingArea').style.display='none';document.getElementById('mainContent').style.display='block'}
+function openInfo(){document.getElementById('infoModal').classList.add('active')}
+function closeInfo(){document.getElementById('infoModal').classList.remove('active')}
+
+async function safeFetch(url){try{const c=new AbortController();const t=setTimeout(()=>c.abort(),15000);const r=await fetch(url,{signal:c.signal});clearTimeout(t);if(!r.ok)return null;return r.json()}catch(e){console.warn('Fetch error:',url,e);return null}}
+
+function rfUrl(drilldowns,territoryFilter){
+  let url=`${OLAP}?token=${OLAP_TOKEN}&cube=RF&drilldowns=${encodeURIComponent(drilldowns)}&measures=Establishments&${RF_MAND}`;
+  if(territoryFilter)url+='&'+territoryFilter;
+  return url;
+}
+
+function rfTerritoryFilter(level,code){
+  if(level==='brasil')return'';
+  if(level==='regiao')return'State='+REGIAO_UFS[parseInt(code)];
+  if(level==='estado')return'State='+code;
+  if(level==='municipio')return'Municipality='+code;
+  return'';
+}
+
+function parseRFPorte(json){
+  if(!json||!json.data)return null;
+  const out={total:0,mei:0,me:0,epp:0,outros:0};
+  json.data.forEach(r=>{
+    const n=r.Establishments||0;
+    out.total+=n;
+    const id=r['Company Size Sebrae ID'];
+    if(id===5)out.mei=n;
+    else if(id===4)out.me=n;
+    else if(id===3)out.epp=n;
+    else out.outros+=n;
+  });
+  return out;
+}
+
+function parseRFSetor(json){
+  if(!json||!json.data)return[];
+  return json.data.map(r=>({nome:r.Sector||'?',qtd:r.Establishments||0})).filter(r=>r.qtd>0).sort((a,b)=>b.qtd-a.qtd);
+}
+
+function parseRFDivisao(json){
+  if(!json||!json.data)return[];
+  return json.data.map(r=>({nome:r.Division||'?',qtd:r.Establishments||0})).filter(r=>r.qtd>0).sort((a,b)=>b.qtd-a.qtd);
+}
+
+async function fetchRFData(level,code){
+  const tf=rfTerritoryFilter(level,code);
+  const [porteJ,setorJ,divJ]=await Promise.all([
+    safeFetch(rfUrl('Company Size Sebrae',tf)),
+    safeFetch(rfUrl('Sector',tf)),
+    safeFetch(rfUrl('Division',tf))
+  ]);
+  return{porte:parseRFPorte(porteJ),setores:parseRFSetor(setorJ),divisoes:parseRFDivisao(divJ)};
+}
+
+function parseIBGEPop(json){
+  if(!json||!json[0]||!json[0].resultados)return{};
+  const out={};
+  json[0].resultados[0].series.forEach(s=>{
+    const id=s.localidade.id;
+    const name=s.localidade.nome;
+    const pop={};
+    Object.entries(s.serie).forEach(([y,v])=>{if(v&&v!=='...')pop[y]=parseInt(v)});
+    out[id]={name,pop};
+  });
+  return out;
+}
+
+function parseIBGEPib(json){
+  if(!json)return{};
+  const out={};
+  json.forEach(v=>{
+    if(!v.resultados||!v.resultados[0])return;
+    v.resultados[0].series.forEach(s=>{
+      const id=s.localidade.id;
+      if(!out[id])out[id]={name:s.localidade.nome};
+      Object.entries(s.serie).forEach(([y,val])=>{
+        if(!val||val==='...')return;
+        const n=parseFloat(val);
+        if(v.id==='37'){if(!out[id].pib)out[id].pib={};out[id].pib[y]=n*1000;}
+        else if(v.id==='498'){if(!out[id].vab)out[id].vab={};out[id].vab[y]=n*1000;}
+        else if(v.id==='513'){if(!out[id].vabAgro)out[id].vabAgro={};out[id].vabAgro[y]=n*1000;}
+        else if(v.id==='517'){if(!out[id].vabInd)out[id].vabInd={};out[id].vabInd[y]=n*1000;}
+        else if(v.id==='6575'){if(!out[id].vabServ)out[id].vabServ={};out[id].vabServ[y]=n*1000;}
+        else if(v.id==='525'){if(!out[id].vabAdmin)out[id].vabAdmin={};out[id].vabAdmin[y]=n*1000;}
+      });
+    });
+  });
+  return out;
+}
+
+function parseCEMPRE(json){
+  if(!json)return null;
+  const out={};let ano=null;
+  json.forEach(v=>{
+    if(!v.resultados)return;
+    v.resultados.forEach(r=>{
+      const cls=r.classificacoes&&r.classificacoes[0];
+      if(!cls)return;
+      const catId=Object.keys(cls.categoria)[0];
+      const catName=Object.values(cls.categoria)[0];
+      const s=r.series&&r.series[0];
+      if(!s)return;
+      const yr=Object.keys(s.serie).sort().pop();
+      const val=s.serie[yr];
+      if(!val||val==='...'||val==='-'||val==='X')return;
+      if(!ano)ano=yr;
+      if(!out[catId])out[catId]={nome:catName,label:CNAE_LABELS[catId]||catName.replace(/^[A-Z] /,'')};
+      const n=parseFloat(val);
+      if(v.id==='706')out[catId].empresas=n;
+      else if(v.id==='707')out[catId].empregados=n;
+      else if(v.id==='708')out[catId].assalariados=n;
+      else if(v.id==='662')out[catId].salarios=n*1000;
+      else if(v.id==='2585')out[catId].empresas=n;
+    });
+  });
+  return{setores:out,ano};
+}
+
+function lastVal(obj){if(!obj)return null;const ks=Object.keys(obj).sort();return ks.length?obj[ks[ks.length-1]]:null}
+function lastYear(obj){if(!obj)return null;const ks=Object.keys(obj).sort();return ks.length?ks[ks.length-1]:null}
+
+async function init(){
+  showLoading();
+  try{
+  const [estados,popNac,pibNac,vabNac,popStates,pibStates,cempreNac,rfNac,rfStatesJ,selic,ipca,credito,inad,emp]=await Promise.all([
+    safeFetch(`${IBGE_LOC}/estados?orderBy=nome`),
+    safeFetch(`${IBGE_AGG}/6579/periodos/-6/variaveis/9324?localidades=N1[all]`),
+    safeFetch(`${IBGE_AGG}/5938/periodos/-5/variaveis/37?localidades=N1[all]`),
+    safeFetch(`${IBGE_AGG}/5938/periodos/2021/variaveis/37|498|513|517|6575|525?localidades=N1[all]`),
+    safeFetch(`${IBGE_AGG}/6579/periodos/last/variaveis/9324?localidades=N3[all]`),
+    safeFetch(`${IBGE_AGG}/5938/periodos/last/variaveis/37?localidades=N3[all]`),
+    safeFetch(`${IBGE_AGG}/6450/periodos/last/variaveis/706|707|708|662?localidades=N1[all]&classificacao=12762[${CNAE_SECTIONS}]`),
+    fetchRFData('brasil','all'),
+    safeFetch(rfUrl('State',''))  ,
+    safeFetch(`${BCB}.432/dados/ultimos/1?formato=json`),
+    safeFetch(`${BCB}.433/dados/ultimos/12?formato=json`),
+    safeFetch(`${BCB}.20631/dados/ultimos/1?formato=json`),
+    safeFetch(`${BCB}.21112/dados/ultimos/1?formato=json`),
+    safeFetch(`${BCB}.28763/dados/ultimos/2?formato=json`)
+  ]);
+
+  allEstados=estados||[];
+  populateEstados();
+
+  const popData=parseIBGEPop(popNac);
+  const pibData=parseIBGEPib(pibNac);
+  const vabData=parseIBGEPib(vabNac);
+  const p=popData['1']||{pop:{}};
+  const pb=pibData['1']||{pib:{}};
+  const vb=vabData['1']||{};
+  const latestPop=lastVal(p.pop);
+  const latestPib=lastVal(pb.pib);
+  nationalData={
+    pop:p.pop,populacao:latestPop,popAno:lastYear(p.pop),
+    pib:pb.pib,pibTotal:latestPib,pibAno:lastYear(pb.pib),
+    pibPc:latestPop&&latestPib?latestPib/latestPop:null,
+    vabAgro:lastVal(vb.vabAgro),vabInd:lastVal(vb.vabInd),
+    vabServ:lastVal(vb.vabServ),vabAdmin:lastVal(vb.vabAdmin),vabAno:'2021',
+    cempre:parseCEMPRE(cempreNac),
+    rf:rfNac
+  };
+  cempreCache['brasil']=nationalData.cempre;
+
+  if(rfStatesJ&&rfStatesJ.data){
+    rfStatesJ.data.forEach(r=>{
+      const sid=r['State ID'];
+      if(sid)statesRF[sid]={nome:r.State,total:r.Establishments||0};
+    });
+  }
+
+  const stPop=parseIBGEPop(popStates);
+  const stPib=parseIBGEPib(pibStates);
+  allEstados.forEach(e=>{
+    const sp=stPop[String(e.id)];
+    const sb=stPib[String(e.id)];
+    const sr=statesRF[e.id];
+    statesPopPib[e.id]={
+      nome:e.nome,sigla:e.sigla,regiao:e.regiao.id,
+      pop:sp?lastVal(sp.pop):0,
+      pib:sb?lastVal(sb.pib):0,
+      empresas:sr?sr.total:0
+    };
+  });
+
+  bcbData.selic=selic&&selic.length?parseFloat(selic[selic.length-1].valor):null;
+  bcbData.ipca=ipca&&ipca.length?ipca.reduce((s,v)=>s+parseFloat(v.valor),0):null;
+  bcbData.ipcaMes=ipca&&ipca.length?parseFloat(ipca[ipca.length-1].valor):null;
+  bcbData.credito=credito&&credito.length?parseFloat(credito[0].valor)*1e6:null;
+  bcbData.inadimplencia=inad&&inad.length?parseFloat(inad[0].valor):null;
+  if(emp&&emp.length>=2){bcbData.empregoSaldo=Math.round(parseFloat(emp[1].valor)-parseFloat(emp[0].valor))}
+
+  buildTabs();
+  renderView(nationalData);
+  }catch(e){console.error('Init error:',e);document.getElementById('narrative').innerHTML='<strong>Erro ao carregar dados.</strong> Verifique sua conexao e recarregue a pagina.';}
+  hideLoading();
+}
+
+function populateEstados(regiaoId){
+  const sel=document.getElementById('selEstado');
+  sel.innerHTML='<option value="">Todos os estados</option>';
+  const filtered=regiaoId?allEstados.filter(s=>s.regiao.id===parseInt(regiaoId)):allEstados;
+  filtered.forEach(s=>{sel.innerHTML+=`<option value="${s.id}">${s.nome} (${s.sigla})</option>`});
+  sel.disabled=!regiaoId;
+  document.getElementById('selMunicipio').innerHTML='<option value="">Todos os municipios</option>';
+  document.getElementById('selMunicipio').disabled=true;
+}
+
+async function loadMunicipios(ufId){
+  const sel=document.getElementById('selMunicipio');
+  sel.innerHTML='<option value="">Carregando...</option>';sel.disabled=true;
+  const munis=await safeFetch(`${IBGE_LOC}/estados/${ufId}/municipios?orderBy=nome`);
+  sel.innerHTML='<option value="">Todos os municipios</option>';
+  if(munis)munis.forEach(m=>{sel.innerHTML+=`<option value="${m.id}">${m.nome}</option>`});
+  sel.disabled=false;
+}
+
+async function fetchTerritoryData(level,code){
+  const nv=IBGE_NIVEL[level];
+  const c=code||'all';
+  const [popJ,pibJ,vabJ,cempreJ,rfData]=await Promise.all([
+    safeFetch(`${IBGE_AGG}/6579/periodos/-6/variaveis/9324?localidades=${nv}[${c}]`),
+    safeFetch(`${IBGE_AGG}/5938/periodos/-5/variaveis/37?localidades=${nv}[${c}]`),
+    safeFetch(`${IBGE_AGG}/5938/periodos/2021/variaveis/37|498|513|517|6575|525?localidades=${nv}[${c}]`),
+    safeFetch(`${IBGE_AGG}/6450/periodos/last/variaveis/706|707|708|662?localidades=${nv}[${c}]&classificacao=12762[${CNAE_SECTIONS}]`),
+    fetchRFData(level,code)
+  ]);
+  const popData=parseIBGEPop(popJ);
+  const pibData=parseIBGEPib(pibJ);
+  const vabData=parseIBGEPib(vabJ);
+  const cempre=parseCEMPRE(cempreJ);
+  const firstKey=Object.keys(popData)[0]||Object.keys(pibData)[0]||Object.keys(vabData)[0];
+  if(!firstKey)return null;
+  const p=popData[firstKey]||{pop:{}};
+  const pb=pibData[firstKey]||{pib:{}};
+  const vb=vabData[firstKey]||{};
+  const latestPop=lastVal(p.pop);
+  const latestPib=lastVal(pb.pib);
+  return{
+    pop:p.pop,populacao:latestPop,popAno:lastYear(p.pop),
+    pib:pb.pib,pibTotal:latestPib,pibAno:lastYear(pb.pib),
+    pibPc:latestPop&&latestPib?latestPib/latestPop:null,
+    vabAgro:lastVal(vb.vabAgro),vabInd:lastVal(vb.vabInd),
+    vabServ:lastVal(vb.vabServ),vabAdmin:lastVal(vb.vabAdmin),vabAno:'2021',
+    cempre,rf:rfData
+  };
+}
+
+async function onRegiaoChange(){
+  const v=document.getElementById('selRegiao').value;
+  populateEstados(v);
+  if(v){
+    currentView={level:'regiao',code:v,name:REGIOES[parseInt(v)]};
+  }else{
+    currentView={level:'brasil',code:'all',name:'Brasil'};
+    updateLevel();renderView(nationalData);return;
+  }
+  updateLevel();showLoading();
+  const data=await fetchTerritoryData('regiao',v);
+  renderView(data);hideLoading();
+}
+
+async function onEstadoChange(){
+  const v=document.getElementById('selEstado').value;
+  const mun=document.getElementById('selMunicipio');
+  mun.innerHTML='<option value="">Todos os municipios</option>';mun.disabled=true;
+  if(v){
+    const estado=allEstados.find(s=>s.id===parseInt(v));
+    currentView={level:'estado',code:v,name:estado?estado.nome:'Estado'};
+    loadMunicipios(v);
+  }else{
+    const r=document.getElementById('selRegiao').value;
+    if(r){currentView={level:'regiao',code:r,name:REGIOES[parseInt(r)]}}
+    else{currentView={level:'brasil',code:'all',name:'Brasil'};updateLevel();renderView(nationalData);return}
+  }
+  updateLevel();showLoading();
+  const data=await fetchTerritoryData(currentView.level,currentView.code);
+  renderView(data);hideLoading();
+}
+
+async function onMunicipioChange(){
+  const v=document.getElementById('selMunicipio').value;
+  if(v){
+    const sel=document.getElementById('selMunicipio');
+    currentView={level:'municipio',code:v,name:sel.options[sel.selectedIndex].text};
+  }else{
+    const uf=document.getElementById('selEstado').value;
+    if(uf){
+      const estado=allEstados.find(s=>s.id===parseInt(uf));
+      currentView={level:'estado',code:uf,name:estado?estado.nome:'Estado'};
+    }
+    updateLevel();showLoading();
+    const data=await fetchTerritoryData(currentView.level,currentView.code);
+    renderView(data);hideLoading();return;
+  }
+  updateLevel();showLoading();
+  const data=await fetchTerritoryData('municipio',v);
+  renderView(data);hideLoading();
+}
+
+function updateLevel(){
+  document.getElementById('levelIcon').textContent=LEVEL_ICONS[currentView.level];
+  document.getElementById('levelLabel').textContent=currentView.name;
+}
+
+function buildTabs(){
+  const bar=document.getElementById('tabBar');
+  const cont=document.getElementById('tabContents');
+  const tabs=[
+    {id:'perfil',label:'Quem Somos'},
+    {id:'empresas',label:'Empresas'},
+    {id:'emprego',label:'Emprego'},
+    {id:'economia',label:'Economia'},
+    {id:'cenario',label:'Cenario Nacional'}
+  ];
+  tabs.forEach((t,i)=>{
+    const btn=document.createElement('button');
+    btn.className='tab'+(i===0?' active':'');btn.textContent=t.label;
+    btn.dataset.tab=t.id;btn.onclick=()=>switchTab(t.id);
+    bar.appendChild(btn);
+    const div=document.createElement('div');
+    div.className='tab-content'+(i===0?' active':'');div.id='tab-'+t.id;
+    cont.appendChild(div);
+  });
+}
+
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.id==='tab-'+id));
+}
+
+function renderView(data){
+  if(!data){document.getElementById('narrative').innerHTML='<strong>Dados indisponiveis</strong> para este territorio. Tente outro nivel ou recarregue a pagina.';return}
+  updateLevel();
+  renderKPIs(data);
+  renderNarrative(data);
+  renderPerfil(data);
+  renderEmpresas(data);
+  renderEmprego(data);
+  renderEconomia(data);
+  renderCenario();
+}
+
+function renderKPIs(d){
+  const isNac=currentView.level==='brasil';
+  const popShare=nationalData&&nationalData.populacao&&!isNac?(d.populacao/nationalData.populacao*100):null;
+  const pibShare=nationalData&&nationalData.pibTotal&&!isNac?(d.pibTotal/nationalData.pibTotal*100):null;
+  const nacPibPc=nationalData?nationalData.pibPc:null;
+  const cmpPibPc=!isNac&&nacPibPc&&d.pibPc?(d.pibPc>nacPibPc?'↑':'↓')+' media BR '+fC(nacPibPc):'';
+
+  let html=`
+    <div class="kpi kpi-blue"><div class="kpi-label">Populacao</div><div class="kpi-value">${fN(d.populacao)}</div><div class="kpi-detail">IBGE Estimativa ${d.popAno||''}</div></div>
+    <div class="kpi kpi-green"><div class="kpi-label">PIB</div><div class="kpi-value">${fC(d.pibTotal)}</div><div class="kpi-detail">IBGE ${d.pibAno||''}</div></div>
+    <div class="kpi kpi-purple"><div class="kpi-label">PIB per capita</div><div class="kpi-value">${d.pibPc?fC(d.pibPc):'N/D'}</div><div class="kpi-detail">${cmpPibPc}</div></div>`;
+
+  if(!isNac&&popShare!=null){
+    html+=`<div class="kpi kpi-cyan"><div class="kpi-label">Peso no Brasil</div><div class="kpi-value">${pct(popShare)}</div><div class="kpi-detail">pop. | ${pibShare!=null?pct(pibShare)+' PIB':''}</div></div>`;
+  }else{
+    html+=`<div class="kpi kpi-cyan"><div class="kpi-label">Selic</div><div class="kpi-value">${bcbData.selic!=null?bcbData.selic.toFixed(2)+'%':'N/D'}</div><div class="kpi-detail">Taxa meta anual — BCB</div></div>`;
+  }
+
+  html+=`
+    <div class="kpi kpi-yellow"><div class="kpi-label">IPCA 12 meses</div><div class="kpi-value">${bcbData.ipca!=null?bcbData.ipca.toFixed(2)+'%':'N/D'}</div><div class="kpi-detail">Inflacao acumulada — BCB</div></div>
+    <div class="kpi ${bcbData.empregoSaldo!=null&&bcbData.empregoSaldo>=0?'kpi-green':'kpi-red'}"><div class="kpi-label">Empregos (Brasil)</div><div class="kpi-value">${bcbData.empregoSaldo!=null?(bcbData.empregoSaldo>=0?'+':'')+fN(bcbData.empregoSaldo):'N/D'}</div><div class="kpi-detail">Saldo mensal CAGED — BCB</div></div>`;
+
+  document.getElementById('kpiRow').innerHTML=html;
+}
+
+function renderNarrative(d){
+  const el=document.getElementById('narrative');
+  const lv=currentView.level;
+  const nm=currentView.name;
+  let txt='';
+
+  if(lv==='brasil'){
+    txt=`<strong>O Brasil</strong> tem uma populacao estimada de <span class="hl">${fN(d.populacao)}</span> habitantes (${d.popAno}). `;
+    txt+=`A economia do pais movimentou <span class="hl">${fC(d.pibTotal)}</span> em ${d.pibAno}, `;
+    txt+=`o que representa um PIB per capita de <span class="hl">${fC(d.pibPc)}</span>. `;
+    if(bcbData.selic!=null){
+      txt+=`No cenario financeiro, a taxa Selic esta em <span class="hl">${bcbData.selic.toFixed(2)}%</span> `;
+      txt+=`e a inflacao (IPCA) acumula <span class="hl">${bcbData.ipca!=null?bcbData.ipca.toFixed(2)+'%':'N/D'}</span> em 12 meses. `;
+    }
+    txt+=`Use os filtros acima para explorar regioes, estados e municipios.`;
+  }else if(lv==='regiao'){
+    const popShare=nationalData?(d.populacao/nationalData.populacao*100):null;
+    const pibShare=nationalData?(d.pibTotal/nationalData.pibTotal*100):null;
+    txt=`A regiao <strong>${nm}</strong> reune <span class="hl">${fN(d.populacao)}</span> habitantes`;
+    if(popShare)txt+=` (<span class="hl">${pct(popShare)}</span> do pais)`;
+    txt+=`. Sua economia gerou <span class="hl">${fC(d.pibTotal)}</span> em ${d.pibAno}`;
+    if(pibShare)txt+=`, equivalente a <span class="hl">${pct(pibShare)}</span> do PIB nacional`;
+    txt+=`. `;
+    if(d.pibPc&&nationalData&&nationalData.pibPc){
+      const ratio=d.pibPc/nationalData.pibPc;
+      if(ratio<0.75)txt+=`O PIB per capita de <span class="neg">${fC(d.pibPc)}</span> esta significativamente abaixo da media nacional de ${fC(nationalData.pibPc)}, sinalizando desafios no desenvolvimento economico regional. `;
+      else if(ratio<0.95)txt+=`O PIB per capita de <span class="hl">${fC(d.pibPc)}</span> esta um pouco abaixo da media nacional de ${fC(nationalData.pibPc)}. `;
+      else if(ratio>1.2)txt+=`O PIB per capita de <span class="pos">${fC(d.pibPc)}</span> supera a media nacional de ${fC(nationalData.pibPc)}, refletindo maior dinamismo economico. `;
+      else txt+=`O PIB per capita de <span class="hl">${fC(d.pibPc)}</span> esta proximo da media nacional. `;
+    }
+    txt+=`Selecione um estado para um diagnostico mais detalhado.`;
+  }else if(lv==='estado'){
+    const uf=allEstados.find(s=>String(s.id)===String(currentView.code));
+    const regName=uf?uf.regiao.nome:'';
+    txt=`<strong>${nm}</strong>`;
+    if(regName)txt+=`, na regiao ${regName},`;
+    txt+=` tem <span class="hl">${fN(d.populacao)}</span> habitantes (${d.popAno}). `;
+    txt+=`Seu PIB alcancou <span class="hl">${fC(d.pibTotal)}</span> em ${d.pibAno}`;
+    if(d.pibPc)txt+=`, com PIB per capita de <span class="hl">${fC(d.pibPc)}</span>`;
+    txt+=`. `;
+    if(d.pibPc&&nationalData&&nationalData.pibPc){
+      const ratio=d.pibPc/nationalData.pibPc;
+      if(ratio<0.6)txt+=`Esse valor representa apenas <span class="neg">${(ratio*100).toFixed(0)}%</span> da media nacional — um indicador de que ha espaco significativo para avanco. `;
+      else if(ratio>1.3)txt+=`Esse valor e <span class="pos">${(ratio*100).toFixed(0)}%</span> da media nacional, posicionando o estado entre os mais dinamicos do pais. `;
+      else txt+=`Esse valor esta ${ratio>=1?'acima':'abaixo'} da media nacional de ${fC(nationalData.pibPc)}. `;
+    }
+    txt+=`Selecione um municipio para ver o diagnostico local.`;
+  }else{
+    const uf=allEstados.find(s=>String(s.id)===String(document.getElementById('selEstado').value));
+    txt=`<strong>${nm}</strong>`;
+    if(uf)txt+=` (${uf.sigla})`;
+    txt+=` tem <span class="hl">${fN(d.populacao)}</span> habitantes (${d.popAno}). `;
+    if(d.pibTotal){
+      txt+=`A economia local movimentou <span class="hl">${fC(d.pibTotal)}</span> em ${d.pibAno}`;
+      if(d.pibPc)txt+=`, resultando em PIB per capita de <span class="hl">${fC(d.pibPc)}</span>`;
+      txt+=`. `;
+      if(d.pibPc&&nationalData&&nationalData.pibPc){
+        const ratio=d.pibPc/nationalData.pibPc;
+        if(ratio<0.4)txt+=`O PIB per capita e <span class="neg">${(ratio*100).toFixed(0)}%</span> da media brasileira — o municipio enfrenta desafios estruturais de desenvolvimento. `;
+        else if(ratio<0.7)txt+=`O PIB per capita esta <span class="neg">abaixo</span> da media nacional, indicando potencial para crescimento. `;
+        else if(ratio>1.5)txt+=`O PIB per capita <span class="pos">supera</span> significativamente a media nacional. `;
+        else txt+=`O PIB per capita esta ${ratio>=1?'acima':'abaixo'} da media brasileira. `;
+      }
+    }else{
+      txt+=`Dados de PIB nao disponiveis para este municipio. `;
+    }
+  }
+
+  el.innerHTML=txt;
+}
+
+function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id]}}
+
+function renderPerfil(d){
+  const el=document.getElementById('tab-perfil');
+  const years=d.pop?Object.keys(d.pop).sort():[];
+  const popValues=years.map(y=>d.pop[y]);
+
+  let rankHtml='';
+  if(currentView.level==='brasil'||currentView.level==='regiao'){
+    let states=Object.entries(statesPopPib);
+    if(currentView.level==='regiao'){
+      const regId=parseInt(currentView.code);
+      states=states.filter(([id])=>statesPopPib[id].regiao===regId);
+    }
+    states.sort((a,b)=>b[1].pop-a[1].pop);
+    const top=states.slice(0,10);
+    const maxPop=top[0]?top[0][1].pop:1;
+    rankHtml=`<div class="chart-box"><div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Estados mais populosos</div><div class="ranking-list">`;
+    top.forEach(([id,s],i)=>{
+      const w=Math.max(5,(s.pop/maxPop)*100);
+      rankHtml+=`<div class="ranking-item"><div class="ranking-pos">${i+1}</div><div class="ranking-name">${s.nome}</div><div class="ranking-bar"><div class="ranking-fill" style="width:${w}%"></div></div><div class="ranking-value">${fN(s.pop)}</div></div>`;
+    });
+    rankHtml+=`</div></div>`;
+  }
+
+  let popGrowth='';
+  if(years.length>=2){
+    const first=popValues[0];const last=popValues[popValues.length-1];
+    const growthPct=((last-first)/first*100);
+    const totalYears=parseInt(years[years.length-1])-parseInt(years[0]);
+    popGrowth=`<div class="insight-box info"><div class="insight-title">Evolucao demografica</div>Entre ${years[0]} e ${years[years.length-1]}, a populacao ${growthPct>=0?'cresceu':'diminuiu'} <strong>${Math.abs(growthPct).toFixed(2)}%</strong> (${fN(Math.abs(last-first))} habitantes em ${totalYears} anos). ${growthPct<0.5&&growthPct>=0?'O crescimento lento indica envelhecimento populacional ou migracao.':growthPct<0?'A reducao pode refletir migracao ou revisao metodologica do IBGE.':'O territorio apresenta crescimento demografico.'}</div>`;
+  }
+
+  el.innerHTML=`
+    ${popGrowth}
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Populacao estimada ao longo dos anos</div>
+        <canvas id="chartPop"></canvas>
+      </div>
+      ${rankHtml}
+    </div>`;
+
+  destroyChart('pop');
+  if(years.length>0){
+    charts.pop=new Chart(document.getElementById('chartPop'),{
+      type:'bar',
+      data:{labels:years,datasets:[{label:'Populacao',data:popValues,backgroundColor:'rgba(59,130,246,.6)',borderColor:'#3b82f6',borderWidth:1,borderRadius:4}]},
+      options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'Populacao: '+fN(c.raw)}}},scales:{x:{ticks:{color:TC.muted,font:{size:11}},grid:{display:false}},y:{ticks:{color:TC.muted,callback:v=>fN(v)},grid:{color:TC.grid}}}}
+    });
+  }
+}
+
+function renderEmpresas(d){
+  const el=document.getElementById('tab-empresas');
+  const rf=d.rf;
+  if(!rf||!rf.porte){el.innerHTML='<div class="insight-box warn"><div class="insight-title">Dados de empresas indisponiveis</div>A API da Receita Federal nao retornou dados para este territorio.</div>';return}
+
+  const p=rf.porte;
+  const empPorMilHab=d.populacao&&p.total?(p.total/d.populacao*1000).toFixed(1):null;
+  const nacRF=nationalData&&nationalData.rf?nationalData.rf.porte:null;
+  const nacEmpMil=nacRF&&nationalData.populacao?(nacRF.total/nationalData.populacao*1000).toFixed(1):null;
+  const pctMei=p.total>0?(p.mei/p.total*100):0;
+  const pctMe=p.total>0?(p.me/p.total*100):0;
+  const pctEpp=p.total>0?(p.epp/p.total*100):0;
+
+  const setores=rf.setores||[];
+  const divisoes=rf.divisoes||[];
+  const topDiv=divisoes.slice(0,15);
+  const topSetor=setores[0];
+
+  let profileText='';
+  if(topSetor){
+    const pctTop=p.total>0?((topSetor.qtd/p.total)*100).toFixed(1):0;
+    profileText=`<div class="insight-box info"><div class="insight-title">Perfil empresarial — Receita Federal</div>`;
+    profileText+=`O territorio possui <strong>${fN(p.total)} empresas ativas</strong> na Receita Federal. `;
+    profileText+=`<strong>${pct(pctMei)}</strong> sao MEI, <strong>${pct(pctMe)}</strong> ME e <strong>${pct(pctEpp)}</strong> EPP. `;
+    profileText+=`O setor predominante e <strong>${topSetor.nome}</strong> (${pctTop}%). `;
+    if(empPorMilHab&&nacEmpMil){
+      const ratio=parseFloat(empPorMilHab)/parseFloat(nacEmpMil);
+      profileText+=`A densidade empresarial e de <strong>${empPorMilHab} empresas/mil hab.</strong> (media BR: ${nacEmpMil}). `;
+      if(ratio<0.5)profileText+=`Valor baixo pode indicar economia menos formalizada ou centrada no setor publico.`;
+      else if(ratio>1.2)profileText+=`Acima da media nacional, indicando ambiente empreendedor mais ativo.`;
+      else profileText+=`Proximo da media nacional.`;
+    }
+    profileText+=`</div>`;
+  }
+
+  let rankHtml='';
+  if(currentView.level==='brasil'||currentView.level==='regiao'){
+    let states=Object.entries(statesPopPib);
+    if(currentView.level==='regiao'){
+      const regId=parseInt(currentView.code);
+      states=states.filter(([id])=>statesPopPib[id].regiao===regId);
+    }
+    states.sort((a,b)=>(b[1].empresas||0)-(a[1].empresas||0));
+    const top10=states.slice(0,10);
+    const maxE=top10[0]?top10[0][1].empresas:1;
+    rankHtml=`<div class="chart-box"><div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Ranking de estados — empresas ativas (RF)</div><div class="ranking-list">`;
+    top10.forEach(([id,s],i)=>{
+      const w=Math.max(5,((s.empresas||0)/maxE)*100);
+      rankHtml+=`<div class="ranking-item"><div class="ranking-pos">${i+1}</div><div class="ranking-name">${s.nome}</div><div class="ranking-bar"><div class="ranking-fill" style="width:${w}%;background:var(--cyan)"></div></div><div class="ranking-value">${fN(s.empresas)}</div></div>`;
+    });
+    rankHtml+=`</div></div>`;
+  }
+
+  el.innerHTML=`
+    <div class="kpi-row" style="margin-bottom:1rem">
+      <div class="kpi kpi-blue"><div class="kpi-label">Empresas ativas</div><div class="kpi-value">${fN(p.total)}</div><div class="kpi-detail">Receita Federal</div></div>
+      <div class="kpi kpi-green"><div class="kpi-label">MEI</div><div class="kpi-value">${fN(p.mei)}</div><div class="kpi-detail">${pct(pctMei)} do total</div></div>
+      <div class="kpi kpi-purple"><div class="kpi-label">ME</div><div class="kpi-value">${fN(p.me)}</div><div class="kpi-detail">${pct(pctMe)} do total</div></div>
+      <div class="kpi kpi-yellow"><div class="kpi-label">EPP</div><div class="kpi-value">${fN(p.epp)}</div><div class="kpi-detail">${pct(pctEpp)} do total</div></div>
+      <div class="kpi kpi-cyan"><div class="kpi-label">Empresas/mil hab.</div><div class="kpi-value">${empPorMilHab||'N/D'}</div><div class="kpi-detail">${nacEmpMil?'Media BR: '+nacEmpMil:''}</div></div>
+    </div>
+    ${profileText}
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Distribuicao por porte</div>
+        <canvas id="chartPorte"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--purple)"></span>Setores economicos</div>
+        <canvas id="chartSetorRF"></canvas>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Top divisoes CNAE</div>
+        <canvas id="chartDivisao"></canvas>
+      </div>
+      ${rankHtml||'<div class="chart-box"><div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Ranking de setores</div><div class="ranking-list">'+setores.slice(0,10).map((s,i)=>{const w=Math.max(5,(s.qtd/(setores[0]?.qtd||1))*100);return`<div class="ranking-item"><div class="ranking-pos">${i+1}</div><div class="ranking-name">${s.nome}</div><div class="ranking-bar"><div class="ranking-fill" style="width:${w}%;background:var(--cyan)"></div></div><div class="ranking-value">${fN(s.qtd)}</div></div>`}).join('')+'</div></div>'}
+    </div>`;
+
+  destroyChart('porte');destroyChart('setorRF');destroyChart('divisao');
+
+  const porteLabels=['MEI','ME','EPP','Outros'];
+  const porteValues=[p.mei,p.me,p.epp,p.outros];
+  const porteColors=['#3b82f6','#22c55e','#a855f7','#64748b'];
+  charts.porte=new Chart(document.getElementById('chartPorte'),{
+    type:'doughnut',
+    data:{labels:porteLabels,datasets:[{data:porteValues,backgroundColor:porteColors,borderWidth:0}]},
+    options:{responsive:true,plugins:{legend:{position:'bottom',labels:{color:TC.muted,font:{size:11},padding:12}},tooltip:{callbacks:{label:c=>{const t=c.dataset.data.reduce((s,v)=>s+v,0);return c.label+': '+fN(c.raw)+' ('+pct(c.raw/t*100)+')'}}}}}
+  });
+
+  if(setores.length>0){
+    charts.setorRF=new Chart(document.getElementById('chartSetorRF'),{
+      type:'bar',
+      data:{labels:setores.map(s=>s.nome.length>18?s.nome.substring(0,16)+'...':s.nome),datasets:[{label:'Empresas',data:setores.map(s=>s.qtd),backgroundColor:'rgba(168,85,247,.6)',borderRadius:4}]},
+      options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fN(c.raw)+' empresas'}}},scales:{x:{ticks:{color:TC.muted},grid:{color:TC.grid}},y:{ticks:{color:TC.muted,font:{size:10}},grid:{display:false}}}}
+    });
+  }
+
+  if(topDiv.length>0){
+    charts.divisao=new Chart(document.getElementById('chartDivisao'),{
+      type:'bar',
+      data:{labels:topDiv.map(s=>s.nome.length>22?s.nome.substring(0,20)+'...':s.nome),datasets:[{label:'Empresas',data:topDiv.map(s=>s.qtd),backgroundColor:'rgba(34,197,94,.6)',borderRadius:4}]},
+      options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fN(c.raw)+' empresas'}}},scales:{x:{ticks:{color:TC.muted},grid:{color:TC.grid}},y:{ticks:{color:TC.muted,font:{size:10}},grid:{display:false}}}}
+    });
+  }
+}
+
+function renderEmprego(d){
+  const el=document.getElementById('tab-emprego');
+  const ce=d.cempre;
+  if(!ce||!ce.setores){el.innerHTML='<div class="insight-box warn"><div class="insight-title">Dados de emprego indisponiveis</div>Nao foi possivel obter dados de emprego para este territorio.</div>';return}
+
+  const total=ce.setores['117897'];
+  const setores=Object.entries(ce.setores).filter(([k])=>k!=='117897').map(([k,v])=>({id:k,...v})).filter(s=>s.empregados>0);
+  setores.sort((a,b)=>(b.empregados||0)-(a.empregados||0));
+
+  const totalEmp=total?total.empregados:setores.reduce((s,v)=>s+(v.empregados||0),0);
+  const totalAss=total?total.assalariados:setores.reduce((s,v)=>s+(v.assalariados||0),0);
+  const totalSal=total?total.salarios:setores.reduce((s,v)=>s+(v.salarios||0),0);
+  const pctFormal=totalEmp>0&&totalAss>0?((totalAss/totalEmp)*100):null;
+  const salMedio=totalAss>0?(totalSal/totalAss/12):null;
+  const empPorHab=d.populacao&&totalEmp?(totalEmp/d.populacao*100).toFixed(1):null;
+
+  let insightText='';
+  if(setores.length>0){
+    const topSetor=setores[0];
+    const topPct=totalEmp>0?((topSetor.empregados/totalEmp)*100).toFixed(1):0;
+    insightText=`<div class="insight-box info"><div class="insight-title">Quem mais emprega?</div>O setor <strong>${topSetor.label}</strong> e o maior empregador, com <strong>${fN(topSetor.empregados)} pessoas</strong> (${topPct}% do total). `;
+    if(empPorHab)insightText+=`A taxa de emprego formal e de <strong>${empPorHab}%</strong> da populacao. `;
+    if(pctFormal!=null){
+      insightText+=pctFormal>80?`A alta taxa de assalariamento (${pct(pctFormal)}) indica predominio de relacoes formais de trabalho.`:`A taxa de assalariamento e de ${pct(pctFormal)}.`;
+    }
+    insightText+=`</div>`;
+  }
+
+  const top10=setores.slice(0,10);
+  const empLabels=top10.map(s=>s.label.length>20?s.label.substring(0,18)+'...':s.label);
+  const empValues=top10.map(s=>s.empregados||0);
+  const salValues=top10.map(s=>s.salarios&&s.assalariados?(s.salarios/s.assalariados/12):0);
+
+  el.innerHTML=`
+    <div class="kpi-row" style="margin-bottom:1rem">
+      <div class="kpi kpi-blue"><div class="kpi-label">Pessoal ocupado</div><div class="kpi-value">${fN(totalEmp)}</div><div class="kpi-detail">IBGE CEMPRE ${ce.ano}</div></div>
+      <div class="kpi kpi-green"><div class="kpi-label">Assalariados</div><div class="kpi-value">${fN(totalAss)}</div><div class="kpi-detail">${pctFormal!=null?pct(pctFormal)+' do total':''}</div></div>
+      <div class="kpi kpi-purple"><div class="kpi-label">Salario medio</div><div class="kpi-value">${salMedio?fC(salMedio):'N/D'}</div><div class="kpi-detail">Estimativa mensal</div></div>
+      <div class="kpi kpi-yellow"><div class="kpi-label">Massa salarial/ano</div><div class="kpi-value">${fC(totalSal)}</div><div class="kpi-detail">${ce.ano}</div></div>
+    </div>
+    ${insightText}
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Empregados por setor</div>
+        <canvas id="chartEmpregoSetor"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--yellow)"></span>Salario medio mensal por setor</div>
+        <canvas id="chartSalarioSetor"></canvas>
+      </div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">Contexto nacional — CAGED</div>
+      ${bcbData.empregoSaldo!=null?`O Brasil registrou saldo de <strong>${bcbData.empregoSaldo>=0?'+':''}${fN(bcbData.empregoSaldo)}</strong> empregos formais no ultimo mes (CAGED/BCB). `:''}
+      ${bcbData.selic!=null?`Com a Selic em ${bcbData.selic.toFixed(2)}%, o custo de contratacao e investimento segue pressionado.`:''}
+    </div>`;
+
+  destroyChart('empregoSetor');destroyChart('salarioSetor');
+
+  if(top10.length>0){
+    charts.empregoSetor=new Chart(document.getElementById('chartEmpregoSetor'),{
+      type:'doughnut',
+      data:{labels:empLabels,datasets:[{data:empValues,backgroundColor:CHART_COLORS.slice(0,empValues.length),borderWidth:0}]},
+      options:{responsive:true,plugins:{legend:{position:'right',labels:{color:TC.muted,font:{size:10},padding:8,boxWidth:12}},tooltip:{callbacks:{label:c=>{const t=c.dataset.data.reduce((s,v)=>s+v,0);return c.label+': '+fN(c.raw)+' ('+pct(c.raw/t*100)+')'}}}}}
+    });
+
+    charts.salarioSetor=new Chart(document.getElementById('chartSalarioSetor'),{
+      type:'bar',
+      data:{labels:empLabels,datasets:[{label:'Sal. medio',data:salValues,backgroundColor:'rgba(234,179,8,.6)',borderRadius:4}]},
+      options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fC(c.raw)}}},scales:{x:{ticks:{color:TC.muted,callback:v=>fC(v)},grid:{color:TC.grid}},y:{ticks:{color:TC.muted,font:{size:10}},grid:{display:false}}}}
+    });
+  }
+}
+
+function renderEconomia(d){
+  const el=document.getElementById('tab-economia');
+  const pibYears=d.pib?Object.keys(d.pib).sort():[];
+  const pibValues=pibYears.map(y=>d.pib[y]);
+
+  const hasVab=d.vabAgro!=null||d.vabInd!=null||d.vabServ!=null||d.vabAdmin!=null;
+  const vabLabels=['Agropecuaria','Industria','Servicos','Adm. Publica'];
+  const vabValues=[d.vabAgro||0,d.vabInd||0,d.vabServ||0,d.vabAdmin||0];
+  const vabTotal=vabValues.reduce((s,v)=>s+v,0);
+
+  let vocacao='';
+  if(hasVab&&vabTotal>0){
+    const shares=vabValues.map(v=>v/vabTotal*100);
+    const maxIdx=shares.indexOf(Math.max(...shares));
+    const sector=vabLabels[maxIdx];
+    const share=shares[maxIdx];
+    const profileMap={0:'agropecuaria',1:'industrial',2:'de servicos',3:'dependente de administracao publica'};
+    vocacao=`<div class="insight-box"><div class="insight-title">Perfil economico</div>A economia ${currentView.level==='brasil'?'do Brasil':'deste territorio'} e predominantemente <strong>${profileMap[maxIdx]}</strong>, com ${sector} representando <strong>${pct(share)}</strong> do Valor Adicionado Bruto (VAB, ref. ${d.vabAno}). `;
+    if(maxIdx===3&&share>40)vocacao+=`A alta dependencia de administracao publica indica fragilidade no setor privado local. `;
+    else if(maxIdx===2&&share>60)vocacao+=`A concentracao em servicos e tipica de economias mais urbanizadas e diversificadas. `;
+    else if(maxIdx===0&&share>30)vocacao+=`A relevancia do setor agropecuario indica vocacao rural com potencial para agroindustria. `;
+    vocacao+=`</div>`;
+  }
+
+  let rankHtml='';
+  if(currentView.level==='brasil'||currentView.level==='regiao'){
+    let states=Object.entries(statesPopPib);
+    if(currentView.level==='regiao'){
+      const regId=parseInt(currentView.code);
+      states=states.filter(([id])=>statesPopPib[id].regiao===regId);
+    }
+    states.sort((a,b)=>(b[1].pib||0)-(a[1].pib||0));
+    const top=states.slice(0,10);
+    const maxPib=top[0]?top[0][1].pib:1;
+    rankHtml=`<div class="chart-box"><div class="chart-title"><span class="dot" style="background:var(--green)"></span>Maiores PIBs por estado</div><div class="ranking-list">`;
+    top.forEach(([id,s],i)=>{
+      const w=Math.max(5,((s.pib||0)/maxPib)*100);
+      rankHtml+=`<div class="ranking-item"><div class="ranking-pos">${i+1}</div><div class="ranking-name">${s.nome}</div><div class="ranking-bar"><div class="ranking-fill" style="width:${w}%;background:var(--green)"></div></div><div class="ranking-value">${fC(s.pib)}</div></div>`;
+    });
+    rankHtml+=`</div></div>`;
+  }
+
+  let pibPcComp='';
+  if(currentView.level!=='brasil'&&d.pibPc&&nationalData&&nationalData.pibPc){
+    const ratio=d.pibPc/nationalData.pibPc;
+    const cls=ratio>=1?'':'warn';
+    pibPcComp=`<div class="insight-box ${cls}"><div class="insight-title">PIB per capita em contexto</div>O PIB per capita de <strong>${fC(d.pibPc)}</strong> ${ratio>=1?'supera':'esta abaixo d'}a media nacional de <strong>${fC(nationalData.pibPc)}</strong>, representando <strong>${(ratio*100).toFixed(0)}%</strong> do valor medio brasileiro. ${ratio<0.5?'Essa diferenca expressiva evidencia desigualdades regionais que impactam o ambiente de negocios.':ratio<0.8?'Ha espaco para convergencia, especialmente via investimento em capital humano e infraestrutura.':ratio>1.2?'Isso reflete uma economia mais dinamica que a media do pais.':'O territorio esta proximo da media nacional.'}</div>`;
+  }
+
+  el.innerHTML=`
+    ${vocacao}${pibPcComp}
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Evolucao do PIB (R$)</div>
+        <canvas id="chartPib"></canvas>
+      </div>
+      ${hasVab?`<div class="chart-box"><div class="chart-title"><span class="dot" style="background:var(--purple)"></span>Composicao do VAB (${d.vabAno})</div><canvas id="chartVab"></canvas></div>`:''}
+    </div>
+    ${rankHtml}`;
+
+  destroyChart('pib');destroyChart('vab');
+
+  if(pibYears.length>0){
+    charts.pib=new Chart(document.getElementById('chartPib'),{
+      type:'line',
+      data:{labels:pibYears,datasets:[{label:'PIB',data:pibValues,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.1)',fill:true,tension:.3,pointRadius:4,pointBackgroundColor:'#22c55e'}]},
+      options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'PIB: '+fC(c.raw)}}},scales:{x:{ticks:{color:TC.muted,font:{size:11}},grid:{display:false}},y:{ticks:{color:TC.muted,callback:v=>fC(v)},grid:{color:TC.grid}}}}
+    });
+  }
+
+  if(hasVab){
+    charts.vab=new Chart(document.getElementById('chartVab'),{
+      type:'doughnut',
+      data:{labels:vabLabels,datasets:[{data:vabValues,backgroundColor:['#22c55e','#3b82f6','#a855f7','#eab308'],borderWidth:0}]},
+      options:{responsive:true,plugins:{legend:{position:'bottom',labels:{color:TC.muted,font:{size:11},padding:12}},tooltip:{callbacks:{label:c=>{const t=c.dataset.data.reduce((s,v)=>s+v,0);return c.label+': '+fC(c.raw)+' ('+pct(c.raw/t*100)+')'}}}}}
+    });
+  }
+}
+
+function renderCenario(){
+  const el=document.getElementById('tab-cenario');
+  const s=bcbData;
+
+  let selicCtx='';
+  if(s.selic!=null){
+    if(s.selic>=13)selicCtx='Taxa elevada: o credito fica mais caro, dificultando investimentos e expansao de negocios. Cenario desafiador para o ambiente empresarial.';
+    else if(s.selic>=10)selicCtx='Taxa moderadamente alta: o custo do credito pressiona margens, especialmente para pequenos negocios que dependem de financiamento.';
+    else if(s.selic>=6)selicCtx='Taxa moderada: condicoes razoaveis de credito, mas ainda com impacto relevante nos custos financeiros das empresas.';
+    else selicCtx='Taxa baixa: ambiente favoravel para investimentos e expansao de credito. Oportunidade para novos negocios.';
+  }
+
+  let ipcaCtx='';
+  if(s.ipca!=null){
+    if(s.ipca>6)ipcaCtx='Inflacao acima da meta: pressao sobre custos operacionais e poder de compra dos consumidores.';
+    else if(s.ipca>4.5)ipcaCtx='Inflacao no limite superior da meta: exige atencao ao repasse de precos.';
+    else if(s.ipca>3)ipcaCtx='Inflacao dentro da meta: cenario de estabilidade de precos favoravel aos negocios.';
+    else ipcaCtx='Inflacao baixa: ambiente de precos estaveis, favorecendo planejamento empresarial.';
+  }
+
+  let creditoCtx='';
+  if(s.credito!=null&&s.inadimplencia!=null){
+    creditoCtx=`O saldo de credito livre para pessoas juridicas esta em <strong>${fC(s.credito)}</strong>, `;
+    if(s.inadimplencia>7)creditoCtx+=`com inadimplencia em <strong class="neg">${pct(s.inadimplencia)}</strong> — nivel preocupante que reflete dificuldades financeiras do setor produtivo.`;
+    else if(s.inadimplencia>5)creditoCtx+=`com inadimplencia em <strong>${pct(s.inadimplencia)}</strong> — nivel que merece atencao.`;
+    else creditoCtx+=`com inadimplencia em <strong class="pos">${pct(s.inadimplencia)}</strong> — nivel controlado, indicando boa saude financeira do setor.`;
+  }
+
+  let empregoCtx='';
+  if(s.empregoSaldo!=null){
+    if(s.empregoSaldo>100000)empregoCtx=`O Brasil gerou <strong class="pos">+${fN(s.empregoSaldo)}</strong> empregos formais no ultimo mes — sinal positivo para o mercado de trabalho.`;
+    else if(s.empregoSaldo>0)empregoCtx=`O saldo de empregos formais foi de <strong>+${fN(s.empregoSaldo)}</strong> no ultimo mes — resultado positivo, porem moderado.`;
+    else empregoCtx=`O saldo de empregos formais foi <strong class="neg">${fN(s.empregoSaldo)}</strong> no ultimo mes — indicando retracao no mercado de trabalho formal.`;
+  }
+
+  el.innerHTML=`
+    <div class="insight-box info">
+      <div class="insight-title">Por que o cenario nacional importa?</div>
+      Independentemente do territorio que voce esta analisando, o contexto macroeconomico do Brasil afeta diretamente o ambiente de negocios local. A taxa de juros define o custo do credito, a inflacao impacta custos e receitas, e o emprego formal reflete a dinamica do mercado de trabalho.
+    </div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--accent)"></span>Taxa Selic (meta anual)</div>
+        <div style="text-align:center;padding:2rem 0">
+          <div style="font-size:2.8rem;font-weight:800;color:${s.selic!=null&&s.selic>=13?'var(--red)':s.selic>=10?'var(--yellow)':'var(--green)'}">${s.selic!=null?s.selic.toFixed(2)+'%':'N/D'}</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.5rem">${selicCtx}</div>
+        </div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--yellow)"></span>Inflacao IPCA (acumulado 12 meses)</div>
+        <div style="text-align:center;padding:2rem 0">
+          <div style="font-size:2.8rem;font-weight:800;color:${s.ipca!=null&&s.ipca>6?'var(--red)':s.ipca>4.5?'var(--yellow)':'var(--green)'}">${s.ipca!=null?s.ipca.toFixed(2)+'%':'N/D'}</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.5rem">${ipcaCtx}</div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--green)"></span>Credito livre para empresas (PJ)</div>
+        <div style="padding:1rem 0;font-size:.82rem;line-height:1.8;color:#94a3b8">${creditoCtx||'Dados indisponiveis.'}</div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>Mercado de trabalho formal</div>
+        <div style="padding:1rem 0;font-size:.82rem;line-height:1.8;color:#94a3b8">${empregoCtx||'Dados indisponiveis.'}</div>
+      </div>
+    </div>`;
+}
+
+function exportWhatsApp(){
+  const d=currentView.level==='brasil'?nationalData:null;
+  const nm=currentView.name;
+  const lv=currentView.level;
+  const narrativeEl=document.getElementById('narrative');
+  const narrativeText=narrativeEl?narrativeEl.innerText.replace(/\s+/g,' ').trim():'';
+  const kpis=document.querySelectorAll('#kpiRow .kpi');
+  let kpiLines=[];
+  kpis.forEach(k=>{
+    const label=k.querySelector('.kpi-label');
+    const value=k.querySelector('.kpi-value');
+    if(label&&value)kpiLines.push('• '+label.textContent+': '+value.textContent);
+  });
+  const hoje=new Date().toLocaleDateString('pt-BR');
+  let msg='📊 *PIPPA Raio-X — '+nm+'*\n';
+  msg+='_Diagnostico territorial | '+hoje+'_\n\n';
+  msg+='*Nivel:* '+lv.charAt(0).toUpperCase()+lv.slice(1)+'\n\n';
+  if(kpiLines.length){msg+='*Indicadores:*\n'+kpiLines.join('\n')+'\n\n';}
+  if(narrativeText){
+    const resumo=narrativeText.length>500?narrativeText.substring(0,497)+'...':narrativeText;
+    msg+='*Resumo:*\n'+resumo+'\n\n';
+  }
+  msg+='🔗 ./\n';
+  msg+='_PIPPA — Sebrae Nacional_';
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+init();
+</script>
+</body>
+</html>

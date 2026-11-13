@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PIPPA | Credito e Financiamento</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>(function(){var t=localStorage.getItem('pippa-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080f1e;--surface:#0f1a2e;--surface2:#162038;--border:rgba(255,255,255,.08);--text:#eff3ee;--text2:#8b9dc3;--muted:#8b9dc3;--accent:#65b7fb;--accent-light:#90ccfd;--green:#61b466;--yellow:#fbec76;--red:#e0565d;--purple:#be64e3;--cyan:#65b7fb;--orange:#f39d72;--radius:12px;--font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Figtree',sans-serif}
+[data-theme="light"]{--bg:#eff3ee;--surface:#ffffff;--surface2:#e5eae4;--border:rgba(42,79,218,.1);--text:#000000;--text2:#4a5568;--muted:#6b7280;--accent:#2a4fda;--accent-light:#0b2574;--card:rgba(42,79,218,.04)}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+
+.header{background:var(--surface);padding:12px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem}
+.header-brand{display:flex;align-items:center;gap:.8rem}
+.header-logo{width:40px;height:40px;background:rgba(101,183,251,.08);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--accent)}
+.header h1{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.header h1 span{color:var(--accent)}
+.header-sub{font-size:.7rem;color:var(--muted);margin-top:.1rem}
+.header-controls{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.info-btn{width:30px;height:30px;border-radius:50%;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;font-family:inherit}
+.info-btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn{background:transparent;color:var(--muted);border:1px solid var(--border);padding:.4rem 1rem;border-radius:8px;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.nav-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.4rem .8rem;border-radius:8px;font-size:.7rem;font-weight:600;text-decoration:none;transition:all .2s}
+.nav-home{border:1px solid var(--border);color:var(--muted)}
+.nav-home:hover{border-color:var(--accent);color:var(--accent)}
+.nav-portal{border:1px solid var(--border);color:var(--muted)}
+.nav-portal:hover{border-color:var(--accent);color:var(--accent)}
+.nav-btn svg{width:13px;height:13px}
+.api-status{font-size:.65rem;padding:.2rem .5rem;border-radius:5px;display:none;font-weight:600}
+
+.main{max-width:1300px;margin:0 auto;padding:1.5rem 2rem}
+.narrative{background:rgba(101,183,251,.06);border:1px solid rgba(101,183,251,.12);border-radius:var(--radius);padding:1rem 1.3rem;margin-bottom:1.2rem;font-size:.82rem;color:var(--muted);line-height:1.8}
+.narrative strong{color:var(--text)}
+
+.tabs{display:flex;gap:.3rem;margin-bottom:1.2rem;border-bottom:1px solid var(--border);padding-bottom:.4rem}
+.tab{padding:.45rem 1.1rem;border-radius:8px 8px 0 0;font-size:.75rem;font-weight:600;cursor:pointer;color:var(--muted);background:transparent;border:none;transition:all .2s;font-family:inherit}
+.tab.active{color:var(--accent);background:rgba(101,183,251,.1);border-bottom:2px solid var(--accent)}
+.tab:hover:not(.active){color:var(--text)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin-bottom:1.2rem}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;text-align:center}
+.kpi-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem}
+.kpi-value{font-size:1.5rem;font-weight:800}
+.kpi-detail{font-size:.65rem;color:var(--muted);margin-top:.2rem;line-height:1.4}
+
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:1rem;margin-bottom:1rem}
+.chart-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem}
+.chart-box.full{grid-column:1/-1}
+.chart-title{font-size:.78rem;font-weight:600;margin-bottom:.6rem;color:var(--text)}
+
+.insight{background:rgba(97,180,102,.05);border-left:3px solid var(--green);border-radius:0 var(--radius) var(--radius) 0;padding:.7rem 1rem;margin:1rem 0;font-size:.75rem;color:var(--muted);line-height:1.7}
+.insight strong{color:var(--green)}
+
+.table-wrapper{overflow-x:auto;margin-top:.5rem;border-radius:var(--radius);border:1px solid var(--border);max-height:500px}
+table{width:100%;border-collapse:collapse;font-size:.72rem}
+th{text-align:left;padding:.5rem .7rem;background:rgba(255,255,255,.04);color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border);position:sticky;top:0}
+td{padding:.45rem .7rem;border-bottom:1px solid var(--border)}
+tr:hover td{background:rgba(255,255,255,.02)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+
+.info-overlay{display:none;position:fixed;inset:0;background:rgba(8,15,30,.85);z-index:999;justify-content:center;align-items:center;backdrop-filter:blur(4px)}
+.info-overlay.active{display:flex}
+.info-modal{background:var(--surface);border:1px solid rgba(255,255,255,.1);border-radius:16px;max-width:640px;width:92%;max-height:85vh;overflow-y:auto;padding:2rem;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.5)}
+.info-modal h2{font-size:1rem;font-weight:700;margin-bottom:.4rem;color:var(--accent)}
+.info-modal h3{font-size:.82rem;font-weight:600;margin:1rem 0 .3rem;color:var(--text);border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:.25rem}
+.info-modal p,.info-modal li{font-size:.75rem;color:var(--muted);line-height:1.7}
+.info-modal ul{padding-left:1.1rem;margin-bottom:.4rem}
+.info-close{position:absolute;top:10px;right:14px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.06);border:none;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.info-close:hover{background:rgba(224,86,93,.2);color:#e0565d}
+
+.data-range{display:inline-block;font-size:.7rem;padding:.3rem .8rem;border-radius:6px;background:rgba(101,183,251,.08);border:1px solid rgba(101,183,251,.15);color:var(--muted);margin-bottom:1.2rem}
+.footer{text-align:center;padding:1.2rem;border-top:1px solid var(--border);margin-top:2rem;color:var(--muted);font-size:.65rem}
+.theme-toggle{background:transparent;border:1px solid var(--border);color:var(--muted);width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.icon-moon{display:none}
+[data-theme="light"] .icon-sun{display:none}
+[data-theme="light"] .icon-moon{display:block}
+[data-theme="light"] .narrative{background:rgba(42,79,218,.06);border-color:rgba(42,79,218,.12);color:var(--muted)}
+[data-theme="light"] .insight{background:rgba(97,180,102,.05)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(42,79,218,.3);border-radius:3px}
+@media(max-width:900px){.grid-2{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}.header{padding:.8rem 1rem}.main{padding:1rem}}
+@media(max-width:600px){.kpi-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="header-logo">AN</div>
+    <div>
+      <h1><span>PIPPA</span> Ambiente de Negocios</h1>
+      <div class="header-sub">Tema 5 — Credito e Financiamento</div>
+    </div>
+  </div>
+  <div class="header-controls">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema"><svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    <button class="info-btn" onclick="openInfo()" title="Metodologia">i</button>
+    <button class="btn" onclick="exportWhatsApp()">&#x1F4E4; WhatsApp</button>
+    <button class="btn" id="btnApi" onclick="fetchAPIs()">Consultar APIs</button>
+    <span class="api-status" id="apiStatus"></span>
+    <a href="index.html" class="nav-btn nav-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Inicio
+    </a>
+    <a href="../pippa-portal/index.html" class="nav-btn nav-portal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Portal
+    </a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="narrative">
+    <strong>O credito esta acessivel para os pequenos negocios?</strong> Este painel mostra a evolucao do credito para empresas, as taxas de juros e a cobertura bancaria no pais. Dados do Banco Central (BCB SGS). Clique em "Consultar APIs" para buscar os dados mais recentes.
+  </div>
+  <div class="data-range" id="dataRange"></div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="credito" onclick="switchTab('credito')">Credito</button>
+    <button class="tab" data-tab="cobertura" onclick="switchTab('cobertura')">Cobertura Bancaria</button>
+  </div>
+
+  <!-- Tab 1: Credito -->
+  <div class="tab-content active" id="credito">
+    <div class="kpi-row" id="kpiCredito"></div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title">Evolucao do saldo de credito PJ (R$ bilhoes)</div>
+        <canvas id="chartSaldoCredito" height="220"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">Credito por porte de empresa</div>
+        <canvas id="chartPorteCredito" height="220"></canvas>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>O que isso significa?</strong> As micro e pequenas empresas (MPEs) recebem cerca de um terco do credito total, apesar de representarem mais de 90% das empresas no pais. Grandes empresas concentram quase 40% do volume. Ampliar o acesso ao credito para MPEs e fundamental para o crescimento dos pequenos negocios.
+    </div>
+  </div>
+
+  <!-- Tab 2: Cobertura Bancaria -->
+  <div class="tab-content" id="cobertura">
+    <div class="kpi-row" id="kpiCobertura"></div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title">Evolucao da taxa Selic (% ao ano)</div>
+        <canvas id="chartSelic" height="220"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">Distribuicao por tipo de instituicao financeira</div>
+        <canvas id="chartTipoInstituicao" height="220"></canvas>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>O que isso significa?</strong> As cooperativas de credito vem ampliando sua presenca, especialmente no Sul e Centro-Oeste, levando servicos financeiros a municipios onde os grandes bancos nao operam. As fintechs tambem ganham espaco, oferecendo credito com menos burocracia. Essas alternativas ajudam a reduzir os "desertos bancarios" — municipios sem nenhuma agencia.
+    </div>
+  </div>
+</div>
+
+<div id="infoModal" class="info-overlay" onclick="if(event.target===this)closeInfo()">
+  <div class="info-modal">
+    <button class="info-close" onclick="closeInfo()">&times;</button>
+    <h2>Metodologia — Credito e Financiamento</h2>
+    <p>Este painel apresenta dados sobre o acesso ao credito para empresas e a infraestrutura financeira disponivel no Brasil.</p>
+
+    <h3>Aba Credito</h3>
+    <ul>
+      <li><strong>Saldo de credito PJ:</strong> Quanto dinheiro os bancos emprestaram para empresas no total. Valor em bilhoes de reais, atualizado mensalmente.</li>
+      <li><strong>Concessoes mensais:</strong> Quanto credito novo foi liberado para empresas no ultimo mes.</li>
+      <li><strong>Inadimplencia PJ:</strong> Percentual de empresas que estao com pagamentos atrasados ha mais de 90 dias. Quanto menor, melhor.</li>
+      <li><strong>Credito por porte:</strong> Mostra como o credito se divide entre micro e pequenas empresas (MPE), medias e grandes. MPEs recebem proporcao menor do total.</li>
+    </ul>
+
+    <h3>Aba Cobertura Bancaria</h3>
+    <ul>
+      <li><strong>Taxa Selic:</strong> A taxa basica de juros definida pelo Banco Central. Quando a Selic sobe, o credito fica mais caro para todos.</li>
+      <li><strong>Total de agencias:</strong> Quantidade de agencias bancarias em todo o pais.</li>
+      <li><strong>Municipios sem agencia:</strong> Cidades que nao possuem nenhuma agencia bancaria — os chamados "desertos bancarios".</li>
+      <li><strong>Tipos de instituicao:</strong> Mostra a distribuicao entre bancos tradicionais, cooperativas de credito e fintechs. Cooperativas e fintechs ajudam a levar credito para regioes menos atendidas.</li>
+    </ul>
+
+    <h3>Fontes de Dados</h3>
+    <ul>
+      <li><strong>Banco Central do Brasil (BCB SGS)</strong> — API publica, sem necessidade de cadastro. Series temporais atualizadas mensalmente.</li>
+      <li><strong>Serie 20631:</strong> Saldo de credito para empresas (pessoas juridicas).</li>
+      <li><strong>Serie 21112:</strong> Taxa de inadimplencia de empresas.</li>
+      <li><strong>Serie 432:</strong> Taxa Selic (juros basicos da economia).</li>
+      <li><strong>Serie 433:</strong> IPCA (inflacao mensal).</li>
+      <li><strong>Serie 20632:</strong> Concessoes de credito para empresas.</li>
+    </ul>
+
+    <h3>Botao "Consultar APIs"</h3>
+    <p>Busca dados atualizados em tempo real de 5 series do Banco Central. Os graficos das abas de credito e cobertura sao atualizados automaticamente com os dados mais recentes.</p>
+  </div>
+</div>
+
+<div class="footer">PIPPA Ambiente de Negocios | Sebrae Nacional | 2026</div>
+
+<script>
+function toggleTheme(){const html=document.documentElement;const t=html.getAttribute('data-theme')==='dark'?'light':'dark';html.setAttribute('data-theme',t);localStorage.setItem('pippa-theme',t);applyChartTheme()}
+/* ========== SAMPLE DATA ========== */
+const SAMPLE_DATA = {
+  saldo_credito: [
+    {data:'01/10/2024',valor:649340},{data:'01/11/2024',valor:620293},{data:'01/12/2024',valor:699427},
+    {data:'01/01/2025',valor:591893},{data:'01/02/2025',valor:590966},{data:'01/03/2025',valor:620474},
+    {data:'01/04/2025',valor:644574},{data:'01/05/2025',valor:648239},{data:'01/06/2025',valor:641196},
+    {data:'01/07/2025',valor:649848},{data:'01/08/2025',valor:643637},{data:'01/09/2025',valor:700052},
+    {data:'01/10/2025',valor:691661},{data:'01/11/2025',valor:652949},{data:'01/12/2025',valor:804310},
+    {data:'01/01/2026',valor:649474},{data:'01/02/2026',valor:610505},{data:'01/03/2026',valor:742227},
+    {data:'01/04/2026',valor:692959},{data:'01/05/2026',valor:701351},{data:'01/06/2026',valor:748273},
+    {data:'01/07/2026',valor:730323},{data:'01/08/2026',valor:729247}
+  ],
+  inadimplencia: [
+    {data:'01/10/2024',valor:5.59},{data:'01/11/2024',valor:5.47},{data:'01/12/2024',valor:5.40},
+    {data:'01/01/2025',valor:5.74},{data:'01/02/2025',valor:5.81},{data:'01/03/2025',valor:5.91},
+    {data:'01/04/2025',valor:6.21},{data:'01/05/2025',valor:6.38},{data:'01/06/2025',valor:6.50},
+    {data:'01/07/2025',valor:6.73},{data:'01/08/2025',valor:6.97},{data:'01/09/2025',valor:6.89},
+    {data:'01/10/2025',valor:6.86},{data:'01/11/2025',valor:6.94},{data:'01/12/2025',valor:7.06},
+    {data:'01/01/2026',valor:7.17},{data:'01/02/2026',valor:7.42},{data:'01/03/2026',valor:7.25},
+    {data:'01/04/2026',valor:7.37},{data:'01/05/2026',valor:7.56},{data:'01/06/2026',valor:7.37},
+    {data:'01/07/2026',valor:7.78},{data:'01/08/2026',valor:8.01}
+  ],
+  selic: [
+    {data:'01/10/2024',valor:10.75},{data:'01/11/2024',valor:11.25},{data:'01/12/2024',valor:12.25},
+    {data:'01/01/2025',valor:13.25},{data:'01/02/2025',valor:13.25},{data:'01/03/2025',valor:14.25},
+    {data:'01/04/2025',valor:14.25},{data:'01/05/2025',valor:14.75},{data:'01/06/2025',valor:15.00},
+    {data:'01/07/2025',valor:15.00},{data:'01/08/2025',valor:15.00},{data:'01/09/2025',valor:15.00},
+    {data:'01/10/2025',valor:15.00},{data:'01/11/2025',valor:15.00},{data:'01/12/2025',valor:15.00},
+    {data:'01/01/2026',valor:15.00},{data:'01/02/2026',valor:15.00},{data:'01/03/2026',valor:14.75},
+    {data:'01/04/2026',valor:14.50},{data:'01/05/2026',valor:14.50},{data:'01/06/2026',valor:14.25},
+    {data:'01/07/2026',valor:14.25},{data:'01/08/2026',valor:14.00},{data:'01/09/2026',valor:13.75}
+  ],
+  ipca: [
+    {data:'01/10/2024',valor:0.56},{data:'01/11/2024',valor:0.39},{data:'01/12/2024',valor:0.52},
+    {data:'01/01/2025',valor:0.16},{data:'01/02/2025',valor:1.31},{data:'01/03/2025',valor:0.56},
+    {data:'01/04/2025',valor:0.43},{data:'01/05/2025',valor:0.26},{data:'01/06/2025',valor:0.24},
+    {data:'01/07/2025',valor:0.26},{data:'01/08/2025',valor:-0.11},{data:'01/09/2025',valor:0.48},
+    {data:'01/10/2025',valor:0.09},{data:'01/11/2025',valor:0.18},{data:'01/12/2025',valor:0.33},
+    {data:'01/01/2026',valor:0.33},{data:'01/02/2026',valor:0.70},{data:'01/03/2026',valor:0.88},
+    {data:'01/04/2026',valor:0.67},{data:'01/05/2026',valor:0.58},{data:'01/06/2026',valor:0.16},
+    {data:'01/07/2026',valor:0.07},{data:'01/08/2026',valor:-0.32}
+  ],
+  concessoes: [
+    {data:'01/10/2024',valor:290629},{data:'01/11/2024',valor:277465},{data:'01/12/2024',valor:340808},
+    {data:'01/01/2025',valor:254132},{data:'01/02/2025',valor:262741},{data:'01/03/2025',valor:283032},
+    {data:'01/04/2025',valor:295572},{data:'01/05/2025',valor:300034},{data:'01/06/2025',valor:291040},
+    {data:'01/07/2025',valor:284467},{data:'01/08/2025',valor:276003},{data:'01/09/2025',valor:321483},
+    {data:'01/10/2025',valor:298284},{data:'01/11/2025',valor:274299},{data:'01/12/2025',valor:396721},
+    {data:'01/01/2026',valor:285024},{data:'01/02/2026',valor:272549},{data:'01/03/2026',valor:344943},
+    {data:'01/04/2026',valor:314249},{data:'01/05/2026',valor:324375},{data:'01/06/2026',valor:362683},
+    {data:'01/07/2026',valor:329483},{data:'01/08/2026',valor:334993}
+  ],
+  credito_porte: [
+    {porte:'MPE (micro e pequena)',valor:243569,pct:33.4},
+    {porte:'Media empresa',valor:200543,pct:27.5},
+    {porte:'Grande empresa',valor:285135,pct:39.1}
+  ],
+  infra: {
+    total_agencias: 18645,
+    municipios_sem_agencia: 1048
+  },
+  tipo_instituicao: [
+    {tipo:'Bancos comerciais',valor:18400},
+    {tipo:'Cooperativas de credito',valor:4104},
+    {tipo:'Fintechs e digitais',valor:1250},
+    {tipo:'Sociedades de credito',valor:850}
+  ]
+};
+
+/* ========== GLOBALS ========== */
+const charts = {};
+let DATA = null;
+const isDark=()=>document.documentElement.getAttribute('data-theme')!=='light';
+const TC={get text(){return isDark()?'#eff3ee':'#1a202c'},get muted(){return isDark()?'#a8c4e0':'#4a5568'},get grid(){return isDark()?'rgba(255,255,255,.06)':'rgba(0,0,0,.08)'}};
+function applyChartTheme(){Chart.defaults.color=TC.muted;Object.values(Chart.instances||{}).forEach(c=>{(c.options.scales||{})&&Object.values(c.options.scales).forEach(s=>{if(s.ticks)s.ticks.color=s.ticks._isLabel?TC.text:TC.muted;if(s.grid)s.grid.color=s.grid.display===false?'transparent':TC.grid;if(s.title&&s.title.display)s.title.color=TC.muted});c.update('none')})}
+Chart.defaults.color=TC.muted;
+Chart.defaults.font.family="'Figtree','Segoe UI',system-ui,sans-serif";
+
+/* ========== HELPERS ========== */
+function fmtBRL(v){
+  if(v>=1e12) return 'R$ '+(v/1e12).toFixed(1)+'T';
+  if(v>=1e9)  return 'R$ '+(v/1e9).toFixed(1)+'B';
+  if(v>=1e6)  return 'R$ '+(v/1e6).toFixed(1)+'M';
+  if(v>=1e3)  return 'R$ '+(v/1e3).toFixed(1)+'k';
+  return 'R$ '+v.toLocaleString('pt-BR');
+}
+function fmtNum(v){
+  if(v>=1e6) return (v/1e6).toFixed(1)+'M';
+  if(v>=1e3) return (v/1e3).toFixed(1)+'k';
+  return v.toLocaleString('pt-BR');
+}
+
+/* ========== TAB SWITCHING ========== */
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.id===id));
+}
+
+/* ========== DESTROY CHARTS ========== */
+function destroyCharts(){
+  Object.keys(charts).forEach(k=>{if(charts[k]){charts[k].destroy();delete charts[k]}});
+}
+
+/* ========== INIT ========== */
+function init(){
+  DATA={...SAMPLE_DATA};
+  renderAll();
+}
+
+function renderAll(){
+  destroyCharts();
+  renderDataRange();
+  renderCredito();
+  renderCobertura();
+}
+
+const MESES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+function renderDataRange(){
+  const series=DATA.saldo_credito||DATA.selic||[];
+  if(series.length<2){document.getElementById('dataRange').textContent='';return}
+  const first=series[0].data.split('/');
+  const last=series[series.length-1].data.split('/');
+  document.getElementById('dataRange').textContent='Periodo dos dados: '+MESES[parseInt(first[1])-1]+'/'+first[2]+' a '+MESES[parseInt(last[1])-1]+'/'+last[2];
+}
+
+/* ========== TAB 1: CREDITO ========== */
+function renderCredito(){
+  const d=DATA;
+  const lastSaldo=d.saldo_credito[d.saldo_credito.length-1];
+  const lastConcessao=d.concessoes[d.concessoes.length-1];
+  const lastInad=d.inadimplencia[d.inadimplencia.length-1];
+
+  document.getElementById('kpiCredito').innerHTML=`
+    <div class="kpi"><div class="kpi-label">Saldo credito PJ</div><div class="kpi-value" style="color:var(--accent)">${fmtBRL(lastSaldo.valor*1e6)}</div><div class="kpi-detail">Total emprestado a empresas — ${lastSaldo.data}</div></div>
+    <div class="kpi"><div class="kpi-label">Concessoes mensais</div><div class="kpi-value" style="color:var(--green)">${fmtBRL(lastConcessao.valor*1e6)}</div><div class="kpi-detail">Credito novo no ultimo mes — ${lastConcessao.data}</div></div>
+    <div class="kpi"><div class="kpi-label">Inadimplencia PJ</div><div class="kpi-value" style="color:${lastInad.valor>7?'var(--red)':'var(--yellow)'}">${lastInad.valor.toFixed(1)}%</div><div class="kpi-detail">Empresas com atraso acima de 90 dias</div></div>
+  `;
+
+  // Labels from dates
+  const labels=d.saldo_credito.map(item=>{
+    const p=item.data.split('/');
+    return p[1]+'/'+p[2];
+  });
+
+  // Chart 1: Evolucao do saldo de credito PJ (line, single axis)
+  charts.saldoCredito=new Chart(document.getElementById('chartSaldoCredito'),{
+    type:'line',
+    data:{
+      labels:labels,
+      datasets:[{
+        label:'Saldo PJ (R$ bilhoes)',
+        data:d.saldo_credito.map(item=>item.valor/1000),
+        borderColor:'#2a4fda',
+        backgroundColor:'rgba(101,183,251,.08)',
+        fill:true,
+        tension:.3,
+        pointRadius:3,
+        borderWidth:2.5,
+        pointBackgroundColor:'#2a4fda'
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>'R$ '+ctx.raw.toFixed(1)+' bilhoes'}}
+      },
+      scales:{
+        x:{grid:{color:TC.grid},ticks:{color:TC.muted,maxRotation:45,font:{size:10}}},
+        y:{grid:{color:TC.grid},ticks:{color:TC.muted,callback:v=>'R$ '+v.toFixed(0)+'B'}}
+      }
+    }
+  });
+
+  // Chart 2: Credito por porte de empresa (doughnut: MPE vs Media vs Grande)
+  const porte=d.credito_porte;
+  const porteColors=['rgba(101,183,251,.7)','rgba(251,236,118,.7)','rgba(190,100,227,.7)'];
+  const porteTotal=porte.reduce((s,p)=>s+p.valor,0);
+
+  charts.porteCredito=new Chart(document.getElementById('chartPorteCredito'),{
+    type:'doughnut',
+    data:{
+      labels:porte.map(p=>p.porte),
+      datasets:[{
+        data:porte.map(p=>p.valor),
+        backgroundColor:porteColors,
+        borderColor:'#0b2574',
+        borderWidth:3
+      }]
+    },
+    options:{
+      responsive:true,
+      cutout:'50%',
+      plugins:{
+        legend:{position:'bottom',labels:{color:'#8b9dc3',boxWidth:12,padding:16,font:{size:11}}},
+        tooltip:{callbacks:{label:ctx=>{
+          const pct=(ctx.raw/porteTotal*100).toFixed(1);
+          return ctx.label+': '+fmtBRL(ctx.raw*1e6)+' ('+pct+'%)';
+        }}}
+      }
+    }
+  });
+}
+
+/* ========== TAB 2: COBERTURA BANCARIA ========== */
+function renderCobertura(){
+  const d=DATA;
+  const lastSelic=d.selic[d.selic.length-1];
+  const infra=d.infra;
+
+  document.getElementById('kpiCobertura').innerHTML=`
+    <div class="kpi"><div class="kpi-label">Taxa Selic atual</div><div class="kpi-value" style="color:var(--yellow)">${lastSelic.valor.toFixed(2)}%</div><div class="kpi-detail">Taxa basica de juros — ${lastSelic.data}</div></div>
+    <div class="kpi"><div class="kpi-label">Total agencias bancarias</div><div class="kpi-value" style="color:var(--accent)">${fmtNum(infra.total_agencias)}</div><div class="kpi-detail">Agencias em todo o Brasil</div></div>
+    <div class="kpi"><div class="kpi-label">Municipios sem agencia</div><div class="kpi-value" style="color:var(--red)">${fmtNum(infra.municipios_sem_agencia)}</div><div class="kpi-detail">De 5.570 municipios no pais</div></div>
+  `;
+
+  // Labels from selic dates
+  const labelsSelic=d.selic.map(item=>{
+    const p=item.data.split('/');
+    return p[1]+'/'+p[2];
+  });
+
+  // Chart 1: Evolucao da taxa Selic (line, SINGLE axis)
+  charts.selic=new Chart(document.getElementById('chartSelic'),{
+    type:'line',
+    data:{
+      labels:labelsSelic,
+      datasets:[{
+        label:'Selic (% a.a.)',
+        data:d.selic.map(item=>item.valor),
+        borderColor:'#fbec76',
+        backgroundColor:'rgba(251,236,118,.08)',
+        fill:true,
+        tension:.3,
+        pointRadius:3,
+        borderWidth:2.5,
+        pointBackgroundColor:'#fbec76'
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>ctx.raw.toFixed(2)+'% ao ano'}}
+      },
+      scales:{
+        x:{grid:{color:TC.grid},ticks:{color:TC.muted,maxRotation:45,font:{size:10}}},
+        y:{grid:{color:TC.grid},ticks:{color:TC.muted,callback:v=>v.toFixed(1)+'%'}}
+      }
+    }
+  });
+
+  // Chart 2: Distribuicao por tipo de instituicao financeira (doughnut)
+  const tipos=d.tipo_instituicao;
+  const tipoColors=['#2a4fda','#61b466','#65b7fb','#be64e3'];
+  const tipoTotal=tipos.reduce((s,t)=>s+t.valor,0);
+
+  charts.tipoInstituicao=new Chart(document.getElementById('chartTipoInstituicao'),{
+    type:'doughnut',
+    data:{
+      labels:tipos.map(t=>t.tipo),
+      datasets:[{
+        data:tipos.map(t=>t.valor),
+        backgroundColor:tipoColors,
+        borderColor:'#0b2574',
+        borderWidth:3
+      }]
+    },
+    options:{
+      responsive:true,
+      cutout:'50%',
+      plugins:{
+        legend:{position:'bottom',labels:{color:'#8b9dc3',boxWidth:12,padding:16,font:{size:11}}},
+        tooltip:{callbacks:{label:ctx=>{
+          const pct=(ctx.raw/tipoTotal*100).toFixed(1);
+          return ctx.label+': '+fmtNum(ctx.raw)+' ('+pct+'%)';
+        }}}
+      }
+    }
+  });
+}
+
+/* ========== CONSULTAR APIs (BCB SGS) ========== */
+async function fetchAPIs(){
+  const btn=document.getElementById('btnApi');
+  const st=document.getElementById('apiStatus');
+  btn.disabled=true; btn.textContent='Consultando...';
+  st.style.display='none';
+
+  const now=new Date();
+  const start=new Date(now.getFullYear()-2,now.getMonth(),1);
+  const fmtDate=d=>String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+  const di=fmtDate(start);
+  const df=fmtDate(now);
+  const suffix='&dataInicial='+di+'&dataFinal='+df;
+
+  const urls={
+    saldo_credito:'https://api.bcb.gov.br/dados/serie/bcdata.sgs.20631/dados?formato=json'+suffix,
+    inadimplencia:'https://api.bcb.gov.br/dados/serie/bcdata.sgs.21112/dados?formato=json'+suffix,
+    selic:        'https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados?formato=json'+suffix,
+    ipca:         'https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados?formato=json'+suffix,
+    concessoes:   'https://api.bcb.gov.br/dados/serie/bcdata.sgs.20632/dados?formato=json'+suffix
+  };
+
+  try{
+    const results=await Promise.all(
+      Object.entries(urls).map(async([key,url])=>{
+        const res=await fetch(url);
+        if(!res.ok) throw new Error('HTTP '+res.status+' para '+key);
+        const json=await res.json();
+        return[key,json.map(item=>({
+          data:item.data,
+          valor:parseFloat(String(item.valor).replace(',','.'))
+        }))];
+      })
+    );
+
+    const apiData={};
+    results.forEach(([key,val])=>{apiData[key]=val});
+
+    // Keep static data
+    apiData.credito_porte=SAMPLE_DATA.credito_porte;
+    apiData.infra=SAMPLE_DATA.infra;
+    apiData.tipo_instituicao=SAMPLE_DATA.tipo_instituicao;
+
+    DATA=apiData;
+    renderAll();
+
+    st.style.display='inline';st.style.background='rgba(97,180,102,.15)';st.style.color='#61b466';
+    st.textContent='Atualizado (BCB SGS '+now.getFullYear()+')';
+  }catch(e){
+    console.error('Erro ao consultar BCB:',e);
+    DATA={...SAMPLE_DATA};
+    renderAll();
+
+    st.style.display='inline';st.style.background='rgba(224,86,93,.15)';st.style.color='#e0565d';
+    st.textContent='Erro: '+(e.message||'falha na consulta')+' — usando dados amostrais';
+  }finally{
+    btn.disabled=false;btn.textContent='Consultar APIs';
+  }
+}
+
+function openInfo(){document.getElementById('infoModal').classList.add('active')}
+function closeInfo(){document.getElementById('infoModal').classList.remove('active')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeInfo()});
+
+function exportWhatsApp(){
+  var title=document.querySelector('.header h1').textContent;
+  var subtitle=document.querySelector('.header-sub').textContent;
+  var date=new Date().toLocaleDateString('pt-BR');
+  var msg='*'+title+'*\n'+subtitle+'\n📅 '+date+'\n\n';
+  var activeTab=document.querySelector('.tab-content.active');
+  var kpis=activeTab.querySelectorAll('.kpi');
+  kpis.forEach(function(kpi){
+    var label=kpi.querySelector('.kpi-label');
+    var value=kpi.querySelector('.kpi-value');
+    if(label&&value) msg+='📊 '+label.textContent+': '+value.textContent+'\n';
+  });
+  msg+='\n🔗 5_credito.html';
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+init();
+</script>
+</body>
+</html>

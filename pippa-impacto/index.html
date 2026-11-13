@@ -282,8 +282,8 @@ async function loadPortfolio(){
       orcamento:{nome:'PIPPA Orçamento',icon:'💲',color:v('--ceu'),url:'../pippa-orcamento/index.html',desc:'Inteligência Orçamentária UPP 2027'},
       regulatorio:{nome:'PIPPA Regulatório',icon:'📰',color:v('--cor-vermelho'),url:'../pippa-regulatorio/output/regulatorio_dou_20260928.html',desc:'Monitor do Diário Oficial da União'},
       transformalab:{nome:'TransformaLab — PIPPA (Dados Sintéticos)',icon:'🔬',color:v('--cor-experimentacao'),url:'../pippa-transformalab/index.html',desc:'Experimentação em Políticas Públicas'},
-      indicadores:{nome:'PIPPA Indicadores — Ambiente de Negócios',icon:'📊',color:v('--cor-lima'),url:'https://julioenders.github.io/indicadores-ambiente-negocios/dashboard/index.html',desc:'6 Temas de Indicadores Compostos'},
-      raioxmunicipal:{nome:'Raio-X Municipal',icon:'🔍',color:v('--cor-rosa-claro'),url:'https://julioenders.github.io/pippa-raio-x/',desc:'Diagnóstico Completo por Município'},
+      indicadores:{nome:'PIPPA Indicadores — Ambiente de Negócios',icon:'📊',color:v('--cor-lima'),url:'../pippa-indicadores/index.html',desc:'6 Temas de Indicadores Compostos'},
+      raioxmunicipal:{nome:'Raio-X Municipal',icon:'🔍',color:v('--cor-rosa-claro'),url:'../pippa-raio-x/index.html',desc:'Diagnóstico Completo por Município'},
       atuacaoupp:{nome:'Atuação UPP 2026',icon:'🏛️',color:v('--azul-sebrae'),url:'../pippa-atuacao-upp/index.html',desc:'Entregas Estratégicas da UPP'},
       projeto2027:{nome:'Projeto de Implantação Nacional 2027',icon:'🚀',color:v('--cor-orcamento'),url:'../pippa-projeto-2027/index.html',desc:'Escopo, Roadmap e Governança Ágil'},
       stakeholders:{nome:'PIPPA Stakeholders',icon:'👥',color:v('--cor-nao-classificado'),url:'../pippa-stakeholders/index.html',desc:'Mapa Parlamentar — CRM Legislativo'},
@@ -428,7 +428,7 @@ function exportWhatsApp(){
   msg+='• Eixos Cobertos: '+eixos+'\n';
   msg+='• APIs Integradas: '+apis+'\n';
   msg+='• Indicadores Monitorados: '+indicadores+'\n\n';
-  msg+='🔗 https://julioenders.github.io/pippa-sebrae/pippa-impacto/index.html\n';
+  msg+='🔗 ../pippa-impacto/index.html\n';
   msg+='📡 PIPPA — Sebrae Nacional';
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
