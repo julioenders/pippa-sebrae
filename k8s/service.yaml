@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pippa
+  namespace: pippa
+  labels:
+    app.kubernetes.io/name: pippa
+    app.kubernetes.io/part-of: upp-sebrae
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: pippa
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      name: http

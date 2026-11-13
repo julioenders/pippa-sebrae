@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pippa
+  namespace: pippa
+  labels:
+    app.kubernetes.io/name: pippa
+    app.kubernetes.io/part-of: upp-sebrae
+  annotations:
+    # GKE: usar GCE Ingress Controller (padrão)
+    kubernetes.io/ingress.class: gce
+    # Certificado gerenciado pelo Google
+    networking.gke.io/managed-certificates: pippa-cert
+    # Redirecionar HTTP para HTTPS
+    kubernetes.io/ingress.allow-http: "false"
+spec:
+  rules:
+    - host: pippa.sebrae.com.br
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pippa
+                port:
+                  number: 80

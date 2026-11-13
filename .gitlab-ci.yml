@@ -1,0 +1,59 @@
+# =============================================================================
+# PIPPA — Pipeline CI/CD
+# GitLab CI → Docker Build → Artifact Registry (GCP) → GKE Deploy
+# =============================================================================
+#
+# Variáveis a configurar no GitLab CI/CD Settings > Variables:
+#   GCP_PROJECT_ID        - ID do projeto GCP (ex: sebrae-upp-prod)
+#   GCP_REGION            - Região (ex: southamerica-east1)
+#   GCP_SERVICE_ACCOUNT   - JSON da service account com permissões de push/deploy
+#   GKE_CLUSTER_NAME      - Nome do cluster GKE
+#   GKE_CLUSTER_ZONE      - Zona do cluster (ex: southamerica-east1-a)
+# =============================================================================
+
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_IMAGE: ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/pippa/pippa
+  DOCKER_TAG: ${CI_COMMIT_SHORT_SHA}
+
+# --- Build da imagem Docker ---
+build:
+  stage: build
+  image: docker:27
+  services:
+    - docker:27-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - echo "${GCP_SERVICE_ACCOUNT}" | docker login -u _json_key --password-stdin https://${GCP_REGION}-docker.pkg.dev
+  script:
+    - docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} -t ${DOCKER_IMAGE}:latest .
+    - docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+    - docker push ${DOCKER_IMAGE}:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# --- Deploy no GKE ---
+deploy:
+  stage: deploy
+  image: google/cloud-sdk:slim
+  before_script:
+    - echo "${GCP_SERVICE_ACCOUNT}" | gcloud auth activate-service-account --key-file=-
+    - gcloud config set project ${GCP_PROJECT_ID}
+    - gcloud container clusters get-credentials ${GKE_CLUSTER_NAME} --zone ${GKE_CLUSTER_ZONE}
+  script:
+    - sed -i "s|image: pippa:latest|image: ${DOCKER_IMAGE}:${DOCKER_TAG}|" k8s/deployment.yaml
+    - kubectl apply -f k8s/namespace.yaml
+    - kubectl apply -f k8s/deployment.yaml
+    - kubectl apply -f k8s/service.yaml
+    - kubectl apply -f k8s/managed-certificate.yaml
+    - kubectl apply -f k8s/ingress.yaml
+    - kubectl -n pippa rollout status deployment/pippa --timeout=120s
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  environment:
+    name: production
+    url: https://pippa.sebrae.com.br
